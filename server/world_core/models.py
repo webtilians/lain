@@ -35,6 +35,23 @@ class NodeBelief:
 
 
 @dataclass
+class SituationBelief:
+    agent_id: str
+    situation_id: str
+
+    believed_type: str
+    believed_location: str
+    believed_subject_id: str | None
+    believed_status: str
+
+    believed_severity: float
+    confidence: float
+
+    source: str
+    updated_minute: int
+
+
+@dataclass
 class Agent:
     id: str
     name: str
@@ -43,7 +60,10 @@ class Agent:
     goal: str
     energy: float = 1.0
     controller_type: str = "AI"
-    memory: list[str] = field(default_factory=list)
+
+    memory: list[str] = field(
+        default_factory=list
+    )
 
 
 @dataclass
