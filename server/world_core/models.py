@@ -122,3 +122,19 @@ class ActorBelief:
     source_evidence_id: str
 
     updated_minute: int
+
+
+@dataclass
+class ActorLocationBelief:
+    observer_id: str
+    subject_actor_id: str
+
+    believed_location: str
+
+    confidence: float
+
+    source: str
+
+    source_event_id: int
+
+    updated_minute: int

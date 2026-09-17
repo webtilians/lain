@@ -1,4 +1,6 @@
 from .models import (
+    ActorBelief,
+    ActorLocationBelief,
     Agent,
     GoalCandidate,
     SituationBelief,
@@ -20,10 +22,6 @@ FACTION_RESPONSES = {
             "goal_type": (
                 "AUDIT_SIGNAL_MANIPULATION"
             ),
-
-            # Protocol considera especialmente
-            # grave que actores no autorizados
-            # manipulen la red.
             "interest": 1.25,
         },
     },
@@ -36,10 +34,6 @@ FACTION_RESPONSES = {
             ),
             "interest": 1.00,
         },
-
-        # Wired conoce la situación,
-        # pero por ahora no genera un objetivo
-        # especial a partir de ella.
     },
 }
 
@@ -57,16 +51,13 @@ def clamp(
     )
 
 
-def build_goal_candidate(
+def build_situation_goal_candidate(
     agent: Agent,
     belief: SituationBelief,
     minute: int,
 ) -> GoalCandidate | None:
 
-    if (
-        belief.believed_status
-        != "OPEN"
-    ):
+    if belief.believed_status != "OPEN":
         return None
 
     if belief.confidence < 0.20:
@@ -79,10 +70,8 @@ def build_goal_candidate(
         )
     )
 
-    response = (
-        faction_rules.get(
-            belief.believed_type
-        )
+    response = faction_rules.get(
+        belief.believed_type
     )
 
     if response is None:
@@ -94,31 +83,19 @@ def build_goal_candidate(
         * response["interest"]
     )
 
-    # Estar físicamente cerca
-    # aumenta la urgencia percibida.
-
     if (
         agent.location
         == belief.believed_location
     ):
-
         priority += 0.10
 
     priority = clamp(
         priority
     )
 
-    if (
-        belief.believed_subject_id
-        is None
-    ):
-
-        target_id = (
-            belief.situation_id
-        )
-
+    if belief.believed_subject_id is None:
+        target_id = belief.situation_id
     else:
-
         target_id = (
             belief.believed_subject_id
         )
@@ -126,9 +103,7 @@ def build_goal_candidate(
     return GoalCandidate(
         agent_id=agent.id,
 
-        goal_type=(
-            response["goal_type"]
-        ),
+        goal_type=response["goal_type"],
 
         target_id=target_id,
 
@@ -146,18 +121,111 @@ def build_goal_candidate(
     )
 
 
+def build_actor_goal_candidate(
+    agent: Agent,
+
+    actor_belief: ActorBelief,
+
+    location_beliefs:
+        list[ActorLocationBelief],
+
+    minute: int,
+) -> GoalCandidate | None:
+
+    if agent.faction != "PROTOCOL":
+        return None
+
+    if (
+        actor_belief.belief_type
+        != "LIKELY_UNAUTHORIZED_MANIPULATOR"
+    ):
+        return None
+
+    if actor_belief.confidence < 0.65:
+        return None
+
+    location_belief = None
+
+    for candidate in location_beliefs:
+
+        if (
+            candidate.subject_actor_id
+            == actor_belief.subject_actor_id
+        ):
+            location_belief = candidate
+            break
+
+    if location_belief is None:
+        return None
+
+    if location_belief.confidence < 0.30:
+        return None
+
+    priority = (
+        actor_belief.confidence
+        * location_belief.confidence
+        * 1.35
+    )
+
+    if (
+        agent.location
+        == location_belief.believed_location
+    ):
+        priority += 0.05
+
+    priority = clamp(
+        priority
+    )
+
+    return GoalCandidate(
+        agent_id=agent.id,
+
+        goal_type="LOCATE_SUSPECT",
+
+        target_id=(
+            actor_belief.subject_actor_id
+        ),
+
+        source_situation_id=(
+            f"ACTOR_BELIEF:"
+            f"{actor_belief.subject_actor_id}"
+        ),
+
+        priority=priority,
+
+        believed_location=(
+            location_belief.believed_location
+        ),
+
+        created_minute=minute,
+    )
+
+
 def select_goal(
     agent: Agent,
-    beliefs: list[SituationBelief],
+
+    situation_beliefs:
+        list[SituationBelief],
+
+    actor_beliefs:
+        list[ActorBelief],
+
+    actor_location_beliefs:
+        list[ActorLocationBelief],
+
     minute: int,
 ) -> GoalCandidate | None:
 
     candidates = []
 
-    for belief in beliefs:
+    # ---------------------------------------------
+    # WORLD SITUATIONS
+    # ---------------------------------------------
+
+    for belief in situation_beliefs:
 
         candidate = (
-            build_goal_candidate(
+            build_situation_goal_candidate(
                 agent=agent,
                 belief=belief,
                 minute=minute,
@@ -165,7 +233,33 @@ def select_goal(
         )
 
         if candidate is not None:
+            candidates.append(
+                candidate
+            )
 
+    # ---------------------------------------------
+    # BELIEFS ABOUT PEOPLE
+    # ---------------------------------------------
+
+    for actor_belief in actor_beliefs:
+
+        candidate = (
+            build_actor_goal_candidate(
+                agent=agent,
+
+                actor_belief=(
+                    actor_belief
+                ),
+
+                location_beliefs=(
+                    actor_location_beliefs
+                ),
+
+                minute=minute,
+            )
+        )
+
+        if candidate is not None:
             candidates.append(
                 candidate
             )

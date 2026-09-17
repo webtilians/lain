@@ -37,7 +37,7 @@ class AgentK:
     ) -> ActionIntent:
 
         # ==========================================
-        # BASIC RESOURCE NEED
+        # RESOURCE NEED
         # ==========================================
 
         if self.agent.energy < 0.25:
@@ -49,7 +49,7 @@ class AgentK:
             )
 
         # ==========================================
-        # NO CURRENT MOTIVATION
+        # NOTHING IMPORTANT
         # ==========================================
 
         if goal is None:
@@ -61,7 +61,7 @@ class AgentK:
             )
 
         # ==========================================
-        # TRAVEL TOWARDS GOAL
+        # TRAVEL
         # ==========================================
 
         if (
@@ -73,6 +73,27 @@ class AgentK:
                 actor_id=self.agent.id,
                 action="MOVE",
                 target=goal.believed_location,
+            )
+
+        # ==========================================
+        # LOCATE PERSON OF INTEREST
+        # ==========================================
+
+        if (
+            goal.goal_type
+            == "LOCATE_SUSPECT"
+        ):
+
+            # Ya hemos llegado a la última
+            # localización conocida.
+            #
+            # Todavía no interrogamos.
+            # Primero observamos la zona.
+
+            return ActionIntent(
+                actor_id=self.agent.id,
+                action="OBSERVE_AREA",
+                target=self.agent.location,
             )
 
         # ==========================================
@@ -110,19 +131,13 @@ class AgentK:
             )
 
         # ==========================================
-        # UNAUTHORIZED MANIPULATION
+        # FORENSIC AUDIT
         # ==========================================
 
         if (
             goal.goal_type
             == "AUDIT_SIGNAL_MANIPULATION"
         ):
-
-            # Por ahora K inspecciona el nodo
-            # buscando rastros de quién lo alteró.
-            #
-            # Más adelante esto generará
-            # evidence / actor beliefs.
 
             return ActionIntent(
                 actor_id=self.agent.id,
