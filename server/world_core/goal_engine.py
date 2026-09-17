@@ -57,7 +57,10 @@ def build_situation_goal_candidate(
     minute: int,
 ) -> GoalCandidate | None:
 
-    if belief.believed_status != "OPEN":
+    if (
+        belief.believed_status
+        != "OPEN"
+    ):
         return None
 
     if belief.confidence < 0.20:
@@ -93,17 +96,17 @@ def build_situation_goal_candidate(
         priority
     )
 
-    if belief.believed_subject_id is None:
-        target_id = belief.situation_id
-    else:
-        target_id = (
-            belief.believed_subject_id
-        )
+    target_id = (
+        belief.believed_subject_id
+        or belief.situation_id
+    )
 
     return GoalCandidate(
         agent_id=agent.id,
 
-        goal_type=response["goal_type"],
+        goal_type=(
+            response["goal_type"]
+        ),
 
         target_id=target_id,
 
@@ -141,7 +144,10 @@ def build_actor_goal_candidate(
     ):
         return None
 
-    if actor_belief.confidence < 0.65:
+    if (
+        actor_belief.confidence
+        < 0.65
+    ):
         return None
 
     location_belief = None
@@ -152,26 +158,55 @@ def build_actor_goal_candidate(
             candidate.subject_actor_id
             == actor_belief.subject_actor_id
         ):
+
             location_belief = candidate
             break
 
     if location_belief is None:
         return None
 
-    if location_belief.confidence < 0.30:
+    if (
+        location_belief.confidence
+        < 0.30
+    ):
         return None
+
+    # ==============================================
+    # DIRECT CONFIRMATION
+    # ==============================================
+
+    if (
+        location_belief.source
+        == "DIRECT_ACTOR_PERCEPTION"
+
+        and
+
+        location_belief.confidence
+        >= 0.95
+    ):
+
+        goal_type = (
+            "CONTACT_SUSPECT"
+        )
+
+        # Confirmar físicamente al sospechoso
+        # hace esta tarea ligeramente más urgente.
+
+        multiplier = 1.45
+
+    else:
+
+        goal_type = (
+            "LOCATE_SUSPECT"
+        )
+
+        multiplier = 1.35
 
     priority = (
         actor_belief.confidence
         * location_belief.confidence
-        * 1.35
+        * multiplier
     )
-
-    if (
-        agent.location
-        == location_belief.believed_location
-    ):
-        priority += 0.05
 
     priority = clamp(
         priority
@@ -180,7 +215,7 @@ def build_actor_goal_candidate(
     return GoalCandidate(
         agent_id=agent.id,
 
-        goal_type="LOCATE_SUSPECT",
+        goal_type=goal_type,
 
         target_id=(
             actor_belief.subject_actor_id
@@ -218,10 +253,6 @@ def select_goal(
 
     candidates = []
 
-    # ---------------------------------------------
-    # WORLD SITUATIONS
-    # ---------------------------------------------
-
     for belief in situation_beliefs:
 
         candidate = (
@@ -233,13 +264,10 @@ def select_goal(
         )
 
         if candidate is not None:
+
             candidates.append(
                 candidate
             )
-
-    # ---------------------------------------------
-    # BELIEFS ABOUT PEOPLE
-    # ---------------------------------------------
 
     for actor_belief in actor_beliefs:
 
@@ -260,6 +288,7 @@ def select_goal(
         )
 
         if candidate is not None:
+
             candidates.append(
                 candidate
             )

@@ -3,7 +3,9 @@ from .database import (
     initialize_database,
 )
 
-from .models import ActionIntent
+from .models import (
+    ActionIntent,
+)
 
 
 VALID_ACTIONS = {
@@ -13,6 +15,7 @@ VALID_ACTIONS = {
     "AMPLIFY",
     "OBSERVE",
     "OBSERVE_AREA",
+    "CONTACT",
     "REST",
 }
 
@@ -29,8 +32,9 @@ def queue_action(
     action = action.upper()
 
     if action not in VALID_ACTIONS:
+
         raise ValueError(
-            f"Invalid action: {action}"
+            f"Unknown action: {action}"
         )
 
     with get_connection() as conn:
@@ -44,6 +48,7 @@ def queue_action(
                 source,
                 processed
             )
+
             VALUES (?, ?, ?, ?, 0)
             """,
             (
@@ -60,6 +65,7 @@ def queue_action(
 
 
 def load_pending_actions():
+
     initialize_database()
 
     with get_connection() as conn:
@@ -72,8 +78,11 @@ def load_pending_actions():
                 action,
                 target,
                 source
+
             FROM pending_actions
+
             WHERE processed = 0
+
             ORDER BY id
             """
         ).fetchall()
@@ -81,6 +90,8 @@ def load_pending_actions():
     result = []
 
     for row in rows:
+
+        action_id = row[0]
 
         intent = ActionIntent(
             actor_id=row[1],
@@ -91,7 +102,7 @@ def load_pending_actions():
 
         result.append(
             (
-                row[0],
+                action_id,
                 intent,
             )
         )
@@ -102,11 +113,17 @@ def load_pending_actions():
 def mark_action_processed(
     action_id: int,
 ):
+
+    initialize_database()
+
     with get_connection() as conn:
+
         conn.execute(
             """
             UPDATE pending_actions
+
             SET processed = 1
+
             WHERE id = ?
             """,
             (action_id,),

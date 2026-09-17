@@ -72,23 +72,34 @@ class AgentK:
             return ActionIntent(
                 actor_id=self.agent.id,
                 action="MOVE",
-                target=goal.believed_location,
+                target=(
+                    goal.believed_location
+                ),
             )
 
         # ==========================================
-        # LOCATE PERSON OF INTEREST
+        # CONTACT CONFIRMED SUSPECT
+        # ==========================================
+
+        if (
+            goal.goal_type
+            == "CONTACT_SUSPECT"
+        ):
+
+            return ActionIntent(
+                actor_id=self.agent.id,
+                action="CONTACT",
+                target=goal.target_id,
+            )
+
+        # ==========================================
+        # LOCATE SUSPECT
         # ==========================================
 
         if (
             goal.goal_type
             == "LOCATE_SUSPECT"
         ):
-
-            # Ya hemos llegado a la última
-            # localización conocida.
-            #
-            # Todavía no interrogamos.
-            # Primero observamos la zona.
 
             return ActionIntent(
                 actor_id=self.agent.id,
@@ -144,10 +155,6 @@ class AgentK:
                 action="INVESTIGATE",
                 target=goal.target_id,
             )
-
-        # ==========================================
-        # FALLBACK
-        # ==========================================
 
         return ActionIntent(
             actor_id=self.agent.id,

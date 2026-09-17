@@ -44,6 +44,11 @@ from .goal_engine import (
     select_goal,
 )
 
+from .interactions import (
+    create_or_get_interaction,
+    list_open_interactions,
+)
+
 from .knowledge import (
     knows_node,
     learn_node,
@@ -114,14 +119,16 @@ class Simulation:
             )
         )
 
-        self.player = load_or_create_agent(
-            Agent(
-                id="PLAYER_1",
-                name="Player",
-                faction="UNALIGNED",
-                location="APARTMENT",
-                goal="UNKNOWN",
-                controller_type="HUMAN",
+        self.player = (
+            load_or_create_agent(
+                Agent(
+                    id="PLAYER_1",
+                    name="Player",
+                    faction="UNALIGNED",
+                    location="APARTMENT",
+                    goal="UNKNOWN",
+                    controller_type="HUMAN",
+                )
             )
         )
 
@@ -228,7 +235,9 @@ class Simulation:
         if text in agent.memory:
             return
 
-        agent.memory.append(text)
+        agent.memory.append(
+            text
+        )
 
         add_memory(
             agent.id,
@@ -256,7 +265,9 @@ class Simulation:
             if perception is None:
                 continue
 
-            save_belief(perception)
+            save_belief(
+                perception
+            )
 
             if not knows_node(
                 agent.id,
@@ -266,9 +277,11 @@ class Simulation:
                 learn_node(
                     agent_id=agent.id,
                     node_id=self.node.id,
+
                     confidence=(
                         perception.confidence
                     ),
+
                     source=(
                         "DIRECT_PERCEPTION"
                     ),
@@ -297,7 +310,9 @@ class Simulation:
         self,
     ):
 
-        situations = list_situations()
+        situations = (
+            list_situations()
+        )
 
         for agent in (
             self.all_agents.values()
@@ -330,18 +345,6 @@ class Simulation:
     def actor_intelligence_phase(
         self,
     ):
-
-        """
-        Los agentes pueden recibir información
-        adicional a través de los recursos
-        disponibles para su facción.
-
-        Protocol, por ejemplo, puede consultar
-        registros históricos de actividad.
-
-        Esto NO consulta la posición real
-        del jugador.
-        """
 
         for actor in self.ai_actors:
 
@@ -417,9 +420,13 @@ class Simulation:
                 agent.goal = "IDLE"
 
             else:
-                agent.goal = goal.goal_type
+                agent.goal = (
+                    goal.goal_type
+                )
 
-            save_agent(agent)
+            save_agent(
+                agent
+            )
 
     # ==================================================
     # COGNITION
@@ -495,6 +502,7 @@ class Simulation:
             "AMPLIFY": 0.25,
             "OBSERVE": 0.02,
             "OBSERVE_AREA": 0.01,
+            "CONTACT": 0.02,
         }
 
         required_energy = (
@@ -508,6 +516,7 @@ class Simulation:
             agent.energy
             < required_energy
         ):
+
             return (
                 False,
                 "NOT_ENOUGH_ENERGY",
@@ -518,6 +527,51 @@ class Simulation:
 
         if action == "OBSERVE_AREA":
             return True, ""
+
+        # ==============================================
+        # ACTOR CONTACT
+        # ==============================================
+
+        if action == "CONTACT":
+
+            target_actor = (
+                self.all_agents.get(
+                    intent.target
+                )
+            )
+
+            if target_actor is None:
+
+                return (
+                    False,
+                    "UNKNOWN_ACTOR",
+                )
+
+            if (
+                target_actor.id
+                == agent.id
+            ):
+
+                return (
+                    False,
+                    "CANNOT_CONTACT_SELF",
+                )
+
+            if (
+                target_actor.location
+                != agent.location
+            ):
+
+                return (
+                    False,
+                    "ACTOR_NOT_PRESENT",
+                )
+
+            return True, ""
+
+        # ==============================================
+        # NODE ACTIONS
+        # ==============================================
 
         node_actions = {
             "INVESTIGATE",
@@ -532,6 +586,7 @@ class Simulation:
                 intent.target
                 != self.node.id
             ):
+
                 return (
                     False,
                     "UNKNOWN_TARGET",
@@ -541,6 +596,7 @@ class Simulation:
                 agent.location
                 != self.node.location
             ):
+
                 return (
                     False,
                     "TARGET_NOT_PRESENT",
@@ -555,6 +611,7 @@ class Simulation:
                 agent.id,
                 self.node.id,
             ):
+
                 return (
                     False,
                     "NODE_NOT_KNOWN",
@@ -591,6 +648,7 @@ class Simulation:
             if agent is None:
 
                 if action_id is not None:
+
                     mark_action_processed(
                         action_id
                     )
@@ -616,6 +674,7 @@ class Simulation:
 
                 record_event(
                     minute=self.minute,
+
                     actor_id=agent.id,
 
                     action=(
@@ -624,6 +683,7 @@ class Simulation:
                     ),
 
                     target=intent.target,
+
                     details=reason,
                 )
 
@@ -640,6 +700,10 @@ class Simulation:
 
             details = ""
 
+            # ==========================================
+            # MOVE
+            # ==========================================
+
             if action == "MOVE":
 
                 agent.location = target
@@ -654,6 +718,71 @@ class Simulation:
                     f"moved to {target}"
                 )
 
+            # ==========================================
+            # CONTACT
+            # ==========================================
+
+            elif action == "CONTACT":
+
+                agent.energy = max(
+                    0.0,
+                    agent.energy - 0.02,
+                )
+
+                current_goal = (
+                    self.current_goals.get(
+                        agent.id
+                    )
+                )
+
+                source_goal = (
+                    current_goal.goal_type
+                    if current_goal
+                    else "UNKNOWN"
+                )
+
+                interaction, created = (
+                    create_or_get_interaction(
+                        initiator_id=agent.id,
+                        recipient_id=target,
+
+                        topic=(
+                            "UNAUTHORIZED_SIGNAL_"
+                            "MANIPULATION"
+                        ),
+
+                        source_goal=(
+                            source_goal
+                        ),
+
+                        minute=self.minute,
+                    )
+                )
+
+                details = (
+                    f"{agent.name} contacted "
+                    f"{target} about "
+                    f"{interaction.topic}"
+                )
+
+                if created:
+
+                    print(
+                        f"    -> INTERACTION OPENED: "
+                        f"{interaction.id}"
+                    )
+
+                else:
+
+                    print(
+                        f"    -> INTERACTION ALREADY OPEN: "
+                        f"{interaction.id}"
+                    )
+
+            # ==========================================
+            # INVESTIGATE
+            # ==========================================
+
             elif action == "INVESTIGATE":
 
                 belief = NodeBelief(
@@ -665,8 +794,7 @@ class Simulation:
                     ),
 
                     believed_strength=(
-                        self.node
-                        .anomaly_strength
+                        self.node.anomaly_strength
                     ),
 
                     confidence=0.95,
@@ -680,12 +808,15 @@ class Simulation:
                     ),
                 )
 
-                save_belief(belief)
+                save_belief(
+                    belief
+                )
 
                 learn_node(
                     agent_id=agent.id,
                     node_id=self.node.id,
                     confidence=0.95,
+
                     source=(
                         "ACTIVE_INVESTIGATION"
                     ),
@@ -755,6 +886,10 @@ class Simulation:
                             f"{evidence.strength:.2f}"
                         )
 
+            # ==========================================
+            # STABILIZE
+            # ==========================================
+
             elif action == "STABILIZE":
 
                 node_delta -= 0.10
@@ -773,6 +908,10 @@ class Simulation:
                     f"attempted to stabilize "
                     f"{self.node.id}"
                 )
+
+            # ==========================================
+            # AMPLIFY
+            # ==========================================
 
             elif action == "AMPLIFY":
 
@@ -793,6 +932,10 @@ class Simulation:
                     f"{self.node.id}"
                 )
 
+            # ==========================================
+            # OBSERVE
+            # ==========================================
+
             elif action == "OBSERVE":
 
                 agent.energy = max(
@@ -801,9 +944,14 @@ class Simulation:
                 )
 
                 details = (
-                    f"{agent.name} observes "
+                    f"{agent.name} "
+                    f"observes "
                     f"{self.node.id}"
                 )
+
+            # ==========================================
+            # OBSERVE AREA
+            # ==========================================
 
             elif action == "OBSERVE_AREA":
 
@@ -817,6 +965,10 @@ class Simulation:
                     f"observes area"
                 )
 
+            # ==========================================
+            # REST
+            # ==========================================
+
             elif action == "REST":
 
                 agent.energy = min(
@@ -828,7 +980,9 @@ class Simulation:
                     f"{agent.name} rests"
                 )
 
-            save_agent(agent)
+            save_agent(
+                agent
+            )
 
             record_event(
                 minute=self.minute,
@@ -860,12 +1014,16 @@ class Simulation:
             ),
         )
 
-        save_node(self.node)
+        save_node(
+            self.node
+        )
 
         if (
             signal_delta != 0.0
-            or stability_delta != 0.0
-            or connection_delta != 0.0
+            or
+            stability_delta != 0.0
+            or
+            connection_delta != 0.0
         ):
 
             self.world.apply_event(
@@ -878,7 +1036,9 @@ class Simulation:
     # TICK
     # ==================================================
 
-    def tick(self):
+    def tick(
+        self,
+    ):
 
         self.minute += 10
 
@@ -895,9 +1055,6 @@ class Simulation:
         self.node_perception_phase()
 
         self.situation_perception_phase()
-
-        # Datos derivados de creencias/evidencias,
-        # nunca de la posición real del jugador.
 
         self.actor_intelligence_phase()
 
@@ -935,15 +1092,39 @@ class Simulation:
 
         print()
         print("----- WORLD STATE -----")
-        print(f"Minute:     {self.minute}")
-        print(f"Signal:     {state.signal:.3f}")
-        print(f"Stability:  {state.stability:.3f}")
-        print(f"Connection: {state.connection:.3f}")
+
+        print(
+            f"Minute:     "
+            f"{self.minute}"
+        )
+
+        print(
+            f"Signal:     "
+            f"{state.signal:.3f}"
+        )
+
+        print(
+            f"Stability:  "
+            f"{state.stability:.3f}"
+        )
+
+        print(
+            f"Connection: "
+            f"{state.connection:.3f}"
+        )
 
         print()
         print("----- NODE REALITY -----")
-        print(f"Node:       {self.node.id}")
-        print(f"Location:   {self.node.location}")
+
+        print(
+            f"Node:       "
+            f"{self.node.id}"
+        )
+
+        print(
+            f"Location:   "
+            f"{self.node.location}"
+        )
 
         print(
             f"Anomaly:    "
@@ -963,7 +1144,9 @@ class Simulation:
         for situation in situations:
 
             print()
-            print(situation.id)
+            print(
+                situation.id
+            )
 
             print(
                 f"Type: "
@@ -1038,18 +1221,6 @@ class Simulation:
                     f"{selected_goal.source_situation_id}"
                 )
 
-            node_belief = load_belief(
-                agent.id,
-                self.node.id,
-            )
-
-            if node_belief is not None:
-
-                print(
-                    f"Believes node: "
-                    f"{node_belief.believed_strength:.2f}"
-                )
-
             actor_beliefs = (
                 list_actor_beliefs(
                     agent.id
@@ -1105,3 +1276,52 @@ class Simulation:
                     f"   source: "
                     f"{location_belief.source}"
                 )
+
+        # ==================================================
+        # INTERACTIONS
+        # ==================================================
+
+        print()
+        print(
+            "----- OPEN INTERACTIONS -----"
+        )
+
+        interactions = (
+            list_open_interactions()
+        )
+
+        if not interactions:
+
+            print("None")
+
+        for interaction in interactions:
+
+            print()
+            print(
+                interaction.id
+            )
+
+            print(
+                f"Initiator: "
+                f"{interaction.initiator_id}"
+            )
+
+            print(
+                f"Recipient: "
+                f"{interaction.recipient_id}"
+            )
+
+            print(
+                f"Topic: "
+                f"{interaction.topic}"
+            )
+
+            print(
+                f"Status: "
+                f"{interaction.status}"
+            )
+
+            print(
+                f"Source goal: "
+                f"{interaction.source_goal}"
+            )
