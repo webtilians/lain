@@ -574,11 +574,14 @@ def evaluate_unauthorized_manipulation(
 # WORLD EVALUATION
 # ======================================================
 
-def evaluate_world(
+def evaluate_node(
     world: WorldState,
     node: WorldNode,
     minute: int,
 ):
+
+    if not node.active:
+        return
 
     evaluate_signal_surge(
         world=world,
@@ -587,6 +590,42 @@ def evaluate_world(
     )
 
     evaluate_unauthorized_manipulation(
+        world=world,
+        node=node,
+        minute=minute,
+    )
+
+
+def evaluate_nodes(
+    world: WorldState,
+    nodes: list[WorldNode],
+    minute: int,
+):
+
+    for node in nodes:
+
+        evaluate_node(
+            world=world,
+            node=node,
+            minute=minute,
+        )
+
+
+def evaluate_world(
+    world: WorldState,
+    node: WorldNode,
+    minute: int,
+):
+
+    """
+    Backwards-compatible adapter for
+    World Core 0.9.
+
+    World Core 1.0 will gradually migrate
+    callers to evaluate_nodes().
+    """
+
+    evaluate_node(
         world=world,
         node=node,
         minute=minute,

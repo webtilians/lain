@@ -460,3 +460,76 @@ def record_event(
         )
 
         conn.commit()
+
+
+def list_nodes() -> list[WorldNode]:
+
+    initialize_database()
+
+    with get_connection() as conn:
+
+        rows = conn.execute(
+            """
+            SELECT
+                id,
+                location,
+                node_type,
+                discovered,
+                active,
+                anomaly_strength
+
+            FROM nodes
+
+            ORDER BY id
+            """
+        ).fetchall()
+
+    return [
+        WorldNode(
+            id=row[0],
+            location=row[1],
+            node_type=row[2],
+            discovered=bool(row[3]),
+            active=bool(row[4]),
+            anomaly_strength=row[5],
+        )
+        for row in rows
+    ]
+
+
+def load_node(
+    node_id: str,
+) -> WorldNode | None:
+
+    initialize_database()
+
+    with get_connection() as conn:
+
+        row = conn.execute(
+            """
+            SELECT
+                id,
+                location,
+                node_type,
+                discovered,
+                active,
+                anomaly_strength
+
+            FROM nodes
+
+            WHERE id = ?
+            """,
+            (node_id,),
+        ).fetchone()
+
+    if row is None:
+        return None
+
+    return WorldNode(
+        id=row[0],
+        location=row[1],
+        node_type=row[2],
+        discovered=bool(row[3]),
+        active=bool(row[4]),
+        anomaly_strength=row[5],
+    )
