@@ -1,6 +1,14 @@
 from server.agents.agent_k import AgentK
 from server.agents.nora import Nora
+from .dialogue import (
+    process_dialogue_responses,
+)
 
+from .interactions import (
+    create_or_get_interaction,
+    find_open_interaction,
+    list_open_interactions,
+)
 from server.situations.engine import (
     evaluate_world,
     list_open_situations,
@@ -47,6 +55,7 @@ from .goal_engine import (
 from .interactions import (
     create_or_get_interaction,
     list_open_interactions,
+    find_open_interaction,
 )
 
 from .knowledge import (
@@ -453,11 +462,46 @@ class Simulation:
                 )
             )
 
-            intent = actor.decide(
-                world=self.world.get_state(),
-                node_belief=node_belief,
-                goal=goal,
-            )
+            open_interaction = False
+
+            if (
+                goal is not None
+                and
+                goal.goal_type
+                == "CONTACT_SUSPECT"
+            ):
+
+                open_interaction = (
+                    find_open_interaction(
+                        initiator_id=agent.id,
+                        recipient_id=goal.target_id,
+                        topic=(
+                            "UNAUTHORIZED_SIGNAL_"
+                            "MANIPULATION"
+                        ),
+                    )
+                    is not None
+                )
+
+            if actor is self.k:
+
+                intent = actor.decide(
+                    world=self.world.get_state(),
+                    node_belief=node_belief,
+                    goal=goal,
+
+                    open_interaction=(
+                        open_interaction
+                    ),
+                )
+
+            else:
+
+                intent = actor.decide(
+                    world=self.world.get_state(),
+                    node_belief=node_belief,
+                    goal=goal,
+                )
 
             intents.append(
                 (
@@ -1057,6 +1101,10 @@ class Simulation:
         self.situation_perception_phase()
 
         self.actor_intelligence_phase()
+
+        process_dialogue_responses(
+            minute=self.minute
+        )
 
         self.goal_selection_phase()
 

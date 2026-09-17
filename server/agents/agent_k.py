@@ -17,15 +17,9 @@ class AgentK:
         self.agent = agent or Agent(
             id="AGENT_K",
             name="K",
-
             faction="PROTOCOL",
-
-            location=(
-                "APARTMENT_DISTRICT"
-            ),
-
+            location="APARTMENT_DISTRICT",
             goal="IDLE",
-
             controller_type="AI",
         )
 
@@ -34,11 +28,9 @@ class AgentK:
         world: WorldState,
         node_belief: NodeBelief | None,
         goal: GoalCandidate | None,
-    ) -> ActionIntent:
 
-        # ==========================================
-        # RESOURCE NEED
-        # ==========================================
+        open_interaction: bool = False,
+    ) -> ActionIntent:
 
         if self.agent.energy < 0.25:
 
@@ -48,10 +40,6 @@ class AgentK:
                 target=self.agent.id,
             )
 
-        # ==========================================
-        # NOTHING IMPORTANT
-        # ==========================================
-
         if goal is None:
 
             return ActionIntent(
@@ -59,10 +47,6 @@ class AgentK:
                 action="OBSERVE_AREA",
                 target=self.agent.location,
             )
-
-        # ==========================================
-        # TRAVEL
-        # ==========================================
 
         if (
             self.agent.location
@@ -77,24 +61,27 @@ class AgentK:
                 ),
             )
 
-        # ==========================================
-        # CONTACT CONFIRMED SUSPECT
-        # ==========================================
-
         if (
             goal.goal_type
             == "CONTACT_SUSPECT"
         ):
+
+            # Contact already exists.
+            # Do not spam CONTACT every tick.
+
+            if open_interaction:
+
+                return ActionIntent(
+                    actor_id=self.agent.id,
+                    action="OBSERVE_AREA",
+                    target=self.agent.location,
+                )
 
             return ActionIntent(
                 actor_id=self.agent.id,
                 action="CONTACT",
                 target=goal.target_id,
             )
-
-        # ==========================================
-        # LOCATE SUSPECT
-        # ==========================================
 
         if (
             goal.goal_type
@@ -106,10 +93,6 @@ class AgentK:
                 action="OBSERVE_AREA",
                 target=self.agent.location,
             )
-
-        # ==========================================
-        # SIGNAL SURGE
-        # ==========================================
 
         if (
             goal.goal_type
@@ -140,10 +123,6 @@ class AgentK:
                 action="STABILIZE",
                 target=goal.target_id,
             )
-
-        # ==========================================
-        # FORENSIC AUDIT
-        # ==========================================
 
         if (
             goal.goal_type

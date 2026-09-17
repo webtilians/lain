@@ -9,6 +9,7 @@ from .models import (
 def clamp(
     value: float,
 ) -> float:
+
     return max(
         0.0,
         min(
@@ -74,13 +75,13 @@ def initialize_evidence():
 
 def save_evidence(
     evidence: Evidence,
-):
+) -> bool:
 
     initialize_evidence()
 
     with get_connection() as conn:
 
-        conn.execute(
+        cursor = conn.execute(
             """
             INSERT OR IGNORE INTO evidence (
                 id,
@@ -125,6 +126,8 @@ def save_evidence(
 
         conn.commit()
 
+        return cursor.rowcount == 1
+
 
 def save_actor_belief(
     belief: ActorBelief,
@@ -154,6 +157,7 @@ def save_actor_belief(
         confidence = belief.confidence
 
         if existing is not None:
+
             confidence = max(
                 existing[0],
                 confidence,
@@ -185,6 +189,71 @@ def save_actor_belief(
                 belief.belief_type,
 
                 confidence,
+
+                belief.source_evidence_id,
+
+                belief.updated_minute,
+            ),
+        )
+
+        conn.commit()
+
+
+def replace_actor_belief(
+    belief: ActorBelief,
+):
+
+    """
+    Replaces the observer's current interpretation
+    of one actor.
+
+    Used when new social evidence changes the
+    meaning of the earlier evidence.
+    """
+
+    initialize_evidence()
+
+    with get_connection() as conn:
+
+        conn.execute(
+            """
+            DELETE FROM actor_beliefs
+
+            WHERE observer_id = ?
+              AND subject_actor_id = ?
+            """,
+            (
+                belief.observer_id,
+                belief.subject_actor_id,
+            ),
+        )
+
+        conn.execute(
+            """
+            INSERT INTO actor_beliefs (
+                observer_id,
+
+                subject_actor_id,
+
+                belief_type,
+
+                confidence,
+
+                source_evidence_id,
+
+                updated_minute
+            )
+
+            VALUES (?, ?, ?, ?, ?, ?)
+            """,
+            (
+                belief.observer_id,
+
+                belief.subject_actor_id,
+
+                belief.belief_type,
+
+                belief.confidence,
 
                 belief.source_evidence_id,
 
@@ -314,6 +383,7 @@ def discover_unauthorized_manipulation_evidence(
 
     source_event_id = event[0]
     event_minute = event[1]
+
     subject_actor_id = event[2]
     action = event[3]
 
@@ -321,11 +391,6 @@ def discover_unauthorized_manipulation_evidence(
         0,
         current_minute - event_minute,
     )
-
-    # Cuanto más antiguo sea el rastro,
-    # menos fiable resulta.
-    #
-    # No damos nunca certeza absoluta.
 
     strength = clamp(
         0.95 - (age / 600.0)
@@ -373,9 +438,15 @@ def discover_unauthorized_manipulation_evidence(
         ),
     )
 
-    save_evidence(
+    new_evidence = save_evidence(
         evidence
     )
+
+    # Same trace cannot repeatedly reset
+    # the observer's beliefs.
+
+    if not new_evidence:
+        return None
 
     belief = ActorBelief(
         observer_id=discoverer_id,
