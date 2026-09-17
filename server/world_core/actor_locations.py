@@ -475,9 +475,33 @@ def historical_information_is_newer(
     if existing is None:
         return True
 
-    return (
+    # A later simulated minute always wins.
+
+    if (
         historical.updated_minute
         > existing.updated_minute
+    ):
+        return True
+
+    if (
+        historical.updated_minute
+        < existing.updated_minute
+    ):
+        return False
+
+    # Same simulated minute:
+    #
+    # DIRECT_ACTOR_PERCEPTION uses source_event_id=-1.
+    #
+    # A MOVE event recorded during that same tick has
+    # a real positive event id and happened after the
+    # perception phase.
+    #
+    # Therefore the movement is newer information.
+
+    return (
+        historical.source_event_id
+        > existing.source_event_id
     )
 
 

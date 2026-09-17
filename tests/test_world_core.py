@@ -610,3 +610,53 @@ def test_confirmed_location_generates_contact_goal():
         goal.believed_location
         == "STATION"
     )
+    
+# ======================================================
+# 7. SAME-TICK MOVEMENT BEATS EARLIER DIRECT SIGHTING
+# ======================================================
+
+def test_same_tick_movement_is_newer_than_direct_sighting():
+
+    from server.world_core.actor_locations import (
+        historical_information_is_newer,
+    )
+
+    direct_sighting = ActorLocationBelief(
+        observer_id="AGENT_K",
+
+        subject_actor_id="PLAYER_1",
+
+        believed_location="STATION",
+
+        confidence=0.99,
+
+        source="DIRECT_ACTOR_PERCEPTION",
+
+        source_event_id=-1,
+
+        updated_minute=30,
+    )
+
+    movement_log = ActorLocationBelief(
+        observer_id="AGENT_K",
+
+        subject_actor_id="PLAYER_1",
+
+        believed_location="APARTMENT",
+
+        confidence=0.95,
+
+        source="PROTOCOL_ACTIVITY_LOG",
+
+        source_event_id=123,
+
+        updated_minute=30,
+    )
+
+    assert (
+        historical_information_is_newer(
+            historical=movement_log,
+            existing=direct_sighting,
+        )
+        is True
+    )
