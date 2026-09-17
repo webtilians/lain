@@ -12,6 +12,10 @@ from .database import (
     save_node,
     save_simulation_minute,
 )
+from .knowledge import (
+    knows_node,
+    learn_node,
+)
 from .models import Agent, WorldNode
 
 
@@ -58,134 +62,212 @@ class Simulation:
 
         self.minute = load_simulation_minute()
 
+        self.bootstrap_existing_knowledge()
+
+    def bootstrap_existing_knowledge(self):
+
+        for actor in [self.k, self.nora]:
+
+            for memory in actor.agent.memory:
+
+                if (
+                    "Discovered anomalous node NODE_07"
+                    in memory
+                ):
+                    learn_node(
+                        actor.agent.id,
+                        "NODE_07",
+                        source="EPISODIC_MEMORY",
+                    )
+
     def remember(self, agent, text: str):
-        agent.memory.append(text)
-        add_memory(agent.id, text)
 
-    def execute_action(self, actor, decision: dict):
+        if text not in agent.memory:
+            agent.memory.append(text)
+            add_memory(agent.id, text)
 
-        action = decision["action"]
-        target = decision["target"]
+    def resolve_intents(self, intents):
 
-        agent = actor.agent
+        node_delta = 0.0
 
-        details = ""
+        signal_delta = 0.0
+        stability_delta = 0.0
+        connection_delta = 0.0
 
-        if action == "MOVE":
+        for actor, decision in intents:
 
-            agent.location = target
+            agent = actor.agent
+
+            action = decision["action"]
+            target = decision["target"]
+
+            details = ""
+
+            if action == "MOVE":
+
+                agent.location = target
+                agent.energy = max(
+                    0.0,
+                    agent.energy - 0.05,
+                )
+
+                details = (
+                    f"{agent.name} moved to {target}"
+                )
+
+            elif action == "INVESTIGATE":
+
+                learn_node(
+                    agent.id,
+                    self.node.id,
+                )
+
+                self.node.discovered = True
+
+                agent.energy = max(
+                    0.0,
+                    agent.energy - 0.10,
+                )
+
+                memory = (
+                    f"Discovered anomalous node "
+                    f"{self.node.id} "
+                    f"at {self.node.location}"
+                )
+
+                self.remember(agent, memory)
+
+                details = memory
+
+            elif action == "STABILIZE":
+
+                node_delta -= 0.10
+
+                signal_delta -= 0.01
+                stability_delta += 0.02
+                connection_delta -= 0.005
+
+                agent.energy = max(
+                    0.0,
+                    agent.energy - 0.25,
+                )
+
+                details = (
+                    f"{agent.name} attempted "
+                    f"to stabilize {self.node.id}"
+                )
+
+            elif action == "AMPLIFY":
+
+                node_delta += 0.10
+
+                signal_delta += 0.02
+                stability_delta -= 0.015
+                connection_delta += 0.015
+
+                agent.energy = max(
+                    0.0,
+                    agent.energy - 0.25,
+                )
+
+                details = (
+                    f"{agent.name} attempted "
+                    f"to amplify {self.node.id}"
+                )
+
+            elif action == "OBSERVE":
+
+                agent.energy = max(
+                    0.0,
+                    agent.energy - 0.02,
+                )
+
+                details = (
+                    f"{agent.name} observes "
+                    f"{self.node.id}"
+                )
+
+            elif action == "REST":
+
+                agent.energy = min(
+                    1.0,
+                    agent.energy + 0.35,
+                )
+
+                details = (
+                    f"{agent.name} rests"
+                )
+
             save_agent(agent)
 
-            details = f"{agent.name} moved to {target}"
-
-        elif action == "INVESTIGATE":
-
-            self.node.discovered = True
-            save_node(self.node)
-
-            memory = (
-                f"Discovered anomalous node "
-                f"{self.node.id} at {self.node.location}"
+            record_event(
+                minute=self.minute,
+                actor_id=agent.id,
+                action=action,
+                target=target,
+                details=details,
             )
 
-            self.remember(agent, memory)
-            details = memory
-
-        elif action == "STABILIZE":
-
-            self.node.anomaly_strength = max(
-                0.0,
-                self.node.anomaly_strength - 0.10,
+            print(
+                f"[{self.minute:04}m] "
+                f"{agent.name} "
+                f"{action} -> {target}"
             )
 
-            save_node(self.node)
+        # Todos los efectos sobre el nodo
+        # se aplican juntos.
 
-            self.world.apply_event(
-                signal_delta=-0.01,
-                stability_delta=0.02,
-                connection_delta=-0.005,
-            )
-
-            memory = (
-                f"Attempted to stabilize "
-                f"{self.node.id}"
-            )
-
-            self.remember(agent, memory)
-
-            details = (
-                f"{self.node.id} anomaly now "
-                f"{self.node.anomaly_strength:.2f}"
-            )
-
-        elif action == "AMPLIFY":
-
-            self.node.anomaly_strength = min(
+        self.node.anomaly_strength = max(
+            0.0,
+            min(
                 1.0,
-                self.node.anomaly_strength + 0.10,
-            )
+                self.node.anomaly_strength
+                + node_delta,
+            ),
+        )
 
-            save_node(self.node)
+        save_node(self.node)
+
+        if (
+            signal_delta != 0
+            or stability_delta != 0
+            or connection_delta != 0
+        ):
 
             self.world.apply_event(
-                signal_delta=0.02,
-                stability_delta=-0.015,
-                connection_delta=0.015,
+                signal_delta=signal_delta,
+                stability_delta=stability_delta,
+                connection_delta=connection_delta,
             )
-
-            memory = (
-                f"Amplified signal at "
-                f"{self.node.id}"
-            )
-
-            self.remember(agent, memory)
-
-            details = (
-                f"{self.node.id} anomaly now "
-                f"{self.node.anomaly_strength:.2f}"
-            )
-
-        else:
-
-            details = (
-                f"{agent.name} observes "
-                f"{self.node.id}"
-            )
-
-        record_event(
-            minute=self.minute,
-            actor_id=agent.id,
-            action=action,
-            target=target,
-            details=details,
-        )
-
-        print(
-            f"[{self.minute:04}m] "
-            f"{agent.name} {action} -> {target}"
-        )
 
     def tick(self):
 
         self.minute += 10
         save_simulation_minute(self.minute)
 
-        actors = [
+        intents = []
+
+        for actor in [
             self.k,
             self.nora,
-        ]
+        ]:
 
-        for actor in actors:
+            knowledge = knows_node(
+                actor.agent.id,
+                self.node.id,
+            )
 
             decision = actor.decide(
                 world=self.world.get_state(),
                 node=self.node,
+                knows_node=knowledge,
             )
 
-            self.execute_action(
-                actor,
-                decision,
+            intents.append(
+                (actor, decision)
             )
+
+        self.resolve_intents(intents)
 
     def run(self, ticks: int = 10):
 
@@ -196,37 +278,56 @@ class Simulation:
 
         print()
         print("----- WORLD STATE -----")
+
         print(f"Minute:     {self.minute}")
         print(f"Signal:     {state.signal:.3f}")
         print(f"Stability:  {state.stability:.3f}")
         print(f"Connection: {state.connection:.3f}")
 
         print()
+
         print("----- NODE -----")
+
         print(f"Node:       {self.node.id}")
-        print(f"Discovered: {self.node.discovered}")
+
         print(
             f"Anomaly:    "
             f"{self.node.anomaly_strength:.2f}"
         )
 
         print()
+
         print("----- AGENTS -----")
 
-        for actor in [self.k, self.nora]:
+        for actor in [
+            self.k,
+            self.nora,
+        ]:
+
+            agent = actor.agent
 
             print()
             print(
-                f"{actor.agent.name} "
-                f"[{actor.agent.faction}]"
+                f"{agent.name} "
+                f"[{agent.faction}]"
             )
 
             print(
                 f"Location: "
-                f"{actor.agent.location}"
+                f"{agent.location}"
+            )
+
+            print(
+                f"Energy: "
+                f"{agent.energy:.2f}"
+            )
+
+            print(
+                f"Knows NODE_07: "
+                f"{knows_node(agent.id, self.node.id)}"
             )
 
             print("Memory:")
 
-            for memory in actor.agent.memory:
+            for memory in agent.memory:
                 print(f" - {memory}")

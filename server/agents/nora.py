@@ -16,7 +16,14 @@ class Nora:
         self,
         world: WorldState,
         node: WorldNode,
+        knows_node: bool,
     ) -> dict:
+
+        if self.agent.energy < 0.25:
+            return {
+                "action": "REST",
+                "target": self.agent.id,
+            }
 
         if self.agent.location != node.location:
             return {
@@ -24,7 +31,7 @@ class Nora:
                 "target": node.location,
             }
 
-        if not node.discovered:
+        if not knows_node:
             return {
                 "action": "INVESTIGATE",
                 "target": node.id,
