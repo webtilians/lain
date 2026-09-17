@@ -72,3 +72,19 @@ class ActionIntent:
     action: str
     target: str
     source: str = "AI"
+
+
+@dataclass
+class GoalCandidate:
+    agent_id: str
+
+    goal_type: str
+    target_id: str
+
+    source_situation_id: str
+
+    priority: float
+
+    believed_location: str
+
+    created_minute: int

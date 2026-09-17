@@ -1,6 +1,7 @@
 from server.world_core.models import (
     ActionIntent,
     Agent,
+    GoalCandidate,
     NodeBelief,
     WorldState,
 )
@@ -12,61 +13,99 @@ class AgentK:
         self,
         agent: Agent | None = None,
     ):
+
         self.agent = agent or Agent(
             id="AGENT_K",
             name="K",
             faction="PROTOCOL",
             location="APARTMENT_DISTRICT",
-            goal="INVESTIGATE_ANOMALIES",
+            goal="IDLE",
             controller_type="AI",
         )
 
     def decide(
         self,
         world: WorldState,
-        belief: NodeBelief | None,
+        node_belief: NodeBelief | None,
+        goal: GoalCandidate | None,
     ) -> ActionIntent:
 
+        # --------------------------------------------
+        # BIOLOGICAL / RESOURCE NEED
+        # --------------------------------------------
+
         if self.agent.energy < 0.25:
+
             return ActionIntent(
                 actor_id=self.agent.id,
                 action="REST",
                 target=self.agent.id,
             )
 
-        if belief is None:
+        # --------------------------------------------
+        # NO RELEVANT GOAL
+        # --------------------------------------------
+
+        if goal is None:
+
             return ActionIntent(
                 actor_id=self.agent.id,
                 action="OBSERVE_AREA",
                 target=self.agent.location,
             )
 
+        # --------------------------------------------
+        # MOVE TOWARDS GOAL
+        # --------------------------------------------
+
         if (
             self.agent.location
-            != belief.believed_location
+            != goal.believed_location
         ):
+
             return ActionIntent(
                 actor_id=self.agent.id,
                 action="MOVE",
-                target=belief.believed_location,
+                target=goal.believed_location,
             )
 
-        if belief.confidence < 0.50:
-            return ActionIntent(
-                actor_id=self.agent.id,
-                action="INVESTIGATE",
-                target=belief.node_id,
-            )
+        # --------------------------------------------
+        # PROTOCOL INTERPRETATION
+        # --------------------------------------------
 
-        if belief.believed_strength > 0.30:
+        if (
+            goal.goal_type
+            == "REDUCE_SIGNAL_SURGE"
+        ):
+
+            if node_belief is None:
+
+                return ActionIntent(
+                    actor_id=self.agent.id,
+                    action="INVESTIGATE",
+                    target=goal.target_id,
+                )
+
+            if node_belief.confidence < 0.50:
+
+                return ActionIntent(
+                    actor_id=self.agent.id,
+                    action="INVESTIGATE",
+                    target=goal.target_id,
+                )
+
             return ActionIntent(
                 actor_id=self.agent.id,
                 action="STABILIZE",
-                target=belief.node_id,
+                target=goal.target_id,
             )
+
+        # --------------------------------------------
+        # FALLBACK
+        # --------------------------------------------
 
         return ActionIntent(
             actor_id=self.agent.id,
-            action="OBSERVE",
-            target=belief.node_id,
+            action="OBSERVE_AREA",
+            target=self.agent.location,
         )
