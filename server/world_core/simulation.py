@@ -1,4 +1,5 @@
 from server.agents.agent_k import AgentK
+from server.agents.nora import Nora
 
 from .core import WorldCore
 from .database import (
@@ -29,7 +30,9 @@ class Simulation:
             anomaly_strength=0.60,
         )
 
-        default_agent = Agent(
+        self.node = load_or_create_node(default_node)
+
+        k_default = Agent(
             id="AGENT_K",
             name="K",
             faction="PROTOCOL",
@@ -37,29 +40,43 @@ class Simulation:
             goal="INVESTIGATE_ANOMALIES",
         )
 
-        self.node = load_or_create_node(default_node)
+        nora_default = Agent(
+            id="AGENT_NORA",
+            name="Nora",
+            faction="WIRED",
+            location="OLD_DISTRICT",
+            goal="EXPAND_THE_WIRED",
+        )
 
-        persisted_agent = load_or_create_agent(default_agent)
+        self.k = AgentK(
+            load_or_create_agent(k_default)
+        )
 
-        self.k = AgentK(persisted_agent)
+        self.nora = Nora(
+            load_or_create_agent(nora_default)
+        )
 
         self.minute = load_simulation_minute()
 
-    def remember(self, text: str):
-        self.k.agent.memory.append(text)
-        add_memory(self.k.agent.id, text)
+    def remember(self, agent, text: str):
+        agent.memory.append(text)
+        add_memory(agent.id, text)
 
-    def execute_action(self, decision: dict):
+    def execute_action(self, actor, decision: dict):
 
         action = decision["action"]
         target = decision["target"]
 
+        agent = actor.agent
+
+        details = ""
+
         if action == "MOVE":
 
-            self.k.agent.location = target
-            save_agent(self.k.agent)
+            agent.location = target
+            save_agent(agent)
 
-            details = f"K moved to {target}"
+            details = f"{agent.name} moved to {target}"
 
         elif action == "INVESTIGATE":
 
@@ -71,8 +88,7 @@ class Simulation:
                 f"{self.node.id} at {self.node.location}"
             )
 
-            self.remember(memory)
-
+            self.remember(agent, memory)
             details = memory
 
         elif action == "STABILIZE":
@@ -95,7 +111,34 @@ class Simulation:
                 f"{self.node.id}"
             )
 
-            self.remember(memory)
+            self.remember(agent, memory)
+
+            details = (
+                f"{self.node.id} anomaly now "
+                f"{self.node.anomaly_strength:.2f}"
+            )
+
+        elif action == "AMPLIFY":
+
+            self.node.anomaly_strength = min(
+                1.0,
+                self.node.anomaly_strength + 0.10,
+            )
+
+            save_node(self.node)
+
+            self.world.apply_event(
+                signal_delta=0.02,
+                stability_delta=-0.015,
+                connection_delta=0.015,
+            )
+
+            memory = (
+                f"Amplified signal at "
+                f"{self.node.id}"
+            )
+
+            self.remember(agent, memory)
 
             details = (
                 f"{self.node.id} anomaly now "
@@ -104,11 +147,14 @@ class Simulation:
 
         else:
 
-            details = f"K observes {self.node.id}"
+            details = (
+                f"{agent.name} observes "
+                f"{self.node.id}"
+            )
 
         record_event(
             minute=self.minute,
-            actor_id=self.k.agent.id,
+            actor_id=agent.id,
             action=action,
             target=target,
             details=details,
@@ -116,7 +162,7 @@ class Simulation:
 
         print(
             f"[{self.minute:04}m] "
-            f"K {action} -> {target}"
+            f"{agent.name} {action} -> {target}"
         )
 
     def tick(self):
@@ -124,12 +170,22 @@ class Simulation:
         self.minute += 10
         save_simulation_minute(self.minute)
 
-        decision = self.k.decide(
-            world=self.world.get_state(),
-            node=self.node,
-        )
+        actors = [
+            self.k,
+            self.nora,
+        ]
 
-        self.execute_action(decision)
+        for actor in actors:
+
+            decision = actor.decide(
+                world=self.world.get_state(),
+                node=self.node,
+            )
+
+            self.execute_action(
+                actor,
+                decision,
+            )
 
     def run(self, ticks: int = 10):
 
@@ -155,10 +211,22 @@ class Simulation:
         )
 
         print()
-        print("----- AGENT K -----")
-        print(f"Location: {self.k.agent.location}")
+        print("----- AGENTS -----")
 
-        print("Memory:")
+        for actor in [self.k, self.nora]:
 
-        for memory in self.k.agent.memory:
-            print(f" - {memory}")
+            print()
+            print(
+                f"{actor.agent.name} "
+                f"[{actor.agent.faction}]"
+            )
+
+            print(
+                f"Location: "
+                f"{actor.agent.location}"
+            )
+
+            print("Memory:")
+
+            for memory in actor.agent.memory:
+                print(f" - {memory}")
