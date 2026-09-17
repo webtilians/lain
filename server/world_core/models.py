@@ -42,4 +42,13 @@ class Agent:
     location: str
     goal: str
     energy: float = 1.0
+    controller_type: str = "AI"
     memory: list[str] = field(default_factory=list)
+
+
+@dataclass
+class ActionIntent:
+    actor_id: str
+    action: str
+    target: str
+    source: str = "AI"

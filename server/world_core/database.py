@@ -13,6 +13,7 @@ def get_connection():
 
 def initialize_database():
     with get_connection() as conn:
+
         conn.execute(
             """
             CREATE TABLE IF NOT EXISTS world_state (
@@ -32,10 +33,28 @@ def initialize_database():
                 faction TEXT NOT NULL,
                 location TEXT NOT NULL,
                 goal TEXT NOT NULL,
-                energy REAL NOT NULL
+                energy REAL NOT NULL,
+                controller_type TEXT NOT NULL DEFAULT 'AI'
             )
             """
         )
+
+        # Migración para bases creadas en versiones anteriores.
+        agent_columns = {
+            row[1]
+            for row in conn.execute(
+                "PRAGMA table_info(agents)"
+            ).fetchall()
+        }
+
+        if "controller_type" not in agent_columns:
+            conn.execute(
+                """
+                ALTER TABLE agents
+                ADD COLUMN controller_type TEXT
+                NOT NULL DEFAULT 'AI'
+                """
+            )
 
         conn.execute(
             """
@@ -83,6 +102,20 @@ def initialize_database():
             """
         )
 
+        conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS pending_actions (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                actor_id TEXT NOT NULL,
+                action TEXT NOT NULL,
+                target TEXT NOT NULL,
+                source TEXT NOT NULL,
+                processed INTEGER NOT NULL DEFAULT 0
+            )
+            """
+        )
+
         existing_world = conn.execute(
             "SELECT id FROM world_state WHERE id = 1"
         ).fetchone()
@@ -124,10 +157,7 @@ def load_world_state() -> WorldState:
     with get_connection() as conn:
         row = conn.execute(
             """
-            SELECT
-                signal,
-                stability,
-                connection
+            SELECT signal, stability, connection
             FROM world_state
             WHERE id = 1
             """
@@ -167,6 +197,7 @@ def load_or_create_agent(default: Agent) -> Agent:
     initialize_database()
 
     with get_connection() as conn:
+
         row = conn.execute(
             """
             SELECT
@@ -175,7 +206,8 @@ def load_or_create_agent(default: Agent) -> Agent:
                 faction,
                 location,
                 goal,
-                energy
+                energy,
+                controller_type
             FROM agents
             WHERE id = ?
             """,
@@ -191,9 +223,10 @@ def load_or_create_agent(default: Agent) -> Agent:
                     faction,
                     location,
                     goal,
-                    energy
+                    energy,
+                    controller_type
                 )
-                VALUES (?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
                 """,
                 (
                     default.id,
@@ -202,6 +235,7 @@ def load_or_create_agent(default: Agent) -> Agent:
                     default.location,
                     default.goal,
                     default.energy,
+                    default.controller_type,
                 ),
             )
 
@@ -217,6 +251,7 @@ def load_or_create_agent(default: Agent) -> Agent:
                 location=row[3],
                 goal=row[4],
                 energy=row[5],
+                controller_type=row[6],
             )
 
         memories = conn.execute(
@@ -245,13 +280,15 @@ def save_agent(agent: Agent):
             SET
                 location = ?,
                 goal = ?,
-                energy = ?
+                energy = ?,
+                controller_type = ?
             WHERE id = ?
             """,
             (
                 agent.location,
                 agent.goal,
                 agent.energy,
+                agent.controller_type,
                 agent.id,
             ),
         )
@@ -259,7 +296,10 @@ def save_agent(agent: Agent):
         conn.commit()
 
 
-def add_memory(agent_id: str, memory: str):
+def add_memory(
+    agent_id: str,
+    memory: str,
+):
     with get_connection() as conn:
         conn.execute(
             """
@@ -278,10 +318,14 @@ def add_memory(agent_id: str, memory: str):
         conn.commit()
 
 
-def load_or_create_node(default: WorldNode) -> WorldNode:
+def load_or_create_node(
+    default: WorldNode,
+) -> WorldNode:
+
     initialize_database()
 
     with get_connection() as conn:
+
         row = conn.execute(
             """
             SELECT
@@ -371,7 +415,9 @@ def load_simulation_minute() -> int:
     return row[0]
 
 
-def save_simulation_minute(minute: int):
+def save_simulation_minute(
+    minute: int,
+):
     with get_connection() as conn:
         conn.execute(
             """
