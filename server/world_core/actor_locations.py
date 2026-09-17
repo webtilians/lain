@@ -51,6 +51,61 @@ def initialize_actor_locations():
         conn.commit()
 
 
+def load_actor_location_belief(
+    observer_id: str,
+    subject_actor_id: str,
+) -> ActorLocationBelief | None:
+
+    initialize_actor_locations()
+
+    with get_connection() as conn:
+
+        row = conn.execute(
+            """
+            SELECT
+                observer_id,
+                subject_actor_id,
+
+                believed_location,
+
+                confidence,
+
+                source,
+
+                source_event_id,
+
+                updated_minute
+
+            FROM actor_location_beliefs
+
+            WHERE observer_id = ?
+              AND subject_actor_id = ?
+            """,
+            (
+                observer_id,
+                subject_actor_id,
+            ),
+        ).fetchone()
+
+    if row is None:
+        return None
+
+    return ActorLocationBelief(
+        observer_id=row[0],
+        subject_actor_id=row[1],
+
+        believed_location=row[2],
+
+        confidence=row[3],
+
+        source=row[4],
+
+        source_event_id=row[5],
+
+        updated_minute=row[6],
+    )
+
+
 def save_actor_location_belief(
     belief: ActorLocationBelief,
 ):
@@ -150,111 +205,170 @@ def list_actor_location_beliefs(
 
 
 # ======================================================
-# INTERNAL WORLD SENSOR
+# BELIEF AGING
 # ======================================================
 
-def get_actor_real_location(
-    actor_id: str,
-) -> str | None:
+def decay_actor_location_beliefs(
+    observer_id: str,
+    current_minute: int,
+):
 
     """
-    IMPORTANT:
+    updated_minute means:
+        when the evidence about this location
+        was actually produced.
 
-    This function belongs to the world/sensor layer.
+    We deliberately DO NOT update it while
+    confidence decays.
 
-    Agents must NEVER receive this value directly.
+    Therefore we always know how old the
+    underlying information really is.
+    """
 
-    It may only be used to determine whether
-    direct perception is physically possible.
+    initialize_actor_locations()
+
+    with get_connection() as conn:
+
+        rows = conn.execute(
+            """
+            SELECT
+                subject_actor_id,
+                source,
+                updated_minute
+
+            FROM actor_location_beliefs
+
+            WHERE observer_id = ?
+            """,
+            (observer_id,),
+        ).fetchall()
+
+        for row in rows:
+
+            subject_actor_id = row[0]
+            source = row[1]
+            evidence_minute = row[2]
+
+            age = max(
+                0,
+                current_minute
+                - evidence_minute,
+            )
+
+            if (
+                source
+                == "DIRECT_ACTOR_PERCEPTION"
+            ):
+
+                base_confidence = 0.99
+
+            elif (
+                source
+                == "PROTOCOL_ACTIVITY_LOG"
+            ):
+
+                base_confidence = 0.95
+
+            else:
+
+                base_confidence = 0.80
+
+            confidence = max(
+                0.20,
+
+                base_confidence
+                - (age / 800.0),
+            )
+
+            conn.execute(
+                """
+                UPDATE actor_location_beliefs
+
+                SET confidence = ?
+
+                WHERE observer_id = ?
+                  AND subject_actor_id = ?
+                """,
+                (
+                    confidence,
+                    observer_id,
+                    subject_actor_id,
+                ),
+            )
+
+        conn.commit()
+
+
+# ======================================================
+# DIRECT PHYSICAL PERCEPTION
+# ======================================================
+
+def perceive_colocated_actors(
+    observer: Agent,
+    current_minute: int,
+):
+
+    """
+    World Core may use objective positions
+    to decide what is physically perceptible.
+
+    The agent receives only the resulting
+    perception.
     """
 
     with get_connection() as conn:
 
-        row = conn.execute(
+        rows = conn.execute(
             """
-            SELECT location
+            SELECT
+                id,
+                location
+
             FROM agents
-            WHERE id = ?
+
+            WHERE location = ?
+              AND id != ?
             """,
-            (actor_id,),
-        ).fetchone()
+            (
+                observer.location,
+                observer.id,
+            ),
+        ).fetchall()
 
-    if row is None:
-        return None
+    for row in rows:
 
-    return row[0]
+        subject_actor_id = row[0]
+        location = row[1]
 
+        belief = ActorLocationBelief(
+            observer_id=observer.id,
 
-# ======================================================
-# DIRECT ACTOR PERCEPTION
-# ======================================================
+            subject_actor_id=(
+                subject_actor_id
+            ),
 
-def try_direct_actor_perception(
-    observer: Agent,
-    subject_actor_id: str,
-    current_minute: int,
-) -> ActorLocationBelief | None:
+            believed_location=location,
 
-    """
-    The world may inspect true positions only to
-    determine whether two actors can perceive
-    each other.
+            confidence=0.99,
 
-    The cognition system never sees the true
-    location directly.
-    """
+            source=(
+                "DIRECT_ACTOR_PERCEPTION"
+            ),
 
-    subject_location = (
-        get_actor_real_location(
-            subject_actor_id
+            source_event_id=-1,
+
+            updated_minute=(
+                current_minute
+            ),
         )
-    )
 
-    if subject_location is None:
-        return None
-
-    # They must physically share the same location.
-    if (
-        observer.location
-        != subject_location
-    ):
-        return None
-
-    belief = ActorLocationBelief(
-        observer_id=observer.id,
-
-        subject_actor_id=(
-            subject_actor_id
-        ),
-
-        believed_location=(
-            subject_location
-        ),
-
-        confidence=0.99,
-
-        source=(
-            "DIRECT_ACTOR_PERCEPTION"
-        ),
-
-        # There is no historical event behind
-        # a direct visual perception.
-        source_event_id=-1,
-
-        updated_minute=(
-            current_minute
-        ),
-    )
-
-    save_actor_location_belief(
-        belief
-    )
-
-    return belief
+        save_actor_location_belief(
+            belief
+        )
 
 
 # ======================================================
-# HISTORICAL INTELLIGENCE
+# PROTOCOL HISTORICAL INTELLIGENCE
 # ======================================================
 
 def find_latest_actor_movement(
@@ -312,19 +426,15 @@ def build_historical_location_belief(
 
     age = max(
         0,
-        current_minute - event_minute,
-    )
-
-    # Historical information becomes less
-    # trustworthy as time passes.
-
-    confidence = clamp(
-        0.95 - (age / 800.0)
+        current_minute
+        - event_minute,
     )
 
     confidence = max(
         0.20,
-        confidence,
+
+        0.95
+        - (age / 800.0),
     )
 
     return ActorLocationBelief(
@@ -336,7 +446,9 @@ def build_historical_location_belief(
 
         believed_location=location,
 
-        confidence=confidence,
+        confidence=clamp(
+            confidence
+        ),
 
         source=(
             "PROTOCOL_ACTIVITY_LOG"
@@ -346,14 +458,31 @@ def build_historical_location_belief(
             source_event_id
         ),
 
+        # Important:
+        # this is the time of the movement,
+        # not the time Protocol queried it.
         updated_minute=(
-            current_minute
+            event_minute
         ),
     )
 
 
+def historical_information_is_newer(
+    historical: ActorLocationBelief,
+    existing: ActorLocationBelief | None,
+) -> bool:
+
+    if existing is None:
+        return True
+
+    return (
+        historical.updated_minute
+        > existing.updated_minute
+    )
+
+
 # ======================================================
-# INTELLIGENCE UPDATE
+# COMPLETE ACTOR PERCEPTION / INTELLIGENCE PHASE
 # ======================================================
 
 def update_actor_location_intelligence(
@@ -362,22 +491,27 @@ def update_actor_location_intelligence(
     current_minute: int,
 ):
 
-    """
-    Protocol attempts to locate actors it considers
-    relevant.
+    # ----------------------------------------------
+    # 1. OLD INFORMATION AGES
+    # ----------------------------------------------
 
-    Information hierarchy:
+    decay_actor_location_beliefs(
+        observer_id=observer.id,
+        current_minute=current_minute,
+    )
 
-        DIRECT PERCEPTION
-               ↓
-        HISTORICAL LOG
+    # ----------------------------------------------
+    # 2. DIRECT PHYSICAL PERCEPTION
+    # ----------------------------------------------
 
-    Direct physical perception is preferred when
-    available.
+    perceive_colocated_actors(
+        observer=observer,
+        current_minute=current_minute,
+    )
 
-    Otherwise Protocol falls back to historical
-    activity data.
-    """
+    # ----------------------------------------------
+    # 3. SPECIAL PROTOCOL INTELLIGENCE
+    # ----------------------------------------------
 
     if observer.faction != "PROTOCOL":
         return
@@ -400,30 +534,14 @@ def update_actor_location_intelligence(
             actor_belief.subject_actor_id
         )
 
-        # =================================================
-        # FIRST: DIRECT PHYSICAL PERCEPTION
-        # =================================================
-
-        direct = (
-            try_direct_actor_perception(
-                observer=observer,
-
+        existing = (
+            load_actor_location_belief(
+                observer_id=observer.id,
                 subject_actor_id=(
                     subject_actor_id
                 ),
-
-                current_minute=(
-                    current_minute
-                ),
             )
         )
-
-        if direct is not None:
-            continue
-
-        # =================================================
-        # OTHERWISE: HISTORICAL INTELLIGENCE
-        # =================================================
 
         historical = (
             build_historical_location_belief(
@@ -440,6 +558,15 @@ def update_actor_location_intelligence(
         )
 
         if historical is None:
+            continue
+
+        # Never replace a more recent direct
+        # sighting with an older system log.
+
+        if not historical_information_is_newer(
+            historical=historical,
+            existing=existing,
+        ):
             continue
 
         save_actor_location_belief(
