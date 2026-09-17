@@ -88,3 +88,37 @@ class GoalCandidate:
     believed_location: str
 
     created_minute: int
+
+
+@dataclass
+class Evidence:
+    id: str
+
+    evidence_type: str
+
+    discoverer_id: str
+    subject_actor_id: str
+
+    target_id: str
+
+    strength: float
+
+    source_event_id: int
+
+    discovered_minute: int
+
+    details: str
+
+
+@dataclass
+class ActorBelief:
+    observer_id: str
+    subject_actor_id: str
+
+    belief_type: str
+
+    confidence: float
+
+    source_evidence_id: str
+
+    updated_minute: int

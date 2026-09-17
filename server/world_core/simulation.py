@@ -30,6 +30,11 @@ from .database import (
     save_simulation_minute,
 )
 
+from .evidence import (
+    discover_unauthorized_manipulation_evidence,
+    list_actor_beliefs,
+)
+
 from .goal_engine import (
     select_goal,
 )
@@ -104,16 +109,14 @@ class Simulation:
             )
         )
 
-        self.player = (
-            load_or_create_agent(
-                Agent(
-                    id="PLAYER_1",
-                    name="Player",
-                    faction="UNALIGNED",
-                    location="APARTMENT",
-                    goal="UNKNOWN",
-                    controller_type="HUMAN",
-                )
+        self.player = load_or_create_agent(
+            Agent(
+                id="PLAYER_1",
+                name="Player",
+                faction="UNALIGNED",
+                location="APARTMENT",
+                goal="UNKNOWN",
+                controller_type="HUMAN",
             )
         )
 
@@ -137,12 +140,10 @@ class Simulation:
             load_simulation_minute()
         )
 
-        # Objetivos seleccionados
-        # durante este tick.
-
         self.current_goals = {}
 
         self.bootstrap_existing_knowledge()
+
         self.seed_initial_leads()
 
     # ==================================================
@@ -266,8 +267,12 @@ class Simulation:
                 learn_node(
                     agent_id=agent.id,
                     node_id=self.node.id,
-                    confidence=perception.confidence,
-                    source="DIRECT_PERCEPTION",
+                    confidence=(
+                        perception.confidence
+                    ),
+                    source=(
+                        "DIRECT_PERCEPTION"
+                    ),
                 )
 
                 self.node.discovered = True
@@ -308,12 +313,10 @@ class Simulation:
 
             for situation in situations:
 
-                belief = (
-                    perceive_situation(
-                        agent=agent,
-                        situation=situation,
-                        minute=self.minute,
-                    )
+                belief = perceive_situation(
+                    agent=agent,
+                    situation=situation,
+                    minute=self.minute,
                 )
 
                 if belief is None:
@@ -354,11 +357,9 @@ class Simulation:
             ] = goal
 
             if goal is None:
-
                 agent.goal = "IDLE"
 
             else:
-
                 agent.goal = (
                     goal.goal_type
                 )
@@ -386,8 +387,10 @@ class Simulation:
                 self.node.id,
             )
 
-            goal = self.current_goals.get(
-                agent.id
+            goal = (
+                self.current_goals.get(
+                    agent.id
+                )
             )
 
             intent = actor.decide(
@@ -402,8 +405,6 @@ class Simulation:
                     intent,
                 )
             )
-
-        # HUMAN ACTIONS
 
         for (
             action_id,
@@ -454,7 +455,6 @@ class Simulation:
             agent.energy
             < required_energy
         ):
-
             return (
                 False,
                 "NOT_ENOUGH_ENERGY",
@@ -479,7 +479,6 @@ class Simulation:
                 intent.target
                 != self.node.id
             ):
-
                 return (
                     False,
                     "UNKNOWN_TARGET",
@@ -489,7 +488,6 @@ class Simulation:
                 agent.location
                 != self.node.location
             ):
-
                 return (
                     False,
                     "TARGET_NOT_PRESENT",
@@ -504,7 +502,6 @@ class Simulation:
                 agent.id,
                 self.node.id,
             ):
-
                 return (
                     False,
                     "NODE_NOT_KNOWN",
@@ -541,6 +538,7 @@ class Simulation:
             if agent is None:
 
                 if action_id is not None:
+
                     mark_action_processed(
                         action_id
                     )
@@ -615,18 +613,25 @@ class Simulation:
                 belief = NodeBelief(
                     agent_id=agent.id,
                     node_id=self.node.id,
+
                     believed_location=(
                         self.node.location
                     ),
+
                     believed_strength=(
                         self.node
                         .anomaly_strength
                     ),
+
                     confidence=0.95,
+
                     source=(
                         "ACTIVE_INVESTIGATION"
                     ),
-                    updated_minute=self.minute,
+
+                    updated_minute=(
+                        self.minute
+                    ),
                 )
 
                 save_belief(
@@ -663,6 +668,52 @@ class Simulation:
                     f"investigated "
                     f"{self.node.id}"
                 )
+
+                # ======================================
+                # FORENSIC EVIDENCE
+                # ======================================
+
+                current_goal = (
+                    self.current_goals.get(
+                        agent.id
+                    )
+                )
+
+                if (
+                    current_goal is not None
+                    and
+                    current_goal.goal_type
+                    == "AUDIT_SIGNAL_MANIPULATION"
+                ):
+
+                    evidence = (
+                        discover_unauthorized_manipulation_evidence(
+                            discoverer_id=agent.id,
+                            node_id=self.node.id,
+                            current_minute=self.minute,
+                        )
+                    )
+
+                    if evidence is not None:
+
+                        self.remember(
+                            agent,
+                            (
+                                "Recovered signal "
+                                "access trace linking "
+                                f"{evidence.subject_actor_id} "
+                                f"to {self.node.id} "
+                                f"(confidence "
+                                f"{evidence.strength:.2f})"
+                            ),
+                        )
+
+                        print(
+                            f"    -> EVIDENCE: "
+                            f"{evidence.subject_actor_id} "
+                            f"confidence="
+                            f"{evidence.strength:.2f}"
+                        )
 
             # ------------------------------------------
             # STABILIZE
@@ -784,7 +835,7 @@ class Simulation:
                 )
 
         # ==============================================
-        # APPLY SHARED CONSEQUENCES
+        # APPLY CONSEQUENCES
         # ==============================================
 
         self.node.anomaly_strength = max(
@@ -802,10 +853,8 @@ class Simulation:
 
         if (
             signal_delta != 0.0
-            or
-            stability_delta != 0.0
-            or
-            connection_delta != 0.0
+            or stability_delta != 0.0
+            or connection_delta != 0.0
         ):
 
             self.world.apply_event(
@@ -828,37 +877,25 @@ class Simulation:
             self.minute
         )
 
-        # 0. WORLD REALITY
-
         evaluate_world(
             world=self.world.get_state(),
             node=self.node,
             minute=self.minute,
         )
 
-        # 1. PERCEPTION
-
         self.node_perception_phase()
 
         self.situation_perception_phase()
 
-        # 2. MOTIVATION / GOALS
-
         self.goal_selection_phase()
-
-        # 3. COGNITION
 
         intents = (
             self.cognition_phase()
         )
 
-        # 4. ACTION
-
         self.resolve_intents(
             intents
         )
-
-        # 5. CONSEQUENCES CREATE NEW SITUATIONS
 
         evaluate_world(
             world=self.world.get_state(),
@@ -937,7 +974,6 @@ class Simulation:
         )
 
         if not situations:
-
             print("None")
 
         for situation in situations:
@@ -1071,4 +1107,42 @@ class Simulation:
                 print(
                     f"   source: "
                     f"{belief.source}"
+                )
+
+            actor_beliefs = (
+                list_actor_beliefs(
+                    agent.id
+                )
+            )
+
+            print(
+                "Actor beliefs:"
+            )
+
+            if not actor_beliefs:
+
+                print(
+                    " - NONE"
+                )
+
+            for actor_belief in actor_beliefs:
+
+                print(
+                    f" - subject: "
+                    f"{actor_belief.subject_actor_id}"
+                )
+
+                print(
+                    f"   belief: "
+                    f"{actor_belief.belief_type}"
+                )
+
+                print(
+                    f"   confidence: "
+                    f"{actor_belief.confidence:.2f}"
+                )
+
+                print(
+                    f"   evidence: "
+                    f"{actor_belief.source_evidence_id}"
                 )
