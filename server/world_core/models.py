@@ -24,6 +24,17 @@ class WorldNode:
 
 
 @dataclass
+class NodeBelief:
+    agent_id: str
+    node_id: str
+    believed_location: str
+    believed_strength: float
+    confidence: float
+    source: str
+    updated_minute: int
+
+
+@dataclass
 class Agent:
     id: str
     name: str

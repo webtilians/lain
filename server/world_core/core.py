@@ -1,4 +1,8 @@
-from .database import load_world_state, save_world_state
+from .database import (
+    load_world_state,
+    save_world_state,
+)
+
 from .models import WorldState
 
 

@@ -1,9 +1,16 @@
-from server.world_core.models import Agent, WorldNode, WorldState
+from server.world_core.models import (
+    Agent,
+    NodeBelief,
+    WorldState,
+)
 
 
 class Nora:
 
-    def __init__(self, agent: Agent | None = None):
+    def __init__(
+        self,
+        agent: Agent | None = None,
+    ):
         self.agent = agent or Agent(
             id="AGENT_NORA",
             name="Nora",
@@ -15,8 +22,7 @@ class Nora:
     def decide(
         self,
         world: WorldState,
-        node: WorldNode,
-        knows_node: bool,
+        belief: NodeBelief | None,
     ) -> dict:
 
         if self.agent.energy < 0.25:
@@ -25,25 +31,34 @@ class Nora:
                 "target": self.agent.id,
             }
 
-        if self.agent.location != node.location:
+        if belief is None:
+            return {
+                "action": "OBSERVE_AREA",
+                "target": self.agent.location,
+            }
+
+        if (
+            self.agent.location
+            != belief.believed_location
+        ):
             return {
                 "action": "MOVE",
-                "target": node.location,
+                "target": belief.believed_location,
             }
 
-        if not knows_node:
+        if belief.confidence < 0.50:
             return {
                 "action": "INVESTIGATE",
-                "target": node.id,
+                "target": belief.node_id,
             }
 
-        if node.anomaly_strength < 0.75:
+        if belief.believed_strength < 0.75:
             return {
                 "action": "AMPLIFY",
-                "target": node.id,
+                "target": belief.node_id,
             }
 
         return {
             "action": "OBSERVE",
-            "target": node.id,
+            "target": belief.node_id,
         }

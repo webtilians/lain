@@ -83,27 +83,34 @@ def initialize_database():
             """
         )
 
-        existing = conn.execute(
+        existing_world = conn.execute(
             "SELECT id FROM world_state WHERE id = 1"
         ).fetchone()
 
-        if existing is None:
+        if existing_world is None:
             conn.execute(
                 """
-                INSERT INTO world_state
-                (id, signal, stability, connection)
+                INSERT INTO world_state (
+                    id,
+                    signal,
+                    stability,
+                    connection
+                )
                 VALUES (1, 0.10, 0.90, 0.35)
                 """
             )
 
-        existing_sim = conn.execute(
+        existing_simulation = conn.execute(
             "SELECT id FROM simulation_state WHERE id = 1"
         ).fetchone()
 
-        if existing_sim is None:
+        if existing_simulation is None:
             conn.execute(
                 """
-                INSERT INTO simulation_state (id, minute)
+                INSERT INTO simulation_state (
+                    id,
+                    minute
+                )
                 VALUES (1, 0)
                 """
             )
@@ -117,13 +124,20 @@ def load_world_state() -> WorldState:
     with get_connection() as conn:
         row = conn.execute(
             """
-            SELECT signal, stability, connection
+            SELECT
+                signal,
+                stability,
+                connection
             FROM world_state
             WHERE id = 1
             """
         ).fetchone()
 
-    return WorldState(*row)
+    return WorldState(
+        signal=row[0],
+        stability=row[1],
+        connection=row[2],
+    )
 
 
 def save_world_state(state: WorldState):
@@ -133,7 +147,8 @@ def save_world_state(state: WorldState):
         conn.execute(
             """
             UPDATE world_state
-            SET signal = ?,
+            SET
+                signal = ?,
                 stability = ?,
                 connection = ?
             WHERE id = 1
@@ -144,6 +159,7 @@ def save_world_state(state: WorldState):
                 state.connection,
             ),
         )
+
         conn.commit()
 
 
@@ -153,7 +169,13 @@ def load_or_create_agent(default: Agent) -> Agent:
     with get_connection() as conn:
         row = conn.execute(
             """
-            SELECT id, name, faction, location, goal, energy
+            SELECT
+                id,
+                name,
+                faction,
+                location,
+                goal,
+                energy
             FROM agents
             WHERE id = ?
             """,
@@ -163,8 +185,14 @@ def load_or_create_agent(default: Agent) -> Agent:
         if row is None:
             conn.execute(
                 """
-                INSERT INTO agents
-                (id, name, faction, location, goal, energy)
+                INSERT INTO agents (
+                    id,
+                    name,
+                    faction,
+                    location,
+                    goal,
+                    energy
+                )
                 VALUES (?, ?, ?, ?, ?, ?)
                 """,
                 (
@@ -176,8 +204,11 @@ def load_or_create_agent(default: Agent) -> Agent:
                     default.energy,
                 ),
             )
+
             conn.commit()
+
             agent = default
+
         else:
             agent = Agent(
                 id=row[0],
@@ -198,7 +229,10 @@ def load_or_create_agent(default: Agent) -> Agent:
             (default.id,),
         ).fetchall()
 
-        agent.memory = [row[0] for row in memories]
+        agent.memory = [
+            memory_row[0]
+            for memory_row in memories
+        ]
 
     return agent
 
@@ -208,7 +242,8 @@ def save_agent(agent: Agent):
         conn.execute(
             """
             UPDATE agents
-            SET location = ?,
+            SET
+                location = ?,
                 goal = ?,
                 energy = ?
             WHERE id = ?
@@ -220,6 +255,7 @@ def save_agent(agent: Agent):
                 agent.id,
             ),
         )
+
         conn.commit()
 
 
@@ -227,11 +263,18 @@ def add_memory(agent_id: str, memory: str):
     with get_connection() as conn:
         conn.execute(
             """
-            INSERT INTO agent_memory (agent_id, memory)
+            INSERT INTO agent_memory (
+                agent_id,
+                memory
+            )
             VALUES (?, ?)
             """,
-            (agent_id, memory),
+            (
+                agent_id,
+                memory,
+            ),
         )
+
         conn.commit()
 
 
@@ -241,8 +284,13 @@ def load_or_create_node(default: WorldNode) -> WorldNode:
     with get_connection() as conn:
         row = conn.execute(
             """
-            SELECT id, location, node_type,
-                   discovered, active, anomaly_strength
+            SELECT
+                id,
+                location,
+                node_type,
+                discovered,
+                active,
+                anomaly_strength
             FROM nodes
             WHERE id = ?
             """,
@@ -252,9 +300,14 @@ def load_or_create_node(default: WorldNode) -> WorldNode:
         if row is None:
             conn.execute(
                 """
-                INSERT INTO nodes
-                (id, location, node_type,
-                 discovered, active, anomaly_strength)
+                INSERT INTO nodes (
+                    id,
+                    location,
+                    node_type,
+                    discovered,
+                    active,
+                    anomaly_strength
+                )
                 VALUES (?, ?, ?, ?, ?, ?)
                 """,
                 (
@@ -266,7 +319,9 @@ def load_or_create_node(default: WorldNode) -> WorldNode:
                     default.anomaly_strength,
                 ),
             )
+
             conn.commit()
+
             return default
 
     return WorldNode(
@@ -284,7 +339,8 @@ def save_node(node: WorldNode):
         conn.execute(
             """
             UPDATE nodes
-            SET discovered = ?,
+            SET
+                discovered = ?,
                 active = ?,
                 anomaly_strength = ?
             WHERE id = ?
@@ -296,6 +352,7 @@ def save_node(node: WorldNode):
                 node.id,
             ),
         )
+
         conn.commit()
 
 
@@ -324,6 +381,7 @@ def save_simulation_minute(minute: int):
             """,
             (minute,),
         )
+
         conn.commit()
 
 
@@ -337,8 +395,13 @@ def record_event(
     with get_connection() as conn:
         conn.execute(
             """
-            INSERT INTO events
-            (minute, actor_id, action, target, details)
+            INSERT INTO events (
+                minute,
+                actor_id,
+                action,
+                target,
+                details
+            )
             VALUES (?, ?, ?, ?, ?)
             """,
             (
@@ -349,4 +412,5 @@ def record_event(
                 details,
             ),
         )
+
         conn.commit()
