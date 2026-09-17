@@ -17,9 +17,15 @@ class AgentK:
         self.agent = agent or Agent(
             id="AGENT_K",
             name="K",
+
             faction="PROTOCOL",
-            location="APARTMENT_DISTRICT",
+
+            location=(
+                "APARTMENT_DISTRICT"
+            ),
+
             goal="IDLE",
+
             controller_type="AI",
         )
 
@@ -30,9 +36,9 @@ class AgentK:
         goal: GoalCandidate | None,
     ) -> ActionIntent:
 
-        # --------------------------------------------
-        # BIOLOGICAL / RESOURCE NEED
-        # --------------------------------------------
+        # ==========================================
+        # BASIC RESOURCE NEED
+        # ==========================================
 
         if self.agent.energy < 0.25:
 
@@ -42,9 +48,9 @@ class AgentK:
                 target=self.agent.id,
             )
 
-        # --------------------------------------------
-        # NO RELEVANT GOAL
-        # --------------------------------------------
+        # ==========================================
+        # NO CURRENT MOTIVATION
+        # ==========================================
 
         if goal is None:
 
@@ -54,9 +60,9 @@ class AgentK:
                 target=self.agent.location,
             )
 
-        # --------------------------------------------
-        # MOVE TOWARDS GOAL
-        # --------------------------------------------
+        # ==========================================
+        # TRAVEL TOWARDS GOAL
+        # ==========================================
 
         if (
             self.agent.location
@@ -69,9 +75,9 @@ class AgentK:
                 target=goal.believed_location,
             )
 
-        # --------------------------------------------
-        # PROTOCOL INTERPRETATION
-        # --------------------------------------------
+        # ==========================================
+        # SIGNAL SURGE
+        # ==========================================
 
         if (
             goal.goal_type
@@ -86,7 +92,10 @@ class AgentK:
                     target=goal.target_id,
                 )
 
-            if node_belief.confidence < 0.50:
+            if (
+                node_belief.confidence
+                < 0.50
+            ):
 
                 return ActionIntent(
                     actor_id=self.agent.id,
@@ -100,9 +109,30 @@ class AgentK:
                 target=goal.target_id,
             )
 
-        # --------------------------------------------
+        # ==========================================
+        # UNAUTHORIZED MANIPULATION
+        # ==========================================
+
+        if (
+            goal.goal_type
+            == "AUDIT_SIGNAL_MANIPULATION"
+        ):
+
+            # Por ahora K inspecciona el nodo
+            # buscando rastros de quién lo alteró.
+            #
+            # Más adelante esto generará
+            # evidence / actor beliefs.
+
+            return ActionIntent(
+                actor_id=self.agent.id,
+                action="INVESTIGATE",
+                target=goal.target_id,
+            )
+
+        # ==========================================
         # FALLBACK
-        # --------------------------------------------
+        # ==========================================
 
         return ActionIntent(
             actor_id=self.agent.id,

@@ -6,23 +6,48 @@ from .models import (
 
 
 FACTION_RESPONSES = {
+
     "PROTOCOL": {
+
         "SIGNAL_SURGE": {
-            "goal_type": "REDUCE_SIGNAL_SURGE",
+            "goal_type": (
+                "REDUCE_SIGNAL_SURGE"
+            ),
             "interest": 1.00,
+        },
+
+        "UNAUTHORIZED_SIGNAL_MANIPULATION": {
+            "goal_type": (
+                "AUDIT_SIGNAL_MANIPULATION"
+            ),
+
+            # Protocol considera especialmente
+            # grave que actores no autorizados
+            # manipulen la red.
+            "interest": 1.25,
         },
     },
 
     "WIRED": {
+
         "SIGNAL_SURGE": {
-            "goal_type": "EXPAND_SIGNAL_SURGE",
+            "goal_type": (
+                "EXPAND_SIGNAL_SURGE"
+            ),
             "interest": 1.00,
         },
+
+        # Wired conoce la situación,
+        # pero por ahora no genera un objetivo
+        # especial a partir de ella.
     },
 }
 
 
-def clamp(value: float) -> float:
+def clamp(
+    value: float,
+) -> float:
+
     return max(
         0.0,
         min(
@@ -38,19 +63,26 @@ def build_goal_candidate(
     minute: int,
 ) -> GoalCandidate | None:
 
-    if belief.believed_status != "OPEN":
+    if (
+        belief.believed_status
+        != "OPEN"
+    ):
         return None
 
     if belief.confidence < 0.20:
         return None
 
-    faction_rules = FACTION_RESPONSES.get(
-        agent.faction,
-        {},
+    faction_rules = (
+        FACTION_RESPONSES.get(
+            agent.faction,
+            {},
+        )
     )
 
-    response = faction_rules.get(
-        belief.believed_type
+    response = (
+        faction_rules.get(
+            belief.believed_type
+        )
     )
 
     if response is None:
@@ -62,34 +94,54 @@ def build_goal_candidate(
         * response["interest"]
     )
 
+    # Estar físicamente cerca
+    # aumenta la urgencia percibida.
+
     if (
         agent.location
         == belief.believed_location
     ):
+
         priority += 0.10
 
     priority = clamp(
         priority
     )
 
-    if belief.believed_subject_id is None:
-        target_id = belief.situation_id
+    if (
+        belief.believed_subject_id
+        is None
+    ):
+
+        target_id = (
+            belief.situation_id
+        )
+
     else:
+
         target_id = (
             belief.believed_subject_id
         )
 
     return GoalCandidate(
         agent_id=agent.id,
-        goal_type=response["goal_type"],
+
+        goal_type=(
+            response["goal_type"]
+        ),
+
         target_id=target_id,
+
         source_situation_id=(
             belief.situation_id
         ),
+
         priority=priority,
+
         believed_location=(
             belief.believed_location
         ),
+
         created_minute=minute,
     )
 
@@ -113,6 +165,7 @@ def select_goal(
         )
 
         if candidate is not None:
+
             candidates.append(
                 candidate
             )
