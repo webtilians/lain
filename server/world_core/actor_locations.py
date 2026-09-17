@@ -149,6 +149,114 @@ def list_actor_location_beliefs(
     ]
 
 
+# ======================================================
+# INTERNAL WORLD SENSOR
+# ======================================================
+
+def get_actor_real_location(
+    actor_id: str,
+) -> str | None:
+
+    """
+    IMPORTANT:
+
+    This function belongs to the world/sensor layer.
+
+    Agents must NEVER receive this value directly.
+
+    It may only be used to determine whether
+    direct perception is physically possible.
+    """
+
+    with get_connection() as conn:
+
+        row = conn.execute(
+            """
+            SELECT location
+            FROM agents
+            WHERE id = ?
+            """,
+            (actor_id,),
+        ).fetchone()
+
+    if row is None:
+        return None
+
+    return row[0]
+
+
+# ======================================================
+# DIRECT ACTOR PERCEPTION
+# ======================================================
+
+def try_direct_actor_perception(
+    observer: Agent,
+    subject_actor_id: str,
+    current_minute: int,
+) -> ActorLocationBelief | None:
+
+    """
+    The world may inspect true positions only to
+    determine whether two actors can perceive
+    each other.
+
+    The cognition system never sees the true
+    location directly.
+    """
+
+    subject_location = (
+        get_actor_real_location(
+            subject_actor_id
+        )
+    )
+
+    if subject_location is None:
+        return None
+
+    # They must physically share the same location.
+    if (
+        observer.location
+        != subject_location
+    ):
+        return None
+
+    belief = ActorLocationBelief(
+        observer_id=observer.id,
+
+        subject_actor_id=(
+            subject_actor_id
+        ),
+
+        believed_location=(
+            subject_location
+        ),
+
+        confidence=0.99,
+
+        source=(
+            "DIRECT_ACTOR_PERCEPTION"
+        ),
+
+        # There is no historical event behind
+        # a direct visual perception.
+        source_event_id=-1,
+
+        updated_minute=(
+            current_minute
+        ),
+    )
+
+    save_actor_location_belief(
+        belief
+    )
+
+    return belief
+
+
+# ======================================================
+# HISTORICAL INTELLIGENCE
+# ======================================================
+
 def find_latest_actor_movement(
     actor_id: str,
     current_minute: int,
@@ -184,6 +292,70 @@ def find_latest_actor_movement(
     return row
 
 
+def build_historical_location_belief(
+    observer: Agent,
+    subject_actor_id: str,
+    current_minute: int,
+) -> ActorLocationBelief | None:
+
+    movement = find_latest_actor_movement(
+        actor_id=subject_actor_id,
+        current_minute=current_minute,
+    )
+
+    if movement is None:
+        return None
+
+    source_event_id = movement[0]
+    event_minute = movement[1]
+    location = movement[2]
+
+    age = max(
+        0,
+        current_minute - event_minute,
+    )
+
+    # Historical information becomes less
+    # trustworthy as time passes.
+
+    confidence = clamp(
+        0.95 - (age / 800.0)
+    )
+
+    confidence = max(
+        0.20,
+        confidence,
+    )
+
+    return ActorLocationBelief(
+        observer_id=observer.id,
+
+        subject_actor_id=(
+            subject_actor_id
+        ),
+
+        believed_location=location,
+
+        confidence=confidence,
+
+        source=(
+            "PROTOCOL_ACTIVITY_LOG"
+        ),
+
+        source_event_id=(
+            source_event_id
+        ),
+
+        updated_minute=(
+            current_minute
+        ),
+    )
+
+
+# ======================================================
+# INTELLIGENCE UPDATE
+# ======================================================
+
 def update_actor_location_intelligence(
     observer: Agent,
     actor_beliefs: list[ActorBelief],
@@ -191,13 +363,20 @@ def update_actor_location_intelligence(
 ):
 
     """
-    Protocol puede consultar actividad histórica
-    de la red.
+    Protocol attempts to locate actors it considers
+    relevant.
 
-    Importante:
-    esto NO proporciona la posición real actual.
+    Information hierarchy:
 
-    Solo recupera la última localización registrada.
+        DIRECT PERCEPTION
+               ↓
+        HISTORICAL LOG
+
+    Direct physical perception is preferred when
+    available.
+
+    Otherwise Protocol falls back to historical
+    activity data.
     """
 
     if observer.faction != "PROTOCOL":
@@ -211,61 +390,58 @@ def update_actor_location_intelligence(
         ):
             continue
 
-        if actor_belief.confidence < 0.65:
+        if (
+            actor_belief.confidence
+            < 0.65
+        ):
             continue
 
-        movement = find_latest_actor_movement(
-            actor_id=(
-                actor_belief.subject_actor_id
-            ),
-            current_minute=current_minute,
+        subject_actor_id = (
+            actor_belief.subject_actor_id
         )
 
-        if movement is None:
+        # =================================================
+        # FIRST: DIRECT PHYSICAL PERCEPTION
+        # =================================================
+
+        direct = (
+            try_direct_actor_perception(
+                observer=observer,
+
+                subject_actor_id=(
+                    subject_actor_id
+                ),
+
+                current_minute=(
+                    current_minute
+                ),
+            )
+        )
+
+        if direct is not None:
             continue
 
-        source_event_id = movement[0]
-        event_minute = movement[1]
-        location = movement[2]
+        # =================================================
+        # OTHERWISE: HISTORICAL INTELLIGENCE
+        # =================================================
 
-        age = max(
-            0,
-            current_minute - event_minute,
+        historical = (
+            build_historical_location_belief(
+                observer=observer,
+
+                subject_actor_id=(
+                    subject_actor_id
+                ),
+
+                current_minute=(
+                    current_minute
+                ),
+            )
         )
 
-        # La última localización conocida
-        # pierde fiabilidad con el tiempo.
-
-        confidence = clamp(
-            0.95 - (age / 800.0)
-        )
-
-        confidence = max(
-            0.20,
-            confidence,
-        )
-
-        belief = ActorLocationBelief(
-            observer_id=observer.id,
-
-            subject_actor_id=(
-                actor_belief.subject_actor_id
-            ),
-
-            believed_location=location,
-
-            confidence=confidence,
-
-            source="PROTOCOL_ACTIVITY_LOG",
-
-            source_event_id=(
-                source_event_id
-            ),
-
-            updated_minute=current_minute,
-        )
+        if historical is None:
+            continue
 
         save_actor_location_belief(
-            belief
+            historical
         )
-        
