@@ -184,3 +184,30 @@ def test_unauthorized_manipulation_is_node_specific():
         "PLAYER_1"
         in node_12_manipulation.reason
     )
+
+
+def test_global_signal_does_not_activate_quiet_node():
+
+    node = create_node(
+        node_id="NODE_12",
+        location="OLD_DISTRICT",
+        anomaly=0.10,
+    )
+
+    world = WorldState(
+        signal=0.90,
+        stability=0.50,
+        connection=0.80,
+    )
+
+    evaluate_nodes(
+        world=world,
+        nodes=[node],
+        minute=100,
+    )
+
+    situation = load_situation(
+        "SIGNAL_SURGE_NODE_12"
+    )
+
+    assert situation is None

@@ -10,7 +10,7 @@ from .interactions import (
     list_open_interactions,
 )
 from server.situations.engine import (
-    evaluate_world,
+    evaluate_nodes,
     list_open_situations,
     list_situations,
 )
@@ -91,7 +91,7 @@ class Simulation:
 
         self.world = WorldCore()
 
-        self.node = load_or_create_node(
+        node_07 = load_or_create_node(
             WorldNode(
                 id="NODE_07",
                 location="STATION",
@@ -101,6 +101,22 @@ class Simulation:
                 anomaly_strength=0.60,
             )
         )
+
+        node_12 = load_or_create_node(
+            WorldNode(
+                id="NODE_12",
+                location="OLD_DISTRICT",
+                node_type="UNKNOWN_SIGNAL",
+                discovered=False,
+                active=True,
+                anomaly_strength=0.10,
+            )
+        )
+
+        self.nodes = {
+            node_07.id: node_07,
+            node_12.id: node_12,
+        }
 
         self.k = AgentK(
             load_or_create_agent(
@@ -178,24 +194,36 @@ class Simulation:
             self.all_agents.values()
         ):
 
-            for memory in agent.memory:
+            for node in (
+                self.nodes.values()
+            ):
+
+                memory_marker = (
+                    "Discovered anomalous "
+                    f"node {node.id} "
+                    f"at {node.location}"
+                )
 
                 if (
-                    "Discovered anomalous "
-                    "node NODE_07"
-                    in memory
+                    memory_marker
+                    not in agent.memory
                 ):
+                    continue
 
-                    learn_node(
-                        agent_id=agent.id,
-                        node_id="NODE_07",
-                        confidence=1.0,
-                        source="EPISODIC_MEMORY",
-                    )
+                learn_node(
+                    agent_id=agent.id,
+                    node_id=node.id,
+                    confidence=1.0,
+                    source="EPISODIC_MEMORY",
+                )
 
     def seed_initial_leads(
         self,
     ):
+
+        node = (
+            self.nodes["NODE_07"]
+        )
 
         for actor in self.ai_actors:
 
@@ -203,7 +231,7 @@ class Simulation:
 
             existing = load_belief(
                 agent.id,
-                self.node.id,
+                node.id,
             )
 
             if existing is not None:
@@ -212,10 +240,10 @@ class Simulation:
             save_belief(
                 NodeBelief(
                     agent_id=agent.id,
-                    node_id=self.node.id,
+                    node_id=node.id,
 
                     believed_location=(
-                        "STATION"
+                        node.location
                     ),
 
                     believed_strength=0.50,
@@ -265,27 +293,35 @@ class Simulation:
             self.all_agents.values()
         ):
 
-            perception = perceive_node(
-                agent=agent,
-                node=self.node,
-                minute=self.minute,
-            )
-
-            if perception is None:
-                continue
-
-            save_belief(
-                perception
-            )
-
-            if not knows_node(
-                agent.id,
-                self.node.id,
+            for node in (
+                self.nodes.values()
             ):
+
+                if not node.active:
+                    continue
+
+                perception = perceive_node(
+                    agent=agent,
+                    node=node,
+                    minute=self.minute,
+                )
+
+                if perception is None:
+                    continue
+
+                save_belief(
+                    perception
+                )
+
+                if knows_node(
+                    agent.id,
+                    node.id,
+                ):
+                    continue
 
                 learn_node(
                     agent_id=agent.id,
-                    node_id=self.node.id,
+                    node_id=node.id,
 
                     confidence=(
                         perception.confidence
@@ -296,18 +332,18 @@ class Simulation:
                     ),
                 )
 
-                self.node.discovered = True
+                node.discovered = True
 
                 save_node(
-                    self.node
+                    node
                 )
 
                 self.remember(
                     agent,
                     (
                         "Discovered anomalous "
-                        f"node {self.node.id} "
-                        f"at {self.node.location}"
+                        f"node {node.id} "
+                        f"at {node.location}"
                     ),
                 )
 
@@ -451,16 +487,24 @@ class Simulation:
 
             agent = actor.agent
 
-            node_belief = load_belief(
-                agent.id,
-                self.node.id,
-            )
-
             goal = (
                 self.current_goals.get(
                     agent.id
                 )
             )
+
+            node_belief = None
+
+            if (
+                goal is not None
+                and
+                goal.target_id in self.nodes
+            ):
+
+                node_belief = load_belief(
+                    agent.id,
+                    goal.target_id,
+                )
 
             open_interaction = False
 
@@ -626,10 +670,13 @@ class Simulation:
 
         if action in node_actions:
 
-            if (
-                intent.target
-                != self.node.id
-            ):
+            target_node = (
+                self.nodes.get(
+                    intent.target
+                )
+            )
+
+            if target_node is None:
 
                 return (
                     False,
@@ -637,8 +684,17 @@ class Simulation:
                 )
 
             if (
+                not target_node.active
+            ):
+
+                return (
+                    False,
+                    "NODE_INACTIVE",
+                )
+
+            if (
                 agent.location
-                != self.node.location
+                != target_node.location
             ):
 
                 return (
@@ -653,7 +709,7 @@ class Simulation:
 
             if not knows_node(
                 agent.id,
-                self.node.id,
+                intent.target,
             ):
 
                 return (
@@ -672,7 +728,10 @@ class Simulation:
         queued_intents,
     ):
 
-        node_delta = 0.0
+        node_deltas = {
+            node_id: 0.0
+            for node_id in self.nodes
+        }
 
         signal_delta = 0.0
         stability_delta = 0.0
@@ -741,6 +800,12 @@ class Simulation:
 
             action = intent.action
             target = intent.target
+
+            target_node = (
+                self.nodes.get(
+                    target
+                )
+            )
 
             details = ""
 
@@ -831,14 +896,14 @@ class Simulation:
 
                 belief = NodeBelief(
                     agent_id=agent.id,
-                    node_id=self.node.id,
+                    node_id=target_node.id,
 
                     believed_location=(
-                        self.node.location
+                        target_node.location
                     ),
 
                     believed_strength=(
-                        self.node.anomaly_strength
+                        target_node.anomaly_strength
                     ),
 
                     confidence=0.95,
@@ -858,7 +923,7 @@ class Simulation:
 
                 learn_node(
                     agent_id=agent.id,
-                    node_id=self.node.id,
+                    node_id=target_node.id,
                     confidence=0.95,
 
                     source=(
@@ -866,7 +931,11 @@ class Simulation:
                     ),
                 )
 
-                self.node.discovered = True
+                target_node.discovered = True
+
+                save_node(
+                    target_node
+                )
 
                 agent.energy = max(
                     0.0,
@@ -877,15 +946,15 @@ class Simulation:
                     agent,
                     (
                         "Investigated anomalous "
-                        f"node {self.node.id} "
-                        f"at {self.node.location}"
+                        f"node {target_node.id} "
+                        f"at {target_node.location}"
                     ),
                 )
 
                 details = (
                     f"{agent.name} "
                     f"investigated "
-                    f"{self.node.id}"
+                    f"{target_node.id}"
                 )
 
                 current_goal = (
@@ -904,7 +973,7 @@ class Simulation:
                     evidence = (
                         discover_unauthorized_manipulation_evidence(
                             discoverer_id=agent.id,
-                            node_id=self.node.id,
+                            node_id=target_node.id,
                             current_minute=self.minute,
                         )
                     )
@@ -917,7 +986,7 @@ class Simulation:
                                 "Recovered signal "
                                 "access trace linking "
                                 f"{evidence.subject_actor_id} "
-                                f"to {self.node.id} "
+                                f"to {target_node.id} "
                                 f"(confidence "
                                 f"{evidence.strength:.2f})"
                             ),
@@ -936,7 +1005,9 @@ class Simulation:
 
             elif action == "STABILIZE":
 
-                node_delta -= 0.10
+                node_deltas[
+                    target_node.id
+                ] -= 0.10
 
                 signal_delta -= 0.01
                 stability_delta += 0.02
@@ -950,7 +1021,7 @@ class Simulation:
                 details = (
                     f"{agent.name} "
                     f"attempted to stabilize "
-                    f"{self.node.id}"
+                    f"{target_node.id}"
                 )
 
             # ==========================================
@@ -959,7 +1030,9 @@ class Simulation:
 
             elif action == "AMPLIFY":
 
-                node_delta += 0.10
+                node_deltas[
+                    target_node.id
+                ] += 0.10
 
                 signal_delta += 0.02
                 stability_delta -= 0.015
@@ -973,7 +1046,7 @@ class Simulation:
                 details = (
                     f"{agent.name} "
                     f"attempted to amplify "
-                    f"{self.node.id}"
+                    f"{target_node.id}"
                 )
 
             # ==========================================
@@ -990,7 +1063,7 @@ class Simulation:
                 details = (
                     f"{agent.name} "
                     f"observes "
-                    f"{self.node.id}"
+                    f"{target_node.id}"
                 )
 
             # ==========================================
@@ -1049,18 +1122,30 @@ class Simulation:
                     action_id
                 )
 
-        self.node.anomaly_strength = max(
-            0.0,
-            min(
-                1.0,
-                self.node.anomaly_strength
-                + node_delta,
-            ),
-        )
+        for (
+            node_id,
+            node_delta,
+        ) in node_deltas.items():
 
-        save_node(
-            self.node
-        )
+            if node_delta == 0.0:
+                continue
+
+            node = (
+                self.nodes[node_id]
+            )
+
+            node.anomaly_strength = max(
+                0.0,
+                min(
+                    1.0,
+                    node.anomaly_strength
+                    + node_delta,
+                ),
+            )
+
+            save_node(
+                node
+            )
 
         if (
             signal_delta != 0.0
@@ -1090,9 +1175,13 @@ class Simulation:
             self.minute
         )
 
-        evaluate_world(
+        evaluate_nodes(
             world=self.world.get_state(),
-            node=self.node,
+
+            nodes=list(
+                self.nodes.values()
+            ),
+
             minute=self.minute,
         )
 
@@ -1116,9 +1205,13 @@ class Simulation:
             intents
         )
 
-        evaluate_world(
+        evaluate_nodes(
             world=self.world.get_state(),
-            node=self.node,
+
+            nodes=list(
+                self.nodes.values()
+            ),
+
             minute=self.minute,
         )
 
@@ -1164,20 +1257,30 @@ class Simulation:
         print()
         print("----- NODE REALITY -----")
 
-        print(
-            f"Node:       "
-            f"{self.node.id}"
-        )
+        for node in (
+            self.nodes.values()
+        ):
 
-        print(
-            f"Location:   "
-            f"{self.node.location}"
-        )
+            print()
+            print(
+                f"Node:       "
+                f"{node.id}"
+            )
 
-        print(
-            f"Anomaly:    "
-            f"{self.node.anomaly_strength:.2f}"
-        )
+            print(
+                f"Location:   "
+                f"{node.location}"
+            )
+
+            print(
+                f"Active:     "
+                f"{node.active}"
+            )
+
+            print(
+                f"Anomaly:    "
+                f"{node.anomaly_strength:.2f}"
+            )
 
         print()
         print("----- REAL SITUATIONS -----")

@@ -227,16 +227,32 @@ def evaluate_signal_surge(
         situation_id
     )
 
-    should_exist = (
-        world.signal >= 0.50
-        or
-        node.anomaly_strength >= 0.45
+    # A high global Signal can aggravate a node,
+    # but cannot create a local anomaly from nothing.
+
+    local_surge = (
+        node.anomaly_strength
+        >= 0.45
     )
 
-    should_resolve = (
-        world.signal <= 0.35
+    network_assisted_surge = (
+        world.signal >= 0.50
         and
-        node.anomaly_strength <= 0.25
+        node.anomaly_strength >= 0.30
+    )
+
+    should_exist = (
+        local_surge
+        or
+        network_assisted_surge
+    )
+
+    # A local situation resolves when the
+    # local node itself becomes quiet.
+
+    should_resolve = (
+        node.anomaly_strength
+        <= 0.25
     )
 
     severity = max(
