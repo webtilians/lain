@@ -63,6 +63,12 @@ from .knowledge import (
     learn_node,
 )
 
+from .locations import (
+    is_known_location,
+    next_hop,
+    shortest_hops,
+)
+
 from .models import (
     ActionIntent,
     Agent,
@@ -611,6 +617,47 @@ class Simulation:
             )
 
         if action == "MOVE":
+
+            if not is_known_location(
+                agent.location
+            ):
+
+                return (
+                    False,
+                    "UNKNOWN_ORIGIN",
+                )
+
+            if not is_known_location(
+                intent.target
+            ):
+
+                return (
+                    False,
+                    "UNKNOWN_LOCATION",
+                )
+
+            if (
+                agent.location
+                == intent.target
+            ):
+
+                return (
+                    False,
+                    "ALREADY_THERE",
+                )
+
+            distance = shortest_hops(
+                origin=agent.location,
+                destination=intent.target,
+            )
+
+            if distance is None:
+
+                return (
+                    False,
+                    "UNREACHABLE_LOCATION",
+                )
+
             return True, ""
 
         if action == "OBSERVE_AREA":
@@ -808,6 +855,7 @@ class Simulation:
             )
 
             details = ""
+            event_target = target
 
             # ==========================================
             # MOVE
@@ -815,16 +863,48 @@ class Simulation:
 
             if action == "MOVE":
 
-                agent.location = target
+                origin = (
+                    agent.location
+                )
+
+                destination = (
+                    target
+                )
+
+                arrival = next_hop(
+                    origin=origin,
+                    destination=destination,
+                )
+
+                if arrival is None:
+
+                    # This should already have been
+                    # rejected by validate_intent().
+                    continue
+
+                agent.location = (
+                    arrival
+                )
 
                 agent.energy = max(
                     0.0,
                     agent.energy - 0.05,
                 )
 
+                # Important:
+                # movement intelligence must record
+                # the place actually reached,
+                # not the requested final destination.
+
+                event_target = (
+                    arrival
+                )
+
                 details = (
-                    f"{agent.name} "
-                    f"moved to {target}"
+                    f"{agent.name} moved "
+                    f"from {origin} "
+                    f"to {arrival} "
+                    f"toward {destination}"
                 )
 
             # ==========================================
@@ -1105,7 +1185,7 @@ class Simulation:
                 minute=self.minute,
                 actor_id=agent.id,
                 action=action,
-                target=target,
+                target=event_target,
                 details=details,
             )
 
@@ -1113,7 +1193,7 @@ class Simulation:
                 f"[{self.minute:04}m] "
                 f"{agent.name} "
                 f"{action} -> "
-                f"{target}"
+                f"{event_target}"
             )
 
             if action_id is not None:

@@ -17,6 +17,37 @@ from server.world_core.simulation import (
 )
 
 
+def move_player_to(
+    simulation,
+    destination,
+    max_ticks=10,
+):
+
+    for _ in range(
+        max_ticks
+    ):
+
+        if (
+            simulation.player.location
+            == destination
+        ):
+            return
+
+        queue_action(
+            actor_id="PLAYER_1",
+            action="MOVE",
+            target=destination,
+            source="HUMAN",
+        )
+
+        simulation.tick()
+
+    pytest.fail(
+        f"PLAYER_1 failed to reach "
+        f"{destination}"
+    )
+
+
 def test_simulation_bootstraps_multiple_nodes():
 
     simulation = Simulation()
@@ -51,14 +82,10 @@ def test_player_can_discover_and_modify_second_node():
     # PLAYER MOVES TO NODE_12
     # ----------------------------------------------
 
-    queue_action(
-        actor_id="PLAYER_1",
-        action="MOVE",
-        target="OLD_DISTRICT",
-        source="HUMAN",
+    move_player_to(
+        simulation,
+        "OLD_DISTRICT",
     )
-
-    simulation.tick()
 
     assert (
         simulation.player.location

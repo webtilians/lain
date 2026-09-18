@@ -3,38 +3,58 @@ from collections import deque
 
 LOCATION_GRAPH = {
 
-    "APARTMENT": {
+    "APARTMENT": (
         "APARTMENT_DISTRICT",
-    },
+    ),
 
-    "APARTMENT_DISTRICT": {
+    "APARTMENT_DISTRICT": (
         "APARTMENT",
         "STATION",
-    },
+    ),
 
-    "STATION": {
+    "STATION": (
         "APARTMENT_DISTRICT",
         "OLD_DISTRICT",
-    },
+    ),
 
-    "OLD_DISTRICT": {
+    "OLD_DISTRICT": (
         "STATION",
-    },
+    ),
 }
 
 
-def shortest_hops(
+def is_known_location(
+    location: str,
+) -> bool:
+
+    return (
+        location
+        in LOCATION_GRAPH
+    )
+
+
+def shortest_path(
     origin: str,
     destination: str,
-) -> int | None:
+) -> list[str] | None:
 
     if origin == destination:
-        return 0
 
-    if origin not in LOCATION_GRAPH:
+        if is_known_location(
+            origin
+        ):
+            return [origin]
+
         return None
 
-    if destination not in LOCATION_GRAPH:
+    if not is_known_location(
+        origin
+    ):
+        return None
+
+    if not is_known_location(
+        destination
+    ):
         return None
 
     visited = {
@@ -45,34 +65,37 @@ def shortest_hops(
         [
             (
                 origin,
-                0,
+                [origin],
             )
         ]
     )
 
     while queue:
 
-        location, distance = (
+        location, path = (
             queue.popleft()
         )
 
         for neighbor in (
             LOCATION_GRAPH.get(
                 location,
-                set(),
+                (),
             )
         ):
 
             if neighbor in visited:
                 continue
 
+            new_path = (
+                path
+                + [neighbor]
+            )
+
             if (
                 neighbor
                 == destination
             ):
-                return (
-                    distance + 1
-                )
+                return new_path
 
             visited.add(
                 neighbor
@@ -81,29 +104,54 @@ def shortest_hops(
             queue.append(
                 (
                     neighbor,
-                    distance + 1,
+                    new_path,
                 )
             )
 
     return None
 
 
+def shortest_hops(
+    origin: str,
+    destination: str,
+) -> int | None:
+
+    path = shortest_path(
+        origin,
+        destination,
+    )
+
+    if path is None:
+        return None
+
+    return (
+        len(path) - 1
+    )
+
+
+def next_hop(
+    origin: str,
+    destination: str,
+) -> str | None:
+
+    path = shortest_path(
+        origin,
+        destination,
+    )
+
+    if path is None:
+        return None
+
+    if len(path) == 1:
+        return origin
+
+    return path[1]
+
+
 def spatial_priority_factor(
     origin: str,
     destination: str,
 ) -> float:
-
-    """
-    Distance affects urgency without
-    completely suppressing distant crises.
-
-    0 hops -> 1.00
-    1 hop  -> 0.85
-    2 hops -> 0.70
-    3 hops -> 0.55
-
-    Minimum -> 0.40
-    """
 
     distance = shortest_hops(
         origin,

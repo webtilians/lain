@@ -108,6 +108,37 @@ def advance_until(
     )
 
 
+def move_player_to(
+    simulation,
+    destination: str,
+    max_ticks: int = 10,
+):
+
+    for _ in range(
+        max_ticks
+    ):
+
+        if (
+            simulation.player.location
+            == destination
+        ):
+            return
+
+        queue_action(
+            actor_id=PLAYER_ID,
+            action="MOVE",
+            target=destination,
+            source="HUMAN",
+        )
+
+        simulation.tick()
+
+    pytest.fail(
+        f"PLAYER_1 failed to reach "
+        f"{destination}"
+    )
+
+
 def test_player_action_creates_emergent_pursuit_and_denial():
 
     simulation = Simulation()
@@ -117,14 +148,10 @@ def test_player_action_creates_emergent_pursuit_and_denial():
     # PLAYER ENTERS STATION
     # ==================================================
 
-    queue_action(
-        actor_id=PLAYER_ID,
-        action="MOVE",
-        target="STATION",
-        source="HUMAN",
+    move_player_to(
+        simulation,
+        "STATION",
     )
-
-    simulation.tick()
 
     assert (
         simulation.player.location
@@ -176,6 +203,23 @@ def test_player_action_creates_emergent_pursuit_and_denial():
     )
 
     simulation.tick()
+
+    # First travel step:
+    #
+    # STATION
+    #   -> APARTMENT_DISTRICT
+
+    assert (
+        simulation.player.location
+        == "APARTMENT_DISTRICT"
+    )
+
+    # Finish the escape.
+
+    move_player_to(
+        simulation,
+        "APARTMENT",
+    )
 
     assert (
         simulation.player.location
