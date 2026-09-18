@@ -69,6 +69,10 @@ from .locations import (
     shortest_hops,
 )
 
+from .messages import (
+    ensure_initial_player_message,
+)
+
 from .models import (
     ActionIntent,
     Agent,
@@ -192,6 +196,8 @@ class Simulation:
 
         self.bootstrap_existing_knowledge()
         self.seed_initial_leads()
+
+        ensure_initial_player_message()
 
     # ==================================================
     # BOOTSTRAP

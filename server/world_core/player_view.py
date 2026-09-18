@@ -15,6 +15,10 @@ from .locations import (
     LOCATION_GRAPH,
 )
 
+from .messages import (
+    list_player_messages,
+)
+
 from .knowledge import (
     initialize_knowledge,
 )
@@ -177,6 +181,11 @@ def build_player_snapshot(
             "created_minute": interaction.created_minute,
         }
 
+    messages = list_player_messages(
+        player_id=player_id,
+        current_minute=load_simulation_minute(),
+    )
+
     return {
         "schema_version": "0.1",
         "minute": load_simulation_minute(),
@@ -198,4 +207,22 @@ def build_player_snapshot(
             player_id
         ),
         "interaction": interaction_payload,
+        "messages": [
+            {
+                "id": message.id,
+                "sender": message.sender_label,
+                "subject": message.subject,
+                "body": message.body,
+                "created_minute": message.created_minute,
+                "read": message.read,
+                "acknowledged": message.acknowledged,
+                "acknowledged_minute": message.acknowledged_minute,
+            }
+            for message in messages
+        ],
+        "unread_messages": sum(
+            1
+            for message in messages
+            if not message.read
+        ),
     }

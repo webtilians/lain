@@ -16,6 +16,10 @@ from server.world_core.player_view import (
     build_player_snapshot,
 )
 
+from server.world_core.messages import (
+    acknowledge_message,
+)
+
 from server.world_core.simulation import (
     Simulation,
 )
@@ -77,6 +81,25 @@ def perform_player_step(
     }
 
 
+def acknowledge_player_message(
+    message_id: str,
+):
+
+    runtime = get_runtime()
+
+    acknowledge_message(
+        message_id=message_id,
+        player_id=PLAYER_ID,
+        minute=runtime.minute,
+    )
+
+    return {
+        "state": build_player_snapshot(
+            PLAYER_ID
+        ),
+    }
+
+
 @app.get(
     "/health"
 )
@@ -117,5 +140,24 @@ def player_step(
 
         raise HTTPException(
             status_code=400,
+            detail=str(error),
+        )
+
+
+@app.post(
+    "/api/v1/player/messages/{message_id}/ack"
+)
+def player_message_ack(
+    message_id: str,
+):
+
+    try:
+        return acknowledge_player_message(
+            message_id
+        )
+
+    except ValueError as error:
+        raise HTTPException(
+            status_code=404,
             detail=str(error),
         )

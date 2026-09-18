@@ -63,6 +63,31 @@ func step(
 			"Could not send action: %s" % error
 		)
 
+func acknowledge_message(
+	message_id: String
+) -> void:
+	if (
+		_request.get_http_client_status()
+		!= HTTPClient.STATUS_DISCONNECTED
+	):
+		return
+
+	_pending_kind = "ack_message"
+
+	var error := _request.request(
+		BASE_URL
+		+ "/api/v1/player/messages/"
+		+ message_id
+		+ "/ack",
+		[],
+		HTTPClient.METHOD_POST
+	)
+
+	if error != OK:
+		api_error.emit(
+			"Could not acknowledge message: %s" % error
+		)
+
 func _on_request_completed(
 	result: int,
 	response_code: int,
@@ -90,7 +115,11 @@ func _on_request_completed(
 		)
 		return
 
-	if _pending_kind == "step":
+	if (
+		_pending_kind == "step"
+		or
+		_pending_kind == "ack_message"
+	):
 		snapshot = parsed.get("state", {})
 	else:
 		snapshot = parsed
