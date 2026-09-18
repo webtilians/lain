@@ -16,8 +16,8 @@ from server.world_core.player_view import (
     build_player_snapshot,
 )
 
-from server.world_core.messages import (
-    acknowledge_message,
+from server.world_core.wired import (
+    process_wired_message_acknowledgement,
 )
 
 from server.world_core.simulation import (
@@ -87,13 +87,14 @@ def acknowledge_player_message(
 
     runtime = get_runtime()
 
-    acknowledge_message(
+    result = process_wired_message_acknowledgement(
         message_id=message_id,
         player_id=PLAYER_ID,
         minute=runtime.minute,
     )
 
     return {
+        "effect": result,
         "state": build_player_snapshot(
             PLAYER_ID
         ),

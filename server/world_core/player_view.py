@@ -31,6 +31,51 @@ from .situation_beliefs import (
 PLAYER_ID = "PLAYER_1"
 
 
+def build_wired_projection(
+    known_nodes: list[dict],
+    messages: list,
+):
+
+    connected = any(
+        message.acknowledged
+        for message in messages
+        if message.id == "MSG_BOOTSTRAP_001"
+    )
+
+    signals = []
+
+    if connected:
+
+        for node in known_nodes:
+
+            belief = node.get(
+                "belief"
+            )
+
+            if belief is None:
+                continue
+
+            if belief.get(
+                "source"
+            ) != "WIRED_MESSAGE":
+                continue
+
+            signals.append(
+                {
+                    "node_id": node["id"],
+                    "location": belief["location"],
+                    "strength": belief["strength"],
+                    "confidence": belief["confidence"],
+                    "source": belief["source"],
+                }
+            )
+
+    return {
+        "connected": connected,
+        "signals": signals,
+    }
+
+
 def load_player_row(
     player_id: str = PLAYER_ID,
 ):
@@ -186,6 +231,10 @@ def build_player_snapshot(
         current_minute=load_simulation_minute(),
     )
 
+    known_nodes = list_player_known_nodes(
+        player_id
+    )
+
     return {
         "schema_version": "0.1",
         "minute": load_simulation_minute(),
@@ -200,9 +249,7 @@ def build_player_snapshot(
         "navigation": {
             "reachable_locations": reachable_locations,
         },
-        "known_nodes": list_player_known_nodes(
-            player_id
-        ),
+        "known_nodes": known_nodes,
         "situations": list_player_situations(
             player_id
         ),
@@ -224,5 +271,9 @@ def build_player_snapshot(
             1
             for message in messages
             if not message.read
+        ),
+        "wired": build_wired_projection(
+            known_nodes=known_nodes,
+            messages=messages,
         ),
     }

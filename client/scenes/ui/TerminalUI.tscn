@@ -35,6 +35,16 @@ theme_override_constants/separation = 12
 [node name="Header" type="Label" parent="Background/Window/Margin/VBox"]
 text = "WIRED MAIL // 1.0"
 
+[node name="Tabs" type="HBoxContainer" parent="Background/Window/Margin/VBox"]
+theme_override_constants/separation = 8
+
+[node name="Mail" type="Button" parent="Background/Window/Margin/VBox/Tabs"]
+text = "MAIL"
+
+[node name="Wired" type="Button" parent="Background/Window/Margin/VBox/Tabs"]
+text = "THE WIRED"
+visible = false
+
 [node name="Separator" type="HSeparator" parent="Background/Window/Margin/VBox"]
 
 [node name="Sender" type="Label" parent="Background/Window/Margin/VBox"]
