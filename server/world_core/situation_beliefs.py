@@ -2,6 +2,10 @@ from .database import (
     get_connection,
 )
 
+from .belief_provenance import (
+    record_belief_revision,
+)
+
 from .models import (
     SituationBelief,
 )
@@ -466,6 +470,19 @@ def save_situation_belief(
     belief: SituationBelief,
 ):
 
+    # ==================================================
+    # STATE BEFORE NEW INFORMATION
+    # ==================================================
+
+    previous = load_situation_belief(
+        agent_id=belief.agent_id,
+        situation_id=belief.situation_id,
+    )
+
+    # ==================================================
+    # PRESERVE INCOMING INFORMATION AS HYPOTHESIS
+    # ==================================================
+
     save_situation_hypothesis(
         belief
     )
@@ -477,6 +494,26 @@ def save_situation_belief(
 
     if dominant is None:
         return
+
+    hypotheses = list_situation_hypotheses(
+        agent_id=belief.agent_id,
+        situation_id=belief.situation_id,
+    )
+
+    # ==================================================
+    # AUDIT COGNITIVE REVISION
+    # ==================================================
+
+    record_belief_revision(
+        previous=previous,
+        new=dominant,
+        hypotheses=hypotheses,
+        minute=belief.updated_minute,
+    )
+
+    # ==================================================
+    # COMMIT WORKING BELIEF
+    # ==================================================
 
     write_working_belief(
         dominant
