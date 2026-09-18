@@ -20,17 +20,7 @@ extends Node3D
 	$HUD/Info/Panel/VBox/Knowledge
 )
 
-@onready var transition: ColorRect = (
-	$HUD/Transition
-)
-
-@onready var transition_label: Label = (
-	$HUD/Transition/Label
-)
-
 func _ready() -> void:
-	transition.visible = false
-
 	WorldApi.snapshot_updated.connect(
 		_on_snapshot_updated
 	)
@@ -95,13 +85,6 @@ func _on_snapshot_updated(
 	knowledge_label.text = (
 		"KNOWN NODES // %d" % nodes.size()
 	)
-
-	if location != "APARTMENT":
-		transition.visible = true
-		transition_label.text = (
-			"%s\n\nWORLD CORE SYNCHRONIZED" % location
-		)
-		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 
 func _on_api_error(
 	message: String
