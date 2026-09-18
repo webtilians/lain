@@ -201,7 +201,7 @@ def build_actor_goal_candidate(
     ):
         return None
 
-    if (
+    current_direct_perception = (
         location_belief.source
         == "DIRECT_ACTOR_PERCEPTION"
 
@@ -209,7 +209,14 @@ def build_actor_goal_candidate(
 
         location_belief.confidence
         >= 0.95
-    ):
+
+        and
+
+        location_belief.updated_minute
+        == minute
+    )
+
+    if current_direct_perception:
 
         goal_type = (
             "CONTACT_SUSPECT"

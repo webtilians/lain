@@ -19,6 +19,11 @@ DIRECT_AUTHORITY = 3
 NETWORK_AUTHORITY = 2
 REPORT_AUTHORITY = 1
 
+HYPOTHESIS_DECAY_PER_10_MINUTES = 0.05
+
+DIRECT_AUTHORITY_WINDOW_MINUTES = 10
+NETWORK_AUTHORITY_WINDOW_MINUTES = 40
+
 
 def clamp(
     value: float,
@@ -35,20 +40,73 @@ def clamp(
 
 def source_authority(
     source: str,
+    age_minutes: int = 0,
 ) -> int:
 
     if (
         source
         == "DIRECT_SITUATION_PERCEPTION"
     ):
-        return DIRECT_AUTHORITY
+
+        if (
+            age_minutes
+            <= DIRECT_AUTHORITY_WINDOW_MINUTES
+        ):
+            return DIRECT_AUTHORITY
+
+        return REPORT_AUTHORITY
 
     if source.endswith(
         "_NETWORK"
     ):
-        return NETWORK_AUTHORITY
+
+        if (
+            age_minutes
+            <= NETWORK_AUTHORITY_WINDOW_MINUTES
+        ):
+            return NETWORK_AUTHORITY
+
+        return REPORT_AUTHORITY
 
     return REPORT_AUTHORITY
+
+
+def hypothesis_age(
+    hypothesis: SituationBelief,
+    current_minute: int,
+) -> int:
+
+    return max(
+        0,
+        current_minute
+        - hypothesis.updated_minute,
+    )
+
+
+def effective_hypothesis_confidence(
+    hypothesis: SituationBelief,
+    current_minute: int,
+) -> float:
+
+    age = hypothesis_age(
+        hypothesis=hypothesis,
+        current_minute=current_minute,
+    )
+
+    elapsed_steps = (
+        age // 10
+    )
+
+    decay = (
+        elapsed_steps
+        * HYPOTHESIS_DECAY_PER_10_MINUTES
+    )
+
+    return max(
+        0.05,
+        hypothesis.confidence
+        - decay,
+    )
 
 
 # ======================================================
@@ -260,13 +318,17 @@ def claim_signature(
 
 def group_support(
     hypotheses: list[SituationBelief],
+    current_minute: int,
 ) -> float:
 
     if not hypotheses:
         return 0.0
 
     strongest = max(
-        hypothesis.confidence
+        effective_hypothesis_confidence(
+            hypothesis=hypothesis,
+            current_minute=current_minute,
+        )
         for hypothesis in hypotheses
     )
 
@@ -291,6 +353,7 @@ def group_support(
 def build_dominant_belief(
     agent_id: str,
     situation_id: str,
+    current_minute: int | None = None,
 ) -> SituationBelief | None:
 
     hypotheses = list_situation_hypotheses(
@@ -301,9 +364,20 @@ def build_dominant_belief(
     if not hypotheses:
         return None
 
+    if current_minute is None:
+
+        current_minute = max(
+            hypothesis.updated_minute
+            for hypothesis in hypotheses
+        )
+
     highest_authority = max(
         source_authority(
-            hypothesis.source
+            hypothesis.source,
+            age_minutes=hypothesis_age(
+                hypothesis,
+                current_minute,
+            ),
         )
         for hypothesis in hypotheses
     )
@@ -312,7 +386,11 @@ def build_dominant_belief(
         hypothesis
         for hypothesis in hypotheses
         if source_authority(
-            hypothesis.source
+            hypothesis.source,
+            age_minutes=hypothesis_age(
+                hypothesis,
+                current_minute,
+            ),
         ) == highest_authority
     ]
 
@@ -336,12 +414,17 @@ def build_dominant_belief(
     for signature, members in groups.items():
 
         support = group_support(
-            members
+            hypotheses=members,
+            current_minute=current_minute,
         )
 
         representative = max(
             members,
             key=lambda item: (
+                effective_hypothesis_confidence(
+                    item,
+                    current_minute,
+                ),
                 item.confidence,
                 item.updated_minute,
                 item.source,
@@ -351,7 +434,7 @@ def build_dominant_belief(
         ranked_groups.append(
             (
                 support,
-                representative.updated_minute,
+                representative.confidence,
                 signature,
                 representative,
                 members,
@@ -490,6 +573,7 @@ def save_situation_belief(
     dominant = build_dominant_belief(
         agent_id=belief.agent_id,
         situation_id=belief.situation_id,
+        current_minute=belief.updated_minute,
     )
 
     if dominant is None:
@@ -623,12 +707,10 @@ def decay_situation_beliefs(
 
         rows = conn.execute(
             """
-            SELECT
-                situation_id,
-                confidence,
-                updated_minute
+            SELECT DISTINCT
+                situation_id
 
-            FROM situation_beliefs
+            FROM situation_hypotheses
 
             WHERE agent_id = ?
             """,
@@ -637,34 +719,22 @@ def decay_situation_beliefs(
             ),
         ).fetchall()
 
-        for row in rows:
+    situation_ids = [
+        row[0]
+        for row in rows
+    ]
 
-            situation_id = row[0]
-            confidence = row[1]
-            updated_minute = row[2]
+    for situation_id in situation_ids:
 
-            if updated_minute >= current_minute:
-                continue
+        dominant = build_dominant_belief(
+            agent_id=agent_id,
+            situation_id=situation_id,
+            current_minute=current_minute,
+        )
 
-            new_confidence = max(
-                0.05,
-                confidence - 0.05,
-            )
+        if dominant is None:
+            continue
 
-            conn.execute(
-                """
-                UPDATE situation_beliefs
-
-                SET confidence = ?
-
-                WHERE agent_id = ?
-                  AND situation_id = ?
-                """,
-                (
-                    new_confidence,
-                    agent_id,
-                    situation_id,
-                ),
-            )
-
-        conn.commit()
+        write_working_belief(
+            dominant
+        )
