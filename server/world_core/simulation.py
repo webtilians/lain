@@ -81,6 +81,7 @@ from .perception import (
 )
 
 from .reports import (
+    evaluate_accepted_reports_against_belief,
     process_information_reports,
 )
 
@@ -399,6 +400,17 @@ class Simulation:
 
                 if belief is None:
                     continue
+
+                # Before replacing the current belief,
+                # compare authoritative information against
+                # any explicit reports the agent previously
+                # accepted.
+
+                evaluate_accepted_reports_against_belief(
+                    agent=agent,
+                    belief=belief,
+                    current_minute=self.minute,
+                )
 
                 save_situation_belief(
                     belief
