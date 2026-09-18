@@ -10,7 +10,6 @@ from .models import (
 )
 
 from .situation_beliefs import (
-    load_situation_belief,
     save_situation_belief,
 )
 
@@ -438,34 +437,6 @@ def evaluate_accepted_reports_against_belief(
     return outcomes
 
 
-def report_can_replace_belief(
-    report: InformationReport,
-    existing: SituationBelief | None,
-    effective_confidence: float,
-) -> bool:
-
-    if existing is None:
-        return True
-
-    if (
-        existing.source
-        == "DIRECT_SITUATION_PERCEPTION"
-        and existing.updated_minute
-        >= report.created_minute
-    ):
-        return False
-
-    if (
-        existing.updated_minute
-        > report.created_minute
-        and existing.confidence
-        >= effective_confidence
-    ):
-        return False
-
-    return True
-
-
 def process_information_reports(
     agent: Agent,
     current_minute: int,
@@ -489,40 +460,34 @@ def process_information_reports(
             report.confidence * trust
         )
 
-        existing = load_situation_belief(
+        # Delivery and epistemic dominance are now
+        # separate concepts.
+        #
+        # Every delivered report becomes a hypothesis.
+        # The competition layer decides whether it
+        # influences the working belief.
+
+        belief = SituationBelief(
             agent_id=agent.id,
             situation_id=report.situation_id,
+            believed_type=report.claimed_type,
+            believed_location=report.claimed_location,
+            believed_subject_id=report.claimed_subject_id,
+            believed_status=report.claimed_status,
+            believed_severity=report.claimed_severity,
+            confidence=effective_confidence,
+            source=report.source,
+            updated_minute=current_minute,
         )
 
-        should_accept = report_can_replace_belief(
-            report=report,
-            existing=existing,
-            effective_confidence=effective_confidence,
-        )
-
-        if should_accept:
-
-            belief = SituationBelief(
-                agent_id=agent.id,
-                situation_id=report.situation_id,
-                believed_type=report.claimed_type,
-                believed_location=report.claimed_location,
-                believed_subject_id=report.claimed_subject_id,
-                believed_status=report.claimed_status,
-                believed_severity=report.claimed_severity,
-                confidence=effective_confidence,
-                source=report.source,
-                updated_minute=current_minute,
-            )
-
-            save_situation_belief(belief)
-            accepted.append(report)
+        save_situation_belief(belief)
+        accepted.append(report)
 
         mark_report_delivered(
             report_id=report.id,
             agent_id=agent.id,
             minute=current_minute,
-            accepted=should_accept,
+            accepted=True,
         )
 
     return accepted
