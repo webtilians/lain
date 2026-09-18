@@ -80,6 +80,10 @@ from .perception import (
     perceive_node,
 )
 
+from .reports import (
+    process_information_reports,
+)
+
 from .situation_beliefs import (
     decay_situation_beliefs,
     list_agent_situation_beliefs,
@@ -371,6 +375,17 @@ class Simulation:
 
             decay_situation_beliefs(
                 agent_id=agent.id,
+                current_minute=self.minute,
+            )
+
+            # Reports arrive first.
+            #
+            # A real channel or direct perception
+            # later in this same tick may overwrite
+            # the report.
+
+            process_information_reports(
+                agent=agent,
                 current_minute=self.minute,
             )
 
