@@ -143,6 +143,16 @@ def test_player_action_creates_emergent_pursuit_and_denial():
 
     simulation = Simulation()
 
+    # This regression isolates the K/player causal chain.
+    #
+    # Nora is tested independently elsewhere. Keeping her
+    # active here can sustain SIGNAL_SURGE indefinitely and
+    # legitimately prevent K from prioritizing the audit.
+
+    simulation.ai_actors = [
+        simulation.k
+    ]
+
     # ==================================================
     # PHASE 1
     # PLAYER ENTERS STATION

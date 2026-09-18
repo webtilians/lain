@@ -27,6 +27,8 @@ class Situation:
 
     reason: str
 
+    status_changed_minute: int | None = None
+
 
 def clamp(value: float) -> float:
     return max(
@@ -58,10 +60,57 @@ def initialize_situations():
                 created_minute INTEGER NOT NULL,
                 updated_minute INTEGER NOT NULL,
 
-                reason TEXT NOT NULL
+                reason TEXT NOT NULL,
+
+                status_changed_minute INTEGER NOT NULL
             )
             """
         )
+
+        columns = {
+            row[1]
+            for row in conn.execute(
+                "PRAGMA table_info(situations)"
+            ).fetchall()
+        }
+
+        if (
+            "status_changed_minute"
+            not in columns
+        ):
+
+            conn.execute(
+                """
+                ALTER TABLE situations
+                ADD COLUMN status_changed_minute
+                INTEGER NOT NULL DEFAULT 0
+                """
+            )
+
+            conn.execute(
+                """
+                UPDATE situations
+
+                SET status_changed_minute = COALESCE(
+                    (
+                        SELECT MAX(events.minute)
+
+                        FROM events
+
+                        WHERE events.target = situations.id
+
+                          AND events.action IN (
+                              'CREATE_SITUATION',
+                              'REOPEN_SITUATION',
+                              'RESOLVE_SITUATION'
+                          )
+                    ),
+                    created_minute
+                )
+
+                WHERE status_changed_minute = 0
+                """
+            )
 
         conn.commit()
 
@@ -82,6 +131,10 @@ def row_to_situation(row) -> Situation:
         updated_minute=row[7],
 
         reason=row[8],
+
+        status_changed_minute=(
+            row[9]
+        ),
     )
 
 
@@ -104,7 +157,8 @@ def load_situation(
                 severity,
                 created_minute,
                 updated_minute,
-                reason
+                reason,
+                status_changed_minute
 
             FROM situations
 
@@ -136,7 +190,8 @@ def list_situations() -> list[Situation]:
                 severity,
                 created_minute,
                 updated_minute,
-                reason
+                reason,
+                status_changed_minute
 
             FROM situations
 
@@ -165,6 +220,24 @@ def save_situation(
 
     initialize_situations()
 
+    status_changed_minute = (
+        situation.status_changed_minute
+    )
+
+    if status_changed_minute is None:
+
+        if situation.status == "OPEN":
+
+            status_changed_minute = (
+                situation.created_minute
+            )
+
+        else:
+
+            status_changed_minute = (
+                situation.updated_minute
+            )
+
     with get_connection() as conn:
 
         conn.execute(
@@ -178,7 +251,8 @@ def save_situation(
                 severity,
                 created_minute,
                 updated_minute,
-                reason
+                reason,
+                status_changed_minute
             )
 
             VALUES (
@@ -186,7 +260,7 @@ def save_situation(
                 ?, ?,
                 ?, ?,
                 ?, ?,
-                ?
+                ?, ?
             )
             """,
             (
@@ -203,6 +277,8 @@ def save_situation(
                 situation.updated_minute,
 
                 situation.reason,
+
+                status_changed_minute,
             ),
         )
 
@@ -286,6 +362,8 @@ def evaluate_signal_surge(
                 updated_minute=minute,
 
                 reason=reason,
+
+                status_changed_minute=minute,
             )
 
             save_situation(situation)
@@ -315,6 +393,9 @@ def evaluate_signal_surge(
         existing.updated_minute = minute
         existing.reason = reason
 
+        if was_closed:
+            existing.status_changed_minute = minute
+
         save_situation(existing)
 
         if was_closed:
@@ -343,6 +424,7 @@ def evaluate_signal_surge(
 
         existing.status = "RESOLVED"
         existing.updated_minute = minute
+        existing.status_changed_minute = minute
 
         existing.reason = (
             f"Signal stabilized at "
@@ -459,6 +541,7 @@ def evaluate_unauthorized_manipulation(
 
             existing.status = "RESOLVED"
             existing.updated_minute = minute
+            existing.status_changed_minute = minute
 
             existing.reason = (
                 "No recent unauthorized "
@@ -530,6 +613,8 @@ def evaluate_unauthorized_manipulation(
             updated_minute=minute,
 
             reason=reason,
+
+            status_changed_minute=minute,
         )
 
         save_situation(
@@ -564,6 +649,9 @@ def evaluate_unauthorized_manipulation(
     existing.severity = severity
     existing.updated_minute = minute
     existing.reason = reason
+
+    if was_closed:
+        existing.status_changed_minute = minute
 
     save_situation(
         existing

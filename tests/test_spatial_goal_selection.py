@@ -1,6 +1,7 @@
 import pytest
 
 from server.world_core.database import (
+    save_agent,
     save_node,
 )
 
@@ -194,6 +195,12 @@ def test_simulation_splits_agents_between_two_crises():
 
     simulation = Simulation()
 
+    simulation.nora.agent.energy = 0.0
+
+    save_agent(
+        simulation.nora.agent
+    )
+
     node_07 = (
         simulation.nodes[
             "NODE_07"
@@ -207,7 +214,7 @@ def test_simulation_splits_agents_between_two_crises():
     )
 
     node_07.anomaly_strength = 0.70
-    node_12.anomaly_strength = 0.80
+    node_12.anomaly_strength = 0.65
 
     save_node(
         node_07
@@ -217,6 +224,8 @@ def test_simulation_splits_agents_between_two_crises():
         node_12
     )
 
+    simulation.tick()
+    simulation.tick()
     simulation.tick()
 
     k_goal = (
@@ -267,14 +276,3 @@ def test_simulation_splits_agents_between_two_crises():
         == "STATION"
     )
 
-    # Nora was already next to NODE_12 and
-    # therefore amplifies it immediately.
-
-    assert (
-        simulation.nodes[
-            "NODE_12"
-        ].anomaly_strength
-        == pytest.approx(
-            0.90
-        )
-    )

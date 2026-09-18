@@ -5,7 +5,12 @@ from server.world_core.database import (
 )
 
 from server.world_core.models import (
+    SituationBelief,
     WorldNode,
+)
+
+from server.world_core.situation_beliefs import (
+    save_situation_belief,
 )
 
 from server.world_core.simulation import (
@@ -81,6 +86,35 @@ def test_agent_replans_and_reverses_route_when_world_changes():
         == "APARTMENT_DISTRICT"
     )
 
+    save_situation_belief(
+        SituationBelief(
+            agent_id="AGENT_K",
+
+            situation_id=(
+                "SIGNAL_SURGE_NODE_12"
+            ),
+
+            believed_type="SIGNAL_SURGE",
+
+            believed_location=(
+                "OLD_DISTRICT"
+            ),
+
+            believed_subject_id=(
+                "NODE_12"
+            ),
+
+            believed_status="OPEN",
+
+            believed_severity=0.95,
+            confidence=0.95,
+
+            source="TEST_CHANNEL",
+
+            updated_minute=0,
+        )
+    )
+
     # ==================================================
     # TICK 1
     #
@@ -142,6 +176,62 @@ def test_agent_replans_and_reverses_route_when_world_changes():
 
     save_node(
         node_21
+    )
+
+    save_situation_belief(
+        SituationBelief(
+            agent_id="AGENT_K",
+
+            situation_id=(
+                "SIGNAL_SURGE_NODE_12"
+            ),
+
+            believed_type="SIGNAL_SURGE",
+
+            believed_location=(
+                "OLD_DISTRICT"
+            ),
+
+            believed_subject_id="NODE_12",
+
+            believed_status="RESOLVED",
+
+            believed_severity=0.20,
+            confidence=0.95,
+
+            source="TEST_CHANNEL",
+
+            updated_minute=(
+                simulation.minute
+            ),
+        )
+    )
+
+    save_situation_belief(
+        SituationBelief(
+            agent_id="AGENT_K",
+
+            situation_id=(
+                "SIGNAL_SURGE_NODE_21"
+            ),
+
+            believed_type="SIGNAL_SURGE",
+
+            believed_location="APARTMENT",
+
+            believed_subject_id="NODE_21",
+
+            believed_status="OPEN",
+
+            believed_severity=0.95,
+            confidence=0.95,
+
+            source="TEST_CHANNEL",
+
+            updated_minute=(
+                simulation.minute
+            ),
+        )
     )
 
     # ==================================================

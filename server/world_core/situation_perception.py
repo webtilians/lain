@@ -1,4 +1,6 @@
-from server.situations.engine import Situation
+from server.situations.engine import (
+    Situation,
+)
 
 from .models import (
     Agent,
@@ -6,29 +8,40 @@ from .models import (
 )
 
 
-# Diferentes actores interpretan
-# una misma crisis de forma distinta.
-
 SEVERITY_BIAS = {
     "AGENT_K": -0.03,
     "AGENT_NORA": 0.05,
     "PLAYER_1": 0.00,
 }
 
-
-# Información que las facciones
-# distribuyen internamente.
+# ======================================================
+# INFORMATION CHANNELS
+# ======================================================
 
 FACTION_FEEDS = {
 
     "PROTOCOL": {
-        "SIGNAL_SURGE": 0.80,
+
+        "SIGNAL_SURGE": {
+            "confidence": 0.80,
+            "latency_minutes": 20,
+        },
     },
 
     "WIRED": {
-        "SIGNAL_SURGE": 0.75,
+
+        "SIGNAL_SURGE": {
+            "confidence": 0.75,
+            "latency_minutes": 10,
+        },
     },
 }
+
+PUBLIC_RUMOR_CONFIDENCE = 0.40
+PUBLIC_RUMOR_THRESHOLD = 0.75
+PUBLIC_RUMOR_LATENCY_MINUTES = 30
+
+RESOLVED_FEED_RETENTION_MINUTES = 30
 
 
 def clamp(
@@ -44,6 +57,35 @@ def clamp(
     )
 
 
+def information_age(
+    situation: Situation,
+    minute: int,
+) -> int:
+
+    changed_minute = (
+        situation.status_changed_minute
+    )
+
+    if changed_minute is None:
+
+        if situation.status == "OPEN":
+
+            changed_minute = (
+                situation.created_minute
+            )
+
+        else:
+
+            changed_minute = (
+                situation.updated_minute
+            )
+
+    return max(
+        0,
+        minute - changed_minute,
+    )
+
+
 def perceive_situation(
     agent: Agent,
     situation: Situation,
@@ -55,9 +97,11 @@ def perceive_situation(
         0.0,
     )
 
-    # ==========================================
-    # 1. PERCEPCIÓN DIRECTA
-    # ==========================================
+    # ==================================================
+    # 1. DIRECT PHYSICAL PERCEPTION
+    #
+    # Direct observation has no network latency.
+    # ==================================================
 
     if (
         agent.location
@@ -85,7 +129,8 @@ def perceive_situation(
             ),
 
             believed_severity=clamp(
-                situation.severity + bias
+                situation.severity
+                + bias
             ),
 
             confidence=0.95,
@@ -97,9 +142,14 @@ def perceive_situation(
             updated_minute=minute,
         )
 
-    # ==========================================
-    # 2. RED DE LA FACCIÓN
-    # ==========================================
+    age = information_age(
+        situation=situation,
+        minute=minute,
+    )
+
+    # ==================================================
+    # 2. FACTION NETWORK
+    # ==================================================
 
     faction_feed = (
         FACTION_FEEDS.get(
@@ -108,77 +158,104 @@ def perceive_situation(
         )
     )
 
-    feed_confidence = (
+    feed_rule = (
         faction_feed.get(
             situation.situation_type
         )
     )
 
-    if feed_confidence is not None:
+    if feed_rule is not None:
 
-        # Las redes distribuyen inmediatamente
-        # situaciones abiertas.
-        #
-        # Una resolución solo permanece
-        # en el feed durante 30 min simulados.
-
-        visible = (
-            situation.status == "OPEN"
-            or (
-                situation.status == "RESOLVED"
-                and
-                minute
-                - situation.updated_minute
-                <= 30
-            )
+        latency = (
+            feed_rule[
+                "latency_minutes"
+            ]
         )
 
-        if visible:
+        information_arrived = (
+            age >= latency
+        )
 
-            return SituationBelief(
-                agent_id=agent.id,
-                situation_id=situation.id,
+        if information_arrived:
 
-                believed_type=(
-                    situation.situation_type
-                ),
+            visible = False
 
-                believed_location=(
-                    situation.location
-                ),
+            if (
+                situation.status
+                == "OPEN"
+            ):
 
-                believed_subject_id=(
-                    situation.subject_id
-                ),
+                visible = True
 
-                believed_status=(
-                    situation.status
-                ),
+            elif (
+                situation.status
+                == "RESOLVED"
+            ):
 
-                believed_severity=clamp(
-                    situation.severity
-                    + (bias * 0.5)
-                ),
+                visible = (
+                    age
+                    <= (
+                        latency
+                        + RESOLVED_FEED_RETENTION_MINUTES
+                    )
+                )
 
-                confidence=feed_confidence,
+            if visible:
 
-                source=(
-                    f"{agent.faction}_NETWORK"
-                ),
+                return SituationBelief(
+                    agent_id=agent.id,
+                    situation_id=situation.id,
 
-                updated_minute=minute,
-            )
+                    believed_type=(
+                        situation.situation_type
+                    ),
 
-    # ==========================================
-    # 3. RUMOR PÚBLICO
-    # ==========================================
+                    believed_location=(
+                        situation.location
+                    ),
 
-    # Solo situaciones muy grandes empiezan
-    # a filtrarse a la población general.
+                    believed_subject_id=(
+                        situation.subject_id
+                    ),
+
+                    believed_status=(
+                        situation.status
+                    ),
+
+                    believed_severity=clamp(
+                        situation.severity
+                        + (bias * 0.5)
+                    ),
+
+                    confidence=(
+                        feed_rule[
+                            "confidence"
+                        ]
+                    ),
+
+                    source=(
+                        f"{agent.faction}_NETWORK"
+                    ),
+
+                    updated_minute=minute,
+                )
+
+    # ==================================================
+    # 3. PUBLIC RUMOR
+    # ==================================================
 
     if (
         situation.status == "OPEN"
-        and situation.severity >= 0.75
+
+        and
+
+        situation.severity
+        >= PUBLIC_RUMOR_THRESHOLD
+
+        and
+
+        age
+        >= PUBLIC_RUMOR_LATENCY_MINUTES
     ):
 
         return SituationBelief(
@@ -193,18 +270,18 @@ def perceive_situation(
                 situation.location
             ),
 
-            # Un rumor no necesariamente
-            # identifica con precisión
-            # el objeto responsable.
             believed_subject_id=None,
 
             believed_status="OPEN",
 
             believed_severity=clamp(
-                situation.severity + bias
+                situation.severity
+                + bias
             ),
 
-            confidence=0.40,
+            confidence=(
+                PUBLIC_RUMOR_CONFIDENCE
+            ),
 
             source="PUBLIC_RUMOR",
 
