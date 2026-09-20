@@ -174,7 +174,7 @@ def test_llm_receives_only_owner_attributed_relevant_memory(monkeypatch):
 
     monkeypatch.setattr(llm_dialogue, "urlopen", provider)
     reply = say_to_player_conversation(
-        "AGENT_K", "¿Recuerdas mi contraseña centinela?",
+        "AGENT_K", "¿Qué recuerdas del código centinela?",
         greeting["turn_id"] + 2, sim.minute,
     )
     assert reply["line"] == "Me lo dijiste tú, no lo comprobé."
