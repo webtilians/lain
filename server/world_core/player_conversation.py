@@ -143,7 +143,7 @@ def conversation_payload(
     with get_connection() as conn:
         row = conn.execute(
             """
-            SELECT id, speaker_id, text
+            SELECT id, speaker_id, text, source
             FROM player_conversation_turns
             WHERE interaction_id = ?
             ORDER BY id DESC
@@ -163,6 +163,7 @@ def conversation_payload(
         "actor_name": actor_name,
         "turn_id": row[0],
         "line": row[2],
+        "response_source": row[3],
         "choices": available_choices(),
     }
 
