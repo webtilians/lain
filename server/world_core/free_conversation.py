@@ -5,6 +5,10 @@ and persists the utterance, NPC response, memory and audit event atomically.
 """
 from .agent_context import AgentContextBuilder
 from .database import get_connection
+from .episodic_memory import (
+    initialize_memory_provenance,
+    save_episodic_memory,
+)
 from .llm_dialogue import generate_dialogue_reply
 from .player_conversation import (
     PLAYER_ID,
@@ -73,6 +77,7 @@ def say_to_player_conversation(
 
     interaction, actor_name = require_conversation(actor_id)
     initialize_conversation_turns()
+    initialize_memory_provenance()
 
     with get_connection() as conn:
         latest = _latest_turn(conn, interaction.id)
@@ -92,7 +97,9 @@ def say_to_player_conversation(
     # The last player message is provided explicitly; old private memories
     # and previous turns are accessible only through this recipient's context.
     context = AgentContextBuilder().build(
-        agent_id=actor_id, interaction_id=interaction.id,
+        agent_id=actor_id,
+        interaction_id=interaction.id,
+        retrieval_query=player_line,
     )
     reply = generate_dialogue_reply(
         context=context, choice_id="FREE_TEXT", choice_text=player_line,
@@ -132,7 +139,7 @@ def say_to_player_conversation(
         else:
             if latest[1] != actor_id:
                 raise ValueError("NOT_PLAYER_TURN")
-            conn.execute(
+            player_turn = conn.execute(
                 """
                 INSERT INTO player_conversation_turns
                     (interaction_id, speaker_id, text, source, minute)
@@ -154,13 +161,16 @@ def say_to_player_conversation(
                     reply.source, minute,
                 ),
             )
-            conn.execute(
-                "INSERT INTO agent_memory (agent_id, memory) VALUES (?, ?)",
-                (
-                    actor_id,
-                    f"During conversation {interaction.id}, "
-                    f"{PLAYER_ID} said: {player_line}",
-                ),
+            save_episodic_memory(
+                conn,
+                actor_id,
+                f"During conversation {interaction.id}, "
+                f"{PLAYER_ID} said: {player_line}",
+                source_kind="PLAYER_TESTIMONY",
+                source_actor_id=PLAYER_ID,
+                origin_turn_id=player_turn.lastrowid,
+                minute=minute,
+                shareable=False,
             )
             conn.execute(
                 """
