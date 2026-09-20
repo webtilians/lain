@@ -1,7 +1,7 @@
 from .beliefs import load_belief
 from .database import get_connection
 from .agent_context import AgentContextBuilder
-from .dialogue_engine import DeterministicDialogueEngine
+from .llm_dialogue import generate_dialogue_reply
 from .interactions import (
     find_open_interaction,
 )
@@ -246,16 +246,16 @@ def build_agent_reply(
     actor_name: str,
     choice_id: str,
     interaction_id: str,
-) -> str:
-    # Identity and evidence are read from this agent's persisted context,
-    # never from the client or the objective world state.
+):
+    """Return text AND provenance from the agent's bounded context."""
     context = AgentContextBuilder().build(
         agent_id=actor_id,
         interaction_id=interaction_id,
     )
-    return DeterministicDialogueEngine().generate(
+    return generate_dialogue_reply(
         context=context,
         choice_id=choice_id,
+        choice_text=CHOICES[choice_id],
     )
 
 
@@ -266,113 +266,114 @@ def reply_to_player_conversation(
     minute: int,
 ) -> dict:
     interaction, actor_name = require_conversation(actor_id)
-
     if choice_id not in CHOICES:
         raise ValueError("UNKNOWN_DIALOGUE_CHOICE")
     if choice_id == "TELL_OBSERVED" and not player_observed_signal():
         raise ValueError("EVIDENCE_NOT_AVAILABLE")
-
     initialize_conversation_turns()
 
-    # Building context may read several tables or initialize belief tables.
-    # Do this before acquiring SQLite's exclusive writer reservation.
-    agent_line = build_agent_reply(
-        actor_id,
-        actor_name,
-        choice_id,
-        interaction.id,
-    )
-
+    # Reject ordinary retries before calling the model; avoid unnecessary
+    # model costs. Repeat the check under a write lock to prevent double saves.
     with get_connection() as conn:
-        # Serialize concurrent requests before checking the turn identifier.
-        # Both turns, memory and event commit (or roll back) together.
-        conn.execute("BEGIN IMMEDIATE")
         latest = conn.execute(
             """
-            SELECT id, speaker_id
-            FROM player_conversation_turns
-            WHERE interaction_id = ?
-            ORDER BY id DESC
-            LIMIT 1
+            SELECT id, speaker_id FROM player_conversation_turns
+            WHERE interaction_id = ? ORDER BY id DESC LIMIT 1
             """,
             (interaction.id,),
         ).fetchone()
+    if latest is None:
+        raise ValueError("CONVERSATION_NOT_STARTED")
+    if latest[0] != after_turn_id:
+        return conversation_payload(interaction.id, actor_id, actor_name)
+    if latest[1] != actor_id:
+        raise ValueError("NOT_PLAYER_TURN")
 
+    # Generating may take seconds. Never hold a SQLite write lock during
+    # external model inference.
+    reply = build_agent_reply(
+        actor_id, actor_name, choice_id, interaction.id,
+    )
+
+    with get_connection() as conn:
+        conn.execute("BEGIN IMMEDIATE")
+        current = conn.execute(
+            "SELECT status FROM interactions WHERE id = ?",
+            (interaction.id,),
+        ).fetchone()
+        if current is None or current[0] != "OPEN":
+            raise ValueError("NO_OPEN_CONVERSATION")
+        positions = conn.execute(
+            "SELECT id, location FROM agents WHERE id IN (?, ?)",
+            (PLAYER_ID, actor_id),
+        ).fetchall()
+        locations = {row[0]: row[1] for row in positions}
+        if (
+            PLAYER_ID not in locations
+            or actor_id not in locations
+            or locations[PLAYER_ID] != locations[actor_id]
+        ):
+            raise ValueError("ACTOR_NOT_PRESENT")
+        latest = conn.execute(
+            """
+            SELECT id, speaker_id FROM player_conversation_turns
+            WHERE interaction_id = ? ORDER BY id DESC LIMIT 1
+            """,
+            (interaction.id,),
+        ).fetchone()
         if latest is None:
             raise ValueError("CONVERSATION_NOT_STARTED")
-        if latest[0] != after_turn_id:
-            return conversation_payload(
-                interaction.id,
-                actor_id,
-                actor_name,
+        if latest[0] == after_turn_id:
+            if latest[1] != actor_id:
+                raise ValueError("NOT_PLAYER_TURN")
+            player_line = CHOICES[choice_id]
+            conn.execute(
+                """
+                INSERT INTO player_conversation_turns
+                (interaction_id, speaker_id, text, source, minute)
+                VALUES (?, ?, ?, ?, ?)
+                """,
+                (
+                    interaction.id, PLAYER_ID, player_line,
+                    "PLAYER_CHOICE", minute,
+                ),
             )
-        if latest[1] != actor_id:
-            raise ValueError("NOT_PLAYER_TURN")
-
-        player_line = CHOICES[choice_id]
-
-        conn.execute(
-            """
-            INSERT INTO player_conversation_turns (
-                interaction_id,
-                speaker_id,
-                text,
-                source,
-                minute
+            conn.execute(
+                """
+                INSERT INTO player_conversation_turns
+                (interaction_id, speaker_id, text, source, minute)
+                VALUES (?, ?, ?, ?, ?)
+                """,
+                (
+                    interaction.id, actor_id, reply.text,
+                    reply.source, minute,
+                ),
             )
-            VALUES (?, ?, ?, ?, ?)
-            """,
-            (
-                interaction.id,
-                PLAYER_ID,
-                player_line,
-                "PLAYER_CHOICE",
-                minute,
-            ),
-        )
-        conn.execute(
-            """
-            INSERT INTO player_conversation_turns (
-                interaction_id,
-                speaker_id,
-                text,
-                source,
-                minute
+            conn.execute(
+                "INSERT INTO agent_memory (agent_id, memory) VALUES (?, ?)",
+                (
+                    actor_id,
+                    f"During conversation {interaction.id}, "
+                    f"{PLAYER_ID} said: {player_line}",
+                ),
             )
-            VALUES (?, ?, ?, ?, ?)
-            """,
-            (
-                interaction.id,
-                actor_id,
-                agent_line,
-                "DETERMINISTIC_DIALOGUE",
-                minute,
-            ),
-        )
-        conn.execute(
-            """
-            INSERT INTO agent_memory (agent_id, memory)
-            VALUES (?, ?)
-            """,
-            (
-                actor_id,
-                f"During conversation {interaction.id}, "
-                f"{PLAYER_ID} said: {player_line}",
-            ),
-        )
-        conn.execute(
-            """
-            INSERT INTO events (minute, actor_id, action, target, details)
-            VALUES (?, ?, ?, ?, ?)
-            """,
-            (minute, PLAYER_ID, "DIALOGUE_CHOICE", interaction.id, choice_id),
-        )
-        # The connection context commits every part of this reply together.
+            conn.execute(
+                """
+                INSERT INTO events
+                (minute, actor_id, action, target, details)
+                VALUES (?, ?, ?, ?, ?)
+                """,
+                (
+                    minute, PLAYER_ID, "DIALOGUE_CHOICE",
+                    interaction.id, choice_id,
+                ),
+            )
+        # Otherwise a concurrent request already committed this turn.
+        # The caller receives the newest persisted response, without
+        # duplicating turns, memories or events.
 
     return conversation_payload(
-        interaction.id,
-        actor_id,
-        actor_name,
+        interaction.id, actor_id, actor_name,
     )
 
 
