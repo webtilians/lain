@@ -79,6 +79,7 @@ def _provider_reply(context: dict, choice_text: str) -> str:
             for item in context.get("memory_records", [])[-12:]
         ],
         "player_claims": context.get("player_claims", []),
+        "general_claims": context.get("general_claims", []),
         "goals": context["goals"],
         "conversation": (
             None if conversation is None else {
@@ -108,6 +109,9 @@ def _provider_reply(context: dict, choice_text: str) -> str:
         "Hablas como el personaje al jugador: si el jugador te dio una "
         "contraseña, di 'me dijiste', NUNCA 'te dije'. No confundas "
         "una contraseña personal del jugador con una clave del mundo. "
+        "Las general_claims son declaraciones personales atribuidas "
+        "a su emisor, nunca hechos del mundo; si hay versiones previas "
+        "del mismo tema, usa la de mayor origin_turn_id y atribúyela. "
         "Si existe una player_claim de contraseña, representa SOLO "
         "la última contraseña que este personaje ha oído decir al jugador. "
         "Las contraseñas antiguas del historial no sustituyen esa última "
@@ -208,6 +212,12 @@ def generate_dialogue_reply(
                 f"La última contraseña que me dijiste fue "
                 f"{claim['claim_value']}. Lo sé porque me lo contaste tú."
             ),
+            source="GROUNDED_RECALL",
+        )
+    if choice_id == "FREE_TEXT" and context.get("general_claims"):
+        statement = context["general_claims"][0]["reported_text"]
+        return DialogueReply(
+            text=f"Recuerdo que me dijiste: «{statement}».",
             source="GROUNDED_RECALL",
         )
     if os.getenv("LAIN_LLM_ENABLED", "0") == "1":
