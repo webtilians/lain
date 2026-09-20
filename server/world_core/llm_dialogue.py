@@ -160,6 +160,12 @@ def generate_dialogue_reply(
             # No prompts, user data, credentials or provider errors in logs.
             # Never treat the failure as permission to reveal world state.
             pass
+    if choice_id == "FREE_TEXT":
+        # No fake generative response if the model is offline.
+        return DialogueReply(
+            text="Te escucho, pero ahora mismo necesito un momento para responderte.",
+            source="DETERMINISTIC_FALLBACK",
+        )
     return DialogueReply(
         text=DeterministicDialogueEngine().generate(
             context=context,
