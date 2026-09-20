@@ -133,11 +133,28 @@ def test_pause_and_resume_reuses_original_transcript():
     )
     assert not created
     assert reopened.id == interaction.id
-    assert reopened.status == "OPEN"
-    assert (
-        start_player_conversation("AGENT_K", sim.minute)["turn_id"]
-        == first["turn_id"]
-    )
+    assert reopened.status == "RESUMING"
+    resumed = start_player_conversation("AGENT_K", sim.minute)
+    assert resumed["turn_id"] > first["turn_id"]
+    assert resumed["line"] == "Nos volvemos a encontrar. ¿Qué quieres contarme?"
+    assert get_interaction(interaction.id).status == "OPEN"
+
+    # Repeating START due to a network retry must not repeat the greeting.
+    again = start_player_conversation("AGENT_K", sim.minute)
+    assert again["turn_id"] == resumed["turn_id"]
+
+    with get_connection() as conn:
+        rows = conn.execute(
+            """
+            SELECT speaker_id, text FROM player_conversation_turns
+            WHERE interaction_id = ? ORDER BY id
+            """,
+            (interaction.id,),
+        ).fetchall()
+    assert rows == [
+        ("AGENT_K", first["line"]),
+        ("AGENT_K", resumed["line"]),
+    ]
 
 
 def test_player_cannot_pause_another_agents_conversation():
@@ -175,3 +192,41 @@ def test_failed_memory_insert_rolls_back_both_turns_and_event():
             (interaction.id,),
         ).fetchone()[0]
     assert (turn_count, event_count) == (1, 0)
+
+
+def test_resumed_greeting_preserves_memory_and_previous_reply():
+    sim, interaction = colocated_contact()
+    save_belief(
+        NodeBelief(
+            agent_id="PLAYER_1",
+            node_id="NODE_07",
+            believed_location="STATION",
+            believed_strength=0.6,
+            confidence=0.85,
+            source="DIRECT_PERCEPTION",
+            updated_minute=sim.minute,
+        )
+    )
+    first = start_player_conversation("AGENT_K", sim.minute)
+    said = reply_to_player_conversation(
+        "AGENT_K", "TELL_OBSERVED", first["turn_id"], sim.minute,
+    )
+    assert "testimonio" in said["line"]
+
+    pause_player_conversation("AGENT_K", interaction.id, sim.minute)
+    create_or_get_interaction(
+        "PLAYER_1", "AGENT_K",
+        "PLAYER_INITIATED_CONVERSATION", "UNKNOWN", sim.minute + 10,
+    )
+    greeting = start_player_conversation("AGENT_K", sim.minute + 10)
+    assert greeting["line"] != said["line"]
+    remembered = reply_to_player_conversation(
+        "AGENT_K", "TELL_OBSERVED", greeting["turn_id"], sim.minute + 10,
+    )
+    assert "Recuerdo" in remembered["line"]
+    with get_connection() as conn:
+        turns = conn.execute(
+            "SELECT COUNT(*) FROM player_conversation_turns WHERE interaction_id = ?",
+            (interaction.id,),
+        ).fetchone()[0]
+    assert turns == 6
