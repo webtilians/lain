@@ -49,13 +49,32 @@ def _provider_reply(context: dict, choice_text: str) -> str:
 
     # Only the agent's projected knowledge enters the external prompt.
     # No global simulation object, player snapshot, DB or secret is passed.
+    conversation = context["conversation"]
     agent_context = {
         "identity": context["identity"],
         "situation": context["situation"],
-        "beliefs": context["beliefs"],
-        "memory": context["memory"],
+        "beliefs": {
+            name: context["beliefs"][name][-32:]
+            for name in ("nodes", "actors", "situations")
+        },
+        "memory": [
+            str(memory)[:500] for memory in context["memory"][-12:]
+        ],
         "goals": context["goals"],
-        "conversation": context["conversation"],
+        "conversation": (
+            None if conversation is None else {
+                "id": conversation["id"],
+                "status": conversation["status"],
+                "turns": [
+                    {
+                        "speaker_id": turn["speaker_id"],
+                        "text": str(turn["text"])[:600],
+                        "source": turn["source"],
+                    }
+                    for turn in conversation["turns"][-16:]
+                ],
+            }
+        ),
     }
     system = (
         "Eres un personaje ficticio de un juego psicológico en español. "
@@ -137,7 +156,7 @@ def generate_dialogue_reply(
                 text=_provider_reply(context, choice_text),
                 source="LLM_DIALOGUE",
             )
-        except (Exception):
+        except Exception:
             # No prompts, user data, credentials or provider errors in logs.
             # Never treat the failure as permission to reveal world state.
             pass
