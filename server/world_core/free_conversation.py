@@ -10,6 +10,7 @@ from .episodic_memory import (
     save_episodic_memory,
 )
 from .llm_dialogue import generate_dialogue_reply
+from .player_claims import initialize_player_claims, record_player_claim
 from .player_conversation import (
     PLAYER_ID,
     conversation_payload,
@@ -78,6 +79,7 @@ def say_to_player_conversation(
     interaction, actor_name = require_conversation(actor_id)
     initialize_conversation_turns()
     initialize_memory_provenance()
+    initialize_player_claims()
 
     with get_connection() as conn:
         latest = _latest_turn(conn, interaction.id)
@@ -160,6 +162,13 @@ def say_to_player_conversation(
                     interaction.id, actor_id, reply.text,
                     reply.source, minute,
                 ),
+            )
+            record_player_claim(
+                conn,
+                actor_id,
+                player_line,
+                player_turn.lastrowid,
+                minute,
             )
             save_episodic_memory(
                 conn,
