@@ -183,7 +183,7 @@ def find_open_interaction(
             WHERE initiator_id = ?
               AND recipient_id = ?
               AND topic = ?
-              AND status IN ('OPEN', 'PAUSED')
+              AND status IN ('OPEN', 'PAUSED', 'RESUMING')
 
             ORDER BY created_minute DESC
 
@@ -315,11 +315,14 @@ def create_or_get_interaction(
 
     if existing is not None:
         if existing.status == "PAUSED":
+            # CONTACT is accepted, but the new greeting has not been
+            # delivered yet. START must append it once before returning
+            # the conversation to OPEN. Repeated CONTACT remains idempotent.
             with get_connection() as conn:
                 conn.execute(
                     """
                     UPDATE interactions
-                    SET status = 'OPEN', updated_minute = ?
+                    SET status = 'RESUMING', updated_minute = ?
                     WHERE id = ? AND status = 'PAUSED'
                     """,
                     (minute, existing.id),
