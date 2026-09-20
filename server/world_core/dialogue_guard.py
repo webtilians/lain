@@ -17,7 +17,8 @@ def _plain(text: str) -> str:
 
 
 NODE_07 = re.compile(r"\b(?:node[_\s-]*0?7|nodo[_\s-]*0?7)\b")
-KEY = re.compile(r"\b(?:clave|contrasena|codigo|password|pin)\b")
+# Recognize a credential word even when attached to a value (e.g. clave123).
+KEY = re.compile(r"\b(?:clave|contrasena|codigo|password|pin)(?:[a-z0-9_-]+)?\b")
 ACCESS = re.compile(
     r"\b(?:acceder|acceso|entrar|entrada|abrir|abre|activar|"
     r"desbloquear|desbloquea|habilita|permite)\b"
@@ -34,14 +35,35 @@ def asks_about_node_access_code(text: str) -> bool:
 
 
 def asserts_unverified_node_access_code(text: str) -> bool:
+    """Fail closed for credential talk about NODE_07 in generated dialogue.
+
+    Old guard required a word like "debes" or "usar" next to a credential.
+    That missed "Necesito que uses Killo13 para acceder" and standalone
+    codes like "clave123". Here there is no verified access-key field in
+    World Core, so even a plausible affirmative *or negative* model
+    statement about NODE_07 credentials is replaced with the
+    authoritative "no verified access code" response.
+    """
     plain = _plain(text)
     return bool(
         NODE_07.search(plain)
         and KEY.search(plain)
-        and ACCESS.search(plain)
         and (
-            REQUIREMENT.search(plain)
-            or re.search(r"\b(?:clave|contrasena|codigo)\b.{0,60}\b(?:abre|desbloquea|permite|habilita)\b", plain)
+            ACCESS.search(plain)
+            or REQUIREMENT.search(plain)
+            or re.search(r"\b(?:clave|contrasena|codigo)\b", plain)
+        )
+    )
+
+
+def misattributes_player_password(text: str) -> bool:
+    """Catch a model claiming it told the player their own password."""
+    plain = _plain(text)
+    return bool(
+        KEY.search(plain)
+        and re.search(
+            r"\b(?:que\s+te\s+dije|yo\s+te\s+dije|que\s+te\s+conte)\b",
+            plain,
         )
     )
 
