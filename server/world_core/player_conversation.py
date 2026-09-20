@@ -47,7 +47,7 @@ def initialize_conversation_turns() -> None:
         conn.commit()
 
 
-def require_conversation(actor_id: str):
+def require_conversation(actor_id: str, allow_resuming: bool = False):
     with get_connection() as conn:
         player = conn.execute(
             """
@@ -83,7 +83,8 @@ def require_conversation(actor_id: str):
         topic=CONVERSATION_TOPIC,
     )
 
-    if interaction is None or interaction.status != "OPEN":
+    permitted_statuses = {"OPEN", "RESUMING"} if allow_resuming else {"OPEN"}
+    if interaction is None or interaction.status not in permitted_statuses:
         raise ValueError("NO_OPEN_CONVERSATION")
 
     return interaction, actor[0]
@@ -170,23 +171,41 @@ def start_player_conversation(
     actor_id: str,
     minute: int,
 ) -> dict:
-    interaction, actor_name = require_conversation(actor_id)
+    interaction, actor_name = require_conversation(
+        actor_id,
+        allow_resuming=True,
+    )
     initialize_conversation_turns()
 
     with get_connection() as conn:
-        # An initial line must be inserted only once, even with two callers.
+        # Mark the session OPEN and append its greeting in one transaction.
+        # If START is retried, the status is already OPEN and no duplicate
+        # greeting is recorded. All previous turns remain in the database.
         conn.execute("BEGIN IMMEDIATE")
+        current = conn.execute(
+            "SELECT status FROM interactions WHERE id = ?",
+            (interaction.id,),
+        ).fetchone()
+        if current is None or current[0] not in {"OPEN", "RESUMING"}:
+            raise ValueError("NO_OPEN_CONVERSATION")
+
         existing = conn.execute(
             """
             SELECT id
             FROM player_conversation_turns
             WHERE interaction_id = ?
+            ORDER BY id DESC
             LIMIT 1
             """,
             (interaction.id,),
         ).fetchone()
 
-        if existing is None:
+        if existing is None or current[0] == "RESUMING":
+            greeting = (
+                "Te escucho. ¿Qué quieres saber?"
+                if existing is None
+                else "Nos volvemos a encontrar. ¿Qué quieres contarme?"
+            )
             conn.execute(
                 """
                 INSERT INTO player_conversation_turns (
@@ -201,12 +220,19 @@ def start_player_conversation(
                 (
                     interaction.id,
                     actor_id,
-                    "Te escucho. ¿Qué quieres saber?",
-                    "DETERMINISTIC_DIALOGUE",
+                    greeting,
+                    "DETERMINISTIC_GREETING",
                     minute,
                 ),
             )
-            conn.commit()
+        if current[0] == "RESUMING":
+            conn.execute(
+                """
+                UPDATE interactions SET status = 'OPEN', updated_minute = ?
+                WHERE id = ? AND status = 'RESUMING'
+                """,
+                (minute, interaction.id),
+            )
 
     return conversation_payload(
         interaction.id,
@@ -371,15 +397,15 @@ def pause_player_conversation(
             or row[0] != PLAYER_ID
             or row[1] != actor_id
             or row[2] != CONVERSATION_TOPIC
-            or row[3] not in {"OPEN", "PAUSED"}
+            or row[3] not in {"OPEN", "PAUSED", "RESUMING"}
         ):
             raise ValueError("CONVERSATION_NOT_AVAILABLE")
-        if row[3] == "OPEN":
+        if row[3] in {"OPEN", "RESUMING"}:
             conn.execute(
                 """
                 UPDATE interactions
                 SET status = 'PAUSED', updated_minute = ?
-                WHERE id = ? AND status = 'OPEN'
+                WHERE id = ? AND status IN ('OPEN', 'RESUMING')
                 """,
                 (minute, interaction_id),
             )
