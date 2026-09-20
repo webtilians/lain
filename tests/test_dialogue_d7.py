@@ -50,7 +50,8 @@ def test_free_text_is_persisted_as_player_testimony_without_world_facts():
         "AGENT_K", statement, first["turn_id"], sim.minute,
     )
     assert response["turn_id"] > first["turn_id"]
-    assert response["response_source"] == "DETERMINISTIC_FALLBACK"
+    assert response["response_source"] == "CURRENT_TESTIMONY"
+    assert "AZUL-743" in response["line"]
 
     with get_connection() as conn:
         rows = conn.execute(
