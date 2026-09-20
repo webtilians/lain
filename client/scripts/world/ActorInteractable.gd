@@ -320,6 +320,7 @@ func _on_chat_request_completed(
 		)
 		return
 
+	print("DIALOGUE // SOURCE = ", parsed.get("response_source", "UNKNOWN"))
 	chat_turn_id = int(
 		parsed.get("turn_id", 0)
 	)
