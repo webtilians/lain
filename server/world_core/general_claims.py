@@ -27,7 +27,7 @@ _ASSIGNMENT = re.compile(
     re.IGNORECASE,
 )
 _DIRECT_QUESTION = re.compile(
-    rf"^\s*[¿]?\s*(?:cu[aá]l\s+es|c[oó]mo\s+se\s+llama)"
+    rf"^\s*[¿]?\s*(?:cu[aá]l\s+es|c[oó]mo\s+se\s+llama|qu[eé]\s+nombre\s+tiene)"
     rf"\s+mi\s+{TOPIC}\s*[?]?\s*$",
     re.IGNORECASE,
 )
