@@ -24,6 +24,11 @@ from server.world_core.simulation import (
     Simulation,
 )
 
+from server.world_core.player_conversation import (
+    start_player_conversation,
+    reply_to_player_conversation,
+)
+
 
 app = FastAPI(
     title="LAIN World API",
@@ -52,6 +57,11 @@ class PlayerStepRequest(
     target: str
 
 
+class PlayerConversationReply(BaseModel):
+    choice_id: str
+    after_turn_id: int
+
+
 def perform_player_step(
     action: str,
     target: str,
@@ -71,10 +81,21 @@ def perform_player_step(
         source="GODOT_CLIENT",
     )
 
-    runtime.tick()
+    action_results = runtime.tick()
+
+    action_result = action_results.get(
+        action_id,
+        {
+            "accepted": False,
+            "action": action,
+            "target": target,
+            "reason": "ACTION_NOT_RESOLVED",
+        },
+    )
 
     return {
         "action_id": action_id,
+        "action_result": action_result,
         "state": build_player_snapshot(
             PLAYER_ID
         ),
@@ -160,5 +181,50 @@ def player_message_ack(
     except ValueError as error:
         raise HTTPException(
             status_code=404,
+            detail=str(error),
+        )
+
+
+@app.post(
+    "/api/v1/player/conversations/{actor_id}/start"
+)
+def player_conversation_start(
+    actor_id: str,
+):
+    runtime = get_runtime()
+
+    try:
+        return start_player_conversation(
+            actor_id=actor_id,
+            minute=runtime.minute,
+        )
+
+    except ValueError as error:
+        raise HTTPException(
+            status_code=409,
+            detail=str(error),
+        )
+
+
+@app.post(
+    "/api/v1/player/conversations/{actor_id}/reply"
+)
+def player_conversation_reply(
+    actor_id: str,
+    request: PlayerConversationReply,
+):
+    runtime = get_runtime()
+
+    try:
+        return reply_to_player_conversation(
+            actor_id=actor_id,
+            choice_id=request.choice_id,
+            after_turn_id=request.after_turn_id,
+            minute=runtime.minute,
+        )
+
+    except ValueError as error:
+        raise HTTPException(
+            status_code=409,
             detail=str(error),
         )

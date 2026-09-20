@@ -73,6 +73,10 @@ from .messages import (
     ensure_initial_player_message,
 )
 
+from .station_story import (
+    ensure_station_followup,
+)
+
 from .models import (
     ActionIntent,
     Agent,
@@ -198,6 +202,11 @@ class Simulation:
         self.seed_initial_leads()
 
         ensure_initial_player_message()
+
+        ensure_station_followup(
+            player_id=self.player.id,
+            minute=self.minute,
+        )
 
     # ==================================================
     # BOOTSTRAP
@@ -632,12 +641,21 @@ class Simulation:
             "CONTACT": 0.02,
         }
 
-        required_energy = (
-            costs.get(
+        # El movimiento entre localizaciones es gratuito
+        # para el jugador humano.
+        # Los agentes autónomos conservan su coste.
+
+        if (
+            agent.id == "PLAYER_1"
+            and action == "MOVE"
+        ):
+            required_energy = 0.0
+
+        else:
+            required_energy = costs.get(
                 action,
                 0.0,
             )
-        )
 
         if (
             agent.energy
@@ -817,6 +835,10 @@ class Simulation:
         stability_delta = 0.0
         connection_delta = 0.0
 
+        # Resultados de las acciones procesadas
+        # durante este tick.
+        self.action_results = {}
+
         for (
             action_id,
             intent,
@@ -831,6 +853,13 @@ class Simulation:
             if agent is None:
 
                 if action_id is not None:
+
+                    self.action_results[action_id] = {
+                        "accepted": False,
+                        "action": intent.action,
+                        "target": intent.target,
+                        "reason": "UNKNOWN_ACTOR",
+                    }
 
                     mark_action_processed(
                         action_id
@@ -871,6 +900,13 @@ class Simulation:
                 )
 
                 if action_id is not None:
+
+                    self.action_results[action_id] = {
+                        "accepted": False,
+                        "action": intent.action,
+                        "target": intent.target,
+                        "reason": reason,
+                    }
 
                     mark_action_processed(
                         action_id
@@ -919,10 +955,15 @@ class Simulation:
                     arrival
                 )
 
-                agent.energy = max(
-                    0.0,
-                    agent.energy - 0.05,
-                )
+                # Solo los agentes autónomos consumen
+                # energía al desplazarse.
+
+                if agent.id != "PLAYER_1":
+
+                    agent.energy = max(
+                        0.0,
+                        agent.energy - 0.05,
+                    )
 
                 # Important:
                 # movement intelligence must record
@@ -969,8 +1010,9 @@ class Simulation:
                         recipient_id=target,
 
                         topic=(
-                            "UNAUTHORIZED_SIGNAL_"
-                            "MANIPULATION"
+                            "PLAYER_INITIATED_CONVERSATION"
+                            if agent.id == self.player.id
+                            else "UNAUTHORIZED_SIGNAL_MANIPULATION"
                         ),
 
                         source_goal=(
@@ -1231,6 +1273,13 @@ class Simulation:
 
             if action_id is not None:
 
+                self.action_results[action_id] = {
+                    "accepted": True,
+                    "action": action,
+                    "target": event_target,
+                    "reason": "",
+                }
+
                 mark_action_processed(
                     action_id
                 )
@@ -1274,6 +1323,8 @@ class Simulation:
                 connection_delta=connection_delta,
             )
 
+        return self.action_results
+
     # ==================================================
     # TICK
     # ==================================================
@@ -1314,8 +1365,13 @@ class Simulation:
             self.cognition_phase()
         )
 
-        self.resolve_intents(
+        action_results = self.resolve_intents(
             intents
+        )
+
+        ensure_station_followup(
+            player_id=self.player.id,
+            minute=self.minute,
         )
 
         evaluate_nodes(
@@ -1327,6 +1383,8 @@ class Simulation:
 
             minute=self.minute,
         )
+
+        return action_results
 
     # ==================================================
     # OUTPUT

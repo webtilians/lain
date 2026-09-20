@@ -249,6 +249,53 @@ def find_latest_open_for_recipient(
     )
 
 
+def find_latest_open_for_initiator(
+    initiator_id: str,
+) -> Interaction | None:
+
+    initialize_interactions()
+
+    with get_connection() as conn:
+
+        row = conn.execute(
+            """
+            SELECT
+                id,
+                interaction_type,
+
+                initiator_id,
+                recipient_id,
+
+                topic,
+                status,
+
+                source_goal,
+
+                created_minute,
+                updated_minute
+
+            FROM interactions
+
+            WHERE initiator_id = ?
+              AND status = 'OPEN'
+
+            ORDER BY
+                created_minute DESC,
+                id DESC
+
+            LIMIT 1
+            """,
+            (initiator_id,),
+        ).fetchone()
+
+    if row is None:
+        return None
+
+    return row_to_interaction(
+        row
+    )
+
+
 def create_or_get_interaction(
     initiator_id: str,
     recipient_id: str,

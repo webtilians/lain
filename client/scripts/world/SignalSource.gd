@@ -1,0 +1,179 @@
+extends StaticBody3D
+
+@export var node_id := "NODE_07"
+
+var busy := false
+var pending_action := ""
+
+func _ready() -> void:
+	add_to_group("interactable")
+
+	EventDialog.choice_selected.connect(
+		_on_choice_selected
+	)
+
+	WorldApi.action_resolved.connect(
+		_on_action_resolved
+	)
+
+	WorldApi.api_error.connect(
+		_on_api_error
+	)
+
+func interact() -> void:
+	if busy or EventDialog.visible:
+		return
+
+	EventDialog.show_choices(
+		str(get_instance_id()),
+		"NODE_07 // UNKNOWN SIGNAL",
+		(
+			"Una estructura emite un pulso irregular.\n\n"
+			+ "La información recibida a través de The Wired "
+			+ "sitúa aquí una señal anómala.\n\n"
+			+ "¿Qué quieres hacer?"
+		),
+		[
+			{
+				"id": "INVESTIGATE",
+				"text": "1. Investigar la señal",
+			},
+			{
+				"id": "OBSERVE",
+				"text": "2. Observar sin intervenir",
+			},
+			{
+				"id": "LEAVE",
+				"text": "3. Alejarse",
+			},
+		]
+	)
+
+func _on_choice_selected(
+	owner_id: String,
+	choice_id: String
+) -> void:
+	if owner_id != str(get_instance_id()):
+		return
+
+	if not EventDialog.visible or busy:
+		return
+
+	if choice_id == "LEAVE":
+		EventDialog.close_event()
+		return
+
+	if choice_id not in ["INVESTIGATE", "OBSERVE"]:
+		return
+
+	busy = true
+	pending_action = choice_id
+	EventDialog.show_event(
+		"NODE_07",
+		"PROCESSING..."
+	)
+	WorldApi.step(choice_id, node_id)
+
+func _on_action_resolved(
+	result: Dictionary,
+	updated_snapshot: Dictionary
+) -> void:
+	if not busy:
+		return
+
+	busy = false
+	var action := pending_action
+	pending_action = ""
+
+	if not bool(result.get("accepted", false)):
+		_show_rejection(result, updated_snapshot)
+		return
+
+	_show_success(action, updated_snapshot)
+
+func _show_rejection(
+	result: Dictionary,
+	updated_snapshot: Dictionary
+) -> void:
+	var reason := str(result.get("reason", "UNKNOWN"))
+	var player: Dictionary = updated_snapshot.get("player", {})
+	var energy := float(player.get("energy", 0.0))
+	var explanation := ""
+
+	match reason:
+		"NOT_ENOUGH_ENERGY":
+			explanation = "No tienes energía suficiente para realizar esta acción."
+		"TARGET_NOT_PRESENT":
+			explanation = "La señal ya no se encuentra en esta localización."
+		"NODE_INACTIVE":
+			explanation = "La señal no está activa."
+		_:
+			explanation = "World Core no ha permitido ejecutar esta acción."
+
+	EventDialog.show_event(
+		"ACTION DENIED",
+		explanation
+		+ "\n\nREASON // " + reason
+		+ "\nENERGY // %.2f" % energy
+	)
+
+func _show_success(
+	action: String,
+	updated_snapshot: Dictionary
+) -> void:
+	var known_nodes: Array = updated_snapshot.get(
+		"known_nodes",
+		[]
+	)
+
+	for node_data in known_nodes:
+		if str(node_data.get("id", "")) != node_id:
+			continue
+
+		var belief_data = node_data.get("belief", {})
+		if typeof(belief_data) != TYPE_DICTIONARY:
+			break
+
+		var confidence := float(
+			belief_data.get("confidence", 0.0)
+		) * 100.0
+		var source := str(
+			belief_data.get("source", "UNKNOWN")
+		)
+
+		if action == "INVESTIGATE":
+			EventDialog.show_event(
+				"INVESTIGATION COMPLETE",
+				"Has investigado la señal en profundidad.\n\n"
+				+ "La información disponible sobre NODE_07 se ha actualizado.\n\n"
+				+ "SOURCE // " + source
+				+ "\nCONFIDENCE // %.0f%%" % confidence
+			)
+		else:
+			EventDialog.show_event(
+				"OBSERVATION COMPLETE",
+				"Has observado la señal sin intervenir.\n\n"
+				+ "SOURCE // " + source
+				+ "\nCONFIDENCE // %.0f%%" % confidence
+			)
+
+		return
+
+	EventDialog.show_event(
+		"ACTION COMPLETE",
+		"La acción ha sido aceptada.\n\n"
+		+ "Todavía no dispones de una interpretación de la señal."
+	)
+
+func _on_api_error(
+	message: String
+) -> void:
+	if not busy:
+		return
+
+	busy = false
+	pending_action = ""
+	EventDialog.show_event(
+		"CONNECTION ERROR",
+		message
+	)

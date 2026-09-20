@@ -87,7 +87,7 @@ def test_move_does_not_teleport():
     )
 
 # ======================================================
-# 3. EACH HOP COSTS ENERGY
+# 3. PLAYER MOVEMENT IS FREE
 # ======================================================
 
 def test_travel_costs_energy_per_hop():
@@ -112,7 +112,7 @@ def test_travel_costs_energy_per_hop():
     assert (
         simulation.player.energy
         == pytest.approx(
-            energy_before - 0.05
+            energy_before
         )
     )
 

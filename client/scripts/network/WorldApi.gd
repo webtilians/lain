@@ -2,29 +2,51 @@ extends Node
 
 signal snapshot_updated(snapshot: Dictionary)
 signal api_error(message: String)
+signal action_denied(reason: String)
+signal action_resolved(
+	result: Dictionary,
+	updated_snapshot: Dictionary
+)
 
 const BASE_URL := "http://127.0.0.1:8000"
 
 var snapshot: Dictionary = {}
 
-var _request: HTTPRequest
-var _pending_kind := ""
+var _state_request: HTTPRequest
+var _mutation_request: HTTPRequest
+
+var _mutation_kind := ""
 
 func _ready() -> void:
-	_request = HTTPRequest.new()
-	add_child(_request)
-	_request.request_completed.connect(
-		_on_request_completed
+	_state_request = HTTPRequest.new()
+	add_child(_state_request)
+	_state_request.request_completed.connect(
+		_on_state_request_completed
 	)
 
+	_mutation_request = HTTPRequest.new()
+	add_child(_mutation_request)
+	_mutation_request.request_completed.connect(
+		_on_mutation_request_completed
+	)
+
+# =====================================================
+# STATE
+# =====================================================
+
 func request_state() -> void:
-	if _request.get_http_client_status() != HTTPClient.STATUS_DISCONNECTED:
+	if (
+		_state_request.get_http_client_status()
+		!= HTTPClient.STATUS_DISCONNECTED
+	):
+		print("WORLD API // STATE REQUEST ALREADY ACTIVE")
 		return
 
-	_pending_kind = "state"
+	print("WORLD API // GET STATE")
 
-	var error := _request.request(
-		BASE_URL + "/api/v1/player/state"
+	var error := _state_request.request(
+		BASE_URL
+		+ "/api/v1/player/state"
 	)
 
 	if error != OK:
@@ -32,14 +54,27 @@ func request_state() -> void:
 			"Could not request player state: %s" % error
 		)
 
+# =====================================================
+# PLAYER ACTION
+# =====================================================
+
 func step(
 	action: String,
 	target: String
 ) -> void:
-	if _request.get_http_client_status() != HTTPClient.STATUS_DISCONNECTED:
+	print("WORLD API // STEP ", action, " -> ", target)
+
+	if (
+		_mutation_request.get_http_client_status()
+		!= HTTPClient.STATUS_DISCONNECTED
+	):
+		print("WORLD API // BUSY")
+		api_error.emit(
+			"World API action request already active"
+		)
 		return
 
-	_pending_kind = "step"
+	_mutation_kind = "step"
 
 	var payload := {
 		"action": action,
@@ -51,7 +86,7 @@ func step(
 		"Content-Type: application/json"
 	]
 
-	var error := _request.request(
+	var error := _mutation_request.request(
 		BASE_URL + "/api/v1/player/step",
 		headers,
 		HTTPClient.METHOD_POST,
@@ -59,22 +94,32 @@ func step(
 	)
 
 	if error != OK:
+		_mutation_kind = ""
 		api_error.emit(
 			"Could not send action: %s" % error
 		)
 
+# =====================================================
+# MESSAGE ACK
+# =====================================================
+
 func acknowledge_message(
 	message_id: String
 ) -> void:
+	print("WORLD API // ACK MESSAGE ", message_id)
+
 	if (
-		_request.get_http_client_status()
+		_mutation_request.get_http_client_status()
 		!= HTTPClient.STATUS_DISCONNECTED
 	):
+		api_error.emit(
+			"World API action request already active"
+		)
 		return
 
-	_pending_kind = "ack_message"
+	_mutation_kind = "ack_message"
 
-	var error := _request.request(
+	var error := _mutation_request.request(
 		BASE_URL
 		+ "/api/v1/player/messages/"
 		+ message_id
@@ -84,23 +129,30 @@ func acknowledge_message(
 	)
 
 	if error != OK:
+		_mutation_kind = ""
 		api_error.emit(
 			"Could not acknowledge message: %s" % error
 		)
 
-func _on_request_completed(
+# =====================================================
+# STATE RESPONSE
+# =====================================================
+
+func _on_state_request_completed(
 	result: int,
 	response_code: int,
 	_headers: PackedStringArray,
 	body: PackedByteArray
 ) -> void:
+	var text := body.get_string_from_utf8()
+	print("WORLD API // STATE RESPONSE ", response_code)
+
 	if result != HTTPRequest.RESULT_SUCCESS:
 		api_error.emit(
-			"Network error: %s" % result
+			"State network error: %s" % result
 		)
 		return
 
-	var text := body.get_string_from_utf8()
 	var parsed = JSON.parse_string(text)
 
 	if response_code < 200 or response_code >= 300:
@@ -115,14 +167,110 @@ func _on_request_completed(
 		)
 		return
 
-	if (
-		_pending_kind == "step"
-		or
-		_pending_kind == "ack_message"
-	):
-		snapshot = parsed.get("state", {})
-	else:
-		snapshot = parsed
-
+	snapshot = parsed
+	_debug_snapshot(snapshot)
 	snapshot_updated.emit(snapshot)
-	_pending_kind = ""
+
+# =====================================================
+# MUTATION RESPONSE
+# =====================================================
+
+func _on_mutation_request_completed(
+	result: int,
+	response_code: int,
+	_headers: PackedStringArray,
+	body: PackedByteArray
+) -> void:
+	var kind := _mutation_kind
+	_mutation_kind = ""
+
+	var text := body.get_string_from_utf8()
+	print("WORLD API // ", kind, " RESPONSE ", response_code)
+
+	if result != HTTPRequest.RESULT_SUCCESS:
+		api_error.emit(
+			"Action network error: %s" % result
+		)
+		return
+
+	var parsed = JSON.parse_string(text)
+
+	if response_code < 200 or response_code >= 300:
+		var message := "Server returned %s: %s" % [response_code, text]
+		print("WORLD API // ERROR ", message)
+		api_error.emit(message)
+		return
+
+	if typeof(parsed) != TYPE_DICTIONARY:
+		api_error.emit(
+			"Invalid response from World Core"
+		)
+		return
+
+	var action_result: Dictionary = parsed.get(
+		"action_result",
+		{}
+	)
+
+	if kind == "step" and action_result.is_empty():
+		api_error.emit(
+			"Missing action_result from World Core"
+		)
+		return
+
+	if not action_result.get("accepted", true):
+		var reason: String = action_result.get("reason", "UNKNOWN")
+		print("WORLD API // ACTION DENIED (", reason, ")")
+		action_denied.emit(reason)
+
+	snapshot = parsed.get("state", {})
+	_debug_snapshot(snapshot)
+	snapshot_updated.emit(snapshot)
+
+	if kind == "step":
+		action_resolved.emit(
+			action_result,
+		snapshot
+	)
+
+# =====================================================
+# DEBUG
+# =====================================================
+
+func _debug_snapshot(
+	next_snapshot: Dictionary
+) -> void:
+	var player: Dictionary = next_snapshot.get(
+		"player",
+		{}
+	)
+
+	print(
+		"WORLD API // LOCATION = ",
+		player.get("location", "UNKNOWN")
+	)
+
+	print(
+		"WORLD API // ENERGY = ",
+		player.get("energy", "UNKNOWN")
+	)
+
+	var wired: Dictionary = next_snapshot.get(
+		"wired",
+		{}
+	)
+
+	var signals: Array = wired.get(
+		"signals",
+		[]
+	)
+
+	for signal_data in signals:
+		print(
+			"WORLD API // SIGNAL ",
+			signal_data.get("node_id", "UNKNOWN"),
+			" CONFIDENCE=",
+			signal_data.get("confidence", 0),
+			" VERIFIED=",
+			signal_data.get("verified", false)
+		)

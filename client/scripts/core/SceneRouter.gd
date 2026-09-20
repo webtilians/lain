@@ -1,8 +1,9 @@
 extends Node
 
 const LOCATION_SCENES := {
-	"APARTMENT": "res://scenes/apartment/Apartment.tscn",
+	"APARTMENT": "res://scenes/apartment/ApartmentIso.tscn",
 	"APARTMENT_DISTRICT": "res://scenes/apartment_district/ApartmentDistrict.tscn",
+	"STATION": "res://scenes/station/Station.tscn",
 }
 
 var current_location := ""

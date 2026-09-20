@@ -68,9 +68,20 @@ func _render_mail(next_snapshot: Dictionary) -> void:
 
 	var message: Dictionary = messages[0]
 	current_message_id = str(message.get("id", ""))
+	var is_bootstrap := (
+		current_message_id
+		== "MSG_BOOTSTRAP_001"
+	)
 	sender_label.text = "FROM: %s" % message.get("sender", "UNKNOWN")
 	subject_label.text = "SUBJECT: %s" % message.get("subject", "")
 	body_label.text = str(message.get("body", ""))
+
+	if not is_bootstrap:
+		status_label.text = (
+			"MESSAGE RECEIVED"
+		)
+		connect_button.visible = false
+		return
 
 	if bool(message.get("acknowledged", false)):
 		status_label.text = "CONNECTION ACCEPTED"
@@ -98,14 +109,18 @@ func _render_wired(next_snapshot: Dictionary) -> void:
 
 	var lines: Array[String] = []
 	for signal_data in signals:
+		var verified := bool(signal_data.get("verified", false))
 		lines.append(str(signal_data.get("node_id", "UNKNOWN")))
 		lines.append("LOCATION // %s" % signal_data.get("location", "UNKNOWN"))
 		lines.append("SIGNAL // %.2f" % float(signal_data.get("strength", 0.0)))
 		lines.append("CONFIDENCE // %.0f%%" % (float(signal_data.get("confidence", 0.0)) * 100.0))
+		lines.append("STATUS // %s" % ("VERIFIED" if verified else "UNVERIFIED"))
+		lines.append("ORIGIN // %s" % signal_data.get("origin_source", "UNKNOWN"))
+		lines.append("CURRENT SOURCE // %s" % signal_data.get("current_source", "UNKNOWN"))
 		lines.append("")
 
 	body_label.text = "\n".join(lines)
-	status_label.text = "SOURCE // UNKNOWN"
+	status_label.text = "WIRED LINK // ACTIVE"
 
 func _show_mail() -> void:
 	mode = "MAIL"

@@ -9,6 +9,7 @@ from .beliefs import (
 
 from .interactions import (
     find_latest_open_for_recipient,
+    find_latest_open_for_initiator,
 )
 
 from .locations import (
@@ -55,10 +56,15 @@ def build_wired_projection(
             if belief is None:
                 continue
 
-            if belief.get(
-                "source"
+            if node.get(
+                "knowledge_source"
             ) != "WIRED_MESSAGE":
                 continue
+
+            current_source = belief.get(
+                "source",
+                "UNKNOWN",
+            )
 
             signals.append(
                 {
@@ -66,7 +72,17 @@ def build_wired_projection(
                     "location": belief["location"],
                     "strength": belief["strength"],
                     "confidence": belief["confidence"],
-                    "source": belief["source"],
+                    "origin_source": node[
+                        "knowledge_source"
+                    ],
+                    "current_source": current_source,
+                    "verified": (
+                        current_source
+                        == "DIRECT_PERCEPTION"
+                    ),
+                    "updated_minute": belief[
+                        "updated_minute"
+                    ],
                 }
             )
 
@@ -192,6 +208,44 @@ def list_player_situations(
     ]
 
 
+def list_visible_actors(
+    player_id: str,
+    player_location: str,
+) -> list[dict]:
+    """
+    Proyección provisional de personajes presentes
+    en la misma localización semántica que el jugador.
+
+    No expone ubicaciones de otros agentes,
+    sus objetivos, sus recuerdos ni sus creencias.
+    """
+
+    with get_connection() as conn:
+
+        rows = conn.execute(
+            """
+            SELECT id, name
+            FROM agents
+            WHERE location = ?
+              AND id != ?
+              AND controller_type != 'HUMAN'
+            ORDER BY id
+            """,
+            (
+                player_location,
+                player_id,
+            ),
+        ).fetchall()
+
+    return [
+        {
+            "id": row[0],
+            "name": row[1],
+        }
+        for row in rows
+    ]
+
+
 def build_player_snapshot(
     player_id: str = PLAYER_ID,
 ):
@@ -226,6 +280,26 @@ def build_player_snapshot(
             "created_minute": interaction.created_minute,
         }
 
+    outgoing_interaction = (
+        find_latest_open_for_initiator(
+            player_id
+        )
+    )
+
+    outgoing_payload = None
+
+    if outgoing_interaction is not None:
+
+        outgoing_payload = {
+            "id": outgoing_interaction.id,
+            "type": outgoing_interaction.interaction_type,
+            "initiator_id": outgoing_interaction.initiator_id,
+            "recipient_id": outgoing_interaction.recipient_id,
+            "topic": outgoing_interaction.topic,
+            "status": outgoing_interaction.status,
+            "created_minute": outgoing_interaction.created_minute,
+        }
+
     messages = list_player_messages(
         player_id=player_id,
         current_minute=load_simulation_minute(),
@@ -250,10 +324,15 @@ def build_player_snapshot(
             "reachable_locations": reachable_locations,
         },
         "known_nodes": known_nodes,
+        "visible_actors": list_visible_actors(
+            player_id=player_id,
+            player_location=location,
+        ),
         "situations": list_player_situations(
             player_id
         ),
         "interaction": interaction_payload,
+        "outgoing_interaction": outgoing_payload,
         "messages": [
             {
                 "id": message.id,

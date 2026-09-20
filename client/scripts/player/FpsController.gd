@@ -3,6 +3,7 @@ extends CharacterBody3D
 @export var move_speed := 3.2
 @export var acceleration := 14.0
 @export var mouse_sensitivity := 0.0022
+@export var interaction_distance := 4.0
 
 @onready var head: Node3D = $Head
 @onready var interaction_ray: RayCast3D = (
@@ -105,12 +106,49 @@ func _physics_process(
 func _try_interaction() -> void:
 	interaction_ray.force_raycast_update()
 
-	if not interaction_ray.is_colliding():
+	if interaction_ray.is_colliding():
+		var collider = interaction_ray.get_collider()
+		if (
+			collider != null
+			and collider.has_method("interact")
+		):
+			print("RAY INTERACTION: ", collider.name)
+			collider.interact()
+			return
+
+	var nearest: Node3D = null
+	var nearest_distance := interaction_distance
+	var interactables := get_tree().get_nodes_in_group(
+		"interactable"
+	)
+
+	for candidate in interactables:
+		if not candidate is Node3D:
+			continue
+
+		var distance := global_position.distance_to(
+			candidate.global_position
+		)
+		if distance > nearest_distance:
+			continue
+
+		nearest = candidate
+		nearest_distance = distance
+
+	if nearest == null:
+		print(
+			"NO INTERACTABLE WITHIN ",
+			interaction_distance,
+			" METERS"
+		)
 		return
 
-	var collider = interaction_ray.get_collider()
-	if collider == null:
-		return
+	print(
+		"PROXIMITY INTERACTION: ",
+		nearest.name,
+		" DISTANCE: ",
+		nearest_distance
+	)
 
-	if collider.has_method("interact"):
-		collider.interact()
+	if nearest.has_method("interact"):
+		nearest.interact()
