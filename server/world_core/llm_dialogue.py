@@ -15,6 +15,7 @@ from .dialogue_guard import (
     asks_about_node_access_code,
     asserts_unverified_node_access_code,
     no_verified_access_code_reply,
+    misattributes_player_password,
 )
 from .player_claims import (
     asks_about_password,
@@ -104,6 +105,9 @@ def _provider_reply(context: dict, choice_text: str) -> str:
         "Si solo conoces un rumor, identifícalo como rumor y no afirmes "
         "haber observado o investigado personalmente algo sin evidencia "
         "DIRECT_PERCEPTION o ACTIVE_INVESTIGATION. "
+        "Hablas como el personaje al jugador: si el jugador te dio una "
+        "contraseña, di 'me dijiste', NUNCA 'te dije'. No confundas "
+        "una contraseña personal del jugador con una clave del mundo. "
         "Si existe una player_claim de contraseña, representa SOLO "
         "la última contraseña que este personaje ha oído decir al jugador. "
         "Las contraseñas antiguas del historial no sustituyen esa última "
@@ -214,6 +218,21 @@ def generate_dialogue_reply(
             if asserts_unverified_node_access_code(model_text):
                 return DialogueReply(
                     text=no_verified_access_code_reply(context),
+                    source="RULE_GROUNDED",
+                )
+            if misattributes_player_password(model_text):
+                claims = context.get("player_claims", [])
+                if claims:
+                    return DialogueReply(
+                        text=(
+                            "La última contraseña que me dijiste fue "
+                            f"{claims[0]['claim_value']}. "
+                            "Lo sé porque me lo contaste tú."
+                        ),
+                        source="GROUNDED_RECALL",
+                    )
+                return DialogueReply(
+                    text="No puedo confirmar que me hayas contado esa contraseña.",
                     source="RULE_GROUNDED",
                 )
             return DialogueReply(
