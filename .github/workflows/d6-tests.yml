@@ -8,6 +8,7 @@ on:
       - develop/isometric-0.2-d8
       - develop/isometric-0.2-d8-r1
       - develop/isometric-0.2-d8-r2
+      - develop/isometric-0.2-d8-r3
   pull_request:
 
 jobs:
