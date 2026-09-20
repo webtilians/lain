@@ -83,7 +83,7 @@ def require_conversation(actor_id: str):
         topic=CONVERSATION_TOPIC,
     )
 
-    if interaction is None:
+    if interaction is None or interaction.status != "OPEN":
         raise ValueError("NO_OPEN_CONVERSATION")
 
     return interaction, actor[0]
@@ -248,6 +248,15 @@ def reply_to_player_conversation(
 
     initialize_conversation_turns()
 
+    # Building context may read several tables or initialize belief tables.
+    # Do this before acquiring SQLite's exclusive writer reservation.
+    agent_line = build_agent_reply(
+        actor_id,
+        actor_name,
+        choice_id,
+        interaction.id,
+    )
+
     with get_connection() as conn:
         # Serialize concurrent requests before checking the turn identifier.
         # Both turns, memory and event commit (or roll back) together.
@@ -275,12 +284,6 @@ def reply_to_player_conversation(
             raise ValueError("NOT_PLAYER_TURN")
 
         player_line = CHOICES[choice_id]
-        agent_line = build_agent_reply(
-            actor_id,
-            actor_name,
-            choice_id,
-            interaction.id,
-        )
 
         conn.execute(
             """
