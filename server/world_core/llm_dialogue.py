@@ -11,6 +11,10 @@ from urllib.parse import urlsplit
 from urllib.request import Request, urlopen
 
 from .dialogue_engine import DeterministicDialogueEngine
+from .player_claims import (
+    asks_about_password,
+    extract_password_claim,
+)
 
 
 @dataclass(frozen=True)
@@ -68,6 +72,7 @@ def _provider_reply(context: dict, choice_text: str) -> str:
             }
             for item in context.get("memory_records", [])[-12:]
         ],
+        "player_claims": context.get("player_claims", []),
         "goals": context["goals"],
         "conversation": (
             None if conversation is None else {
@@ -94,6 +99,10 @@ def _provider_reply(context: dict, choice_text: str) -> str:
         "Si solo conoces un rumor, identifícalo como rumor y no afirmes "
         "haber observado o investigado personalmente algo sin evidencia "
         "DIRECT_PERCEPTION o ACTIVE_INVESTIGATION. "
+        "Si existe una player_claim de contraseña, representa SOLO "
+        "la última contraseña que este personaje ha oído decir al jugador. "
+        "Las contraseñas antiguas del historial no sustituyen esa última "
+        "afirmación, y no puedes conocer lo contado a otro personaje. "
         "Los memory_records distinguen testimonio del jugador, "
         "informes propios y rumores transmitidos. Un recuerdo marcado "
         "PLAYER_TESTIMONY o RELAYED_TESTIMONY NO es una observación "
@@ -161,7 +170,27 @@ def generate_dialogue_reply(
     choice_id: str,
     choice_text: str,
 ) -> DialogueReply:
-    """Keep D5 usable if the model is absent, slow or unavailable."""
+    """Use source-attributed exact recall for explicitly stored password claims.
+
+    This narrow guard prevents a small language model from replacing a
+    known latest value with an earlier one, or claiming no memory when
+    the recipient has direct player testimony. It does not make the claim
+    a true fact of World Core and it does not cover all free-form memories.
+    """
+    if (
+        choice_id == "FREE_TEXT"
+        and asks_about_password(choice_text)
+        and extract_password_claim(choice_text) is None
+        and context.get("player_claims")
+    ):
+        claim = context["player_claims"][0]
+        return DialogueReply(
+            text=(
+                f"La última contraseña que me dijiste fue "
+                f"{claim['claim_value']}. Lo sé porque me lo contaste tú."
+            ),
+            source="GROUNDED_RECALL",
+        )
     if os.getenv("LAIN_LLM_ENABLED", "0") == "1":
         try:
             return DialogueReply(
