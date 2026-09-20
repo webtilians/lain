@@ -13,10 +13,10 @@ import unicodedata
 from .database import get_connection
 
 
-WORDS = r"A-Za-zÁÉÍÓÚÜÑáéíóúüñ0-9_-"
-TOPIC_WORD = rf"[{WORDS}]+"
+WORDS = r"A-Za-zÁÉÍÓÚÜÑáéíóúüñ0-9_"
+TOPIC_WORD = rf"[{WORDS}-]+"
 TOPIC = rf"(?P<topic>{TOPIC_WORD}(?:\s+{TOPIC_WORD}){{0,3}})"
-VALUE = rf"(?P<value>[{WORDS}](?:[{WORDS}\s-]{{0,79}}[{WORDS}])?)"
+VALUE = rf"(?P<value>[{WORDS}-](?:[{WORDS}\s-]{{0,79}}[{WORDS}-])?)"
 
 # Avoid accidentally interpreting "mi perro es..." embedded inside a
 # quote, question or subordinate clause as a statement by the player.
