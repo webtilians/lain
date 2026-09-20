@@ -1,5 +1,6 @@
 from .beliefs import load_belief
 from .database import get_connection
+from .episodic_memory import initialize_memory_provenance, save_episodic_memory
 from .agent_context import AgentContextBuilder
 from .llm_dialogue import generate_dialogue_reply
 from .interactions import (
@@ -252,6 +253,7 @@ def build_agent_reply(
     context = AgentContextBuilder().build(
         agent_id=actor_id,
         interaction_id=interaction_id,
+        retrieval_query=CHOICES[choice_id],
     )
     return generate_dialogue_reply(
         context=context,
@@ -272,6 +274,7 @@ def reply_to_player_conversation(
     if choice_id == "TELL_OBSERVED" and not player_observed_signal():
         raise ValueError("EVIDENCE_NOT_AVAILABLE")
     initialize_conversation_turns()
+    initialize_memory_provenance()
 
     # Reject ordinary retries before calling the model; avoid unnecessary
     # model costs. Repeat the check under a write lock to prevent double saves.
@@ -328,7 +331,7 @@ def reply_to_player_conversation(
             if latest[1] != actor_id:
                 raise ValueError("NOT_PLAYER_TURN")
             player_line = CHOICES[choice_id]
-            conn.execute(
+            player_turn = conn.execute(
                 """
                 INSERT INTO player_conversation_turns
                 (interaction_id, speaker_id, text, source, minute)
@@ -350,13 +353,16 @@ def reply_to_player_conversation(
                     reply.source, minute,
                 ),
             )
-            conn.execute(
-                "INSERT INTO agent_memory (agent_id, memory) VALUES (?, ?)",
-                (
-                    actor_id,
-                    f"During conversation {interaction.id}, "
-                    f"{PLAYER_ID} said: {player_line}",
-                ),
+            save_episodic_memory(
+                conn,
+                actor_id,
+                f"During conversation {interaction.id}, "
+                f"{PLAYER_ID} said: {player_line}",
+                source_kind="PLAYER_TESTIMONY",
+                source_actor_id=PLAYER_ID,
+                origin_turn_id=player_turn.lastrowid,
+                minute=minute,
+                shareable=False,
             )
             conn.execute(
                 """
