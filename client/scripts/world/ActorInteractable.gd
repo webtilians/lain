@@ -20,6 +20,9 @@ func _ready() -> void:
 	EventDialog.dialog_closed.connect(
 		_on_dialog_closed
 	)
+	EventDialog.message_submitted.connect(
+		_on_message_submitted
+	)
 
 	WorldApi.action_resolved.connect(
 		_on_action_resolved
@@ -57,6 +60,20 @@ func interact() -> void:
 			},
 		]
 	)
+
+func _on_message_submitted(owner_id: String, message: String) -> void:
+	if owner_id != str(get_instance_id()):
+		return
+	if awaiting_result or chat_busy or chat_turn_id <= 0:
+		return
+	_send_chat_request(
+		"say",
+		{
+			"text": message,
+			"after_turn_id": chat_turn_id,
+		}
+	)
+
 
 func _on_choice_selected(
 	owner_id: String,
@@ -337,9 +354,16 @@ func _on_chat_request_completed(
 		if typeof(choice) == TYPE_DICTIONARY:
 			choices.append(choice)
 
-	EventDialog.show_choices(
+	# Free conversation is the main interaction in D7. Retain
+	# a quick question and LEAVE without crowding the compact modal.
+	var quick_choices: Array[Dictionary] = []
+	for choice in choices:
+		if str(choice.get("id", "")) in ["ASK_SIGNAL", "LEAVE"]:
+			quick_choices.append(choice)
+
+	EventDialog.show_conversation(
 		str(get_instance_id()),
 		str(parsed.get("actor_name", actor_name)),
 		str(parsed.get("line", "")),
-		choices
+		quick_choices
 	)
