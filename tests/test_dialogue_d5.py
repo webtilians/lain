@@ -144,3 +144,34 @@ def test_player_cannot_pause_another_agents_conversation():
     sim, interaction = colocated_contact()
     with pytest.raises(ValueError, match="CONVERSATION_NOT_AVAILABLE"):
         pause_player_conversation("AGENT_NORA", interaction.id, sim.minute)
+
+
+def test_failed_memory_insert_rolls_back_both_turns_and_event():
+    sim, interaction = colocated_contact()
+    first = start_player_conversation("AGENT_K", sim.minute)
+    with get_connection() as conn:
+        conn.execute(
+            """
+            CREATE TRIGGER fail_d5_memory
+            BEFORE INSERT ON agent_memory
+            WHEN NEW.agent_id = 'AGENT_K'
+            BEGIN
+                SELECT RAISE(ABORT, 'simulated memory failure');
+            END
+            """
+        )
+    import sqlite3
+    with pytest.raises(sqlite3.IntegrityError, match="simulated memory failure"):
+        reply_to_player_conversation(
+            "AGENT_K", "ASK_IDENTITY", first["turn_id"], sim.minute,
+        )
+    with get_connection() as conn:
+        turn_count = conn.execute(
+            "SELECT COUNT(*) FROM player_conversation_turns WHERE interaction_id = ?",
+            (interaction.id,),
+        ).fetchone()[0]
+        event_count = conn.execute(
+            "SELECT COUNT(*) FROM events WHERE action = 'DIALOGUE_CHOICE' AND target = ?",
+            (interaction.id,),
+        ).fetchone()[0]
+    assert (turn_count, event_count) == (1, 0)
