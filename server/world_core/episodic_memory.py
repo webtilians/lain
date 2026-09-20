@@ -7,6 +7,7 @@ import re
 import unicodedata
 
 from .database import get_connection
+from .semantic_query import expanded_query
 
 STOPWORDS = frozenset(
     "a al algo ante con como cuando cual cuales de del donde el ella en "
@@ -156,7 +157,7 @@ def retrieve_memories(
 
     if not rows:
         return []
-    terms = _terms(query or "")
+    terms = _terms(expanded_query(query))
     # Score is lexical and local, never based on other agents' memories.
     recent_count = min(4, limit)
     selected = {row[0]: row for row in rows[:recent_count]}
