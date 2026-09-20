@@ -1,0 +1,24 @@
+# Python virtual environment, caches and tests
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Godot-generated project cache
+client/.godot/
+
+# Local runtime worlds and private dialogue records
+world.db
+world.db-*
+world_backup*.db
+*.sqlite
+*.sqlite3
+
+# Local configuration and secrets
+.env
+.env.*
+!.env.example
+
+*.log
