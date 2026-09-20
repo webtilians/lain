@@ -44,6 +44,7 @@ def start_contact(recipient="AGENT_K"):
 
 def test_free_text_is_persisted_as_player_testimony_without_world_facts():
     sim, interaction, first = start_contact()
+    initial_belief = load_belief("AGENT_K", "NODE_07")
     statement = "Mi palabra secreta de prueba es AZUL-743."
     response = say_to_player_conversation(
         "AGENT_K", statement, first["turn_id"], sim.minute,
@@ -74,7 +75,7 @@ def test_free_text_is_persisted_as_player_testimony_without_world_facts():
     assert rows[2][0] == "AGENT_K"
     assert any(statement in row[0] for row in memories)
     assert events == [("DIALOGUE_SAY", "FREE_TEXT")]
-    assert load_belief("AGENT_K", "NODE_07") is None
+    assert load_belief("AGENT_K", "NODE_07") == initial_belief
 
     nora = AgentContextBuilder().build("AGENT_NORA")
     assert nora["memory"] == []
