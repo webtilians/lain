@@ -8,11 +8,14 @@ from server.world_core.interactions import (
     get_interaction,
 )
 from server.world_core.player_conversation import (
+    initialize_conversation_turns,
     start_player_conversation,
     reply_to_player_conversation,
     pause_player_conversation,
 )
 from server.world_core.simulation import Simulation
+from server.world_core.beliefs import save_belief
+from server.world_core.models import NodeBelief
 
 
 def colocated_contact():
@@ -22,6 +25,7 @@ def colocated_contact():
     simulation.nora.agent.location = "STATION"
     for agent in (simulation.player, simulation.k.agent, simulation.nora.agent):
         save_agent(agent)
+    initialize_conversation_turns()
     interaction, _ = create_or_get_interaction(
         "PLAYER_1",
         "AGENT_K",
@@ -49,6 +53,17 @@ def test_context_is_bounded_and_private():
 
 def test_agent_remembers_player_statement_without_leaking_to_nora():
     sim, interaction = colocated_contact()
+    save_belief(
+        NodeBelief(
+            agent_id="PLAYER_1",
+            node_id="NODE_07",
+            believed_location="STATION",
+            believed_strength=0.6,
+            confidence=0.85,
+            source="DIRECT_PERCEPTION",
+            updated_minute=sim.minute,
+        )
+    )
     first = start_player_conversation("AGENT_K", sim.minute)
     first_reply = reply_to_player_conversation(
         "AGENT_K", "TELL_OBSERVED", first["turn_id"], sim.minute,
