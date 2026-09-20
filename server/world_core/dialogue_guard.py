@@ -24,7 +24,7 @@ ACCESS = re.compile(
     r"desbloquear|desbloquea|habilita|permite)\b"
 )
 REQUIREMENT = re.compile(
-    r"\b(?:debes|tienes\s+que|hay\s+que|necesitas|necesaria|"
+    r"\b(?:debes|debe|tienes\s+que|hay\s+que|necesito|necesitas|necesaria|"
     r"necesario|requiere|requerida|obligatoria|usar|introducir)\b"
 )
 
@@ -47,11 +47,9 @@ def asserts_unverified_node_access_code(text: str) -> bool:
     plain = _plain(text)
     return bool(
         NODE_07.search(plain)
-        and KEY.search(plain)
         and (
-            ACCESS.search(plain)
-            or REQUIREMENT.search(plain)
-            or re.search(r"\b(?:clave|contrasena|codigo)\b", plain)
+            (ACCESS.search(plain) and (KEY.search(plain) or REQUIREMENT.search(plain)))
+            or (KEY.search(plain) and REQUIREMENT.search(plain))
         )
     )
 
