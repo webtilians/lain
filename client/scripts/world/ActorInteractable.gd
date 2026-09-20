@@ -7,12 +7,18 @@ var awaiting_result := false
 var chat_request: HTTPRequest
 var chat_busy := false
 var chat_turn_id := 0
+var chat_interaction_id := ""
+var chat_action := ""
+var pending_pause := false
 
 func _ready() -> void:
 	add_to_group("interactable")
 
 	EventDialog.choice_selected.connect(
 		_on_choice_selected
+	)
+	EventDialog.dialog_closed.connect(
+		_on_dialog_closed
 	)
 
 	WorldApi.action_resolved.connect(
@@ -30,7 +36,7 @@ func _ready() -> void:
 	)
 
 func interact() -> void:
-	if awaiting_result or EventDialog.visible:
+	if awaiting_result or chat_busy or EventDialog.visible:
 		return
 
 	if not _actor_is_present():
@@ -196,16 +202,19 @@ func _request_chat_reply(
 
 func _send_chat_request(
 	action_name: String,
-	payload: Dictionary
+	payload: Dictionary,
+	silent: bool = false
 ) -> void:
 	if chat_busy:
 		return
 
 	chat_busy = true
-	EventDialog.show_event(
-		actor_name,
-		"Esperando respuesta..."
-	)
+	chat_action = action_name
+	if not silent:
+		EventDialog.show_event(
+			actor_name,
+			"Esperando respuesta..."
+		)
 
 	var url := (
 		"http://127.0.0.1:8000"
@@ -231,13 +240,46 @@ func _send_chat_request(
 			"No se pudo enviar la petición."
 		)
 
+func _on_dialog_closed(owner_id: String) -> void:
+	if owner_id != str(get_instance_id()):
+		return
+	if chat_busy:
+		pending_pause = true
+		return
+	_request_chat_pause()
+
+
+func _request_chat_pause() -> void:
+	if chat_interaction_id.is_empty():
+		return
+	var interaction_to_pause := chat_interaction_id
+	chat_turn_id = 0
+	chat_interaction_id = ""
+	_send_chat_request(
+		"pause",
+		{"interaction_id": interaction_to_pause},
+		true
+	)
+
+
 func _on_chat_request_completed(
 	result: int,
 	response_code: int,
 	_headers: PackedStringArray,
 	body: PackedByteArray
 ) -> void:
+	var completed_action := chat_action
+	chat_action = ""
 	chat_busy = false
+
+	if completed_action == "pause":
+		if result != HTTPRequest.RESULT_SUCCESS or response_code < 200 or response_code >= 300:
+			push_warning("Could not pause conversation; next CONTACT may resume it")
+		return
+
+	if pending_pause and result != HTTPRequest.RESULT_SUCCESS:
+		pending_pause = false
+		return
 
 	if result != HTTPRequest.RESULT_SUCCESS:
 		EventDialog.show_event(
@@ -249,6 +291,10 @@ func _on_chat_request_completed(
 	var parsed = JSON.parse_string(
 		body.get_string_from_utf8()
 	)
+
+	if pending_pause and (response_code < 200 or response_code >= 300):
+		pending_pause = false
+		return
 
 	if response_code < 200 or response_code >= 300:
 		var explanation := (
@@ -277,6 +323,13 @@ func _on_chat_request_completed(
 	chat_turn_id = int(
 		parsed.get("turn_id", 0)
 	)
+	chat_interaction_id = str(
+		parsed.get("interaction_id", "")
+	)
+	if pending_pause:
+		pending_pause = false
+		_request_chat_pause()
+		return
 
 	var choices: Array[Dictionary] = []
 	for choice in parsed.get("choices", []):
