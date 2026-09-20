@@ -1,6 +1,7 @@
 from .database import get_connection
 from .episodic_memory import retrieve_memories
 from .player_claims import get_player_claims
+from .general_claims import get_general_claims
 from .evidence import list_actor_beliefs
 from .situation_beliefs import list_agent_situation_beliefs
 
@@ -44,6 +45,7 @@ class AgentContextBuilder:
             "memory": [item["text"] for item in memory_records],
             "memory_records": memory_records,
             "player_claims": get_player_claims(agent_id, retrieval_query),
+            "general_claims": get_general_claims(agent_id, retrieval_query),
             "goals": {
                 "current": agent[4],
             },
