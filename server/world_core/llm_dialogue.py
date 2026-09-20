@@ -22,6 +22,7 @@ from .player_claims import (
     extract_password_claim,
 )
 from .general_claims import parse_personal_statement
+from .autobiographical_memory import temporal_reply
 
 
 @dataclass(frozen=True)
@@ -76,11 +77,17 @@ def _provider_reply(context: dict, choice_text: str) -> str:
                 "text": str(item["text"])[:500],
                 "source_kind": item["source_kind"],
                 "source_actor_id": item["source_actor_id"],
+                **{key: item.get(key) for key in (
+                    "id", "owner_id", "origin_turn_id", "parent_memory_id",
+                    "received_minute", "location", "interaction_id",
+                    "chronology_known",
+                )},
             }
             for item in context.get("memory_records", [])[-12:]
         ],
         "player_claims": context.get("player_claims", []),
         "general_claims": context.get("general_claims", []),
+        "knowledge_timeline": context.get("knowledge_timeline"),
         "goals": context["goals"],
         "conversation": (
             None if conversation is None else {
@@ -124,6 +131,10 @@ def _provider_reply(context: dict, choice_text: str) -> str:
         "la última contraseña que este personaje ha oído decir al jugador. "
         "Las contraseñas antiguas del historial no sustituyen esa última "
         "afirmación, y no puedes conocer lo contado a otro personaje. "
+        "knowledge_timeline separa declaraciones anteriores de la última; "
+        "CURRENT_TESTIMONY solo significa lo último que oíste, no verdad actual. "
+        "received_minute es cuándo adquiriste el recuerdo, no necesariamente "
+        "cuándo sucedió lo relatado. No inventes fechas o lugares ausentes. "
         "Los memory_records distinguen testimonio del jugador, "
         "informes propios y rumores transmitidos. Un recuerdo marcado "
         "PLAYER_TESTIMONY o RELAYED_TESTIMONY NO es una observación "
@@ -238,6 +249,11 @@ def generate_dialogue_reply(
                 f"La última contraseña que me dijiste fue "
                 f"{claim['claim_value']}. Lo sé porque me lo contaste tú."
             ),
+            source="GROUNDED_RECALL",
+        )
+    if choice_id == "FREE_TEXT" and context.get("knowledge_timeline") is not None:
+        return DialogueReply(
+            text=temporal_reply(context["knowledge_timeline"]),
             source="GROUNDED_RECALL",
         )
     if choice_id == "FREE_TEXT" and context.get("general_claims"):

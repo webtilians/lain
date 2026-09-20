@@ -1,3 +1,5 @@
+from .database import get_connection
+from .episodic_memory import initialize_memory_provenance, save_episodic_memory
 from server.agents.agent_k import AgentK
 from server.agents.nora import Nora
 from .dialogue import (
@@ -33,7 +35,6 @@ from .beliefs import (
 from .core import WorldCore
 
 from .database import (
-    add_memory,
     load_or_create_agent,
     load_or_create_node,
     load_simulation_minute,
@@ -293,19 +294,19 @@ class Simulation:
         self,
         agent: Agent,
         text: str,
+        source_kind: str = "SELF_REPORTED",
     ):
 
         if text in agent.memory:
             return
 
-        agent.memory.append(
-            text
-        )
-
-        add_memory(
-            agent.id,
-            text,
-        )
+        initialize_memory_provenance()
+        with get_connection() as conn:
+            save_episodic_memory(
+                conn, agent.id, text, source_kind=source_kind,
+                source_actor_id=agent.id, minute=self.minute,
+            )
+        agent.memory.append(text)
 
     # ==================================================
     # NODE PERCEPTION
@@ -371,6 +372,7 @@ class Simulation:
                         f"node {node.id} "
                         f"at {node.location}"
                     ),
+                    source_kind="DIRECT_PERCEPTION",
                 )
 
     # ==================================================
@@ -1104,6 +1106,7 @@ class Simulation:
                         f"node {target_node.id} "
                         f"at {target_node.location}"
                     ),
+                    source_kind="ACTIVE_INVESTIGATION",
                 )
 
                 details = (
@@ -1145,6 +1148,7 @@ class Simulation:
                                 f"(confidence "
                                 f"{evidence.strength:.2f})"
                             ),
+                            source_kind="ACTIVE_INVESTIGATION",
                         )
 
                         print(

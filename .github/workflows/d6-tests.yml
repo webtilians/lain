@@ -11,6 +11,7 @@ on:
       - develop/isometric-0.2-d8-r3
       - develop/isometric-0.2-d9
       - develop/isometric-0.2-d9-r1
+      - experiment/isometric-0.2-d10-episodic
   pull_request:
 
 jobs:
@@ -26,4 +27,5 @@ jobs:
       - name: Run deterministic and mocked LLM tests
         env:
           LAIN_LLM_ENABLED: "0"
+          LAIN_MEMORY_SEMANTIC: "0"
         run: python -m pytest -q

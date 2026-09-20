@@ -36,6 +36,13 @@ def initialize_memory_provenance() -> None:
             )
             """
         )
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS agent_memory_episodes (
+                memory_id INTEGER PRIMARY KEY,
+                location TEXT,
+                interaction_id TEXT
+            )
+        """)
         conn.execute(
             """
             CREATE TABLE IF NOT EXISTS agent_memory_relays (
@@ -80,6 +87,22 @@ def save_episodic_memory(
             parent_memory_id, minute, int(shareable),
         ),
     )
+    # Snapshot the owner's location at acquisition, never today's location
+    # when reading an old save. Missing legacy metadata stays unknown.
+    location = conn.execute(
+        "SELECT location FROM agents WHERE id = ?", (owner_id,),
+    ).fetchone()
+    interaction = None
+    if origin_turn_id is not None:
+        interaction = conn.execute(
+            "SELECT interaction_id FROM player_conversation_turns WHERE id = ?",
+            (origin_turn_id,),
+        ).fetchone()
+    conn.execute(
+        "INSERT INTO agent_memory_episodes VALUES (?, ?, ?)",
+        (memory_id, location[0] if location else None,
+         interaction[0] if interaction else None),
+    )
     return memory_id
 
 
@@ -116,11 +139,15 @@ def _terms(text: str) -> set[str]:
 
 def retrieve_memories(
     agent_id: str, query: str | None = None, limit: int = 12,
+    *, location: str | None = None,
 ) -> list[dict]:
     """Search ONLY this agent's memories; rank matches before recency.
 
     Uses a bounded scan of 1000 recent candidates (not semantic search).
     The latest four entries are retained to preserve immediate continuity.
+    Lexical overlap dominates; the acquisition place breaks relevance ties.
+    Known episodes are presented by acquisition minute then insertion ID;
+    undated legacy entries stay explicitly undated.
     """
     if not 1 <= limit <= 100:
         raise ValueError("INVALID_CONTEXT_LIMIT")
@@ -129,9 +156,11 @@ def retrieve_memories(
         rows = conn.execute(
             """
             SELECT a.id, a.memory, p.source_kind, p.source_actor_id,
-                   p.origin_turn_id, p.parent_memory_id, p.received_minute
+                   p.origin_turn_id, p.parent_memory_id, p.received_minute,
+                   e.location, e.interaction_id
             FROM agent_memory a
             LEFT JOIN agent_memory_provenance p ON p.memory_id = a.id
+            LEFT JOIN agent_memory_episodes e ON e.memory_id = a.id
             WHERE a.agent_id = ?
             ORDER BY a.id DESC LIMIT ?
             """,
@@ -147,12 +176,16 @@ def retrieve_memories(
         )
         return {
             "id": row[0],
+            "owner_id": agent_id,
             "text": text,
             "source_kind": source_kind,
             "source_actor_id": row[3],
             "origin_turn_id": row[4],
             "parent_memory_id": row[5],
             "received_minute": row[6],
+            "location": row[7],
+            "interaction_id": row[8],
+            "chronology_known": row[6] is not None,
         }
 
     if not rows:
@@ -164,7 +197,9 @@ def retrieve_memories(
     if terms:
         scored = []
         for row in rows[recent_count:]:
-            score = len(terms.intersection(_terms(row[1])))
+            score = len(terms.intersection(_terms(row[1]))) * 4
+            if score and location and row[7] == location:
+                score += 1
             if score:
                 scored.append((score, row[0], row))
         for _, _, row in sorted(scored, reverse=True)[: limit - len(selected)]:
@@ -176,7 +211,10 @@ def retrieve_memories(
         selected[row[0]] = row
     return [
         format_record(row)
-        for row in sorted(selected.values(), key=lambda item: item[0])
+        for row in sorted(
+            selected.values(),
+            key=lambda item: (item[6] is not None, item[6] or 0, item[0]),
+        )
     ]
 
 
