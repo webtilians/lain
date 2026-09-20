@@ -183,7 +183,7 @@ def find_open_interaction(
             WHERE initiator_id = ?
               AND recipient_id = ?
               AND topic = ?
-              AND status = 'OPEN'
+              AND status IN ('OPEN', 'PAUSED')
 
             ORDER BY created_minute DESC
 
@@ -314,11 +314,19 @@ def create_or_get_interaction(
     )
 
     if existing is not None:
-
-        return (
-            existing,
-            False,
-        )
+        if existing.status == "PAUSED":
+            with get_connection() as conn:
+                conn.execute(
+                    """
+                    UPDATE interactions
+                    SET status = 'OPEN', updated_minute = ?
+                    WHERE id = ? AND status = 'PAUSED'
+                    """,
+                    (minute, existing.id),
+                )
+                conn.commit()
+            existing = get_interaction(existing.id)
+        return existing, False
 
     interaction = Interaction(
         id=(
