@@ -1,9 +1,7 @@
 from .beliefs import load_belief
-from .database import (
-    add_memory,
-    get_connection,
-    record_event,
-)
+from .database import get_connection
+from .agent_context import AgentContextBuilder
+from .dialogue_engine import DeterministicDialogueEngine
 from .interactions import (
     find_open_interaction,
 )
@@ -176,6 +174,8 @@ def start_player_conversation(
     initialize_conversation_turns()
 
     with get_connection() as conn:
+        # An initial line must be inserted only once, even with two callers.
+        conn.execute("BEGIN IMMEDIATE")
         existing = conn.execute(
             """
             SELECT id
@@ -219,40 +219,18 @@ def build_agent_reply(
     actor_id: str,
     actor_name: str,
     choice_id: str,
+    interaction_id: str,
 ) -> str:
-    if choice_id == "ASK_IDENTITY":
-        return (
-            f"Puedes llamarme {actor_name}. "
-            "¿Qué necesitas saber?"
-        )
-
-    if choice_id == "ASK_SIGNAL":
-        belief = load_belief(
-            actor_id,
-            "NODE_07",
-        )
-        if belief is None:
-            return "No tengo información suficiente sobre esa señal."
-        if belief.source in {
-            "DIRECT_PERCEPTION",
-            "ACTIVE_INVESTIGATION",
-        }:
-            return (
-                "He examinado esa señal personalmente. "
-                "Su comportamiento merece atención."
-            )
-        return (
-            "He recibido información sobre esa señal, "
-            "pero todavía tendría que contrastarla."
-        )
-
-    if choice_id == "TELL_OBSERVED":
-        return (
-            "Entiendo. Tendré en cuenta tu testimonio, "
-            "pero necesito contrastarlo por mi cuenta."
-        )
-
-    raise ValueError("UNKNOWN_DIALOGUE_CHOICE")
+    # Identity and evidence are read from this agent's persisted context,
+    # never from the client or the objective world state.
+    context = AgentContextBuilder().build(
+        agent_id=actor_id,
+        interaction_id=interaction_id,
+    )
+    return DeterministicDialogueEngine().generate(
+        context=context,
+        choice_id=choice_id,
+    )
 
 
 def reply_to_player_conversation(
@@ -271,6 +249,9 @@ def reply_to_player_conversation(
     initialize_conversation_turns()
 
     with get_connection() as conn:
+        # Serialize concurrent requests before checking the turn identifier.
+        # Both turns, memory and event commit (or roll back) together.
+        conn.execute("BEGIN IMMEDIATE")
         latest = conn.execute(
             """
             SELECT id, speaker_id
@@ -298,6 +279,7 @@ def reply_to_player_conversation(
             actor_id,
             actor_name,
             choice_id,
+            interaction.id,
         )
 
         conn.execute(
@@ -338,26 +320,65 @@ def reply_to_player_conversation(
                 minute,
             ),
         )
-        conn.commit()
-
-    add_memory(
-        actor_id,
-        (
-            f"During conversation {interaction.id}, "
-            f"{PLAYER_ID} said: {player_line}"
-        ),
-    )
-
-    record_event(
-        minute=minute,
-        actor_id=PLAYER_ID,
-        action="DIALOGUE_CHOICE",
-        target=interaction.id,
-        details=choice_id,
-    )
+        conn.execute(
+            """
+            INSERT INTO agent_memory (agent_id, memory)
+            VALUES (?, ?)
+            """,
+            (
+                actor_id,
+                f"During conversation {interaction.id}, "
+                f"{PLAYER_ID} said: {player_line}",
+            ),
+        )
+        conn.execute(
+            """
+            INSERT INTO events (minute, actor_id, action, target, details)
+            VALUES (?, ?, ?, ?, ?)
+            """,
+            (minute, PLAYER_ID, "DIALOGUE_CHOICE", interaction.id, choice_id),
+        )
+        # The connection context commits every part of this reply together.
 
     return conversation_payload(
         interaction.id,
         actor_id,
         actor_name,
     )
+
+
+def pause_player_conversation(
+    actor_id: str,
+    interaction_id: str,
+    minute: int,
+) -> dict:
+    """Pause the player's own conversation without deleting its transcript."""
+    initialize_conversation_turns()
+    with get_connection() as conn:
+        conn.execute("BEGIN IMMEDIATE")
+        row = conn.execute(
+            """
+            SELECT initiator_id, recipient_id, topic, status
+            FROM interactions WHERE id = ?
+            """,
+            (interaction_id,),
+        ).fetchone()
+        if (
+            row is None
+            or row[0] != PLAYER_ID
+            or row[1] != actor_id
+            or row[2] != CONVERSATION_TOPIC
+            or row[3] not in {"OPEN", "PAUSED"}
+        ):
+            raise ValueError("CONVERSATION_NOT_AVAILABLE")
+        if row[3] == "OPEN":
+            conn.execute(
+                """
+                UPDATE interactions
+                SET status = 'PAUSED', updated_minute = ?
+                WHERE id = ? AND status = 'OPEN'
+                """,
+                (minute, interaction_id),
+            )
+
+    return {"interaction_id": interaction_id, "status": "PAUSED"}
