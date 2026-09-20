@@ -5,12 +5,16 @@ signal choice_selected(
 	choice_id: String
 )
 signal dialog_closed(owner_id: String)
+signal message_submitted(owner_id: String, message: String)
 
 var background: ColorRect
 var title_label: Label
 var body_label: Label
 var continue_button: Button
 var choices_box: VBoxContainer
+var message_row: HBoxContainer
+var message_input: LineEdit
+var send_button: Button
 var current_owner_id := ""
 
 var active_player: Node = null
@@ -101,6 +105,23 @@ func _ready() -> void:
 	layout.add_child(choices_box)
 	choices_box.visible = false
 
+	message_row = HBoxContainer.new()
+	message_row.add_theme_constant_override("separation", 6)
+	layout.add_child(message_row)
+	message_row.visible = false
+
+	message_input = LineEdit.new()
+	message_input.placeholder_text = "Escribe lo que quieras decir..."
+	message_input.max_length = 500
+	message_input.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	message_input.text_submitted.connect(_on_message_enter)
+	message_row.add_child(message_input)
+
+	send_button = Button.new()
+	send_button.text = "ENVIAR"
+	send_button.pressed.connect(_on_message_send)
+	message_row.add_child(send_button)
+
 	continue_button = Button.new()
 	continue_button.text = "CONTINUAR"
 	continue_button.pressed.connect(
@@ -115,6 +136,7 @@ func show_event(
 	title_label.text = event_title
 	body_label.text = event_text
 	choices_box.visible = false
+	message_row.visible = false
 	continue_button.visible = true
 	visible = true
 
@@ -193,6 +215,33 @@ func show_choices(
 			_on_choice_pressed.bind(choice_id)
 		)
 		choices_box.add_child(button)
+
+func show_conversation(
+	owner_id: String,
+	event_title: String,
+	event_text: String,
+	choices: Array[Dictionary]
+) -> void:
+	show_choices(owner_id, event_title, event_text, choices)
+	message_row.visible = true
+	message_input.text = ""
+	message_input.grab_focus()
+
+
+func _on_message_enter(_value: String) -> void:
+	_on_message_send()
+
+
+func _on_message_send() -> void:
+	if current_owner_id.is_empty() or not message_row.visible:
+		return
+	var message := message_input.text.strip_edges()
+	if message.is_empty():
+		message_input.grab_focus()
+		return
+	# Clear only after we hand the message to the owning NPC.
+	message_submitted.emit(current_owner_id, message)
+
 
 func _on_choice_pressed(
 	choice_id: String
