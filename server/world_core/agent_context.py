@@ -4,7 +4,13 @@ from .situation_beliefs import list_agent_situation_beliefs
 
 
 class AgentContextBuilder:
-    """Build the private, persisted context available to one agent."""
+    """Build a bounded, private context for one agent."""
+
+    def __init__(self, memory_limit: int = 12, turn_limit: int = 16):
+        if not 1 <= memory_limit <= 100 or not 1 <= turn_limit <= 100:
+            raise ValueError("INVALID_CONTEXT_LIMIT")
+        self.memory_limit = memory_limit
+        self.turn_limit = turn_limit
 
     def build(
         self,
@@ -147,12 +153,13 @@ class AgentContextBuilder:
                 SELECT memory
                 FROM agent_memory
                 WHERE agent_id = ?
-                ORDER BY id
+                ORDER BY id DESC
+                LIMIT ?
                 """,
-                (agent_id,),
+                (agent_id, self.memory_limit),
             ).fetchall()
 
-        return [row[0] for row in rows]
+        return [row[0] for row in reversed(rows)]
 
     def _conversation(
         self,
@@ -194,10 +201,13 @@ class AgentContextBuilder:
                     minute
                 FROM player_conversation_turns
                 WHERE interaction_id = ?
-                ORDER BY id
+                ORDER BY id DESC
+                LIMIT ?
                 """,
-                (interaction_id,),
+                (interaction_id, self.turn_limit),
             ).fetchall()
+
+        rows = list(reversed(rows))
 
         return {
             "id": interaction[0],
