@@ -78,7 +78,7 @@ def test_model_invented_node_code_is_replaced_before_saving(monkeypatch):
 
     monkeypatch.setattr(llm_dialogue, "urlopen", model)
     response = say_to_player_conversation(
-        "AGENT_K", "¿Qué te parece mi contraseña personal?",
+        "AGENT_K", "¿Qué te parece la frase que te dije?",
         saved["turn_id"], sim.minute,
     )
     assert response["response_source"] == "RULE_GROUNDED"
