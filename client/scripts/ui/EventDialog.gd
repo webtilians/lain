@@ -4,6 +4,7 @@ signal choice_selected(
 	owner_id: String,
 	choice_id: String
 )
+signal dialog_closed(owner_id: String)
 
 var background: ColorRect
 var title_label: Label
@@ -136,6 +137,7 @@ func show_event(
 	)
 
 func close_event() -> void:
+	var previous_owner := current_owner_id
 	current_owner_id = ""
 	visible = false
 
@@ -148,6 +150,8 @@ func close_event() -> void:
 		)
 
 	active_player = null
+	if not previous_owner.is_empty():
+		dialog_closed.emit(previous_owner)
 
 func show_choices(
 	owner_id: String,
