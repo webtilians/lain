@@ -1,4 +1,5 @@
 from .database import get_connection
+from .episodic_memory import retrieve_memories
 from .evidence import list_actor_beliefs
 from .situation_beliefs import list_agent_situation_beliefs
 
@@ -16,8 +17,12 @@ class AgentContextBuilder:
         self,
         agent_id: str,
         interaction_id: str | None = None,
+        retrieval_query: str | None = None,
     ) -> dict:
         agent = self._load_agent(agent_id)
+        memory_records = retrieve_memories(
+            agent_id, retrieval_query, self.memory_limit,
+        )
 
         context = {
             "identity": {
@@ -35,7 +40,8 @@ class AgentContextBuilder:
                 "actors": self._actor_beliefs(agent_id),
                 "situations": self._situation_beliefs(agent_id),
             },
-            "memory": self._memories(agent_id),
+            "memory": [item["text"] for item in memory_records],
+            "memory_records": memory_records,
             "goals": {
                 "current": agent[4],
             },
