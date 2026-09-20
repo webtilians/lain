@@ -121,7 +121,10 @@ def test_wrong_speaker_password_attribution_is_replaced(monkeypatch):
         "AGENT_K", "¿Puedes recordar la frase que comentamos?",
         told["turn_id"], sim.minute,
     )
-    assert result["response_source"] == "GROUNDED_RECALL"
-    assert "clave123" in result["line"]
+    # The free-form question did not request a password lookup, so the
+    # recipient's exact claim was not fetched. Reject wrong attribution
+    # rather than falsely claiming an exact value from missing context.
+    assert result["response_source"] == "RULE_GROUNDED"
+    assert "clave123" not in result["line"]
     assert "Killo13" not in result["line"]
-    assert "me dijiste" in result["line"]
+    assert "No puedo confirmar" in result["line"]
