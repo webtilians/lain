@@ -1,0 +1,22 @@
+name: LAIN D6 Python tests
+
+on:
+  push:
+    branches:
+      - develop/isometric-0.2-d6
+  pull_request:
+
+jobs:
+  python-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Run deterministic and mocked LLM tests
+        env:
+          LAIN_LLM_ENABLED: "0"
+        run: python -m pytest -q
