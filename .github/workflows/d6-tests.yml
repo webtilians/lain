@@ -1,9 +1,10 @@
-name: LAIN D6 Python tests
+name: LAIN Python regression tests
 
 on:
   push:
     branches:
       - develop/isometric-0.2-d6
+      - develop/isometric-0.2-d7
   pull_request:
 
 jobs:
