@@ -29,6 +29,9 @@ from server.world_core.player_conversation import (
     reply_to_player_conversation,
     pause_player_conversation,
 )
+from server.world_core.free_conversation import (
+    say_to_player_conversation,
+)
 
 
 app = FastAPI(
@@ -65,6 +68,11 @@ class PlayerConversationReply(BaseModel):
 
 class PlayerConversationPause(BaseModel):
     interaction_id: str
+
+
+class PlayerConversationSay(BaseModel):
+    text: str
+    after_turn_id: int
 
 
 def perform_player_step(
@@ -245,6 +253,23 @@ def player_conversation_pause(
         return pause_player_conversation(
             actor_id=actor_id,
             interaction_id=request.interaction_id,
+            minute=runtime.minute,
+        )
+    except ValueError as error:
+        raise HTTPException(status_code=409, detail=str(error))
+
+
+@app.post("/api/v1/player/conversations/{actor_id}/say")
+def player_conversation_say(
+    actor_id: str,
+    request: PlayerConversationSay,
+):
+    runtime = get_runtime()
+    try:
+        return say_to_player_conversation(
+            actor_id=actor_id,
+            text=request.text,
+            after_turn_id=request.after_turn_id,
             minute=runtime.minute,
         )
     except ValueError as error:
