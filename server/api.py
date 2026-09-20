@@ -27,6 +27,7 @@ from server.world_core.simulation import (
 from server.world_core.player_conversation import (
     start_player_conversation,
     reply_to_player_conversation,
+    pause_player_conversation,
 )
 
 
@@ -60,6 +61,10 @@ class PlayerStepRequest(
 class PlayerConversationReply(BaseModel):
     choice_id: str
     after_turn_id: int
+
+
+class PlayerConversationPause(BaseModel):
+    interaction_id: str
 
 
 def perform_player_step(
@@ -228,3 +233,19 @@ def player_conversation_reply(
             status_code=409,
             detail=str(error),
         )
+
+
+@app.post("/api/v1/player/conversations/{actor_id}/pause")
+def player_conversation_pause(
+    actor_id: str,
+    request: PlayerConversationPause,
+):
+    runtime = get_runtime()
+    try:
+        return pause_player_conversation(
+            actor_id=actor_id,
+            interaction_id=request.interaction_id,
+            minute=runtime.minute,
+        )
+    except ValueError as error:
+        raise HTTPException(status_code=409, detail=str(error))
