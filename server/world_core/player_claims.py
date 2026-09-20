@@ -13,7 +13,7 @@ from .database import get_connection
 
 PASSWORD_ASSIGNMENT = re.compile(
     r"\b(?:mi\s+)?(?:nueva\s+|actual\s+)?contrase(?:ñ|n)a"
-    r"(?:\s+(?:nueva|actual|ahora))?\s*(?:es|:|=)\s*"
+    r"(?:\s+(?:nueva|actual|ahora|centinela))?\s*(?:es|:|=)\s*"
     r"[\"'«]?([A-Za-z0-9][A-Za-z0-9_-]{2,63})(?![A-Za-z0-9_-])",
     re.IGNORECASE,
 )
