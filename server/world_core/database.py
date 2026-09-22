@@ -437,9 +437,10 @@ def record_event(
     action: str,
     target: str,
     details: str = "",
+    location: str | None = None,
 ):
     with get_connection() as conn:
-        conn.execute(
+        cursor = conn.execute(
             """
             INSERT INTO events (
                 minute,
@@ -459,7 +460,12 @@ def record_event(
             ),
         )
 
+        if location is not None:
+            from .shared_experiences import record_action_experience
+            record_action_experience(conn, cursor.lastrowid, actor_id, action,
+                                     target, minute, location)
         conn.commit()
+        return cursor.lastrowid
 
 
 def list_nodes() -> list[WorldNode]:

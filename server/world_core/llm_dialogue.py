@@ -23,6 +23,7 @@ from .player_claims import (
 )
 from .general_claims import parse_personal_statement
 from .autobiographical_memory import temporal_reply
+from .shared_experiences import experience_reply
 
 
 @dataclass(frozen=True)
@@ -88,6 +89,7 @@ def _provider_reply(context: dict, choice_text: str) -> str:
         "player_claims": context.get("player_claims", []),
         "general_claims": context.get("general_claims", []),
         "knowledge_timeline": context.get("knowledge_timeline"),
+        "experiences": context.get("experiences"),
         "goals": context["goals"],
         "conversation": (
             None if conversation is None else {
@@ -131,6 +133,10 @@ def _provider_reply(context: dict, choice_text: str) -> str:
         "la última contraseña que este personaje ha oído decir al jugador. "
         "Las contraseñas antiguas del historial no sustituyen esa última "
         "afirmación, y no puedes conocer lo contado a otro personaje. "
+        "experiences contiene solo experiencias propias verificadas por World Core. "
+        "ENCOUNTER prueba un encuentro, no una investigación. SHARED_ATTENTION "
+        "prueba atención al mismo objetivo; OBSERVER no significa INVESTIGATOR "
+        "ni permite conocer hallazgos privados de otros participantes. "
         "knowledge_timeline separa declaraciones anteriores de la última; "
         "CURRENT_TESTIMONY solo significa lo último que oíste, no verdad actual. "
         "received_minute es cuándo adquiriste el recuerdo, no necesariamente "
@@ -251,6 +257,10 @@ def generate_dialogue_reply(
             ),
             source="GROUNDED_RECALL",
         )
+    if choice_id == "FREE_TEXT":
+        recalled_experience = experience_reply(context)
+        if recalled_experience is not None:
+            return DialogueReply(text=recalled_experience, source="GROUNDED_RECALL")
     if choice_id == "FREE_TEXT" and context.get("knowledge_timeline") is not None:
         return DialogueReply(
             text=temporal_reply(context["knowledge_timeline"]),

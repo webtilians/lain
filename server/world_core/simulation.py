@@ -1,3 +1,4 @@
+from .shared_experiences import record_shared_attention
 from .database import get_connection
 from .episodic_memory import initialize_memory_provenance, save_episodic_memory
 from server.agents.agent_k import AgentK
@@ -840,6 +841,7 @@ class Simulation:
         # Resultados de las acciones procesadas
         # durante este tick.
         self.action_results = {}
+        experienced_actions = []
 
         for (
             action_id,
@@ -1260,13 +1262,17 @@ class Simulation:
                 agent
             )
 
-            record_event(
+            event_id = record_event(
                 minute=self.minute,
                 actor_id=agent.id,
                 action=action,
                 target=event_target,
                 details=details,
+                location=agent.location,
             )
+            experienced_actions.append(dict(id=event_id, actor=agent.id,
+                action=action, target=event_target, location=agent.location,
+                minute=self.minute))
 
             print(
                 f"[{self.minute:04}m] "
@@ -1287,6 +1293,8 @@ class Simulation:
                 mark_action_processed(
                     action_id
                 )
+
+        record_shared_attention(experienced_actions)
 
         for (
             node_id,

@@ -12,6 +12,7 @@ on:
       - develop/isometric-0.2-d9
       - develop/isometric-0.2-d9-r1
       - experiment/isometric-0.2-d10-episodic
+      - experiment/isometric-0.2-d11-shared-experiences
   pull_request:
 
 jobs:

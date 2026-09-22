@@ -1,3 +1,4 @@
+from .shared_experiences import record_encounter
 from .beliefs import load_belief
 from .database import get_connection
 from .episodic_memory import initialize_memory_provenance, save_episodic_memory
@@ -208,7 +209,7 @@ def start_player_conversation(
                 if existing is None
                 else "Nos volvemos a encontrar. ¿Qué quieres contarme?"
             )
-            conn.execute(
+            greeting_turn = conn.execute(
                 """
                 INSERT INTO player_conversation_turns (
                     interaction_id,
@@ -227,6 +228,7 @@ def start_player_conversation(
                     minute,
                 ),
             )
+            record_encounter(conn, actor_id, minute, greeting_turn.lastrowid)
         if current[0] == "RESUMING":
             conn.execute(
                 """

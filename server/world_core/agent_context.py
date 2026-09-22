@@ -1,3 +1,4 @@
+from .shared_experiences import experience_context
 from .database import get_connection
 from .episodic_memory import retrieve_memories
 from .player_claims import get_player_claims
@@ -45,6 +46,7 @@ class AgentContextBuilder:
             },
             "memory": [item["text"] for item in memory_records],
             "memory_records": memory_records,
+            "experiences": experience_context(agent_id, retrieval_query, interaction_id),
             "player_claims": get_player_claims(agent_id, retrieval_query),
             "knowledge_timeline": knowledge_timeline(agent_id, retrieval_query),
             "general_claims": get_general_claims(agent_id, retrieval_query),
