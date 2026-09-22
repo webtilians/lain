@@ -139,3 +139,44 @@ def test_episode_rolls_back_with_caller():
             record_experience(conn, owner='AGENT_K', key='rollback', kind='ENCOUNTER', role='PARTICIPANT', minute=0, location='STATION', participants=('AGENT_K','PLAYER_1'))
             raise RuntimeError('rollback')
     assert records() == []
+
+
+@pytest.mark.parametrize('question', [
+    'que paso la ultima vez que nos vimos',
+    'que paso la ultima vez que nos encontramos en la estacion',
+    'que paso la ultima vez q nos encontramos en la estacion',
+    'que paso la ultima vez q estuvimos en la estacion?',
+    'que paso la ultima vez q estuvimos en la estacion',
+    'que paso la ultima vez q nos vimos',
+])
+def test_repeated_real_player_phrasing_recalls_previous_visit(monkeypatch, question):
+    from server.world_core import llm_dialogue
+    sim = world()
+    interaction, _ = chat(sim)
+    with get_connection() as conn:
+        conn.execute("UPDATE interactions SET status='RESUMING' WHERE id=?", (interaction.id,))
+    turn = start_player_conversation('AGENT_K', 10)
+    monkeypatch.setenv('LAIN_LLM_ENABLED', '1')
+    def forbidden(*args, **kwargs):
+        pytest.fail('Supported recall must not call the model')
+    monkeypatch.setattr(llm_dialogue, '_provider_reply', forbidden)
+    for _ in range(3):
+        turn = say_to_player_conversation('AGENT_K', question, turn['turn_id'], 10)
+        assert turn['response_source'] == 'GROUNDED_RECALL'
+        assert 'minuto 0' in turn['line']
+        assert 'la estación' in turn['line']
+        assert 'Nos volvemos' not in turn['line']
+        assert 'No deduzco' not in turn['line']
+    assert len(records()) == 2
+
+
+def test_model_cannot_replay_resumption_greeting_as_answer(monkeypatch):
+    from server.world_core import llm_dialogue
+    sim = world()
+    _, turn = chat(sim)
+    monkeypatch.setenv('LAIN_LLM_ENABLED', '1')
+    monkeypatch.setattr(llm_dialogue, '_provider_reply', lambda *a, **kw: 'Nos volvemos a encontrar. ¿Qué quieres contarme?')
+    answer = say_to_player_conversation('AGENT_K', 'Puedes explicarlo de otra manera', turn['turn_id'], 0)
+    assert answer['response_source'] == 'DETERMINISTIC_FALLBACK'
+    assert 'Nos volvemos' not in answer['line']
+    assert 'No he conseguido responder' in answer['line']

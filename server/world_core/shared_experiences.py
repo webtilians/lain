@@ -92,7 +92,11 @@ def record_shared_attention(actions):
 
 def experience_request(query):
     text = _clean(query or '').strip().strip('¿?').strip()
-    match = re.fullmatch(r'que paso la ultima vez que estuvimos en (?:la |el )?(.+)', text)
+    text = re.sub(r'\bq\b', 'que', text)
+    text = ' '.join(text.split())
+    if re.fullmatch(r'que paso la ultima vez que (?:nos vimos|nos encontramos|hablamos)', text):
+        return {'mode': 'encounter'}
+    match = re.fullmatch(r'que paso la ultima vez que (?:estuvimos|nos encontramos|nos vimos|hablamos) en (?:la |el )?(.+)', text)
     if match:
         place = {'estacion': 'STATION', 'apartamento': 'APARTMENT',
                  'station': 'STATION', 'apartment': 'APARTMENT'}.get(match[1])
@@ -154,7 +158,9 @@ def experience_reply(context):
         records = [r for r in records if 'PLAYER_1' in r['participants']]
         if not records:
             return 'No tengo registrado un encuentro contigo en ese lugar.'
-        return f"La última vez que nos encontramos allí conversamos, en el minuto {records[0]['minute']}. No deduzco de ese encuentro que investigáramos juntos."
+        place = {'STATION': 'la estación', 'APARTMENT': 'el apartamento'}.get(records[0]['location'])
+        where = f" en {place}" if place else ""
+        return f"Recuerdo que hablamos{where}, en el minuto {records[0]['minute']}."
     if request['mode'] == 'shared' and not records:
         return 'No tengo registrada una investigación compartida contigo sobre esa señal.'
     target = request.get('target')

@@ -7,6 +7,7 @@ require HTTPS, an API key and explicit LAIN_LLM_ALLOW_REMOTE=1.
 from dataclasses import dataclass
 import json
 import os
+import re
 from urllib.parse import urlsplit
 from urllib.request import Request, urlopen
 
@@ -21,7 +22,7 @@ from .player_claims import (
     asks_about_password,
     extract_password_claim,
 )
-from .general_claims import parse_personal_statement
+from .general_claims import _clean, parse_personal_statement
 from .autobiographical_memory import temporal_reply
 from .shared_experiences import experience_reply
 
@@ -275,6 +276,18 @@ def generate_dialogue_reply(
     if os.getenv("LAIN_LLM_ENABLED", "0") == "1":
         try:
             model_text = _provider_reply(context, choice_text)
+            # A resumed greeting is context, not an answer to a new question.
+            normalize = lambda text: re.sub(r"\W+", " ", _clean(text)).strip()
+            greetings = {
+                normalize("Nos volvemos a encontrar. ¿Qué quieres contarme?"),
+                normalize("Te escucho. ¿Qué quieres saber?"),
+                normalize("Nos volvemos a encontrar"),
+            }
+            if choice_id == "FREE_TEXT" and normalize(model_text) in greetings:
+                return DialogueReply(
+                    text="No he conseguido responder a tu pregunta. ¿Puedes reformularla con un poco más de detalle?",
+                    source="DETERMINISTIC_FALLBACK",
+                )
             # The prompt alone is not a reliable factuality gate.
             # Discard fabricated NODE_07 code requirements before persisting.
             if asserts_unverified_node_access_code(model_text):

@@ -92,3 +92,25 @@ acciones aceptadas/rechazadas, proximidad insuficiente, resoluciones separadas,
 movimientos, roles distintos, persistencia e idempotencia y rollback. SQLite
 es temporal; no se necesita un modelo real. El renderizado Godot se comprueba
 manualmente con la secuencia anterior.
+
+## D11-r1: preguntas repetidas y variantes del encuentro
+
+Corrección en `experiment/isometric-0.2-d11-r1-recall` desde D11.
+También se reconocen «que paso la ultima vez que nos vimos», «que paso la
+ultima vez que nos encontramos en la estacion» y «q» como abreviatura de
+«que». Se conserva el encuentro anterior al diálogo actual incluso al repetir
+la pregunta. La respuesta menciona el lugar y el minuto sin la coletilla
+«No deduzco ...». Un saludo de reanudación devuelto por el modelo no se acepta
+como respuesta: si la pregunta no tiene recuperación disponible, se solicita
+reformular en lugar de repetir el saludo. No se borran conversaciones previas.
+
+Para actualizar desde D11, con el servidor detenido:
+
+```powershell
+git fetch origin
+git switch --track origin/experiment/isometric-0.2-d11-r1-recall
+```
+
+Reinicia el servidor y prueba «que paso la ultima vez que nos encontramos en
+la estacion» varias veces seguidas, sin cerrar el diálogo. Debe recordar el
+mismo encuentro previo. Prueba también «q» y «nos vimos».
