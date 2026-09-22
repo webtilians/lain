@@ -40,7 +40,7 @@ func _on_snapshot_updated(
 	snapshot: Dictionary
 ) -> void:
 	connection_label.text = (
-		"WORLD CORE // CONNECTED"
+		"LAIN  /  CONECTADO"
 	)
 
 	var player: Dictionary = snapshot.get(
@@ -56,11 +56,11 @@ func _on_snapshot_updated(
 	)
 
 	location_label.text = (
-		"LOCATION // %s" % location
+		"APARTAMENTO" if location == "APARTMENT" else location
 	)
 
 	minute_label.text = (
-		"WORLD TIME // %04d" % int(
+		"TIEMPO  %04d" % int(
 			snapshot.get(
 				"minute",
 				0
@@ -69,7 +69,7 @@ func _on_snapshot_updated(
 	)
 
 	energy_label.text = (
-		"ENERGY // %.2f" % float(
+		"ENERGÍA  %.2f" % float(
 			player.get(
 				"energy",
 				0.0
@@ -90,7 +90,7 @@ func _on_api_error(
 	message: String
 ) -> void:
 	connection_label.text = (
-		"WORLD CORE // OFFLINE"
+		"SIN CONEXIÓN"
 	)
 
 	knowledge_label.text = message

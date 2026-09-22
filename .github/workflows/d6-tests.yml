@@ -14,6 +14,7 @@ on:
       - experiment/isometric-0.2-d10-episodic
       - experiment/isometric-0.2-d11-shared-experiences
       - experiment/isometric-0.2-d11-r1-recall
+      - experiment/visual-0.3-apartment
   pull_request:
 
 jobs:

@@ -1,5 +1,8 @@
 extends CharacterBody3D
 
+@export var fixed_camera := false
+@export var orthographic_size: float = 12.0
+
 @export var move_speed: float = 3.5
 @export var acceleration: float = 20.0
 @export var interaction_distance: float = 2.3
@@ -37,10 +40,12 @@ func _ready() -> void:
 		Camera3D.PROJECTION_ORTHOGONAL
 	)
 
-	camera.size = 12.0
+	camera.size = orthographic_size
 
 	_update_camera()
 
+	if fixed_camera:
+		return
 	camera.look_at(
 		global_position
 		+ Vector3(0.0, 0.6, 0.0),
@@ -52,6 +57,10 @@ func _ready() -> void:
 	)
 
 func _update_camera() -> void:
+	if fixed_camera:
+		camera.global_position = Vector3(10, 12, 10)
+		camera.look_at(Vector3(0, 0.5, 0), Vector3.UP)
+		return
 	camera.global_position = (
 		global_position
 		+ CAMERA_OFFSET
