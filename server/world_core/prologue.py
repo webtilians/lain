@@ -73,56 +73,111 @@ def gate_move(player_id: str, target_location: str) -> tuple[bool, str]:
     return True, ""
 
 
-def talk_to_prologue_npc(player_id: str, npc_id: str, minute: int) -> dict:
+def talk_to_prologue_npc(
+    player_id: str, npc_id: str, minute: int, choice: str = "INTRO"
+) -> dict:
+    """One deliberate question per interaction; opening a dialogue is read-only.
+
+    The teacher does not know Ryoko's location. Ryoko knows ONLY the
+    fictional host and port: neither NPC names a real protocol, a program,
+    its syntax, a website, or a plan for solving the terminal puzzle.
+    """
     stage = stage_for(player_id)
     if stage is None:
         raise ValueError("NO_ACTIVE_PROLOGUE")
-    # These places remain explorable after the story's first connection;
-    # the scripted characters must not turn into an HTTP error afterwards.
-    if npc_id == "PROFESSOR":
-        required_location = "SCHOOL_LAB"
-        if stage == "FIND_TEACHER":
-            next_stage = "FIND_RYOKO"
-            line = (
-                "No puedo enseñarte a entrar en la Wired. Solo tuve un alumno "
-                "que parecia conocerla: Ryoko. No sé dónde está ahora. "
-                "Si la encuentras, quizá recuerde cómo se conectaba."
-            )
-        else:
-            next_stage = stage
-            line = "El alumno se llamaba Ryoko. No he sabido nada más."
-    elif npc_id == "RYOKO":
-        required_location = "NIGHTCLUB"
-        if stage == "FIND_TEACHER":
-            next_stage = stage
-            line = (
-                "No hablamos de la Wired con desconocidos. "
-                "Pregunta primero por el aula de informática de la escuela."
-            )
-        elif stage == "FIND_RYOKO":
-            next_stage = "FIND_TERMINAL"
-            line = (
-                "La conexión se abre con una orden REAL de consola: TELNET. "
-                "En tu terminal, el servidor se llama WIRED y usa el puerto 23. "
-                "Busca por tu cuenta en Internet la sintaxis del comando "
-                "Telnet para conectarte a un servidor y un puerto. "
-                "No voy a escribirte la orden completa."
-            )
-        else:
-            next_stage = stage
-            line = (
-                "Ya conoces el protocolo, el nombre del servidor y su puerto. "
-                "Busca la sintaxis de Telnet y prueba en tu ordenador."
-            )
-    else:
+    if npc_id not in {"PROFESSOR", "RYOKO"}:
         raise ValueError("UNKNOWN_PROLOGUE_CHARACTER")
+    required_location = "SCHOOL_LAB" if npc_id == "PROFESSOR" else "NIGHTCLUB"
+    allowed = (
+        {"INTRO", "ASK_CLASS", "ASK_STUDENT", "ASK_WHERE", "GOODBYE"}
+        if npc_id == "PROFESSOR"
+        else {"INTRO", "ASK_SCHOOL", "ASK_WIRED", "ASK_ADDRESS",
+              "ASK_METHOD", "GOODBYE"}
+    )
+    if choice not in allowed:
+        raise ValueError("INVALID_PROLOGUE_QUESTION")
     with get_connection() as conn:
         player = conn.execute(
             "SELECT location FROM agents WHERE id=?", (player_id,)
         ).fetchone()
-        if player != (required_location,):
-            raise ValueError("CHARACTER_NOT_PRESENT")
-        if next_stage != stage:
+    if player != (required_location,):
+        raise ValueError("CHARACTER_NOT_PRESENT")
+
+    next_stage = stage
+    if npc_id == "PROFESSOR":
+        lines = {
+            "INTRO": (
+                "La pantalla lleva años apagada. El profesor no se vuelve "
+                "inmediatamente. «¿Has venido a por algún libro?»"
+            ),
+            "ASK_CLASS": (
+                "«Teníamos pocos ordenadores. La mayoría aprendía "
+                "a escribir documentos. A veces alguien se quedaba "
+                "hasta que cerraban las puertas.»"
+            ),
+            "ASK_WHERE": (
+                "«¿Dónde está? No lo sé. Dejé de verla al acabar el curso. "
+                "Ni siquiera sé si conserva el mismo nombre.»"
+                if stage != "FIND_TEACHER"
+                else "«¿A quién buscas? Hay antiguos alumnos a los "
+                "que ya no reconocería.»"
+            ),
+            "GOODBYE": "El profesor vuelve la mirada a la pantalla vacía.",
+        }
+        if choice == "ASK_STUDENT":
+            if stage == "FIND_TEACHER":
+                next_stage = "FIND_RYOKO"
+                line = (
+                    "«Solo hubo una persona que parecía entender qué había "
+                    "al otro lado de esas pantallas. Ryoko. "
+                    "No sé dónde está ahora.»"
+                )
+            else:
+                line = (
+                    "«Ryoko. No tengo ningún dato nuevo sobre su paradero. "
+                    "¿Por qué te interesa tanto?»"
+                )
+        else:
+            line = lines[choice]
+    else:
+        lines = {
+            "INTRO": (
+                "Entre la música alguien te observa un instante. "
+                "«No creo que nos conozcamos.»"
+            ),
+            "ASK_SCHOOL": (
+                "«La escuela... Hace mucho que no paso por allí. "
+                "¿Todavía guardan aquellos ordenadores?»"
+            ),
+            "ASK_WIRED": (
+                "«Las cosas no siempre son lo que parecen en una pantalla. "
+                "No todo lo que responde está al otro lado.»"
+            ),
+            "ASK_METHOD": (
+                "«No recuerdo las teclas. Recuerdo esperar. "
+                "Lo demás tendrás que averiguarlo tú.»"
+            ),
+            "GOODBYE": "Ryoko se pierde de nuevo entre las luces.",
+        }
+        if choice == "ASK_ADDRESS":
+            if stage == "FIND_TEACHER":
+                line = (
+                    "«No hablo de direcciones con desconocidos. "
+                    "¿Cómo has llegado hasta mí?»"
+                )
+            else:
+                if stage == "FIND_RYOKO":
+                    next_stage = "FIND_TERMINAL"
+                line = (
+                    "«Había dos datos escritos en una hoja: "
+                    "WIRED y 23. El segundo era el puerto. "
+                    "No conservo la hoja. Lo demás tendrás que averiguarlo tú.»"
+                )
+        else:
+            line = lines[choice]
+
+    if next_stage != stage:
+        with get_connection() as conn:
             updated = conn.execute(
                 """UPDATE player_prologue SET stage=?, updated_minute=?
                    WHERE player_id=? AND stage=?""",
@@ -135,8 +190,11 @@ def talk_to_prologue_npc(player_id: str, npc_id: str, minute: int) -> dict:
                    VALUES(?, ?, 'PROLOGUE_TALK', ?, ?)""",
                 (minute, player_id, npc_id, next_stage),
             )
-    return {"speaker": "Profesor" if npc_id == "PROFESSOR" else "Ryoko",
-            "text": line, "stage": next_stage}
+    return {
+        "speaker": "Profesor" if npc_id == "PROFESSOR" else "Ryoko",
+        "text": line, "stage": next_stage,
+        "closed": choice == "GOODBYE",
+    }
 
 
 def submit_terminal_command(player_id: str, line: str, minute: int) -> dict:
@@ -183,18 +241,17 @@ def prologue_projection(player_id: str = PLAYER) -> dict:
         return {"enabled": False, "stage": "LEGACY", "hint": ""}
     hints = {
         "FIND_TEACHER": (
-            "Encuentra la escuela en el barrio, entra en su aula de "
-            "informatica y habla con el profesor."
+            "En el barrio está la antigua escuela. "
+            "En el aula de informática quizá quede alguien que recuerde."
         ),
         "FIND_RYOKO": (
-            "Busca a Ryoko, el antiguo alumno del profesor. "
-            "Hay una discoteca en el barrio."
+            "El profesor pronunció un nombre: Ryoko. "
+            "No sabe dónde está. El barrio parece tener otra vida al caer la noche."
         ),
         "FIND_TERMINAL": (
-            "Vuelve al ordenador de tu apartamento. Investiga fuera "
-            "del juego la sintaxis real de TELNET para abrir una "
-            "conexión a WIRED por el puerto 23."
+            "WIRED. Puerto 23. Dos datos que Ryoko no quiso explicar. "
+            "El ordenador de tu apartamento sigue esperando."
         ),
-        "CONNECTED": "Has aprendido a conectar. La historia de la Wired comienza.",
+        "CONNECTED": "La conexión cambió algo. Quizá ahora puedas descubrir qué.",
     }
     return {"enabled": True, "stage": stage, "hint": hints.get(stage, "")}

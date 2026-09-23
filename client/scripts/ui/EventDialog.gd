@@ -40,10 +40,12 @@ func _ready() -> void:
 	panel.set_anchors_and_offsets_preset(
 		Control.PRESET_CENTER
 	)
-	panel.offset_left = -240.0
-	panel.offset_top = -165.0
-	panel.offset_right = 240.0
-	panel.offset_bottom = 165.0
+	# Five investigative dialogue choices need room. The previous 330px
+	# panel clipped the final question and made the UI feel noninteractive.
+	panel.offset_left = -315.0
+	panel.offset_top = -235.0
+	panel.offset_right = 315.0
+	panel.offset_bottom = 235.0
 
 	var style := StyleBoxFlat.new()
 	style.bg_color = Color(
