@@ -342,6 +342,12 @@ def build_player_snapshot(
         # Keep its existing database row untouched, reveal it only AFTER
         # the player has discovered the real terminal syntax and connected.
         messages = []
+        # The later NODE_07 case is not a playable objective until entry.
+        station_case = {
+            "id": "STATION_ECHO_07", "status": "LOCKED",
+            "resolution": None, "summary": "", "witness_count": 0,
+            "responses": [],
+        }
 
     return {
         "schema_version": "0.1",
