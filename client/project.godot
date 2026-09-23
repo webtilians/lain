@@ -19,6 +19,7 @@ config/features=PackedStringArray("4.7")
 WorldApi="*res://scripts/network/WorldApi.gd"
 SceneRouter="*res://scripts/core/SceneRouter.gd"
 EventDialog="*res://scripts/ui/EventDialog.gd"
+CharacterJournal="*res://scripts/ui/CharacterJournal.gd"
 
 [display]
 
