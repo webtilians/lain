@@ -70,3 +70,40 @@ necesitar mas tiempo. Con el provider accesible, hablar con K/Nora por texto
 libre y comprobar en Godot `DIALOGUE // SOURCE = LLM_DIALOGUE` antes de
 esperar una propuesta Reality. Algunos temas predefinidos tienen protecciones
 que devuelven una respuesta determinista de forma deliberada.
+
+
+## Diagnostico si Godot sigue mostrando DETERMINISTIC_FALLBACK
+
+Godot solo muestra el tipo de respuesta. El codigo `LLM // ...` se imprime
+en la **ventana de PowerShell del servidor Python**, no en la consola Godot.
+Si `LLM // REQUESTED` aparece seguido de `LLM // FALLBACK_TIMEOUT`, por
+ejemplo, la consulta se intento y fracaso. Si aparece
+`LLM // RESPONSE_RECEIVED` seguido de
+`LLM // FALLBACK_REPEATED_GREETING`, el modelo contesto, pero repitio una
+frase de saludo que no es una respuesta a la pregunta.
+
+Para aislar la conexion de Ollama y el procesado del contexto sin alterar
+`world.db` ni enviar ninguna conversacion de la partida, detenga Godot si
+hace falta y, desde **otra** consola PowerShell con el mismo modelo, endpoint
+y timeout configurados, ejecute:
+
+```powershell
+cd C:\Users\ENRIQUE\lain
+.\.venv\Scripts\python.exe -m tools.diagnose_llm
+```
+
+El script hace dos consultas exclusivamente con texto **sintetico**.
+`SIMPLE_HTTP_404` indica que el modelo/ruta no se puede consultar con
+ese endpoint; `SIMPLE_CONNECTION_ERROR` indica que la conexion local
+ha fallado; `SIMPLE_TIMEOUT` indica que la consulta minima ha agotado
+el tiempo. `SIMPLE_OK` seguido de `LAIN_CONTEXT_...` separa un proveedor
+accesible de un fallo con el formato o carga del contexto realista de LAIN.
+`LAIN_CONTEXT_OK` demuestra que el modelo es accesible desde el proceso de
+diagnostico pero no que el **proceso Uvicorn que esta sirviendo al juego**
+tenga las mismas variables, ultima rama o puerto. Las lineas de diagnostico
+no contienen credenciales, memoria ni dialogos de tu partida.
+
+Si ambos chequeos dan OK pero la partida sigue devolviendo el fallback,
+comprobar en la ventana de Uvicorn sus lineas `LLM // ...` y confirmar que
+Godot conecta con el servidor local de puerto 8000. La generacion de
+entidades necesita ademas el codigo `REALITY // ENTITY_CREATED_ENTITY_...`.
