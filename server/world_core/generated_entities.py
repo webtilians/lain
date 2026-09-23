@@ -217,9 +217,9 @@ def belief_driven_goal(agent: Agent, minute: int) -> GoalCandidate | None:
                FROM node_beliefs
                WHERE agent_id = ? AND source = 'DIRECT_PERCEPTION'
                  AND believed_strength >= 0.70 AND confidence >= 0.80
-                 AND updated_minute = ?
+                 AND updated_minute BETWEEN ? AND ?
                ORDER BY believed_strength DESC, node_id""",
-            (agent.id, minute),
+            (agent.id, minute - 40, minute),
         ).fetchall()
         for node_id, location, strength, confidence in candidates:
             # An investigation is a one-off reaction to an anomaly, not
