@@ -53,6 +53,9 @@ from .evidence import (
 from .goal_engine import (
     select_goal,
 )
+from .generated_entities import (
+    GeneratedActor, list_generated_entities,
+)
 
 from .interactions import (
     create_or_get_interaction,
@@ -194,6 +197,10 @@ class Simulation:
                 self.player,
         }
 
+        # Rehydrate generated actors on restart; the seeded NPCs and the
+        # player keep their existing identity and controller contracts.
+        self.refresh_generated_actors()
+
         self.minute = (
             load_simulation_minute()
         )
@@ -209,6 +216,21 @@ class Simulation:
             player_id=self.player.id,
             minute=self.minute,
         )
+
+    def refresh_generated_actors(self):
+        """Discover persistent NPC-created entities, including mid-session births."""
+        for entity_id, creator_id, seed_goal, name, location in list_generated_entities():
+            if entity_id in self.all_agents:
+                continue
+            agent = load_or_create_agent(
+                Agent(
+                    id=entity_id, name=name, faction="WIRED_ENTITY",
+                    location=location, goal=seed_goal,
+                    controller_type="GENERATED",
+                )
+            )
+            self.all_agents[entity_id] = agent
+            self.ai_actors.append(GeneratedActor(agent, creator_id, seed_goal))
 
     # ==================================================
     # BOOTSTRAP
@@ -471,6 +493,14 @@ class Simulation:
         for actor in self.ai_actors:
 
             agent = actor.agent
+
+            # Digital entities carry an autonomous seed goal. The factional
+            # crisis planner applies to K and Nora, not to these actors yet.
+            if isinstance(actor, GeneratedActor):
+                agent.goal = actor.seed_goal
+                self.current_goals[agent.id] = None
+                save_agent(agent)
+                continue
 
             situation_beliefs = (
                 list_agent_situation_beliefs(
@@ -1345,6 +1375,7 @@ class Simulation:
         self,
     ):
 
+        self.refresh_generated_actors()
         self.minute += 10
 
         save_simulation_minute(
