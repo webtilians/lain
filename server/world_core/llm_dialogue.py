@@ -8,6 +8,8 @@ from dataclasses import dataclass
 import json
 import os
 import re
+from socket import timeout as SocketTimeout
+from urllib.error import HTTPError, URLError
 from urllib.parse import urlsplit
 from urllib.request import Request, urlopen
 
@@ -25,6 +27,27 @@ from .player_claims import (
 from .general_claims import _clean, parse_personal_statement
 from .autobiographical_memory import temporal_reply
 from .shared_experiences import experience_reply
+
+
+def _trace_dialogue(reason: str) -> None:
+    """Optional, sanitized status codes; never log text, prompts or URLs."""
+    if os.getenv("LAIN_LLM_TRACE") == "1" or os.getenv("LAIN_REALITY_TRACE") == "1":
+        print(f"LLM // {reason}", flush=True)
+
+
+def _failure_reason(error: Exception) -> str:
+    if isinstance(error, HTTPError):
+        code = error.code
+        return f"HTTP_{code}" if isinstance(code, int) and 400 <= code <= 599 else "HTTP_ERROR"
+    if isinstance(error, (TimeoutError, SocketTimeout)):
+        return "TIMEOUT"
+    if isinstance(error, URLError):
+        return "TIMEOUT" if isinstance(error.reason, (TimeoutError, SocketTimeout)) else "CONNECTION_ERROR"
+    if isinstance(error, (ValueError, TypeError, KeyError, IndexError)):
+        return "INVALID_RESPONSE_OR_CONFIGURATION"
+    if isinstance(error, OSError):
+        return "CONNECTION_ERROR"
+    return "PROVIDER_ERROR"
 
 
 @dataclass(frozen=True)
@@ -186,9 +209,10 @@ def _provider_reply(context: dict, choice_text: str) -> str:
     headers = {"Content-Type": "application/json"}
     if key:
         headers["Authorization"] = "Bearer " + key
+    # A cold local 7B model may need longer than 15 seconds to load.
     timeout = max(
         1.0,
-        min(15.0, float(os.getenv("LAIN_LLM_TIMEOUT", "8"))),
+        min(60.0, float(os.getenv("LAIN_LLM_TIMEOUT", "30"))),
     )
     payload = json.dumps(request_body, ensure_ascii=False).encode("utf-8")
     request = Request(
@@ -226,26 +250,30 @@ def generate_dialogue_reply(
     the recipient has direct player testimony. It does not make the claim
     a true fact of World Core and it does not cover all free-form memories.
     """
-    # Explicit first-person declarations concern the player's CURRENT
-    # message. A deterministic acknowledgement prevents old dialogue and
-    # old model inventions from hijacking the reply. The statement itself
-    # is stored as attributed testimony in the enclosing transaction.
-    # Passwords use the existing dedicated private-claim pipeline.
+    # A password is still handled by the verified, attributed recall path.
+    # All OTHER free-text conversation is eligible for the LLM when enabled:
+    # prior personal statements and general memories are context, not
+    # unconditional shortcuts that hide the dialogue model forever.
+    llm_enabled = os.getenv("LAIN_LLM_ENABLED", "0") == "1"
     if choice_id == "FREE_TEXT":
-        personal_statement = parse_personal_statement(choice_text)
-        if personal_statement is not None:
-            return DialogueReply(
-                text=f"Entendido, me dices: «{choice_text}».",
-                source="CURRENT_TESTIMONY",
-            )
         if extract_password_claim(choice_text) is not None:
+            _trace_dialogue("BYPASS_PASSWORD_CLAIM")
             return DialogueReply(
                 text="Entendido, recordaré lo que me acabas de contar.",
                 source="CURRENT_TESTIMONY",
             )
+        if not llm_enabled:
+            personal_statement = parse_personal_statement(choice_text)
+            if personal_statement is not None:
+                _trace_dialogue("BYPASS_CURRENT_TESTIMONY_MODEL_DISABLED")
+                return DialogueReply(
+                    text=f"Entendido, me dices: «{choice_text}».",
+                    source="CURRENT_TESTIMONY",
+                )
 
     if asks_about_node_access_code(choice_text):
         # A player-given password cannot become a NODE_07 world rule.
+        _trace_dialogue("BYPASS_NODE_ACCESS_RULE")
         return DialogueReply(
             text=no_verified_access_code_reply(context),
             source="RULE_GROUNDED",
@@ -257,6 +285,7 @@ def generate_dialogue_reply(
         and context.get("player_claims")
     ):
         claim = context["player_claims"][0]
+        _trace_dialogue("BYPASS_EXACT_PASSWORD_RECALL")
         return DialogueReply(
             text=(
                 f"La última contraseña que me dijiste fue "
@@ -264,24 +293,27 @@ def generate_dialogue_reply(
             ),
             source="GROUNDED_RECALL",
         )
-    if choice_id == "FREE_TEXT":
+    if choice_id == "FREE_TEXT" and not llm_enabled:
         recalled_experience = experience_reply(context)
         if recalled_experience is not None:
             return DialogueReply(text=recalled_experience, source="GROUNDED_RECALL")
-    if choice_id == "FREE_TEXT" and context.get("knowledge_timeline") is not None:
+    if (choice_id == "FREE_TEXT" and not llm_enabled
+            and context.get("knowledge_timeline") is not None):
         return DialogueReply(
             text=temporal_reply(context["knowledge_timeline"]),
             source="GROUNDED_RECALL",
         )
-    if choice_id == "FREE_TEXT" and context.get("general_claims"):
+    if choice_id == "FREE_TEXT" and not llm_enabled and context.get("general_claims"):
         statement = context["general_claims"][0]["reported_text"]
         return DialogueReply(
             text=f"Recuerdo que me dijiste: «{statement}».",
             source="GROUNDED_RECALL",
         )
-    if os.getenv("LAIN_LLM_ENABLED", "0") == "1":
+    if llm_enabled:
+        _trace_dialogue("REQUESTED")
         try:
             model_text = _provider_reply(context, choice_text)
+            _trace_dialogue("RESPONSE_RECEIVED")
             # A resumed greeting is context, not an answer to a new question.
             normalize = lambda text: re.sub(r"\W+", " ", _clean(text)).strip()
             greetings = {
@@ -320,10 +352,12 @@ def generate_dialogue_reply(
                 text=model_text,
                 source="LLM_DIALOGUE",
             )
-        except Exception:
-            # No prompts, user data, credentials or provider errors in logs.
-            # Never treat the failure as permission to reveal world state.
-            pass
+        except Exception as error:
+            # Only stable, sanitized status codes are printed; no user text,
+            # credentials, provider response bodies or raw URLs.
+            _trace_dialogue("FALLBACK_" + _failure_reason(error))
+    else:
+        _trace_dialogue("DISABLED")
     if choice_id == "FREE_TEXT":
         # No fake generative response if the model is offline.
         return DialogueReply(
