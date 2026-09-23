@@ -1,0 +1,200 @@
+[gd_scene load_steps=17 format=3]
+
+[ext_resource type="Script" path="res://scripts/player/IsoController.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/world/ExitDoor.gd" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/ui/RetroOverlay.tscn" id="3"]
+[ext_resource type="Script" path="res://scripts/world/ActorSpawner.gd" id="4"]
+[ext_resource type="PackedScene" path="res://art/characters/LainInspired.tscn" id="visual_avatar"]
+[ext_resource type="PackedScene" path="res://art/visual04/ResidentialStreet.tscn" id="visual_decor"]
+[ext_resource type="Script" path="res://scripts/art/ExteriorPresentation.gd" id="visual_hud"]
+
+[sub_resource type="StandardMaterial3D" id="GroundMaterial"]
+albedo_color = Color(0.16, 0.17, 0.19, 1)
+roughness = 1.0
+
+[sub_resource type="StandardMaterial3D" id="BuildingMaterial"]
+albedo_color = Color(0.47, 0.45, 0.46, 1)
+roughness = 0.98
+
+[sub_resource type="StandardMaterial3D" id="DoorMaterial"]
+albedo_color = Color(0.16, 0.16, 0.19, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="DoorMesh"]
+size = Vector3(1.4, 2.3, 0.14)
+
+[sub_resource type="BoxShape3D" id="DoorShape"]
+size = Vector3(1.4, 2.3, 0.14)
+
+[sub_resource type="CapsuleShape3D" id="PlayerShape"]
+radius = 0.35
+height = 1.8
+
+[sub_resource type="StandardMaterial3D" id="CharacterMaterial"]
+albedo_color = Color(0.18, 0.62, 0.68, 1)
+roughness = 0.8
+
+[sub_resource type="CapsuleMesh" id="CharacterMesh"]
+radius = 0.3
+height = 1.6
+
+[sub_resource type="Environment" id="Environment_OldDistrict"]
+background_mode = 1
+background_color = Color(0.07, 0.065, 0.09, 1)
+ambient_light_source = 3
+ambient_light_color = Color(0.39, 0.36, 0.47, 1)
+ambient_light_energy = 0.46
+tonemap_mode = 2
+tonemap_exposure = 0.90
+fog_enabled = true
+fog_light_color = Color(0.18, 0.17, 0.23, 1)
+fog_light_energy = 0.62
+fog_density = 0.012
+
+[node name="OldDistrict" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_OldDistrict")
+
+[node name="Ground" type="CSGBox3D" parent="."]
+size = Vector3(12, 0.2, 36)
+position = Vector3(0, -0.1, -10)
+use_collision = true
+material = SubResource("GroundMaterial")
+
+[node name="BuildingLeft" type="CSGBox3D" parent="."]
+size = Vector3(5, 3.3, 36)
+position = Vector3(-5.5, 1.65, -10)
+use_collision = true
+material = SubResource("BuildingMaterial")
+
+[node name="BuildingRight" type="CSGBox3D" parent="."]
+size = Vector3(5, 0.55, 36)
+position = Vector3(5.5, 0.275, -10)
+use_collision = true
+material = SubResource("BuildingMaterial")
+
+[node name="EndBlock" type="CSGBox3D" parent="."]
+size = Vector3(12, 7, 2)
+position = Vector3(0, 3.5, -28)
+use_collision = true
+material = SubResource("BuildingMaterial")
+
+[node name="StationDoor" type="StaticBody3D" parent="." groups=["interactable"]]
+position = Vector3(0, 1.15, 7.8)
+rotation_degrees = Vector3(0, 180, 0)
+script = ExtResource("2")
+target_location = "STATION"
+
+[node name="Mesh" type="MeshInstance3D" parent="StationDoor"]
+mesh = SubResource("DoorMesh")
+material_override = SubResource("DoorMaterial")
+
+[node name="Collision" type="CollisionShape3D" parent="StationDoor"]
+shape = SubResource("DoorShape")
+
+[node name="StationSign" type="Label3D" parent="StationDoor"]
+position = Vector3(0, 1.8, -0.15)
+text = "STATION"
+font_size = 30
+outline_size = 3
+billboard = 1
+modulate = Color(0.67, 0.65, 0.76, 1)
+horizontal_alignment = 1
+
+[node name="StationLight" type="OmniLight3D" parent="StationDoor"]
+position = Vector3(0, 1.45, -0.9)
+light_color = Color(0.64, 0.56, 0.72, 1)
+light_energy = 0.34
+omni_range = 7.0
+
+[node name="Lamp1" type="OmniLight3D" parent="."]
+position = Vector3(-1.8, 3.4, 0.5)
+light_color = Color(0.43, 0.43, 0.56, 1)
+light_energy = 0.32
+omni_range = 8.0
+
+[node name="Lamp2" type="OmniLight3D" parent="."]
+position = Vector3(1.7, 3.0, -10)
+light_color = Color(0.34, 0.36, 0.48, 1)
+light_energy = 0.28
+omni_range = 8.0
+
+[node name="Lamp3" type="OmniLight3D" parent="."]
+position = Vector3(-1.4, 3.0, -20)
+light_color = Color(0.29, 0.30, 0.40, 1)
+light_energy = 0.25
+omni_range = 8.0
+
+[node name="MoonFill" type="DirectionalLight3D" parent="."]
+rotation_degrees = Vector3(-52, -42, 0)
+light_color = Color(0.63, 0.60, 0.72, 1)
+light_energy = 0.42
+shadow_enabled = true
+directional_shadow_max_distance = 60.0
+
+[node name="Player" type="CharacterBody3D" parent="." groups=["player"]]
+position = Vector3(0, 0.9, 5.5)
+script = ExtResource("1")
+orthographic_size = 14.2
+
+[node name="Collision" type="CollisionShape3D" parent="Player"]
+shape = SubResource("PlayerShape")
+
+[node name="CharacterMesh" type="MeshInstance3D" parent="Player"]
+visible = false
+mesh = SubResource("CharacterMesh")
+material_override = SubResource("CharacterMaterial")
+
+[node name="Head" type="Node3D" parent="Player"]
+position = Vector3(0, 0.65, 0)
+
+[node name="Camera3D" type="Camera3D" parent="Player/Head"]
+current = true
+
+[node name="Actors" type="Node3D" parent="."]
+script = ExtResource("4")
+location_id = "OLD_DISTRICT"
+
+[node name="Spawns" type="Node3D" parent="Actors"]
+
+[node name="AGENT_K" type="Marker3D" parent="Actors/Spawns"]
+position = Vector3(1.0, 0, -6.0)
+
+[node name="AGENT_NORA" type="Marker3D" parent="Actors/Spawns"]
+position = Vector3(-0.8, 0, -12.5)
+
+[node name="ENTITY_ANCHOR" type="Marker3D" parent="Actors/Spawns"]
+position = Vector3(1.5, 0, -8.5)
+
+[node name="RetroOverlay" parent="." instance=ExtResource("3")]
+
+[node name="HUD" type="CanvasLayer" parent="."]
+layer = 20
+
+[node name="Location" type="Label" parent="HUD"]
+offset_left = 12.0
+offset_top = 10.0
+offset_right = 300.0
+offset_bottom = 35.0
+text = "OLD_DISTRICT"
+
+[node name="Hint" type="Label" parent="HUD"]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -160.0
+offset_top = -35.0
+offset_right = 160.0
+offset_bottom = -10.0
+text = "E // INTERACT"
+horizontal_alignment = 1
+
+[node name="Silhouette" parent="Player" instance=ExtResource("visual_avatar")]
+
+[node name="Dressing" parent="." instance=ExtResource("visual_decor")]
+
+[node name="Presentation" type="Node3D" parent="."]
+script = ExtResource("visual_hud")
