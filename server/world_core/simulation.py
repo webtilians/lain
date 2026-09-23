@@ -275,7 +275,8 @@ class Simulation:
             self.nodes["NODE_07"]
         )
 
-        for actor in self.ai_actors:
+        # Newborn entities do not inherit K/Nora's initial signal lead.
+        for actor in (self.k, self.nora):
 
             agent = actor.agent
 
