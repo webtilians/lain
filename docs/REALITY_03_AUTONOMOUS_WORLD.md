@@ -102,3 +102,45 @@ aparición, interpolación, identidad e invisibilidad en las cuatro escenas,
 sin modificar `world.db`. Realizar también una prueba manual de Godot
 con Uvicorn y Ollama locales. No fusionar la PR experimental hasta
 confirmar el recorrido visual en el entorno real del usuario.
+
+
+## Reality 0.3-r1: si las entidades se quedan quietas
+
+El primer reloj se pausaba mientras hubiera *cualquier* fila de conversación
+`OPEN` en `world.db`, incluso un diálogo de una partida anterior que no se
+hubiera podido pausar al salir. Esa fila podía paralizar la simulación
+indefinidamente. Ahora el reloj solo se pausa con dos condiciones simultáneas:
+la conversación sigue `OPEN` y Godot envía una confirmación reciente
+(`X-Lain-Dialog-Active: 1`) mientras la interfaz de conversación esté visible.
+La confirmación caduca tras 4,5 segundos sin recibirla, sin modificar ni borrar
+ningún diálogo antiguo. Durante la propia petición LLM, el candado de API
+sigue impidiendo que el mundo avance en paralelo.
+
+Al arrancar Uvicorn se imprime `WORLD CLOCK // STARTED interval=8s`.
+Con `LAIN_WORLD_TRACE=1` el servidor emite cada tick
+`WORLD CLOCK // TICK_MINUTE_...` y, en un diálogo real,
+`WORLD CLOCK // PAUSED_ACTIVE_CHAT`. Si el registro no aparece,
+comprobar que se está ejecutando esta rama actualizada, que el servidor
+anterior está detenido, y que `LAIN_WORLD_CLOCK=1`. Si
+`TICK_MINUTE` aparece pero no se mueve la entidad, comprobar si su
+objetivo es investigar una anomalía o viajar a otra localización y si
+World Core registra `WANDER` para una entidad co-localizada.
+
+Una comprobación read-only independiente de Godot desde PowerShell, sin tocar
+`world.db` ni realizar una acción del jugador:
+
+```powershell
+$first = Invoke-RestMethod "http://127.0.0.1:8000/api/v1/player/state"
+Start-Sleep -Seconds 12
+$second = Invoke-RestMethod "http://127.0.0.1:8000/api/v1/player/state"
+"Minuto: $($first.minute) -> $($second.minute)"
+$second.visible_actors | Format-Table id, name, patrol_step
+```
+
+El minuto debe aumentar al menos 10, sin pulsar teclas. El `patrol_step`
+de una presencia generada que esté acompañándote cambia cuando World Core
+aprueba el desplazamiento local. Un `patrol_step` ausente equivale al
+waypoint inicial 0; no implica por sí mismo que el servidor esté parado.
+La posición visual avanza al recibir snapshots nuevos, sin alterar el
+estado autoritativo del mundo. La prueba de Godot en tu ordenador sigue
+siendo necesaria para confirmar la animación de esa rama con tus assets.
