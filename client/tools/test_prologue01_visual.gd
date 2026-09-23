@@ -50,6 +50,28 @@ func _run() -> void:
 		check(exits > 0, location + ": no valid exit")
 		if location == "SCHOOL_LAB" or location == "NIGHTCLUB":
 			check(encounters == 1, location + ": expected one authored NPC")
+			var actor_id := "PROFESSOR" if location == "SCHOOL_LAB" else "RYOKO"
+			var actor = scene.get_node(actor_id)
+			# Simulate a returned INTRO without connecting to the API:
+			# approaching the NPC must present questions, not a final clue.
+			actor.waiting = true
+			actor._on_dialogue(actor_id, {
+				"speaker": actor_id,
+				"text": "Todavía no has preguntado nada.",
+				"stage": "FIND_TEACHER",
+			})
+			var event_dialog = root.get_node("EventDialog")
+			check(event_dialog.choices_box.visible,
+				location + ": conversation has no player choices")
+			var question_buttons := 0
+			for widget in event_dialog.choices_box.get_children():
+				if widget is Button:
+					question_buttons += 1
+					check("telnet" not in widget.text.to_lower(),
+						location + ": dialogue choices spoil the protocol")
+			check(question_buttons >= 4,
+				location + ": NPC only gives an automatic one-line response")
+			event_dialog.close_event()
 		else:
 			check(encounters == 0, "school corridor must not have Ryoko")
 		check(scene.get_node_or_null("HUD/Hint") != null,
