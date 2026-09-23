@@ -4,6 +4,7 @@ const LOCATION_SCENES := {
 	"APARTMENT": "res://scenes/apartment/ApartmentIso.tscn",
 	"APARTMENT_DISTRICT": "res://scenes/apartment_district/ApartmentDistrict.tscn",
 	"STATION": "res://scenes/station/Station.tscn",
+	"OLD_DISTRICT": "res://scenes/old_district/OldDistrict.tscn",
 }
 
 var current_location := ""
