@@ -9,6 +9,21 @@ const ACTOR_INTERACTABLE = preload(
 @onready var spawns: Node3D = $Spawns
 
 var rendered_actors: Dictionary = {}
+var patrol_steps: Dictionary = {}
+var movement_tweens: Dictionary = {}
+
+const LOCAL_PATROL_OFFSETS := [
+	Vector3(0.0, 0.0, 0.0),
+	Vector3(0.65, 0.0, 0.0),
+	Vector3(0.65, 0.0, 0.55),
+	Vector3(0.0, 0.0, 0.55),
+]
+
+func _exit_tree() -> void:
+	for tween in movement_tweens.values():
+		if tween != null and tween.is_running():
+			tween.kill()
+
 
 func _ready() -> void:
 	WorldApi.snapshot_updated.connect(
@@ -65,6 +80,7 @@ func _sync_actors(
 			actor_id
 		) as Node3D
 		var spawn_position := Vector3.ZERO
+		var next_patrol_step := int(actor_data.get("patrol_step", 0)) % 4
 		if actor_id.begins_with("ENTITY_"):
 			var anchor := spawns.get_node_or_null("ENTITY_ANCHOR") as Node3D
 			if anchor == null or generated_index >= 8:
@@ -73,7 +89,7 @@ func _sync_actors(
 				float(generated_index % 2) * 1.4,
 				0.0,
 				-float(generated_index / 2) * 1.7
-			)
+			) + LOCAL_PATROL_OFFSETS[next_patrol_step]
 			generated_index += 1
 		elif marker != null:
 			spawn_position = marker.global_position
@@ -89,12 +105,31 @@ func _sync_actors(
 			)
 			add_child(actor)
 			rendered_actors[actor_id] = actor
+			patrol_steps[actor_id] = next_patrol_step
+			actor.global_position = spawn_position
+			continue
 
 		var representation: Node3D = (
 			rendered_actors[actor_id] as Node3D
 		)
 
-		representation.global_position = spawn_position
+		if actor_id.begins_with("ENTITY_") and (
+			int(patrol_steps.get(actor_id, 0)) != next_patrol_step
+		):
+			# Animate only an ACCEPTED World Core WANDER. Polling the same
+			# snapshot never creates movement or changes the server's state.
+			patrol_steps[actor_id] = next_patrol_step
+			if movement_tweens.has(actor_id):
+				var previous: Tween = movement_tweens[actor_id]
+				if previous.is_running():
+					previous.kill()
+			var tween := create_tween()
+			tween.tween_property(
+				representation, "global_position", spawn_position, 1.8
+			).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+			movement_tweens[actor_id] = tween
+		elif not actor_id.begins_with("ENTITY_"):
+			representation.global_position = spawn_position
 
 	for actor_id in rendered_actors.keys():
 		if present.has(actor_id):
@@ -108,6 +143,12 @@ func _sync_actors(
 			actor.queue_free()
 
 		rendered_actors.erase(actor_id)
+		patrol_steps.erase(actor_id)
+		if movement_tweens.has(actor_id):
+			var previous: Tween = movement_tweens[actor_id]
+			if previous.is_running():
+				previous.kill()
+			movement_tweens.erase(actor_id)
 
 func _create_actor(
 	actor_id: String,
