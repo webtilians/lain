@@ -214,16 +214,92 @@ def _provider_reply(context: dict, choice_text: str) -> str:
         1.0,
         min(60.0, float(os.getenv("LAIN_LLM_TIMEOUT", "8"))),
     )
-    payload = json.dumps(request_body, ensure_ascii=False).encode("utf-8")
-    request = Request(
-        _endpoint(),
-        data=payload,
-        headers=headers,
-        method="POST",
-    )
-    # Limit response size; a broken provider must not exhaust game memory.
-    with urlopen(request, timeout=timeout) as response:
-        raw = response.read(65537)
+    def perform(body: dict) -> bytes:
+        payload = json.dumps(body, ensure_ascii=False).encode("utf-8")
+        request = Request(
+            _endpoint(),
+            data=payload,
+            headers=headers,
+            method="POST",
+        )
+        # Limit response size; a broken provider must not exhaust game memory.
+        with urlopen(request, timeout=timeout) as response:
+            return response.read(65537)
+
+    try:
+        raw = perform(request_body)
+    except HTTPError as error:
+        if error.code != 400:
+            raise
+        # Ollama can reject an otherwise valid OpenAI-compatible request when
+        # the real accumulated character context exceeds the model's accepted
+        # prompt budget. Retry ONCE with the same current utterance and a
+        # bounded provenance-preserving projection instead of silently falling
+        # back to deterministic dialogue.
+        _trace_dialogue("RETRY_COMPACT_HTTP_400")
+        compact_context = {
+            "identity": agent_context["identity"],
+            "situation": agent_context["situation"],
+            "beliefs": {
+                name: agent_context["beliefs"][name][-8:]
+                for name in ("nodes", "actors", "situations")
+            },
+            "memory": [str(item)[:300] for item in agent_context["memory"][-4:]],
+            "memory_records": [
+                {
+                    "text": str(item.get("text", ""))[:300],
+                    "source_kind": item.get("source_kind"),
+                    "source_actor_id": item.get("source_actor_id"),
+                    "received_minute": item.get("received_minute"),
+                    "location": item.get("location"),
+                }
+                for item in agent_context["memory_records"][-4:]
+            ],
+            "player_claims": agent_context["player_claims"][:2],
+            "general_claims": agent_context["general_claims"][:2],
+            # Exact temporal/experience questions are handled deterministically
+            # before provider routing. Omitting their potentially long bundles
+            # here does not weaken those grounded paths.
+            "knowledge_timeline": None,
+            "experiences": {
+                "request": (agent_context.get("experiences") or {}).get("request"),
+                "records": (agent_context.get("experiences") or {}).get("records", [])[:4],
+            },
+            "goals": agent_context["goals"],
+            "conversation": (
+                None if agent_context["conversation"] is None else {
+                    "id": agent_context["conversation"]["id"],
+                    "status": agent_context["conversation"]["status"],
+                    "turns": [
+                        {
+                            "speaker_id": turn["speaker_id"],
+                            "text": str(turn["text"])[:300],
+                            "source": turn["source"],
+                        }
+                        for turn in agent_context["conversation"]["turns"][-6:]
+                    ],
+                }
+            ),
+        }
+        compact_body = {
+            **request_body,
+            "messages": [
+                request_body["messages"][0],
+                {
+                    "role": "user",
+                    "content": json.dumps(
+                        {
+                            "agent_context": compact_context,
+                            "player_utterance": choice_text,
+                        },
+                        ensure_ascii=False,
+                    ),
+                },
+            ],
+        }
+        raw = perform(compact_body)
+        _trace_dialogue("COMPACT_RESPONSE_RECEIVED")
+
     if len(raw) > 65536:
         raise ValueError("LLM_RESPONSE_TOO_LARGE")
     result = json.loads(raw.decode("utf-8"))
