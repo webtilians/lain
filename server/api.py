@@ -5,6 +5,7 @@ from threading import RLock
 from fastapi import (
     FastAPI,
     HTTPException,
+    Header,
 )
 
 from pydantic import (
@@ -171,10 +172,16 @@ def health():
 @app.get(
     "/api/v1/player/state"
 )
-def player_state():
+def player_state(
+    x_lain_dialog_active: str | None = Header(default=None),
+):
 
     with _world_lock:
         get_runtime()
+        # Ephemeral UI heartbeat only: never alter world.db on a GET.
+        # A stale OPEN conversation by itself must not freeze the world.
+        if x_lain_dialog_active == "1" and _clock is not None:
+            _clock.note_player_dialogue_active()
         return build_player_snapshot(PLAYER_ID)
 
 
