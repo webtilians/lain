@@ -8,9 +8,9 @@ extends CharacterBody3D
 @export var interaction_distance: float = 2.3
 
 const CAMERA_OFFSET := Vector3(
-	10.0,
-	12.0,
-	10.0
+	10.5,
+	14.0,
+	10.5
 )
 
 @onready var camera: Camera3D = (
@@ -58,7 +58,7 @@ func _ready() -> void:
 
 func _update_camera() -> void:
 	if fixed_camera:
-		camera.global_position = Vector3(10, 12, 10)
+		camera.global_position = Vector3(10.5, 14.0, 10.5)
 		camera.look_at(Vector3(0, 0.5, 0), Vector3.UP)
 		return
 	camera.global_position = (
