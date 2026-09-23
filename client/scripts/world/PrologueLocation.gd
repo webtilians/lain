@@ -18,15 +18,12 @@ func _on_snapshot(snapshot: Dictionary) -> void:
 	if str(player.get("location", "")) != location_id:
 		return
 	var hint: Label = get_node("HUD/Hint")
-	var progress: Dictionary = snapshot.get("prologue", {})
-	var objective := str(progress.get("hint", "Explora la ciudad."))
-	if location_id == "SCHOOL":
-		objective = "ESCUELA // BUSCA EL AULA DE INFORMATICA"
-	elif location_id == "SCHOOL_LAB":
-		objective = "AULA DE INFORMATICA // HABLA CON EL PROFESOR"
+	var atmosphere := "ESCUELA // PASILLO 02"
+	if location_id == "SCHOOL_LAB":
+		atmosphere = "AULA DE INFORMÁTICA // UN ORDENADOR SIGUE ENCENDIDO"
 	elif location_id == "NIGHTCLUB":
-		objective = "DISCOTECA // ENCUENTRA A RYOKO"
-	hint.text = objective + "  //  E: INTERACTUAR   J: DIARIO"
+		atmosphere = "SÓTANO AZUL // LAS CONVERSACIONES NO LLEGAN AL OTRO LADO"
+	hint.text = atmosphere + "  //  E: INTERACTUAR   J: DIARIO"
 
 
 func _mat(shade: Color, glowing: bool = false) -> StandardMaterial3D:
