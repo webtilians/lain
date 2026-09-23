@@ -32,11 +32,14 @@ func _send(path: String, data: Dictionary, kind: String, actor_id: String = "") 
 		request_error.emit("No se pudo conectar con el servidor: %s" % err)
 
 
-func talk(actor_id: String) -> void:
+func talk(actor_id: String, choice: String = "INTRO") -> void:
 	if actor_id not in ["PROFESSOR", "RYOKO"]:
 		request_error.emit("Personaje del prólogo desconocido.")
 		return
-	_send("/api/v1/prologue/talk/" + actor_id, {}, "TALK", actor_id)
+	_send(
+		"/api/v1/prologue/talk/" + actor_id,
+		{"choice": choice}, "TALK", actor_id,
+	)
 
 
 func terminal_command(line: String) -> void:
