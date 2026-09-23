@@ -1,6 +1,11 @@
+from contextlib import asynccontextmanager
+import os
+from threading import RLock
+
 from fastapi import (
     FastAPI,
     HTTPException,
+    Header,
 )
 
 from pydantic import (
@@ -23,6 +28,7 @@ from server.world_core.wired import (
 from server.world_core.simulation import (
     Simulation,
 )
+from server.world_core.realtime import WorldClock, world_clock_interval
 
 from server.world_core.player_conversation import (
     start_player_conversation,
@@ -34,23 +40,39 @@ from server.world_core.free_conversation import (
 )
 
 
-app = FastAPI(
-    title="LAIN World API",
-    version="0.1.0",
-)
-
 _runtime: Simulation | None = None
+_world_lock = RLock()
+_clock: WorldClock | None = None
 
 
 def get_runtime() -> Simulation:
-
     global _runtime
+    with _world_lock:
+        if _runtime is None:
+            _runtime = Simulation()
+        return _runtime
 
-    if _runtime is None:
 
-        _runtime = Simulation()
+@asynccontextmanager
+async def world_lifespan(_app: FastAPI):
+    global _clock
+    # A single server-owned clock; GET /state never advances the world.
+    if os.getenv("LAIN_WORLD_CLOCK", "1") == "1":
+        _clock = WorldClock(get_runtime(), _world_lock, world_clock_interval())
+        _clock.start()
+    try:
+        yield
+    finally:
+        if _clock is not None:
+            _clock.stop()
+            _clock = None
 
-    return _runtime
+
+app = FastAPI(
+    title="LAIN World API",
+    version="0.1.0",
+    lifespan=world_lifespan,
+)
 
 
 class PlayerStepRequest(
@@ -81,58 +103,60 @@ def perform_player_step(
     simulation: Simulation | None = None,
 ):
 
-    runtime = (
-        simulation
-        if simulation is not None
-        else get_runtime()
-    )
+    with _world_lock:
+        runtime = (
+            simulation
+            if simulation is not None
+            else get_runtime()
+        )
 
-    action_id = queue_action(
-        actor_id=PLAYER_ID,
-        action=action,
-        target=target,
-        source="GODOT_CLIENT",
-    )
+        action_id = queue_action(
+            actor_id=PLAYER_ID,
+            action=action,
+            target=target,
+            source="GODOT_CLIENT",
+        )
 
-    action_results = runtime.tick()
+        action_results = runtime.tick()
 
-    action_result = action_results.get(
-        action_id,
-        {
-            "accepted": False,
-            "action": action,
-            "target": target,
-            "reason": "ACTION_NOT_RESOLVED",
-        },
-    )
+        action_result = action_results.get(
+            action_id,
+            {
+                "accepted": False,
+                "action": action,
+                "target": target,
+                "reason": "ACTION_NOT_RESOLVED",
+            },
+        )
 
-    return {
-        "action_id": action_id,
-        "action_result": action_result,
-        "state": build_player_snapshot(
-            PLAYER_ID
-        ),
-    }
+        return {
+            "action_id": action_id,
+            "action_result": action_result,
+            "state": build_player_snapshot(
+                PLAYER_ID
+            ),
+        }
 
 
 def acknowledge_player_message(
     message_id: str,
 ):
 
-    runtime = get_runtime()
+    with _world_lock:
+        runtime = get_runtime()
 
-    result = process_wired_message_acknowledgement(
-        message_id=message_id,
-        player_id=PLAYER_ID,
-        minute=runtime.minute,
-    )
+        result = process_wired_message_acknowledgement(
+            message_id=message_id,
+            player_id=PLAYER_ID,
+            minute=runtime.minute,
+        )
 
-    return {
-        "effect": result,
-        "state": build_player_snapshot(
-            PLAYER_ID
-        ),
-    }
+        return {
+            "effect": result,
+            "state": build_player_snapshot(
+                PLAYER_ID
+            ),
+        }
 
 
 @app.get(
@@ -148,13 +172,17 @@ def health():
 @app.get(
     "/api/v1/player/state"
 )
-def player_state():
+def player_state(
+    x_lain_dialog_active: str | None = Header(default=None),
+):
 
-    get_runtime()
-
-    return build_player_snapshot(
-        PLAYER_ID
-    )
+    with _world_lock:
+        get_runtime()
+        # Ephemeral UI heartbeat only: never alter world.db on a GET.
+        # A stale OPEN conversation by itself must not freeze the world.
+        if x_lain_dialog_active == "1" and _clock is not None:
+            _clock.note_player_dialogue_active()
+        return build_player_snapshot(PLAYER_ID)
 
 
 @app.post(
@@ -204,19 +232,20 @@ def player_message_ack(
 def player_conversation_start(
     actor_id: str,
 ):
-    runtime = get_runtime()
+    with _world_lock:
+        runtime = get_runtime()
 
-    try:
-        return start_player_conversation(
-            actor_id=actor_id,
-            minute=runtime.minute,
-        )
+        try:
+            return start_player_conversation(
+                actor_id=actor_id,
+                minute=runtime.minute,
+            )
 
-    except ValueError as error:
-        raise HTTPException(
-            status_code=409,
-            detail=str(error),
-        )
+        except ValueError as error:
+            raise HTTPException(
+                status_code=409,
+                detail=str(error),
+            )
 
 
 @app.post(
@@ -226,21 +255,22 @@ def player_conversation_reply(
     actor_id: str,
     request: PlayerConversationReply,
 ):
-    runtime = get_runtime()
+    with _world_lock:
+        runtime = get_runtime()
 
-    try:
-        return reply_to_player_conversation(
-            actor_id=actor_id,
-            choice_id=request.choice_id,
-            after_turn_id=request.after_turn_id,
-            minute=runtime.minute,
-        )
+        try:
+            return reply_to_player_conversation(
+                actor_id=actor_id,
+                choice_id=request.choice_id,
+                after_turn_id=request.after_turn_id,
+                minute=runtime.minute,
+            )
 
-    except ValueError as error:
-        raise HTTPException(
-            status_code=409,
-            detail=str(error),
-        )
+        except ValueError as error:
+            raise HTTPException(
+                status_code=409,
+                detail=str(error),
+            )
 
 
 @app.post("/api/v1/player/conversations/{actor_id}/pause")
@@ -248,15 +278,16 @@ def player_conversation_pause(
     actor_id: str,
     request: PlayerConversationPause,
 ):
-    runtime = get_runtime()
-    try:
-        return pause_player_conversation(
-            actor_id=actor_id,
-            interaction_id=request.interaction_id,
-            minute=runtime.minute,
-        )
-    except ValueError as error:
-        raise HTTPException(status_code=409, detail=str(error))
+    with _world_lock:
+        runtime = get_runtime()
+        try:
+            return pause_player_conversation(
+                actor_id=actor_id,
+                interaction_id=request.interaction_id,
+                minute=runtime.minute,
+            )
+        except ValueError as error:
+            raise HTTPException(status_code=409, detail=str(error))
 
 
 @app.post("/api/v1/player/conversations/{actor_id}/say")
@@ -264,13 +295,14 @@ def player_conversation_say(
     actor_id: str,
     request: PlayerConversationSay,
 ):
-    runtime = get_runtime()
-    try:
-        return say_to_player_conversation(
-            actor_id=actor_id,
-            text=request.text,
-            after_turn_id=request.after_turn_id,
-            minute=runtime.minute,
-        )
-    except ValueError as error:
-        raise HTTPException(status_code=409, detail=str(error))
+    with _world_lock:
+        runtime = get_runtime()
+        try:
+            return say_to_player_conversation(
+                actor_id=actor_id,
+                text=request.text,
+                after_turn_id=request.after_turn_id,
+                minute=runtime.minute,
+            )
+        except ValueError as error:
+            raise HTTPException(status_code=409, detail=str(error))

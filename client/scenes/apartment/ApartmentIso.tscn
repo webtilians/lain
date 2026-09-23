@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=3]
+[gd_scene load_steps=28 format=3]
 
 [ext_resource type="Script" path="res://scripts/world/Apartment.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/player/IsoController.gd" id="2"]
@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/TerminalUI.tscn" id="6"]
 
 [ext_resource type="Script" path="res://scripts/art/ApartmentPresentation.gd" id="7"]
+[ext_resource type="Script" path="res://scripts/world/ActorSpawner.gd" id="8"]
 
 [ext_resource type="Texture2D" path="res://art/apartment/plaster.png" id="plaster"]
 [ext_resource type="PackedScene" path="res://art/visual05/models/Floor.tscn" id="asset_Floor"]
@@ -170,6 +171,21 @@ position = Vector3(0, 0.65, 0)
 
 [node name="Camera3D" type="Camera3D" parent="Player/Head"]
 current = true
+
+[node name="Actors" type="Node3D" parent="."]
+script = ExtResource("8")
+location_id = "APARTMENT"
+
+[node name="Spawns" type="Node3D" parent="Actors"]
+
+[node name="AGENT_K" type="Marker3D" parent="Actors/Spawns"]
+position = Vector3(2.0, 0, 0.6)
+
+[node name="AGENT_NORA" type="Marker3D" parent="Actors/Spawns"]
+position = Vector3(1.6, 0, 1.9)
+
+[node name="ENTITY_ANCHOR" type="Marker3D" parent="Actors/Spawns"]
+position = Vector3(2.0, 0, 2.4)
 
 [node name="HUD" type="CanvasLayer" parent="."]
 
