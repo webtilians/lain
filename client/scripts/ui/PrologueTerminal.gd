@@ -126,12 +126,18 @@ func _on_command(line: String) -> void:
 		"dir":
 			transcript.text += "C:\\WIRED\\  <DIR>    BOOT.LOG    MANUAL.TXT\n"
 		"help":
-			transcript.text += (
-				"CLS: limpiar   DIR: directorio   VER: version\n"
-				+ "El acceso remoto utiliza un comando REAL de red "
-				+ "compatible con terminales antiguas. Busca en Internet "
-				+ "como abrir una conexion Telnet a un servidor y puerto.\n"
-			)
+			transcript.text += "CLS: limpiar   DIR: directorio   VER: version\n"
+			var stage := str(WorldApi.snapshot.get("prologue", {}).get("stage", "LEGACY"))
+			if stage == "FIND_TERMINAL" or stage == "CONNECTED":
+				transcript.text += (
+					"Ya conoces el protocolo. Busca fuera del juego "
+					+ "la sintaxis real de TELNET para un servidor y puerto.\n"
+				)
+			else:
+				transcript.text += (
+					"MODULO REMOTO // CONOCIMIENTOS INSUFICIENTES\n"
+					+ "Quizá alguien del aula de informática pueda ayudarte.\n"
+				)
 		_:
 			command_line.editable = false
 			PrologueApi.terminal_command(command)
