@@ -6,6 +6,7 @@ on:
       - experiment/reality-0.3-visual06-integration
       - experiment/reality-0.4-character-sheets-station-echo
       - experiment/prologue-0.1-school-ryoko-terminal
+      - experiment/prologue-0.2-neighborhood-dialogue
 
 jobs:
   godot-visual:
@@ -59,3 +60,4 @@ jobs:
           if grep -E '^(SCRIPT ERROR:|ERROR:)' /tmp/lain-prologue.log; then
             exit 1
           fi
+

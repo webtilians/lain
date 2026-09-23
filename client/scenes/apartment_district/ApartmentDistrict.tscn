@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3]
+[gd_scene load_steps=21 format=3]
 
 [ext_resource type="Script" path="res://scripts/player/IsoController.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/world/ExitDoor.gd" id="2"]
@@ -8,7 +8,6 @@
 [ext_resource type="Script" path="res://scripts/world/NeighborhoodEntry.gd" id="neighborhood_entry"]
 
 [ext_resource type="PackedScene" path="res://art/characters/LainSlender.tscn" id="visual_avatar"]
-[ext_resource type="PackedScene" path="res://art/visual05/models/ResidentialStreet.tscn" id="visual_decor"]
 [ext_resource type="Script" path="res://scripts/art/ExteriorPresentation.gd" id="visual_hud"]
 
 [ext_resource type="Material" path="res://art/visual05/wall.tres" id="v05_wall"]
@@ -214,11 +213,6 @@ text = "E // INTERACT"
 horizontal_alignment = 1
 
 [node name="Silhouette" parent="Player" instance=ExtResource("visual_avatar")]
-
-[node name="Dressing" parent="." instance=ExtResource("visual_decor")]
-
-[node name="DressingContinuation" parent="." instance=ExtResource("visual_decor")]
-position = Vector3(0, 0, -36.5)
 
 [node name="Presentation" type="Node3D" parent="."]
 script = ExtResource("visual_hud")
