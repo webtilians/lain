@@ -338,6 +338,11 @@ func _on_chat_request_completed(
 		return
 
 	print("DIALOGUE // SOURCE = ", parsed.get("response_source", "UNKNOWN"))
+	# A free-text reply may atomically create an entity in World Core.
+	# Refresh the world projection so nearby presences appear in the scene
+	# immediately, without leaving/re-entering or requiring another action.
+	if completed_action == "say":
+		WorldApi.request_state()
 	chat_turn_id = int(
 		parsed.get("turn_id", 0)
 	)
