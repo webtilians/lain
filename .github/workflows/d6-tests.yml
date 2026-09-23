@@ -17,6 +17,7 @@ on:
       - experiment/visual-0.3-apartment
       - experiment/reality-0.1-generated-entities
       - experiment/visual-reality-0.3-r1
+      - experiment/visual-0.4-lain-environments
   pull_request:
 
 jobs:

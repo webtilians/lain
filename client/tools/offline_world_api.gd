@@ -1,5 +1,5 @@
 extends Node
-## Offline substitute used exclusively by capture_apartment.gd.
+## Offline substitute for offline visual and navigation checks.
 signal snapshot_updated(snapshot: Dictionary)
 signal api_error(message: String)
 signal action_denied(reason: String)

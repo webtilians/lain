@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3]
+[gd_scene load_steps=23 format=3]
 
 [ext_resource type="Script" path="res://scripts/world/Station.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/player/IsoController.gd" id="2"]
@@ -7,8 +7,12 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/RetroOverlay.tscn" id="5"]
 [ext_resource type="Script" path="res://scripts/world/ActorSpawner.gd" id="6"]
 
+[ext_resource type="PackedScene" path="res://art/characters/LainInspired.tscn" id="visual_avatar"]
+[ext_resource type="PackedScene" path="res://art/visual04/StationDressing.tscn" id="visual_decor"]
+[ext_resource type="Script" path="res://scripts/art/ExteriorPresentation.gd" id="visual_hud"]
+
 [sub_resource type="StandardMaterial3D" id="Concrete"]
-albedo_color = Color(0.055, 0.058, 0.062, 1)
+albedo_color = Color(0.38, 0.42, 0.42, 1)
 roughness = 0.95
 
 [sub_resource type="StandardMaterial3D" id="Platform"]
@@ -61,7 +65,7 @@ background_mode = 1
 background_color = Color(0.025, 0.03, 0.04, 1)
 ambient_light_source = 3
 ambient_light_color = Color(0.32, 0.36, 0.44, 1)
-ambient_light_energy = 1.2
+ambient_light_energy = 0.85
 
 [node name="Station" type="Node3D"]
 script = ExtResource("1")
@@ -73,7 +77,7 @@ environment = SubResource("StationEnvironment")
 rotation_degrees = Vector3(-55, -25, 0)
 light_color = Color(0.55, 0.60, 0.70, 1)
 light_energy = 0.55
-shadow_enabled = false
+shadow_enabled = true
 
 [node name="Floor" type="CSGBox3D" parent="."]
 size = Vector3(10, 0.2, 22)
@@ -88,8 +92,8 @@ use_collision = true
 material = SubResource("Concrete")
 
 [node name="RightWall" type="CSGBox3D" parent="."]
-size = Vector3(0.3, 4, 22)
-position = Vector3(5, 2, 0)
+size = Vector3(0.3, 0.45, 22)
+position = Vector3(5, 0.225, 0)
 use_collision = true
 material = SubResource("Concrete")
 
@@ -100,8 +104,8 @@ use_collision = true
 material = SubResource("Concrete")
 
 [node name="EntranceWall" type="CSGBox3D" parent="."]
-size = Vector3(10, 4, 0.3)
-position = Vector3(0, 2, 11)
+size = Vector3(10, 0.45, 0.3)
+position = Vector3(0, 0.225, 11)
 use_collision = true
 material = SubResource("Concrete")
 
@@ -143,27 +147,28 @@ shape = SubResource("DoorShape")
 [node name="ExitLight" type="OmniLight3D" parent="ExitDoor"]
 position = Vector3(0, 1.5, -1.0)
 light_color = Color(0.65, 0.55, 0.35, 1)
-light_energy = 4.0
+light_energy = 0.65
 omni_range = 6.0
 
 [node name="ExitSign" type="Label3D" parent="ExitDoor"]
+visible = false
 position = Vector3(0, 1.8, -0.15)
 text = "APARTMENT DISTRICT"
-font_size = 48
-outline_size = 8
+font_size = 32
+outline_size = 3
 modulate = Color(0.9, 0.8, 0.55, 1)
 
 [node name="ExitLight" type="OmniLight3D" parent="."]
 position = Vector3(0, 2.0, 9.5)
 light_color = Color(0.95, 0.70, 0.32, 1)
-light_energy = 6.0
+light_energy = 0.65
 omni_range = 7.0
 
 [node name="ExitLabel" type="Label3D" parent="."]
 position = Vector3(0, 2.4, 10.0)
 text = "APARTMENT DISTRICT\n[E] EXIT"
-font_size = 48
-outline_size = 10
+font_size = 32
+outline_size = 3
 billboard = 1
 modulate = Color(1, 0.82, 0.5, 1)
 horizontal_alignment = 1
@@ -174,6 +179,7 @@ script = ExtResource("4")
 node_id = "NODE_07"
 
 [node name="Mesh" type="MeshInstance3D" parent="SignalSource"]
+visible = false
 mesh = SubResource("SignalMesh")
 material_override = SubResource("SignalMaterial")
 
@@ -182,15 +188,15 @@ shape = SubResource("SignalShape")
 
 [node name="Glow" type="OmniLight3D" parent="SignalSource"]
 position = Vector3(0, 0.7, 0)
-light_color = Color(0.22, 0.60, 0.90, 1)
-light_energy = 6.0
+light_color = Color(0.62, 0.20, 0.17, 1)
+light_energy = 0.65
 omni_range = 8.0
 
 [node name="SignalLabel" type="Label3D" parent="SignalSource"]
 position = Vector3(0, 1.55, 0)
 text = "NODE_07\n[E] OBSERVE"
-font_size = 48
-outline_size = 10
+font_size = 32
+outline_size = 3
 billboard = 1
 modulate = Color(0.6, 0.85, 1, 1)
 horizontal_alignment = 1
@@ -198,13 +204,13 @@ horizontal_alignment = 1
 [node name="Light1" type="OmniLight3D" parent="."]
 position = Vector3(-1.0, 3.3, 5.0)
 light_color = Color(0.55, 0.58, 0.62, 1)
-light_energy = 3.0
+light_energy = 0.65
 omni_range = 9.0
 
 [node name="Light2" type="OmniLight3D" parent="."]
 position = Vector3(-1.0, 3.3, -4.0)
 light_color = Color(0.40, 0.46, 0.52, 1)
-light_energy = 2.5
+light_energy = 0.65
 omni_range = 8.0
 
 [node name="Player" type="CharacterBody3D" parent="." groups=["player"]]
@@ -215,6 +221,7 @@ script = ExtResource("2")
 shape = SubResource("PlayerShape")
 
 [node name="CharacterMesh" type="MeshInstance3D" parent="Player"]
+visible = false
 mesh = SubResource("CharacterMesh")
 material_override = SubResource("CharacterMaterial")
 
@@ -234,7 +241,7 @@ location_id = "STATION"
 position = Vector3(0, 0, -3.5)
 
 [node name="AGENT_NORA" type="Marker3D" parent="Actors/Spawns"]
-position = Vector3(2.5, 0, -1.5)
+position = Vector3(0.55, 0, 1.0)
 
 [node name="RetroOverlay" parent="." instance=ExtResource("5")]
 
@@ -288,3 +295,10 @@ offset_right = 230.0
 offset_bottom = -10.0
 text = "E // INTERACT"
 horizontal_alignment = 1
+
+[node name="Silhouette" parent="Player" instance=ExtResource("visual_avatar")]
+
+[node name="Dressing" parent="." instance=ExtResource("visual_decor")]
+
+[node name="Presentation" type="Node3D" parent="."]
+script = ExtResource("visual_hud")

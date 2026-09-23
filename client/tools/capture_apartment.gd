@@ -11,6 +11,7 @@ func capture() -> void:
 	root.add_child(scene)
 	current_scene = scene
 	scene.get_node("Player").set_process_unhandled_input(false)
+	scene.get_node("Player").set_physics_process(false)
 	root.get_node("EventDialog").set_process_unhandled_input(false)
 	await process_frame
 	await physics_frame

@@ -106,21 +106,10 @@ func _create_actor(
 	actor.set("actor_id", actor_id)
 	actor.set("actor_name", actor_name)
 
-	var mesh_instance := MeshInstance3D.new()
-	var capsule := CapsuleMesh.new()
-	capsule.radius = 0.28
-	capsule.height = 1.6
-	mesh_instance.mesh = capsule
-	mesh_instance.position.y = 0.8
-
-	var material := StandardMaterial3D.new()
-	if actor_id == "AGENT_K":
-		material.albedo_color = Color(0.55, 0.68, 0.82)
-	else:
-		material.albedo_color = Color(0.72, 0.58, 0.73)
-
-	mesh_instance.material_override = material
-	actor.add_child(mesh_instance)
+	# Visuals only; visibility, identity and dialogue still come from World Core.
+	var model_path := "res://art/characters/AgentK.tscn" if actor_id == "AGENT_K" else "res://art/characters/Nora.tscn"
+	var model: Node3D = load(model_path).instantiate()
+	actor.add_child(model)
 
 	var name_label := Label3D.new()
 	name_label.text = actor_name

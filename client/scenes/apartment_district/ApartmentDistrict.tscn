@@ -1,16 +1,20 @@
-[gd_scene load_steps=15 format=3]
+[gd_scene load_steps=18 format=3]
 
 [ext_resource type="Script" path="res://scripts/player/IsoController.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/world/ExitDoor.gd" id="2"]
 [ext_resource type="PackedScene" path="res://scenes/ui/RetroOverlay.tscn" id="3"]
 [ext_resource type="Script" path="res://scripts/world/ActorSpawner.gd" id="4"]
 
+[ext_resource type="PackedScene" path="res://art/characters/LainInspired.tscn" id="visual_avatar"]
+[ext_resource type="PackedScene" path="res://art/visual04/ResidentialStreet.tscn" id="visual_decor"]
+[ext_resource type="Script" path="res://scripts/art/ExteriorPresentation.gd" id="visual_hud"]
+
 [sub_resource type="StandardMaterial3D" id="GroundMaterial"]
 albedo_color = Color(0.20, 0.22, 0.25, 1)
 roughness = 1.0
 
 [sub_resource type="StandardMaterial3D" id="BuildingMaterial"]
-albedo_color = Color(0.055, 0.06, 0.065, 1)
+albedo_color = Color(0.58, 0.57, 0.55, 1)
 roughness = 0.95
 
 [sub_resource type="StandardMaterial3D" id="DoorMaterial"]
@@ -37,9 +41,9 @@ height = 1.6
 
 [sub_resource type="Environment" id="Environment_District"]
 background_mode = 1
-background_color = Color(0.025, 0.03, 0.04, 1)
+background_color = Color(0.17, 0.16, 0.20, 1)
 ambient_light_source = 3
-ambient_light_color = Color(0.22, 0.25, 0.32, 1)
+ambient_light_color = Color(0.57, 0.56, 0.65, 1)
 ambient_light_energy = 0.8
 
 [node name="ApartmentDistrict" type="Node3D"]
@@ -87,8 +91,8 @@ shape = SubResource("DoorShape")
 [node name="ApartmentSign" type="Label3D" parent="ApartmentDoor"]
 position = Vector3(0, 1.8, 0.15)
 text = "APARTMENT\n[E] ENTER"
-font_size = 48
-outline_size = 10
+font_size = 32
+outline_size = 3
 billboard = 1
 modulate = Color(0.9, 0.78, 0.55, 1)
 horizontal_alignment = 1
@@ -96,7 +100,7 @@ horizontal_alignment = 1
 [node name="ApartmentLight" type="OmniLight3D" parent="ApartmentDoor"]
 position = Vector3(0, 1.4, 1.0)
 light_color = Color(0.9, 0.7, 0.4, 1)
-light_energy = 5.0
+light_energy = 0.4
 omni_range = 7.0
 
 [node name="StationDoor" type="StaticBody3D" parent="."]
@@ -114,32 +118,32 @@ shape = SubResource("DoorShape")
 [node name="StationLight" type="OmniLight3D" parent="StationDoor"]
 position = Vector3(0, 1.4, 1.2)
 light_color = Color(0.25, 0.55, 0.75, 1)
-light_energy = 4.0
+light_energy = 0.4
 omni_range = 8.0
 
 [node name="StationSign" type="Label3D" parent="StationDoor"]
 position = Vector3(0, 1.8, 0.15)
 text = "STATION"
-font_size = 64
-outline_size = 8
+font_size = 36
+outline_size = 3
 modulate = Color(0.55, 0.8, 1, 1)
 
 [node name="Lamp1" type="OmniLight3D" parent="."]
 position = Vector3(-1.8, 3.4, 1)
 light_color = Color(0.48, 0.56, 0.68, 1)
-light_energy = 3.0
+light_energy = 0.4
 omni_range = 9.0
 
 [node name="Lamp2" type="OmniLight3D" parent="."]
 position = Vector3(1.5, 3.0, -9)
 light_color = Color(0.4, 0.48, 0.6, 1)
-light_energy = 2.5
+light_energy = 0.4
 omni_range = 8.0
 
 [node name="Lamp3" type="OmniLight3D" parent="."]
 position = Vector3(-1.5, 3.0, -20)
 light_color = Color(0.32, 0.38, 0.48, 1)
-light_energy = 2.2
+light_energy = 0.4
 omni_range = 8.0
 
 [node name="Player" type="CharacterBody3D" parent="."]
@@ -150,6 +154,7 @@ script = ExtResource("1")
 shape = SubResource("PlayerShape")
 
 [node name="CharacterMesh" type="MeshInstance3D" parent="Player"]
+visible = false
 mesh = SubResource("CharacterMesh")
 material_override = SubResource("CharacterMaterial")
 
@@ -195,3 +200,17 @@ offset_right = 160.0
 offset_bottom = -10.0
 text = "E // INTERACT"
 horizontal_alignment = 1
+
+[node name="Silhouette" parent="Player" instance=ExtResource("visual_avatar")]
+
+[node name="Dressing" parent="." instance=ExtResource("visual_decor")]
+
+[node name="Presentation" type="Node3D" parent="."]
+script = ExtResource("visual_hud")
+
+[node name="OvercastSun" type="DirectionalLight3D" parent="."]
+rotation_degrees = Vector3(-48, -36, 0)
+light_color = Color(0.94, 0.87, 0.80, 1)
+light_energy = 1.1
+shadow_enabled = true
+directional_shadow_max_distance = 60.0
