@@ -144,13 +144,15 @@ func _show_success(
 	var station_case: Dictionary = updated_snapshot.get("station_case", {})
 	if action in ["BROADCAST_TRACE", "ARCHIVE_TRACE"]:
 		var witnesses := int(station_case.get("witness_count", 0))
-		var explanation := (
-			"Has compartido el rastro con %d presencias.\n"
-			+ "Sus respuestas aparecerán en el diario (J) cuando reaccionen."
-		) % witnesses if action == "BROADCAST_TRACE" else (
+		var explanation: String = (
 			"Has archivado el rastro sin compartirlo.\n"
 			+ "Ningún personaje ha recibido este testimonio."
 		)
+		if action == "BROADCAST_TRACE":
+			explanation = (
+				"Has compartido el rastro con %d presencias.\n"
+				+ "Sus respuestas aparecerán en el diario (J) cuando reaccionen."
+			) % witnesses
 		EventDialog.show_event("EL PULSO AUSENTE", explanation)
 		return
 
