@@ -231,16 +231,22 @@ def list_visible_actors(
     sus objetivos, sus recuerdos ni sus creencias.
     """
 
+    # A legacy save may not yet contain the optional physical-motion table.
+    from .generated_entities import initialize_generated_entities
+    initialize_generated_entities()
     with get_connection() as conn:
 
         rows = conn.execute(
             """
-            SELECT id, name
-            FROM agents
-            WHERE location = ?
-              AND id != ?
-              AND controller_type != 'HUMAN'
-            ORDER BY id
+            SELECT a.id, a.name,
+                   CASE WHEN a.controller_type = 'GENERATED'
+                        THEN COALESCE(m.waypoint, 0) ELSE 0 END
+            FROM agents a
+            LEFT JOIN generated_actor_motion m ON m.actor_id = a.id
+            WHERE a.location = ?
+              AND a.id != ?
+              AND a.controller_type != 'HUMAN'
+            ORDER BY a.id
             """,
             (
                 player_location,
@@ -252,6 +258,7 @@ def list_visible_actors(
         {
             "id": row[0],
             "name": row[1],
+            "patrol_step": row[2],
         }
         for row in rows
     ]
