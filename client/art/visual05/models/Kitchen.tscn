@@ -1,0 +1,210 @@
+[gd_scene format=3]
+
+[ext_resource type="Texture2D" path="res://art/visual05/textures/concrete.png" id="1_t2cxn"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_6jmoo"]
+albedo_color = Color(0.8509804, 0.8509804, 0.8784314, 1)
+albedo_texture = ExtResource("1_t2cxn")
+roughness = 0.94
+uv1_scale = Vector3(1.8, 1.8, 1.8)
+uv1_triplanar = true
+uv1_world_triplanar = true
+texture_filter = 5
+
+[sub_resource type="BoxMesh" id="BoxMesh_p32dg"]
+size = Vector3(1.48, 0.94, 0.88)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ekyj1"]
+size = Vector3(1.48, 0.94, 0.88)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_d03rm"]
+albedo_color = Color(0.6431373, 0.69803923, 0.7137255, 1)
+albedo_texture = ExtResource("1_t2cxn")
+roughness = 0.94
+uv1_scale = Vector3(1.8, 1.8, 1.8)
+uv1_triplanar = true
+uv1_world_triplanar = true
+texture_filter = 5
+
+[sub_resource type="BoxMesh" id="BoxMesh_2c5px"]
+size = Vector3(1.55, 0.075, 0.94)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hrq37"]
+albedo_texture = ExtResource("1_t2cxn")
+roughness = 0.94
+uv1_scale = Vector3(1.8, 1.8, 1.8)
+uv1_triplanar = true
+uv1_world_triplanar = true
+texture_filter = 5
+
+[sub_resource type="BoxMesh" id="BoxMesh_mlwa5"]
+size = Vector3(0.63, 0.03, 0.59)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5vkqb"]
+albedo_color = Color(0.29803923, 0.32156864, 0.36078432, 1)
+albedo_texture = ExtResource("1_t2cxn")
+roughness = 0.94
+uv1_scale = Vector3(1.8, 1.8, 1.8)
+uv1_triplanar = true
+uv1_world_triplanar = true
+texture_filter = 5
+
+[sub_resource type="BoxMesh" id="BoxMesh_e4qf0"]
+size = Vector3(0.51, 0.01, 0.47)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_286r1"]
+top_radius = 0.025
+bottom_radius = 0.025
+height = 0.29000008
+radial_segments = 12
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_redio"]
+top_radius = 0.025
+bottom_radius = 0.025
+height = 0.21000004
+radial_segments = 12
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_dyb73"]
+top_radius = 0.18
+bottom_radius = 0.18
+height = 0.025
+radial_segments = 12
+
+[sub_resource type="BoxMesh" id="BoxMesh_ev8vf"]
+size = Vector3(0.68, 0.82, 0.022)
+
+[sub_resource type="BoxMesh" id="BoxMesh_tesxn"]
+size = Vector3(0.03, 0.15, 0.025)
+
+[sub_resource type="BoxMesh" id="BoxMesh_xsueg"]
+size = Vector3(0.68, 0.82, 0.022)
+
+[sub_resource type="BoxMesh" id="BoxMesh_l5vdn"]
+size = Vector3(0.03, 0.15, 0.025)
+
+[sub_resource type="BoxMesh" id="BoxMesh_jt5ck"]
+size = Vector3(1.67, 0.75, 0.06)
+
+[sub_resource type="BoxMesh" id="BoxMesh_ljuco"]
+size = Vector3(0.012, 0.75, 0.012)
+
+[sub_resource type="BoxMesh" id="BoxMesh_273cd"]
+size = Vector3(0.012, 0.75, 0.012)
+
+[sub_resource type="BoxMesh" id="BoxMesh_0p5gi"]
+size = Vector3(0.012, 0.75, 0.012)
+
+[sub_resource type="BoxMesh" id="BoxMesh_t1ru7"]
+size = Vector3(0.012, 0.75, 0.012)
+
+[sub_resource type="BoxMesh" id="BoxMesh_ao8bc"]
+size = Vector3(0.012, 0.75, 0.012)
+
+[node name="Kitchen" type="Node3D" unique_id=1247504013]
+
+[node name="KitchenCabinet" type="MeshInstance3D" parent="." unique_id=1101729947]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.57, 0.47, -3.15)
+material_override = SubResource("StandardMaterial3D_6jmoo")
+mesh = SubResource("BoxMesh_p32dg")
+metadata/asset_group = "Kitchen"
+
+[node name="@StaticBody3D@303" type="StaticBody3D" parent="KitchenCabinet" unique_id=769237628]
+
+[node name="@CollisionShape3D@304" type="CollisionShape3D" parent="KitchenCabinet/@StaticBody3D@303" unique_id=494854877]
+shape = SubResource("BoxShape3D_ekyj1")
+
+[node name="Counter" type="MeshInstance3D" parent="." unique_id=772449691]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.57, 0.98, -3.15)
+material_override = SubResource("StandardMaterial3D_d03rm")
+mesh = SubResource("BoxMesh_2c5px")
+metadata/asset_group = "Kitchen"
+
+[node name="SinkRim" type="MeshInstance3D" parent="." unique_id=1512883967]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.33, 1.03, -3.15)
+material_override = SubResource("StandardMaterial3D_hrq37")
+mesh = SubResource("BoxMesh_mlwa5")
+metadata/asset_group = "Kitchen"
+
+[node name="SinkBasin" type="MeshInstance3D" parent="." unique_id=850651179]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.33, 1.047, -3.15)
+material_override = SubResource("StandardMaterial3D_5vkqb")
+mesh = SubResource("BoxMesh_e4qf0")
+metadata/asset_group = "Kitchen"
+
+[node name="@MeshInstance3D@305" type="MeshInstance3D" parent="." unique_id=1727866053]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3, 1.175, -3.46)
+material_override = SubResource("StandardMaterial3D_5vkqb")
+mesh = SubResource("CylinderMesh_286r1")
+metadata/asset_group = "Kitchen"
+
+[node name="@MeshInstance3D@306" type="MeshInstance3D" parent="." unique_id=321848360]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0.3, 1.32, -3.355)
+material_override = SubResource("StandardMaterial3D_5vkqb")
+mesh = SubResource("CylinderMesh_redio")
+metadata/asset_group = "Kitchen"
+
+[node name="@MeshInstance3D@307" type="MeshInstance3D" parent="." unique_id=1669159155]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.02, 1.04, -3.16)
+material_override = SubResource("StandardMaterial3D_5vkqb")
+mesh = SubResource("CylinderMesh_dyb73")
+metadata/asset_group = "Kitchen"
+
+[node name="CabinetDoor" type="MeshInstance3D" parent="." unique_id=1071406967]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.08, 0.5, -2.699)
+material_override = SubResource("StandardMaterial3D_hrq37")
+mesh = SubResource("BoxMesh_ev8vf")
+metadata/asset_group = "Kitchen"
+
+[node name="CabinetHandle" type="MeshInstance3D" parent="." unique_id=1341436453]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3, 0.68, -2.67)
+material_override = SubResource("StandardMaterial3D_d03rm")
+mesh = SubResource("BoxMesh_tesxn")
+metadata/asset_group = "Kitchen"
+
+[node name="@MeshInstance3D@308" type="MeshInstance3D" parent="." unique_id=1931630554]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.82, 0.5, -2.699)
+material_override = SubResource("StandardMaterial3D_hrq37")
+mesh = SubResource("BoxMesh_xsueg")
+metadata/asset_group = "Kitchen"
+
+[node name="@MeshInstance3D@309" type="MeshInstance3D" parent="." unique_id=672268044]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.04, 0.68, -2.67)
+material_override = SubResource("StandardMaterial3D_d03rm")
+mesh = SubResource("BoxMesh_l5vdn")
+metadata/asset_group = "Kitchen"
+
+[node name="Splashback" type="MeshInstance3D" parent="." unique_id=424875531]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.65, 1.43, -3.79)
+material_override = SubResource("StandardMaterial3D_hrq37")
+mesh = SubResource("BoxMesh_jt5ck")
+metadata/asset_group = "Kitchen"
+
+[node name="TileGrout" type="MeshInstance3D" parent="." unique_id=2047101788]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.1, 1.43, -3.75)
+material_override = SubResource("StandardMaterial3D_d03rm")
+mesh = SubResource("BoxMesh_ljuco")
+metadata/asset_group = "Kitchen"
+
+[node name="@MeshInstance3D@310" type="MeshInstance3D" parent="." unique_id=206540718]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27, 1.43, -3.75)
+material_override = SubResource("StandardMaterial3D_d03rm")
+mesh = SubResource("BoxMesh_273cd")
+metadata/asset_group = "Kitchen"
+
+[node name="@MeshInstance3D@311" type="MeshInstance3D" parent="." unique_id=1145049047]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.64, 1.43, -3.75)
+material_override = SubResource("StandardMaterial3D_d03rm")
+mesh = SubResource("BoxMesh_0p5gi")
+metadata/asset_group = "Kitchen"
+
+[node name="@MeshInstance3D@312" type="MeshInstance3D" parent="." unique_id=145703777]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.01, 1.43, -3.75)
+material_override = SubResource("StandardMaterial3D_d03rm")
+mesh = SubResource("BoxMesh_t1ru7")
+metadata/asset_group = "Kitchen"
+
+[node name="@MeshInstance3D@313" type="MeshInstance3D" parent="." unique_id=313347110]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.38, 1.43, -3.75)
+material_override = SubResource("StandardMaterial3D_d03rm")
+mesh = SubResource("BoxMesh_ao8bc")
+metadata/asset_group = "Kitchen"

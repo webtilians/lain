@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3]
+[gd_scene load_steps=20 format=3]
 
 [ext_resource type="Script" path="res://scripts/player/IsoController.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/world/ExitDoor.gd" id="2"]
@@ -6,8 +6,11 @@
 [ext_resource type="Script" path="res://scripts/world/ActorSpawner.gd" id="4"]
 
 [ext_resource type="PackedScene" path="res://art/characters/LainInspired.tscn" id="visual_avatar"]
-[ext_resource type="PackedScene" path="res://art/visual04/ResidentialStreet.tscn" id="visual_decor"]
+[ext_resource type="PackedScene" path="res://art/visual05/models/ResidentialStreet.tscn" id="visual_decor"]
 [ext_resource type="Script" path="res://scripts/art/ExteriorPresentation.gd" id="visual_hud"]
+
+[ext_resource type="Material" path="res://art/visual05/wall.tres" id="v05_wall"]
+[ext_resource type="Material" path="res://art/visual05/road.tres" id="v05_road"]
 
 [sub_resource type="StandardMaterial3D" id="GroundMaterial"]
 albedo_color = Color(0.20, 0.22, 0.25, 1)
@@ -43,8 +46,8 @@ height = 1.6
 background_mode = 1
 background_color = Color(0.17, 0.16, 0.20, 1)
 ambient_light_source = 3
-ambient_light_color = Color(0.57, 0.56, 0.65, 1)
-ambient_light_energy = 0.8
+ambient_light_color = Color(0.46, 0.43, 0.54, 1)
+ambient_light_energy = 0.42
 
 [node name="ApartmentDistrict" type="Node3D"]
 
@@ -55,25 +58,25 @@ environment = SubResource("Environment_District")
 size = Vector3(12, 0.2, 36)
 position = Vector3(0, -0.1, -10)
 use_collision = true
-material = SubResource("GroundMaterial")
+material = ExtResource("v05_road")
 
 [node name="BuildingLeft" type="CSGBox3D" parent="."]
 size = Vector3(5, 3, 36)
 position = Vector3(-5.5, 1.5, -10)
 use_collision = true
-material = SubResource("BuildingMaterial")
+material = ExtResource("v05_wall")
 
 [node name="BuildingRight" type="CSGBox3D" parent="."]
 size = Vector3(5, 0.55, 36)
 position = Vector3(5.5, 0.275, -10)
 use_collision = true
-material = SubResource("BuildingMaterial")
+material = ExtResource("v05_wall")
 
 [node name="EndBlock" type="CSGBox3D" parent="."]
-size = Vector3(12, 7, 2)
-position = Vector3(0, 3.5, -28)
+size = Vector3(12, 3.8, 2)
+position = Vector3(0, 1.9, -28)
 use_collision = true
-material = SubResource("BuildingMaterial")
+material = ExtResource("v05_wall")
 
 [node name="ApartmentDoor" type="StaticBody3D" parent="."]
 position = Vector3(0, 1.15, 7.8)
@@ -212,8 +215,8 @@ horizontal_alignment = 1
 script = ExtResource("visual_hud")
 
 [node name="OvercastSun" type="DirectionalLight3D" parent="."]
-rotation_degrees = Vector3(-48, -36, 0)
+rotation_degrees = Vector3(-48, 135, 0)
 light_color = Color(0.94, 0.87, 0.80, 1)
-light_energy = 1.1
+light_energy = 1.32
 shadow_enabled = true
 directional_shadow_max_distance = 60.0

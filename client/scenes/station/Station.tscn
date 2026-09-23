@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3]
+[gd_scene load_steps=27 format=3]
 
 [ext_resource type="Script" path="res://scripts/world/Station.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/player/IsoController.gd" id="2"]
@@ -8,8 +8,14 @@
 [ext_resource type="Script" path="res://scripts/world/ActorSpawner.gd" id="6"]
 
 [ext_resource type="PackedScene" path="res://art/characters/LainInspired.tscn" id="visual_avatar"]
-[ext_resource type="PackedScene" path="res://art/visual04/StationDressing.tscn" id="visual_decor"]
+[ext_resource type="PackedScene" path="res://art/visual05/models/StationDressing.tscn" id="visual_decor"]
 [ext_resource type="Script" path="res://scripts/art/ExteriorPresentation.gd" id="visual_hud"]
+
+[ext_resource type="Material" path="res://art/visual05/wall.tres" id="v05_wall"]
+[ext_resource type="Material" path="res://art/visual05/platform.tres" id="v05_platform"]
+
+[ext_resource type="Material" path="res://art/visual05/ballast.tres" id="v05_ballast"]
+[ext_resource type="Material" path="res://art/visual05/rail.tres" id="v05_rail"]
 
 [sub_resource type="StandardMaterial3D" id="Concrete"]
 albedo_color = Color(0.38, 0.42, 0.42, 1)
@@ -65,7 +71,7 @@ background_mode = 1
 background_color = Color(0.025, 0.03, 0.04, 1)
 ambient_light_source = 3
 ambient_light_color = Color(0.32, 0.36, 0.44, 1)
-ambient_light_energy = 0.85
+ambient_light_energy = 0.42
 
 [node name="Station" type="Node3D"]
 script = ExtResource("1")
@@ -75,61 +81,61 @@ environment = SubResource("StationEnvironment")
 
 [node name="StationFillLight" type="DirectionalLight3D" parent="."]
 rotation_degrees = Vector3(-55, -25, 0)
-light_color = Color(0.55, 0.60, 0.70, 1)
-light_energy = 0.55
+light_color = Color(0.60, 0.60, 0.66, 1)
+light_energy = 0.30
 shadow_enabled = true
 
 [node name="Floor" type="CSGBox3D" parent="."]
 size = Vector3(10, 0.2, 22)
 position = Vector3(0, -0.1, 0)
 use_collision = true
-material = SubResource("Platform")
+material = ExtResource("v05_platform")
 
 [node name="LeftWall" type="CSGBox3D" parent="."]
 size = Vector3(0.3, 4, 22)
 position = Vector3(-5, 2, 0)
 use_collision = true
-material = SubResource("Concrete")
+material = ExtResource("v05_wall")
 
 [node name="RightWall" type="CSGBox3D" parent="."]
 size = Vector3(0.3, 0.45, 22)
 position = Vector3(5, 0.225, 0)
 use_collision = true
-material = SubResource("Concrete")
+material = ExtResource("v05_wall")
 
 [node name="BackWall" type="CSGBox3D" parent="."]
 size = Vector3(10, 4, 0.3)
 position = Vector3(0, 2, -11)
 use_collision = true
-material = SubResource("Concrete")
+material = ExtResource("v05_wall")
 
 [node name="EntranceWall" type="CSGBox3D" parent="."]
 size = Vector3(10, 0.45, 0.3)
 position = Vector3(0, 0.225, 11)
 use_collision = true
-material = SubResource("Concrete")
+material = ExtResource("v05_wall")
 
 [node name="Ceiling" type="CSGBox3D" parent="."]
 visible = false
 size = Vector3(10, 0.2, 22)
 position = Vector3(0, 4, 0)
 use_collision = true
-material = SubResource("Concrete")
+material = ExtResource("v05_wall")
 
 [node name="TrackBed" type="CSGBox3D" parent="."]
 size = Vector3(2.7, 0.04, 18)
 position = Vector3(3.0, 0.03, -0.5)
-material = SubResource("Track")
+material = ExtResource("v05_ballast")
 
 [node name="RailLeft" type="CSGBox3D" parent="."]
 size = Vector3(0.10, 0.10, 18)
 position = Vector3(2.25, 0.10, -0.5)
-material = SubResource("Concrete")
+material = ExtResource("v05_rail")
 
 [node name="RailRight" type="CSGBox3D" parent="."]
 size = Vector3(0.10, 0.10, 18)
 position = Vector3(3.75, 0.10, -0.5)
-material = SubResource("Concrete")
+material = ExtResource("v05_rail")
 
 [node name="ExitDoor" type="StaticBody3D" parent="."]
 position = Vector3(0, 1.15, 10.75)

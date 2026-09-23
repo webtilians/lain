@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3]
+[gd_scene load_steps=27 format=3]
 
 [ext_resource type="Script" path="res://scripts/world/Apartment.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/player/IsoController.gd" id="2"]
@@ -10,14 +10,17 @@
 [ext_resource type="Script" path="res://scripts/art/ApartmentPresentation.gd" id="7"]
 
 [ext_resource type="Texture2D" path="res://art/apartment/plaster.png" id="plaster"]
-[ext_resource type="PackedScene" path="res://art/apartment/models/Floor.tscn" id="asset_Floor"]
-[ext_resource type="PackedScene" path="res://art/apartment/models/Architecture.tscn" id="asset_Architecture"]
-[ext_resource type="PackedScene" path="res://art/apartment/models/Workstation.tscn" id="asset_Workstation"]
-[ext_resource type="PackedScene" path="res://art/apartment/models/SleepingArea.tscn" id="asset_SleepingArea"]
-[ext_resource type="PackedScene" path="res://art/apartment/models/Shelves.tscn" id="asset_Shelves"]
-[ext_resource type="PackedScene" path="res://art/apartment/models/Kitchen.tscn" id="asset_Kitchen"]
+[ext_resource type="PackedScene" path="res://art/visual05/models/Floor.tscn" id="asset_Floor"]
+[ext_resource type="PackedScene" path="res://art/visual05/models/Architecture.tscn" id="asset_Architecture"]
+[ext_resource type="PackedScene" path="res://art/visual05/models/Workstation.tscn" id="asset_Workstation"]
+[ext_resource type="PackedScene" path="res://art/visual05/models/SleepingArea.tscn" id="asset_SleepingArea"]
+[ext_resource type="PackedScene" path="res://art/visual05/models/Shelves.tscn" id="asset_Shelves"]
+[ext_resource type="PackedScene" path="res://art/visual05/models/Kitchen.tscn" id="asset_Kitchen"]
 [ext_resource type="PackedScene" path="res://art/apartment/models/Lighting.tscn" id="asset_Lighting"]
 [ext_resource type="PackedScene" path="res://art/characters/LainInspired.tscn" id="asset_PlayerSilhouette"]
+
+[ext_resource type="Material" path="res://art/visual05/wall.tres" id="v05_wall"]
+[ext_resource type="PackedScene" path="res://art/visual05/models/ApartmentDetails.tscn" id="v05_detail"]
 
 [sub_resource type="StandardMaterial3D" id="WallMaterial"]
 albedo_color = Color(0.647059, 0.627451, 0.670588, 1)
@@ -70,32 +73,32 @@ material = SubResource("FloorMaterial")
 size = Vector3(0.2, 3, 8)
 position = Vector3(-4, 1.5, 0)
 use_collision = true
-material = SubResource("WallMaterial")
+material = ExtResource("v05_wall")
 
 [node name="RightWall" type="CSGBox3D" parent="."]
 size = Vector3(0.2, 0.35, 8)
 position = Vector3(4, 0.175, 0)
 use_collision = true
-material = SubResource("WallMaterial")
+material = ExtResource("v05_wall")
 
 [node name="BackWall" type="CSGBox3D" parent="."]
 size = Vector3(8, 0.35, 0.2)
 position = Vector3(0, 0.175, 4)
 use_collision = true
-material = SubResource("WallMaterial")
+material = ExtResource("v05_wall")
 
 [node name="FrontWall" type="CSGBox3D" parent="."]
 size = Vector3(8, 3, 0.2)
 position = Vector3(0, 1.5, -4)
 use_collision = true
-material = SubResource("WallMaterial")
+material = ExtResource("v05_wall")
 
 [node name="Ceiling" type="CSGBox3D" parent="."]
 visible = false
 size = Vector3(8, 0.15, 8)
 position = Vector3(0, 3, 0)
 use_collision = true
-material = SubResource("WallMaterial")
+material = ExtResource("v05_wall")
 
 [node name="Desk" type="CSGBox3D" parent="."]
 visible = false
@@ -131,7 +134,7 @@ omni_range = 4.4
 [node name="IsoFillLight" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.88294756, 0.3488854, -0.3141378, 0, 0.66913056, 0.74314487, 0.46947157, -0.656158, 0.5908072, 0, 0, 0)
 light_color = Color(0.827451, 0.79607844, 0.84313726, 1)
-light_energy = 0.48
+light_energy = 0.34
 shadow_enabled = true
 directional_shadow_max_distance = 35.0
 
@@ -246,3 +249,5 @@ script = ExtResource("7")
 [node name="Kitchen" parent="Art" instance=ExtResource("asset_Kitchen")]
 
 [node name="Lighting" parent="Art" instance=ExtResource("asset_Lighting")]
+
+[node name="Details" parent="Art" instance=ExtResource("v05_detail")]

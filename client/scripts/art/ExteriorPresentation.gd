@@ -13,6 +13,6 @@ func _ready() -> void:
 			label.add_theme_constant_override("shadow_offset_y", 1)
 	var crt: ColorRect = room.get_node("RetroOverlay/CRT")
 	crt.material = crt.material.duplicate()
-	crt.material.set_shader_parameter("scanline_strength", 0.025)
-	crt.material.set_shader_parameter("noise_strength", 0.007)
+	crt.material.set_shader_parameter("scanline_strength", 0.008)
+	crt.material.set_shader_parameter("noise_strength", 0.003)
 	crt.material.set_shader_parameter("color_levels", 128.0)

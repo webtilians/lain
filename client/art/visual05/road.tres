@@ -1,0 +1,12 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[ext_resource type="Texture2D" path="res://art/visual05/textures/asphalt.png" id="1_te7m2"]
+
+[resource]
+albedo_color = Color(0.78039217, 0.7607843, 0.7764706, 1)
+albedo_texture = ExtResource("1_te7m2")
+roughness = 0.94
+uv1_scale = Vector3(0.8, 0.8, 0.8)
+uv1_triplanar = true
+uv1_world_triplanar = true
+texture_filter = 5
