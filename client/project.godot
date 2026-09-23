@@ -20,6 +20,8 @@ WorldApi="*res://scripts/network/WorldApi.gd"
 SceneRouter="*res://scripts/core/SceneRouter.gd"
 EventDialog="*res://scripts/ui/EventDialog.gd"
 CharacterJournal="*res://scripts/ui/CharacterJournal.gd"
+PrologueApi="*res://scripts/network/PrologueApi.gd"
+PrologueTerminal="*res://scripts/ui/PrologueTerminal.gd"
 
 [display]
 
