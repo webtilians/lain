@@ -5,6 +5,7 @@ on:
     branches:
       - experiment/reality-0.3-visual06-integration
       - experiment/reality-0.4-character-sheets-station-echo
+      - experiment/prologue-0.1-school-ryoko-terminal
 
 jobs:
   godot-visual:
