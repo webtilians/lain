@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3]
+[gd_scene load_steps=24 format=3]
 
 [ext_resource type="Script" path="res://scripts/world/Station.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/player/IsoController.gd" id="2"]
@@ -10,6 +10,7 @@
 [ext_resource type="PackedScene" path="res://art/characters/LainInspired.tscn" id="visual_avatar"]
 [ext_resource type="PackedScene" path="res://art/visual04/StationDressing.tscn" id="visual_decor"]
 [ext_resource type="Script" path="res://scripts/art/ExteriorPresentation.gd" id="visual_hud"]
+[ext_resource type="Script" path="res://scripts/art/ReferenceArtDirection.gd" id="reference_look"]
 
 [sub_resource type="StandardMaterial3D" id="Concrete"]
 albedo_color = Color(0.38, 0.42, 0.42, 1)
@@ -305,3 +306,28 @@ horizontal_alignment = 1
 
 [node name="Presentation" type="Node3D" parent="."]
 script = ExtResource("visual_hud")
+
+[node name="OldDistrictDoor" type="StaticBody3D" parent="."]
+position = Vector3(0, 1.15, -10.5)
+script = ExtResource("3")
+target_location = "OLD_DISTRICT"
+
+[node name="Mesh" type="MeshInstance3D" parent="OldDistrictDoor"]
+mesh = SubResource("DoorMesh")
+material_override = SubResource("DoorMaterial")
+
+[node name="Collision" type="CollisionShape3D" parent="OldDistrictDoor"]
+shape = SubResource("DoorShape")
+
+[node name="OldDistrictSign" type="Label3D" parent="OldDistrictDoor"]
+position = Vector3(0, 1.72, 0.2)
+text = "OLD DISTRICT\\n[E] ENTER"
+font_size = 30
+outline_size = 3
+billboard = 1
+modulate = Color(0.75, 0.68, 0.78, 1)
+horizontal_alignment = 1
+
+[node name="ReferenceLook" type="Node3D" parent="."]
+script = ExtResource("reference_look")
+scene_style = "station"
