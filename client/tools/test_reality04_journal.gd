@@ -72,10 +72,15 @@ func _run() -> void:
 	for child in choices.get_children():
 		if child is Button:
 			labels.append(child.text)
-	check(labels.any(func(value: String) -> bool: return "Difundir" in value),
-		"Direct investigation did not unlock the share choice")
-	check(labels.any(func(value: String) -> bool: return "Archivar" in value),
-		"Direct investigation did not unlock the archive choice")
+	var share_found: bool = false
+	var archive_found: bool = false
+	for label_text in labels:
+		if "Difundir" in label_text:
+			share_found = true
+		if "Archivar" in label_text:
+			archive_found = true
+	check(share_found, "Direct investigation did not unlock the share choice")
+	check(archive_found, "Direct investigation did not unlock the archive choice")
 	root.get_node("EventDialog").close_event()
 
 	api.snapshot["station_case"] = {
