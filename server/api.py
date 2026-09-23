@@ -100,6 +100,10 @@ class PlayerConversationSay(BaseModel):
     after_turn_id: int
 
 
+class PrologueTalkRequest(BaseModel):
+    choice: str = "INTRO"
+
+
 class PrologueCommandRequest(BaseModel):
     command: str
 
@@ -316,11 +320,13 @@ def player_conversation_say(
 
 
 @app.post("/api/v1/prologue/talk/{npc_id}")
-def prologue_talk(npc_id: str):
+def prologue_talk(npc_id: str, request: PrologueTalkRequest):
     with _world_lock:
         runtime = get_runtime()
         try:
-            result = talk_to_prologue_npc(PLAYER_ID, npc_id, runtime.minute)
+            result = talk_to_prologue_npc(
+                PLAYER_ID, npc_id, runtime.minute, request.choice,
+            )
             return {"result": result, "state": build_player_snapshot(PLAYER_ID)}
         except ValueError as error:
             raise HTTPException(status_code=409, detail=str(error))
