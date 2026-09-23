@@ -2,7 +2,7 @@
 
 Discovery requires the player's accepted, direct INVESTIGATE action at the
 actual node. The player chooses to archive the trace or disclose it to actors
-physically co-located at that instant. Broadcasting grants RECEIVED_TESTIMONY,
+physically co-located at that instant. Broadcasting grants PLAYER_TESTIMONY,
 never fabricated direct perception or private NPC memories. Other actors
 respond from their individual role during subsequent autonomous ticks.
 """
@@ -142,6 +142,28 @@ def record_station_response(actor_id: str, role: str, minute: int) -> str:
         if cursor.rowcount != 1:
             raise ValueError("CASE_RESPONSE_NOT_PENDING")
     return reaction
+
+
+def actor_received_case_report(actor_id: str) -> dict | None:
+    """Only the named recipient's testimony, never the entire case/journal."""
+    initialize_station_case()
+    with get_connection() as conn:
+        row = conn.execute(
+            """SELECT source, learned_minute, reaction
+               FROM station_echo_witnesses
+               WHERE actor_id=? ORDER BY learned_minute DESC LIMIT 1""",
+            (actor_id,),
+        ).fetchone()
+    if row is None:
+        return None
+    return {
+        "source": row[0], "received_minute": row[1],
+        "report": (
+            "El jugador me dijo que había observado un pulso ausente "
+            "al investigar NODE_07. Es su testimonio, no mi observación."
+        ),
+        "my_response": row[2],
+    }
 
 
 def station_case_snapshot(player_id: str) -> dict:
