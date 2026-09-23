@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3]
+[gd_scene load_steps=19 format=3]
 
 [ext_resource type="Script" path="res://scripts/player/IsoController.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/world/ExitDoor.gd" id="2"]
@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" path="res://art/characters/LainInspired.tscn" id="visual_avatar"]
 [ext_resource type="PackedScene" path="res://art/visual04/ResidentialStreet.tscn" id="visual_decor"]
 [ext_resource type="Script" path="res://scripts/art/ExteriorPresentation.gd" id="visual_hud"]
+[ext_resource type="Script" path="res://scripts/art/ReferenceArtDirection.gd" id="reference_look"]
 
 [sub_resource type="StandardMaterial3D" id="GroundMaterial"]
 albedo_color = Color(0.20, 0.22, 0.25, 1)
@@ -217,3 +218,7 @@ light_color = Color(0.94, 0.87, 0.80, 1)
 light_energy = 1.1
 shadow_enabled = true
 directional_shadow_max_distance = 60.0
+
+[node name="ReferenceLook" type="Node3D" parent="."]
+script = ExtResource("reference_look")
+scene_style = "district"
