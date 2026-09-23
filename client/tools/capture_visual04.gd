@@ -26,7 +26,10 @@ func run() -> void:
 	player.set_physics_process(false)
 	root.get_node("EventDialog").set_process_unhandled_input(false)
 	await process_frame
-	check(scene.get_node("Dressing").find_children("*", "MeshInstance3D", true, false).size() > 150, "Missing saved scenery")
+	if district:
+		check(scene.get_node_or_null("CityArt/School") != null, "Missing saved city scenery")
+	else:
+		check(scene.get_node("Dressing").find_children("*", "MeshInstance3D", true, false).size() > 150, "Missing saved scenery")
 	check(player.get_node("Silhouette/LeftLeg") != null, "Missing animated avatar")
 	check(scene.get_node("Actors").rendered_actors.size() == 2, "Actor representation missing")
 	var actors: Node3D = scene.get_node("Actors")
@@ -59,11 +62,13 @@ func run() -> void:
 		check(root.get_texture().get_image().save_png(args[1]) == OK, "Cannot save preview")
 	else:
 		if district:
-			check(await walk_to(player, Vector3(0,0.9,-25.3)), "Station approach obstructed")
-			check(player.position.distance_to(scene.get_node("StationDoor").position) < player.interaction_distance, "Station door unreachable")
-			check(scene.get_node("StationDoor").target_location == "STATION", "Station destination changed")
-			check(await walk_to(player, Vector3(0,0.9,6.2)), "Apartment approach obstructed")
-			check(player.position.distance_to(scene.get_node("ApartmentDoor").position) < player.interaction_distance, "Apartment door unreachable")
+			check(await walk_to(player, Vector3(0,0.9,5.7)), "Apartment frontage obstructed")
+			check(await walk_to(player, Vector3(0,0.9,-104.5)), "Station approach obstructed")
+			check(player.position.distance_to(scene.get_node("PrologueEntrances/Entrance_STATION").position) < player.interaction_distance, "Station door unreachable")
+			check(scene.get_node("PrologueEntrances/Entrance_STATION").target_location == "STATION", "Station destination changed")
+			check(await walk_to(player, Vector3(0,0.9,5.7)), "Apartment lane obstructed")
+			check(await walk_to(player, Vector3(-12,0.9,5.7)), "Apartment approach obstructed")
+			check(player.position.distance_to(scene.get_node("PrologueEntrances/Entrance_APARTMENT").position) < player.interaction_distance, "Apartment door unreachable")
 		else:
 			check(await walk_to(player, Vector3(0,0.9,-4.8)), "Signal approach obstructed")
 			check(player.position.distance_to(scene.get_node("SignalSource").position) < player.interaction_distance, "Signal unreachable")
@@ -74,7 +79,7 @@ func run() -> void:
 	quit(1 if failed else 0)
 
 func walk_to(player: CharacterBody3D, target: Vector3) -> bool:
-	for frame in range(1000):
+	for frame in range(2400):
 		var offset := target - player.position
 		offset.y = 0
 		if offset.length() < 0.14:

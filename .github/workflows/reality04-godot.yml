@@ -1,12 +1,16 @@
-name: LAIN Reality 0.4 Godot smoke
+name: LAIN Godot city and gameplay smoke
 
 on:
+  push:
+    branches:
+      - experiment/visual-0.8-city-neighborhood
   pull_request:
     branches:
       - experiment/reality-0.3-visual06-integration
       - experiment/reality-0.4-character-sheets-station-echo
       - experiment/prologue-0.1-school-ryoko-terminal
       - experiment/prologue-0.2-neighborhood-dialogue
+      - experiment/visual-0.7-prologue-district-pass
 
 jobs:
   godot-visual:
@@ -58,6 +62,16 @@ jobs:
           /tmp/lain-godot --headless --path client --script res://tools/test_prologue01_visual.gd 2>&1 | tee /tmp/lain-prologue.log
           grep -q 'PROLOGUE01_VISUAL_OK' /tmp/lain-prologue.log
           if grep -E '^(SCRIPT ERROR:|ERROR:)' /tmp/lain-prologue.log; then
+            exit 1
+          fi
+
+      - name: City physical routes, returns, actor placement and camera
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 60s /tmp/lain-godot --headless --path client --script res://tools/test_city08.gd 2>&1 | tee /tmp/lain-city.log
+          grep -q 'CITY08_CHECK_OK' /tmp/lain-city.log
+          if grep -E '^(SCRIPT ERROR:|ERROR:)' /tmp/lain-city.log; then
             exit 1
           fi
 

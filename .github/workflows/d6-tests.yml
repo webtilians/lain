@@ -20,6 +20,7 @@ on:
       - experiment/visual-0.4-lain-environments
       - experiment/reality-0.2-autonomy-visual04
       - experiment/visual-0.5-illustrated
+      - experiment/visual-0.8-city-neighborhood
   pull_request:
 
 jobs:

@@ -2,12 +2,7 @@ extends Node3D
 ## Presentation-only entry points on returning to the expanded neighborhood.
 ## The server still owns the player's semantic location and MOVE validation.
 
-const ENTRY_POSITIONS := {
-	"APARTMENT": Vector3(0.0, 0.9, 5.5),
-	"SCHOOL": Vector3(-8.75, 0.9, -20.0),
-	"NIGHTCLUB": Vector3(8.75, 0.9, -53.0),
-	"STATION": Vector3(0.0, 0.9, -63.7),
-}
+const ENTRY_POSITIONS = preload("res://scripts/world/CityLayout.gd").ENTRIES
 
 
 func _ready() -> void:

@@ -13,6 +13,9 @@ client/.godot/
 world.db
 world.db-*
 world_backup*.db
+city08*.db
+city08*.db-*
+outputs/
 *.sqlite
 *.sqlite3
 

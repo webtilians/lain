@@ -1,203 +1,82 @@
-[gd_scene load_steps=21 format=3]
+[gd_scene load_steps=11 format=3]
 
-[ext_resource type="Script" path="res://scripts/player/IsoController.gd" id="1"]
-[ext_resource type="Script" path="res://scripts/world/ExitDoor.gd" id="2"]
-[ext_resource type="PackedScene" path="res://scenes/ui/RetroOverlay.tscn" id="3"]
-[ext_resource type="Script" path="res://scripts/world/ActorSpawner.gd" id="4"]
-[ext_resource type="Script" path="res://scripts/world/PrologueDistrictEntrances.gd" id="prologue_entrances"]
-[ext_resource type="Script" path="res://scripts/world/NeighborhoodEntry.gd" id="neighborhood_entry"]
-
-[ext_resource type="PackedScene" path="res://art/characters/LainSlender.tscn" id="visual_avatar"]
-[ext_resource type="Script" path="res://scripts/art/ExteriorPresentation.gd" id="visual_hud"]
-
-[ext_resource type="Material" path="res://art/visual05/wall.tres" id="v05_wall"]
-[ext_resource type="Material" path="res://art/visual05/road.tres" id="v05_road"]
-
-[sub_resource type="StandardMaterial3D" id="GroundMaterial"]
-albedo_color = Color(0.20, 0.22, 0.25, 1)
-roughness = 1.0
-
-[sub_resource type="StandardMaterial3D" id="BuildingMaterial"]
-albedo_color = Color(0.58, 0.57, 0.55, 1)
-roughness = 0.95
-
-[sub_resource type="StandardMaterial3D" id="DoorMaterial"]
-albedo_color = Color(0.20, 0.22, 0.25, 1)
-roughness = 0.8
-
-[sub_resource type="BoxMesh" id="DoorMesh"]
-size = Vector3(1.4, 2.3, 0.14)
-
-[sub_resource type="BoxShape3D" id="DoorShape"]
-size = Vector3(1.4, 2.3, 0.14)
+[ext_resource type="Script" path="res://scripts/world/NeighborhoodEntry.gd" id="entry"]
+[ext_resource type="Script" path="res://scripts/player/IsoController.gd" id="player"]
+[ext_resource type="Script" path="res://scripts/world/ActorSpawner.gd" id="actors"]
+[ext_resource type="Script" path="res://scripts/world/PrologueDistrictEntrances.gd" id="doors"]
+[ext_resource type="Script" path="res://scripts/art/CityPresentation.gd" id="presentation"]
+[ext_resource type="PackedScene" path="res://art/city08/Neighborhood.tscn" id="city"]
+[ext_resource type="PackedScene" path="res://art/characters/LainSlender.tscn" id="avatar"]
+[ext_resource type="PackedScene" path="res://scenes/ui/RetroOverlay.tscn" id="overlay"]
 
 [sub_resource type="CapsuleShape3D" id="PlayerShape"]
 radius = 0.35
 height = 1.8
 
-[sub_resource type="StandardMaterial3D" id="CharacterMaterial"]
-albedo_color = Color(0.18, 0.62, 0.68, 1)
-roughness = 0.8
-
-[sub_resource type="CapsuleMesh" id="CharacterMesh"]
-radius = 0.3
-height = 1.6
-
-[sub_resource type="Environment" id="Environment_District"]
+[sub_resource type="Environment" id="DistrictEnvironment"]
 background_mode = 1
-background_color = Color(0.17, 0.16, 0.20, 1)
-ambient_light_source = 3
-ambient_light_color = Color(0.46, 0.43, 0.54, 1)
-ambient_light_energy = 0.42
+background_color = Color(0.24, 0.26, 0.32, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.62, 0.65, 0.76, 1)
+ambient_light_energy = 0.45
+tonemap_mode = 0
 
 [node name="ApartmentDistrict" type="Node3D"]
-script = ExtResource("neighborhood_entry")
+script = ExtResource("entry")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
-environment = SubResource("Environment_District")
+environment = SubResource("DistrictEnvironment")
 
-[node name="Ground" type="CSGBox3D" parent="."]
-size = Vector3(38, 0.2, 78)
-position = Vector3(0, -0.1, -29)
-use_collision = true
-material = ExtResource("v05_road")
+[node name="CityArt" parent="." instance=ExtResource("city")]
 
-[node name="BuildingLeft" type="CSGBox3D" parent="."]
-size = Vector3(5, 3, 78)
-position = Vector3(-16.5, 1.5, -29)
-use_collision = true
-material = ExtResource("v05_wall")
-
-[node name="BuildingRight" type="CSGBox3D" parent="."]
-size = Vector3(5, 0.55, 78)
-position = Vector3(16.5, 0.275, -29)
-use_collision = true
-material = ExtResource("v05_wall")
-
-[node name="EndBlock" type="CSGBox3D" parent="."]
-size = Vector3(38, 3.8, 2)
-position = Vector3(0, 1.9, -69)
-use_collision = true
-material = ExtResource("v05_wall")
-
-[node name="ApartmentDoor" type="StaticBody3D" parent="."]
-position = Vector3(0, 1.15, 7.8)
-rotation_degrees = Vector3(0, 180, 0)
-script = ExtResource("2")
-target_location = "APARTMENT"
-
-[node name="Mesh" type="MeshInstance3D" parent="ApartmentDoor"]
-mesh = SubResource("DoorMesh")
-material_override = SubResource("DoorMaterial")
-
-[node name="Collision" type="CollisionShape3D" parent="ApartmentDoor"]
-shape = SubResource("DoorShape")
-
-[node name="ApartmentSign" type="Label3D" parent="ApartmentDoor"]
-position = Vector3(0, 1.8, 0.15)
-text = "APARTMENT\n[E] ENTER"
-font_size = 32
-outline_size = 3
-billboard = 1
-modulate = Color(0.9, 0.78, 0.55, 1)
-horizontal_alignment = 1
-
-[node name="ApartmentLight" type="OmniLight3D" parent="ApartmentDoor"]
-position = Vector3(0, 1.4, 1.0)
-light_color = Color(0.9, 0.7, 0.4, 1)
-light_energy = 0.4
-omni_range = 7.0
-
-[node name="StationDoor" type="StaticBody3D" parent="."]
-position = Vector3(0, 1.15, -67.65)
-script = ExtResource("2")
-target_location = "STATION"
-
-[node name="Mesh" type="MeshInstance3D" parent="StationDoor"]
-mesh = SubResource("DoorMesh")
-material_override = SubResource("DoorMaterial")
-
-[node name="Collision" type="CollisionShape3D" parent="StationDoor"]
-shape = SubResource("DoorShape")
-
-[node name="StationLight" type="OmniLight3D" parent="StationDoor"]
-position = Vector3(0, 1.4, 1.2)
-light_color = Color(0.25, 0.55, 0.75, 1)
-light_energy = 0.4
-omni_range = 8.0
-
-[node name="StationSign" type="Label3D" parent="StationDoor"]
-position = Vector3(0, 1.8, 0.15)
-text = "STATION"
-font_size = 36
-outline_size = 3
-modulate = Color(0.55, 0.8, 1, 1)
-
-[node name="Lamp1" type="OmniLight3D" parent="."]
-position = Vector3(-1.8, 3.4, 1)
-light_color = Color(0.48, 0.56, 0.68, 1)
-light_energy = 0.4
-omni_range = 9.0
-
-[node name="Lamp2" type="OmniLight3D" parent="."]
-position = Vector3(1.5, 3.0, -31)
-light_color = Color(0.4, 0.48, 0.6, 1)
-light_energy = 0.4
-omni_range = 8.0
-
-[node name="Lamp3" type="OmniLight3D" parent="."]
-position = Vector3(-1.5, 3.0, -54)
-light_color = Color(0.32, 0.38, 0.48, 1)
-light_energy = 0.4
-omni_range = 8.0
+[node name="PrologueEntrances" type="Node3D" parent="."]
+script = ExtResource("doors")
 
 [node name="Player" type="CharacterBody3D" parent="."]
-position = Vector3(0, 0.9, 5.5)
-script = ExtResource("1")
+position = Vector3(-12, 0.91, 5.7)
+script = ExtResource("player")
+orthographic_size = 16.0
 
 [node name="Collision" type="CollisionShape3D" parent="Player"]
 shape = SubResource("PlayerShape")
-
-[node name="CharacterMesh" type="MeshInstance3D" parent="Player"]
-visible = false
-mesh = SubResource("CharacterMesh")
-material_override = SubResource("CharacterMaterial")
 
 [node name="Head" type="Node3D" parent="Player"]
 position = Vector3(0, 0.65, 0)
 
 [node name="Camera3D" type="Camera3D" parent="Player/Head"]
 current = true
+far = 220.0
 
-[node name="PrologueEntrances" type="Node3D" parent="."]
-script = ExtResource("prologue_entrances")
+[node name="Silhouette" parent="Player" instance=ExtResource("avatar")]
 
 [node name="Actors" type="Node3D" parent="."]
-script = ExtResource("4")
+script = ExtResource("actors")
 location_id = "APARTMENT_DISTRICT"
 
 [node name="Spawns" type="Node3D" parent="Actors"]
 
 [node name="AGENT_K" type="Marker3D" parent="Actors/Spawns"]
-position = Vector3(0, 0, -5)
+position = Vector3(-4, 0, -5)
 
 [node name="AGENT_NORA" type="Marker3D" parent="Actors/Spawns"]
-position = Vector3(0, 0, -39)
+position = Vector3(10, 0, -32)
 
 [node name="ENTITY_ANCHOR" type="Marker3D" parent="Actors/Spawns"]
-position = Vector3(-6.4, 0, -32.0)
+position = Vector3(9, 0, -26)
 
-[node name="RetroOverlay" parent="." instance=ExtResource("3")]
+[node name="RetroOverlay" parent="." instance=ExtResource("overlay")]
+layer = 15
 
 [node name="HUD" type="CanvasLayer" parent="."]
 layer = 20
 
 [node name="Location" type="Label" parent="HUD"]
-offset_left = 12.0
-offset_top = 10.0
-offset_right = 300.0
-offset_bottom = 35.0
-text = "APARTMENT_DISTRICT"
+offset_left = 28.0
+offset_top = 27.0
+offset_right = 400.0
+offset_bottom = 54.0
+theme_override_font_sizes/font_size = 22
+text = "Residencial"
 
 [node name="Hint" type="Label" parent="HUD"]
 anchors_preset = 7
@@ -205,21 +84,21 @@ anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -160.0
-offset_top = -35.0
-offset_right = 160.0
-offset_bottom = -10.0
-text = "E // INTERACT"
+offset_left = -320.0
+offset_top = -42.0
+offset_right = 320.0
+offset_bottom = -16.0
+text = "WASD  Caminar     E  Interactuar     J  Diario"
 horizontal_alignment = 1
 
-[node name="Silhouette" parent="Player" instance=ExtResource("visual_avatar")]
-
 [node name="Presentation" type="Node3D" parent="."]
-script = ExtResource("visual_hud")
+script = ExtResource("presentation")
 
 [node name="OvercastSun" type="DirectionalLight3D" parent="."]
-rotation_degrees = Vector3(-48, 135, 0)
-light_color = Color(0.94, 0.87, 0.80, 1)
-light_energy = 1.32
+rotation_degrees = Vector3(-39, -32, 0)
+light_color = Color(0.99, 0.91, 0.83, 1)
+light_energy = 1.07
 shadow_enabled = true
-directional_shadow_max_distance = 60.0
+directional_shadow_max_distance = 95.0
+directional_shadow_mode = 2
+shadow_bias = 0.025

@@ -13,6 +13,7 @@ func check(condition: bool, reason: String) -> void:
 func _run() -> void:
 	var api := root.get_node("WorldApi")
 	api.set_script(load("res://tools/offline_world_api.gd"))
+	root.get_node("PrologueApi").set_script(load("res://tools/offline_prologue_api.gd"))
 	var scenes := {
 		"SCHOOL": "res://scenes/prologue/School.tscn",
 		"SCHOOL_LAB": "res://scenes/prologue/ComputerLab.tscn",
@@ -107,27 +108,10 @@ func _run() -> void:
 	current_scene = district
 	await process_frame
 	var entrances: Node3D = district.get_node("PrologueEntrances")
-	check(district.get_node_or_null("Dressing") == null
-		and district.get_node_or_null("DressingContinuation") == null,
-		"Overlapping old residential street prefab not removed")
-	check(entrances.get_node_or_null("Escuela_Portico_Techo") != null
-		and entrances.get_node_or_null("Escuela_Cornisa") != null,
-		"School has no purpose-built facade or entrance portico")
-	check(entrances.get_node_or_null("Club_Marquesina") != null
-		and entrances.get_node_or_null("Club_Dintel_Neon") != null,
-		"Club has no canopy or atmospheric signage")
-	var tree_count: int = 0
-	for element in entrances.get_children():
-		if not element.name.begins_with("Arbol_"):
-			continue
-		tree_count += 1
-		var tree: Node3D = element
-		check(absf(tree.position.x) + 1.2 < 10.92,
-			"Street tree canopy intersects a building facade")
-		check(absf(tree.position.z + 20.0) > 4.0
-			and absf(tree.position.z + 53.0) > 4.0,
-			"Street tree blocks a story entrance")
-	check(tree_count >= 3, "The tree fix removed all vegetation")
+	check(district.get_node_or_null("CityArt/School") != null,
+		"School facade missing from saved city asset")
+	check(district.get_node_or_null("CityArt/Nightclub") != null,
+		"Club facade missing from saved city asset")
 	var school_door: Node3D = entrances.get_node("Entrance_SCHOOL")
 	var club_door: Node3D = entrances.get_node("Entrance_NIGHTCLUB")
 	check(school_door.is_in_group("interactable"),
@@ -140,13 +124,13 @@ func _run() -> void:
 	check(school_door.global_position.x < -9.0
 		and club_door.global_position.x > 9.0,
 		"School and nightclub are not on opposing neighborhood blocks")
-	var ground: CSGBox3D = district.get_node("Ground")
-	check(ground.size.z > 65.0 and ground.size.x > 30.0,
-		"The district has not been expanded beyond the old corridor")
-	check(entrances.get_node_or_null("MidtownSquare") != null,
+	var ground: BoxShape3D = district.get_node("CityArt/Ground/Collision").shape
+	check(ground.size.z >= 130.0 and ground.size.x >= 90.0,
+		"City no longer contains the expanded walkable district")
+	check(district.get_node_or_null("CityArt/PlazaPlanter") != null,
 		"Neighborhood square missing")
-	check(entrances.get_node_or_null("Cabina_Telefonica") != null,
-		"Neighborhood has no secondary landmark")
+	check(district.get_node_or_null("CityArt/PhoneBooth") != null,
+		"Neighborhood telephone landmark missing")
 	var previous: String = "NIGHTCLUB"
 	root.get_node("SceneRouter").entry_from_location = previous
 	current_scene = null
