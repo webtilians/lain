@@ -10,6 +10,8 @@ const LOCATION_SCENES := {
 }
 
 var current_location := ""
+var entry_from_location := ""
+var _pending_scene_path := ""
 
 func _ready() -> void:
 	WorldApi.snapshot_updated.connect(_on_snapshot_updated)
@@ -33,8 +35,16 @@ func _on_snapshot_updated(snapshot: Dictionary) -> void:
 		current_location = location
 		return
 
+	if scene_path == _pending_scene_path:
+		return
+	# Remember which door brought the player into the expanded district.
+	# Semantic location remains authoritative; this affects visuals only.
+	if current_location != location:
+		entry_from_location = current_location
 	current_location = location
+	_pending_scene_path = scene_path
 	call_deferred("_change_scene", scene_path)
 
 func _change_scene(scene_path: String) -> void:
 	get_tree().change_scene_to_file(scene_path)
+	_pending_scene_path = ""
