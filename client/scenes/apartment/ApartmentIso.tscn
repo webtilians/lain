@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3]
+[gd_scene load_steps=27 format=3]
 
 [ext_resource type="Script" path="res://scripts/world/Apartment.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/player/IsoController.gd" id="2"]
@@ -8,6 +8,8 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/TerminalUI.tscn" id="6"]
 
 [ext_resource type="Script" path="res://scripts/art/ApartmentPresentation.gd" id="7"]
+[ext_resource type="Script" path="res://scripts/world/ActorSpawner.gd" id="presence_spawner"]
+[ext_resource type="Script" path="res://scripts/art/ReferenceArtDirection.gd" id="reference_look"]
 
 [ext_resource type="Texture2D" path="res://art/apartment/plaster.png" id="plaster"]
 [ext_resource type="PackedScene" path="res://art/apartment/models/Floor.tscn" id="asset_Floor"]
@@ -246,3 +248,22 @@ script = ExtResource("7")
 [node name="Kitchen" parent="Art" instance=ExtResource("asset_Kitchen")]
 
 [node name="Lighting" parent="Art" instance=ExtResource("asset_Lighting")]
+
+[node name="Actors" type="Node3D" parent="."]
+script = ExtResource("presence_spawner")
+location_id = "APARTMENT"
+
+[node name="Spawns" type="Node3D" parent="Actors"]
+
+[node name="AGENT_K" type="Marker3D" parent="Actors/Spawns"]
+position = Vector3(1.2, 0, -1.2)
+
+[node name="AGENT_NORA" type="Marker3D" parent="Actors/Spawns"]
+position = Vector3(2.3, 0, 0.9)
+
+[node name="ENTITY_ANCHOR" type="Marker3D" parent="Actors/Spawns"]
+position = Vector3(-0.5, 0, 1.4)
+
+[node name="ReferenceLook" type="Node3D" parent="."]
+script = ExtResource("reference_look")
+scene_style = "apartment"
