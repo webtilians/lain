@@ -65,7 +65,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          /tmp/lain-godot --headless --path client --script res://tools/test_visual07_environment.gd 2>&1 | tee /tmp/lain-visual07.log
+          timeout 90s /tmp/lain-godot --headless --path client --script res://tools/test_visual07_environment.gd 2>&1 | tee /tmp/lain-visual07.log
           grep -q 'VISUAL07_ENVIRONMENT_OK' /tmp/lain-visual07.log
           if grep -E '^(SCRIPT ERROR:|ERROR:)' /tmp/lain-visual07.log; then
             exit 1
