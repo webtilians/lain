@@ -135,9 +135,14 @@ func _refresh_navigation() -> void:
 		child.queue_free()
 	_add_navigation("TU FICHA", "PLAYER")
 	var prologue: Dictionary = WorldApi.snapshot.get("prologue", {})
+	var offline: bool = (
+		bool(prologue.get("enabled", false))
+		and str(prologue.get("stage", "")) != "CONNECTED"
+	)
 	if bool(prologue.get("enabled", false)):
 		_add_navigation("PRÓLOGO // ANTES DE LA WIRED", "PROLOGUE")
-	_add_navigation("CASO // EL PULSO AUSENTE", "CASE")
+	if not offline:
+		_add_navigation("CASO // EL PULSO AUSENTE", "CASE")
 	var sheets: Dictionary = WorldApi.snapshot.get("character_sheets", {})
 	var actors: Array = sheets.get("visible_npcs", [])
 	for item in actors:
@@ -182,7 +187,11 @@ func _render_player() -> void:
 		+ "UBICACIÓN  " + str(data.get("location", "")) + "\n"
 		+ "ENERGÍA  %.2f\n" % float(data.get("energy", 0.0))
 		+ "NODOS CONOCIDOS  %d\n" % int(data.get("known_nodes", 0))
-		+ "INVESTIGACIÓN NODE_07  " + str(data.get("case_status", "UNSEEN"))
+		+ (
+			"CONEXIÓN A LA WIRED  PENDIENTE"
+			if str(data.get("case_status", "")) == "LOCKED"
+			else "INVESTIGACIÓN NODE_07  " + str(data.get("case_status", "UNSEEN"))
+		)
 		+ "\n\nLas fichas solo incluyen conocimientos accesibles al jugador."
 	)
 
