@@ -62,10 +62,16 @@ height = 1.6
 
 [sub_resource type="Environment" id="StationEnvironment"]
 background_mode = 1
-background_color = Color(0.025, 0.03, 0.04, 1)
+background_color = Color(0.018, 0.018, 0.028, 1)
 ambient_light_source = 3
-ambient_light_color = Color(0.32, 0.36, 0.44, 1)
-ambient_light_energy = 0.85
+ambient_light_color = Color(0.26, 0.28, 0.36, 1)
+ambient_light_energy = 0.48
+tonemap_mode = 2
+tonemap_exposure = 0.88
+fog_enabled = true
+fog_light_color = Color(0.12, 0.14, 0.19, 1)
+fog_light_energy = 0.58
+fog_density = 0.015
 
 [node name="Station" type="Node3D"]
 script = ExtResource("1")
@@ -76,7 +82,7 @@ environment = SubResource("StationEnvironment")
 [node name="StationFillLight" type="DirectionalLight3D" parent="."]
 rotation_degrees = Vector3(-55, -25, 0)
 light_color = Color(0.55, 0.60, 0.70, 1)
-light_energy = 0.55
+light_energy = 0.34
 shadow_enabled = true
 
 [node name="Floor" type="CSGBox3D" parent="."]
@@ -216,6 +222,7 @@ omni_range = 8.0
 [node name="Player" type="CharacterBody3D" parent="." groups=["player"]]
 position = Vector3(0, 0.9, 8.5)
 script = ExtResource("2")
+orthographic_size = 13.6
 
 [node name="Collision" type="CollisionShape3D" parent="Player"]
 shape = SubResource("PlayerShape")
