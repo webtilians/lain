@@ -207,7 +207,7 @@ func _on_state_request_completed(
 	var next_minute := int(parsed.get("minute", -1))
 	if next_minute < prior_minute:
 		return
-	var changed := parsed != snapshot
+	var changed: bool = parsed != snapshot
 	snapshot = parsed
 	if changed:
 		if next_minute != prior_minute:
