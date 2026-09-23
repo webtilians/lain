@@ -197,3 +197,27 @@ def test_archiving_keeps_evidence_private_and_never_recruits_witnesses():
             (npc,),
         ).fetchone()[0] == 0
     assert player_action(sim, "BROADCAST_TRACE")["reason"] == "CASE_ALREADY_RESOLVED"
+
+
+def test_npc_prompt_receives_only_its_own_role_and_station_testimony():
+    from server.world_core.character_sheets import generated_role_context
+    from server.world_core.station_echo import actor_received_case_report
+
+    sim = Simulation()
+    station_player(sim)
+    informed = make_entity(sim, "Node 07 Inquiry")
+    uninformed = make_entity(sim, "Monitor Entities")
+    sim.all_agents[uninformed].location = "APARTMENT"
+    save_agent(sim.all_agents[uninformed])
+    assert generated_role_context(informed)["role"] == "INQUIRER"
+    assert generated_role_context(uninformed)["role"] == "MONITOR"
+    assert generated_role_context("AGENT_NORA") is None
+    assert actor_received_case_report(informed) is None
+    assert player_action(sim, "INVESTIGATE")["accepted"]
+    assert player_action(sim, "BROADCAST_TRACE")["accepted"]
+    report = actor_received_case_report(informed)
+    assert report is not None
+    assert report["source"] == "PLAYER_TESTIMONY"
+    assert "mi observación" in report["report"]
+    assert actor_received_case_report(uninformed) is None
+    assert actor_received_case_report("AGENT_NORA") is None
