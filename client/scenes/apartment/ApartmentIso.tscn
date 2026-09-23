@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3]
+[gd_scene load_steps=27 format=3]
 
 [ext_resource type="Script" path="res://scripts/world/Apartment.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/player/IsoController.gd" id="2"]
@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/TerminalUI.tscn" id="6"]
 
 [ext_resource type="Script" path="res://scripts/art/ApartmentPresentation.gd" id="7"]
+[ext_resource type="Script" path="res://scripts/world/ActorSpawner.gd" id="8"]
 
 [ext_resource type="Texture2D" path="res://art/apartment/plaster.png" id="plaster"]
 [ext_resource type="PackedScene" path="res://art/apartment/models/Floor.tscn" id="asset_Floor"]
@@ -59,6 +60,9 @@ size = Vector3(0.9, 0.65, 0.12)
 
 [node name="ApartmentIso" type="Node3D"]
 script = ExtResource("1")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_ApartmentIllustrated")
 
 [node name="Floor" type="CSGBox3D" parent="."]
 size = Vector3(8, 0.2, 8)
@@ -119,19 +123,19 @@ shape = SubResource("MonitorShape")
 [node name="MonitorGlow" type="OmniLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.7, 1.3, -2.3)
 light_color = Color(0.5372549, 0.78039217, 0.74509805, 1)
-light_energy = 0.65
-omni_range = 2.2
+light_energy = 0.48
+omni_range = 2.6
 
 [node name="RoomLight" type="OmniLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 2.1, -2.8)
 light_color = Color(0.85882354, 0.76862746, 0.62352943, 1)
-light_energy = 0.7
-omni_range = 4.4
+light_energy = 0.52
+omni_range = 4.8
 
 [node name="IsoFillLight" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.88294756, 0.3488854, -0.3141378, 0, 0.66913056, 0.74314487, 0.46947157, -0.656158, 0.5908072, 0, 0, 0)
 light_color = Color(0.827451, 0.79607844, 0.84313726, 1)
-light_energy = 0.48
+light_energy = 0.34
 shadow_enabled = true
 directional_shadow_max_distance = 35.0
 
@@ -167,6 +171,22 @@ position = Vector3(0, 0.65, 0)
 
 [node name="Camera3D" type="Camera3D" parent="Player/Head"]
 current = true
+
+
+[node name="Actors" type="Node3D" parent="."]
+script = ExtResource("8")
+location_id = "APARTMENT"
+
+[node name="Spawns" type="Node3D" parent="Actors"]
+
+[node name="AGENT_K" type="Marker3D" parent="Actors/Spawns"]
+position = Vector3(2.0, 0, 0.6)
+
+[node name="AGENT_NORA" type="Marker3D" parent="Actors/Spawns"]
+position = Vector3(1.6, 0, 1.9)
+
+[node name="ENTITY_ANCHOR" type="Marker3D" parent="Actors/Spawns"]
+position = Vector3(2.35, 0, 2.4)
 
 [node name="HUD" type="CanvasLayer" parent="."]
 
