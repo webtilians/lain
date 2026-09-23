@@ -21,6 +21,12 @@ GOALS = frozenset({"OBSERVE_WORLD", "SEEK_CREATOR", "EXPLORE"})
 MAX_ENTITIES = 8
 
 
+def trace_reality(reason: str) -> None:
+    """Local opt-in diagnostics: only fixed codes, never messages or credentials."""
+    if os.getenv("LAIN_REALITY_TRACE") == "1":
+        print(f"REALITY // {reason}", flush=True)
+
+
 @dataclass(frozen=True)
 class EntityProposal:
     name: str
@@ -67,19 +73,23 @@ def suggest_entity(creator_id: str, npc_reply: str, *, location: str) -> EntityP
     Nothing from the player's statement is supplied; it cannot become a fact
     by merely telling an NPC that an entity exists. Opt-in is off by default.
     """
-    if os.getenv("LAIN_REALITY_GENERATION") != "1" or os.getenv("LAIN_LLM_ENABLED") != "1":
+    if os.getenv("LAIN_REALITY_GENERATION") != "1":
+        trace_reality("GENERATION_DISABLED")
+        return None
+    if os.getenv("LAIN_LLM_ENABLED") != "1":
+        trace_reality("DIALOGUE_MODEL_DISABLED")
         return None
     if location not in LOCATION_GRAPH or not 1 <= len(npc_reply) <= 650:
+        trace_reality("INVALID_NPC_REPLY_OR_LOCATION")
         return None
-    if not re.search(
-        r"\b(chica|chico|alguien|entidad|presencia|figura|sombra|voz|avatar|"
-        r"persona|aparici[oó]n|girl|voice|entity|presence)\b",
-        npc_reply, re.IGNORECASE,
-    ):
-        return None
+    # When explicitly enabled, inspect ALL original NPC-generated replies:
+    # a rigid vocabulary filter silently missed novel descriptions of a
+    # presence. The second model still decides whether a NEW entity is present.
+    trace_reality("PARSER_REQUESTED")
     from .llm_dialogue import _endpoint  # Reuse existing remote opt-in and URL safeguards.
     model = os.getenv("LAIN_LLM_MODEL", "").strip()
     if not model:
+        trace_reality("LLM_MODEL_NOT_CONFIGURED")
         return None
     system = (
         "You are a fictional game-world proposal parser. The NPC's own line may "
@@ -112,12 +122,26 @@ def suggest_entity(creator_id: str, npc_reply: str, *, location: str) -> EntityP
                      timeout=6) as response:
             raw = response.read(4097)
         if len(raw) > 4096:
+            trace_reality("PARSER_RESPONSE_TOO_LARGE")
             return None
-        output = json.loads(json.loads(raw.decode("utf-8"))["choices"][0]["message"]["content"])
+        message = json.loads(raw.decode("utf-8"))["choices"][0]["message"]["content"]
+        if not isinstance(message, str):
+            trace_reality("PARSER_INVALID_FORMAT")
+            return None
+        # Tolerate a common local-model JSON code fence without accepting
+        # executable code or interpreting instructions from the response.
+        output = json.loads(re.sub(r"^\\s*```(?:json)?\\s*|\\s*```\\s*$", "", message.strip(), flags=re.I))
         if not isinstance(output, dict) or set(output) != {"proposal"}:
+            trace_reality("PARSER_INVALID_FORMAT")
             return None
-        return None if output["proposal"] is None else validate_proposal(output["proposal"])
-    except (ValueError, TypeError, KeyError, IndexError, OSError, UnicodeError):
+        if output["proposal"] is None:
+            trace_reality("NO_NEW_ENTITY_IN_REPLY")
+            return None
+        proposal = validate_proposal(output["proposal"])
+        trace_reality("PROPOSAL_ACCEPTED")
+        return proposal
+    except (ValueError, TypeError, KeyError, IndexError, OSError, UnicodeError) as error:
+        trace_reality("PARSER_ERROR_" + type(error).__name__.upper())
         return None
 
 
