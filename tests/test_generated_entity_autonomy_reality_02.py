@@ -60,7 +60,7 @@ def test_only_own_fresh_direct_anomaly_can_set_investigation_goal():
     save_belief(NodeBelief(
         agent_id=entity_id, node_id="NODE_07",
         believed_location="STATION", believed_strength=0.90,
-        confidence=0.99, source="DIRECT_PERCEPTION", updated_minute=0,
+        confidence=0.99, source="DIRECT_PERCEPTION", updated_minute=-100,
     ))
     assert belief_driven_goal(actor, 10) is None
 
@@ -120,3 +120,21 @@ def test_entity_reacts_to_direct_anomaly_then_remembers_and_retires_goal():
         for memory in restarted.all_agents[entity_id].memory
     )
     assert len(list_generated_entities()) == 1
+
+
+def test_recent_direct_belief_survives_restart_and_can_drive_later_decision():
+    sim, entity_id = make_entity()
+    sim.refresh_generated_actors()
+    agent = sim.all_agents[entity_id]
+    save_belief(NodeBelief(
+        agent_id=entity_id, node_id="NODE_07",
+        believed_location="STATION", believed_strength=0.90,
+        confidence=0.85, source="DIRECT_PERCEPTION", updated_minute=10,
+    ))
+    restarted = Simulation()
+    generated = restarted.all_agents[entity_id]
+    goal = belief_driven_goal(generated, 30)
+    assert goal is not None
+    assert goal.target_id == "NODE_07"
+    assert goal.believed_location == "STATION"
+    assert belief_driven_goal(generated, 70) is None
