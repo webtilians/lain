@@ -118,7 +118,10 @@ def test_entity_memory_goal_actions_survive_restart():
     assert entity_id in restarted.all_agents
     assert restarted.all_agents[entity_id].location == "STATION"
     assert restarted.all_agents[entity_id].goal == "SEEK_CREATOR"
-    assert restarted.all_agents[entity_id].memory == [memories[0][0]]
+    # Genesis survives, and the entity can acquire new memories on its own.
+    assert memories[0][0] in restarted.all_agents[entity_id].memory
+    assert any("Discovered anomalous node NODE_12" in item
+               for item in restarted.all_agents[entity_id].memory)
 
 
 def test_entity_creation_rolls_back_with_dialogue_transaction():
