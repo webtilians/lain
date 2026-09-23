@@ -13,6 +13,11 @@ from .database import get_connection
 
 def player_is_in_conversation() -> bool:
     with get_connection() as conn:
+        exists = conn.execute(
+            "SELECT 1 FROM sqlite_master WHERE type='table' AND name='interactions'"
+        ).fetchone()
+        if exists is None:
+            return False
         row = conn.execute(
             """SELECT 1 FROM interactions
                WHERE initiator_id='PLAYER_1'
