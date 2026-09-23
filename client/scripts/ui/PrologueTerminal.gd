@@ -75,6 +75,12 @@ func open_terminal() -> void:
 			+ "Utiliza lo aprendido de Ryoko y consulta la sintaxis real "
 			+ "de TELNET fuera del juego.\n"
 		)
+	elif stage == "CONNECTED":
+		text += (
+			"\nLa orden fue aceptada, pero el enlace se interrumpio "
+			+ "antes de abrir la Wired. Repite el comando para recuperar "
+			+ "la conexion guardada.\n"
+		)
 	else:
 		text += "\nSIN ACCESO REMOTO. Busca primero a alguien que te ensene.\n"
 	transcript.text = text
