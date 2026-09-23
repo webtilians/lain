@@ -26,6 +26,7 @@ func _render_snapshot(snapshot: Dictionary) -> void:
 		signal_label.text = "NODE_07 // UNKNOWN"
 		confidence_label.text = ""
 		hint_label.text = "E // INTERACT"
+		_apply_case_hint(snapshot)
 		return
 
 	var verified := bool(node_signal.get("verified", false))
@@ -39,3 +40,14 @@ func _render_snapshot(snapshot: Dictionary) -> void:
 		signal_label.text = "NODE_07 // UNVERIFIED"
 		confidence_label.text = "REMOTE CONFIDENCE // %.0f%%" % confidence
 		hint_label.text = "APPROACH SIGNAL // E TO OBSERVE"
+
+	_apply_case_hint(snapshot)
+
+
+func _apply_case_hint(snapshot: Dictionary) -> void:
+	var situation: Dictionary = snapshot.get("station_case", {})
+	match str(situation.get("status", "UNSEEN")):
+		"TRACE_FOUND":
+			hint_label.text = "EL PULSO AUSENTE // E: DECIDIR   J: DIARIO"
+		"RESOLVED":
+			hint_label.text = "EL PULSO AUSENTE // J: VER CONSECUENCIAS"

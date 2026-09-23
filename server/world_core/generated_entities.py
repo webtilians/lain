@@ -16,6 +16,10 @@ from .actor_locations import load_actor_location_belief
 from .episodic_memory import initialize_memory_provenance, save_episodic_memory
 from .locations import LOCATION_GRAPH, next_hop
 from .models import ActionIntent, Agent, GoalCandidate
+from .character_sheets import (
+    initialize_profiles, insert_origin_profile, actor_role, role_step_due,
+)
+from .station_echo import CASE_ID, has_pending_station_response
 
 GOALS = frozenset({"OBSERVE_WORLD", "SEEK_CREATOR", "EXPLORE"})
 MAX_ENTITIES = 8
@@ -60,6 +64,7 @@ def initialize_generated_entities() -> None:
                     CHECK(waypoint BETWEEN 0 AND 3)
             )
         """)
+    initialize_profiles()
 
 
 def advance_local_waypoint(actor_id: str) -> int:
@@ -225,6 +230,9 @@ def create_entity_from_turn(
            VALUES (?, ?, ?, ?, ?, ?)""",
         (entity_id, creator_id, origin_turn_id, proposal.premise, proposal.goal, minute),
     )
+    insert_origin_profile(
+        conn, entity_id, proposal.name, proposal.premise, proposal.goal, minute,
+    )
     save_episodic_memory(
         conn, entity_id,
         f"I am {proposal.name}. My first memory: {proposal.premise}. "
@@ -301,6 +309,7 @@ class GeneratedActor:
         self.agent = agent
         self.creator_id = creator_id
         self.seed_goal = seed_goal
+        self.role = actor_role(agent.id)
 
     def decide(self, *, world, node_belief, goal) -> ActionIntent:
         actor = self.agent
@@ -310,6 +319,11 @@ class GeneratedActor:
             if actor.location != goal.believed_location:
                 return ActionIntent(actor.id, "MOVE", goal.believed_location)
             return ActionIntent(actor.id, "INVESTIGATE", goal.target_id)
+        # Only the actors who personally received the player's testimony
+        # about NODE_07 may respond; they do so on a role-dependent cadence.
+        if (has_pending_station_response(actor.id, actor.location)
+                and role_step_due(actor.id, self.role, load_simulation_minute())):
+            return ActionIntent(actor.id, "RESPOND_TO_TRACE", CASE_ID)
         # Do not walk out of the scene while a player is trying to talk.
         # The actor uses its own current direct perception, not global
         # knowledge of the player's hidden position.
@@ -321,7 +335,13 @@ class GeneratedActor:
                 and player_belief.believed_location == actor.location
                 and player_belief.updated_minute == load_simulation_minute()
             ):
-                return ActionIntent(actor.id, "WANDER", actor.location)
+                return ActionIntent(
+                    actor.id,
+                    "WANDER" if role_step_due(
+                        actor.id, self.role, load_simulation_minute()
+                    ) else "OBSERVE_AREA",
+                    actor.location,
+                )
         if self.seed_goal == "SEEK_CREATOR":
             with get_connection() as conn:
                 row = conn.execute(
@@ -338,4 +358,10 @@ class GeneratedActor:
                     return ActionIntent(actor.id, "MOVE", destination)
         # All generated seed goals can take bounded local steps. This is
         # not inter-location travel and does not grant extra knowledge.
-        return ActionIntent(actor.id, "WANDER", actor.location)
+        return ActionIntent(
+            actor.id,
+            "WANDER" if role_step_due(
+                actor.id, self.role, load_simulation_minute()
+            ) else "OBSERVE_AREA",
+            actor.location,
+        )

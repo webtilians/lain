@@ -57,6 +57,12 @@ from .generated_entities import (
     GeneratedActor, advance_local_waypoint, belief_driven_goal,
     list_generated_entities,
 )
+from .character_sheets import actor_role, synchronize_existing_profiles
+from .station_echo import (
+    CASE_ID, initialize_station_case, discover_station_echo,
+    validate_case_choice, resolve_station_echo, has_pending_station_response,
+    record_station_response,
+)
 
 from .interactions import (
     create_or_get_interaction,
@@ -201,6 +207,7 @@ class Simulation:
         # Rehydrate generated actors on restart; the seeded NPCs and the
         # player keep their existing identity and controller contracts.
         self.refresh_generated_actors()
+        initialize_station_case()
 
         self.minute = (
             load_simulation_minute()
@@ -220,7 +227,9 @@ class Simulation:
 
     def refresh_generated_actors(self):
         """Discover persistent NPC-created entities, including mid-session births."""
-        for entity_id, creator_id, seed_goal, name, location in list_generated_entities():
+        existing = list_generated_entities()
+        synchronize_existing_profiles()
+        for entity_id, creator_id, seed_goal, name, location in existing:
             if entity_id in self.all_agents:
                 continue
             agent = load_or_create_agent(
@@ -678,6 +687,9 @@ class Simulation:
             "OBSERVE": 0.02,
             "OBSERVE_AREA": 0.01,
             "WANDER": 0.02,
+            "RESPOND_TO_TRACE": 0.02,
+            "BROADCAST_TRACE": 0.02,
+            "ARCHIVE_TRACE": 0.02,
             "CONTACT": 0.02,
         }
 
@@ -759,6 +771,18 @@ class Simulation:
             # target their CURRENT semantic location, never a hidden location.
             if agent.controller_type != "GENERATED" or intent.target != agent.location:
                 return False, "INVALID_WANDER"
+            return True, ""
+
+        if action in {"BROADCAST_TRACE", "ARCHIVE_TRACE"}:
+            if agent.id != self.player.id:
+                return False, "PLAYER_ONLY_CASE_CHOICE"
+            return validate_case_choice(agent.id, action, agent.location, intent.target)
+
+        if action == "RESPOND_TO_TRACE":
+            if (agent.controller_type != "GENERATED"
+                    or intent.target != CASE_ID
+                    or not has_pending_station_response(agent.id, agent.location)):
+                return False, "CASE_RESPONSE_NOT_AVAILABLE"
             return True, ""
 
         # ==============================================
@@ -1297,6 +1321,25 @@ class Simulation:
                 details = f"Local waypoint {waypoint}"
 
             # ==========================================
+            # STATION CASE: evidence-based choice / witness response
+            # ==========================================
+
+            elif action in {"BROADCAST_TRACE", "ARCHIVE_TRACE"}:
+                witnesses = resolve_station_echo(agent.id, action, self.minute)
+                agent.energy = max(0.0, agent.energy - 0.02)
+                details = (
+                    f"Shared station echo with {witnesses} present witnesses"
+                    if action == "BROADCAST_TRACE"
+                    else "Archived station echo without sharing it"
+                )
+
+            elif action == "RESPOND_TO_TRACE":
+                details = record_station_response(
+                    agent.id, actor_role(agent.id), self.minute,
+                )
+                agent.energy = max(0.0, agent.energy - 0.02)
+
+            # ==========================================
             # REST
             # ==========================================
 
@@ -1310,6 +1353,17 @@ class Simulation:
                 details = (
                     f"{agent.name} rests"
                 )
+
+            # An accepted direct investigation (not an OBSERVE or rumor)
+            # is the only way to unlock this player's persistent case.
+            if (action == "INVESTIGATE" and agent.id == self.player.id
+                    and target == "NODE_07"):
+                if discover_station_echo(agent.id, self.minute):
+                    record_event(
+                        minute=self.minute, actor_id=agent.id,
+                        action="CASE_ECHO_DISCOVERED", target=CASE_ID,
+                        details="A missing beat found in the observed signal",
+                    )
 
             save_agent(
                 agent

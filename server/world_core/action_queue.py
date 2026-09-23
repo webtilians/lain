@@ -16,6 +16,8 @@ VALID_ACTIONS = {
     "OBSERVE",
     "OBSERVE_AREA",
     "CONTACT",
+    "BROADCAST_TRACE",
+    "ARCHIVE_TRACE",
     "REST",
 }
 
