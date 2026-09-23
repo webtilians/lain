@@ -181,3 +181,49 @@ def test_unenabled_new_game_remains_backward_compatible(monkeypatch):
     assert gate_move("PLAYER_1", "STATION") == (True, "")
     with pytest.raises(ValueError, match="NO_ACTIVE_PROLOGUE"):
         submit_terminal_command("PLAYER_1", "telnet wired 23", 0)
+
+
+def test_authored_character_sheets_are_visible_only_in_same_room(monkeypatch):
+    sim = fresh_game(monkeypatch)
+    assert build_player_snapshot()["station_case"]["status"] == "LOCKED"
+    assert build_player_snapshot()["messages"] == []
+    relocate(sim, "SCHOOL_LAB")
+    cards = build_player_snapshot()["character_sheets"]["visible_npcs"]
+    assert any(
+        item["id"] == "PROFESSOR"
+        and item["role_assignment"] == "AUTHORED_PROLOGUE"
+        for item in cards
+    )
+    assert not any(item["id"] == "RYOKO" for item in cards)
+    talk_to_prologue_npc("PLAYER_1", "PROFESSOR", sim.minute)
+    relocate(sim, "NIGHTCLUB")
+    cards = build_player_snapshot()["character_sheets"]["visible_npcs"]
+    assert any(item["id"] == "RYOKO" for item in cards)
+    assert not any(item["id"] == "PROFESSOR" for item in cards)
+    assert build_player_snapshot()["station_case"]["status"] == "LOCKED"
+
+
+def test_recover_prologue_if_server_interrupted_after_command_before_ack(monkeypatch):
+    import server.api as api
+    sim = fresh_game(monkeypatch)
+    relocate(sim, "SCHOOL_LAB")
+    talk_to_prologue_npc("PLAYER_1", "PROFESSOR", sim.minute)
+    relocate(sim, "NIGHTCLUB")
+    talk_to_prologue_npc("PLAYER_1", "RYOKO", sim.minute)
+    relocate(sim, "APARTMENT")
+    assert submit_terminal_command(
+        "PLAYER_1", "telnet wired 23", sim.minute,
+    )["accepted"]
+    assert stage_for() == "CONNECTED"
+    assert build_player_snapshot()["wired"]["connected"] is False
+    monkeypatch.setattr(api, "_runtime", sim)
+    repaired = api.prologue_terminal(
+        api.PrologueCommandRequest(command="telnet wired 23")
+    )
+    assert repaired["result"]["accepted"] is True
+    assert repaired["state"]["wired"]["connected"] is True
+    assert repaired["state"]["station_case"]["status"] == "UNSEEN"
+    with get_connection() as conn:
+        assert conn.execute(
+            "SELECT COUNT(*) FROM events WHERE action='PROLOGUE_CONNECTED'"
+        ).fetchone()[0] == 1
