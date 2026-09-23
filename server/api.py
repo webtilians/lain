@@ -141,7 +141,8 @@ def acknowledge_player_message(
     message_id: str,
 ):
 
-    with _world_lock:        runtime = get_runtime()
+    with _world_lock:
+        runtime = get_runtime()
 
         result = process_wired_message_acknowledgement(
             message_id=message_id,
