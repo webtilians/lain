@@ -216,7 +216,7 @@ def belief_driven_goal(agent: Agent, minute: int) -> GoalCandidate | None:
             """SELECT node_id, believed_location, believed_strength, confidence
                FROM node_beliefs
                WHERE agent_id = ? AND source = 'DIRECT_PERCEPTION'
-                 AND believed_strength >= 0.70 AND confidence >= 0.90
+                 AND believed_strength >= 0.70 AND confidence >= 0.80
                  AND updated_minute = ?
                ORDER BY believed_strength DESC, node_id""",
             (agent.id, minute),
