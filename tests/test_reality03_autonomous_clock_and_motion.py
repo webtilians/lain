@@ -163,3 +163,28 @@ def test_expired_dialogue_heartbeat_resumes_even_if_pause_request_was_lost(monke
     # The next deliberate UI heartbeat re-pauses an existing conversation.
     clock.note_player_dialogue_active()
     assert clock.tick_once() is False
+
+
+def test_player_state_heartbeat_pauses_clock_without_advancing_world(monkeypatch):
+    import server.api as api
+    sim, entity_id = world_with_entity()
+    create_or_get_interaction(
+        initiator_id="PLAYER_1", recipient_id=entity_id,
+        topic="PLAYER_INITIATED_CONVERSATION",
+        source_goal="UNKNOWN", minute=sim.minute,
+    )
+    start_player_conversation(entity_id, sim.minute)
+    clock = WorldClock(sim, RLock(), interval=8)
+    monkeypatch.setattr(api, "_runtime", sim)
+    monkeypatch.setattr(api, "_clock", clock)
+    start = sim.minute
+    snapshot = api.player_state(x_lain_dialog_active="1")
+    assert snapshot["minute"] == start
+    assert clock.tick_once() is False
+    # A fresh world with only an old OPEN row does not pause on an ordinary GET.
+    other_clock = WorldClock(sim, RLock(), interval=8)
+    monkeypatch.setattr(api, "_clock", other_clock)
+    snapshot = api.player_state(x_lain_dialog_active=None)
+    assert snapshot["minute"] == start
+    assert other_clock.tick_once() is True
+    assert sim.minute == start + 10
