@@ -18,7 +18,7 @@ def context():
 
 @pytest.mark.parametrize("utterance", [
     "¿Qué piensas de esa nueva presencia en la Wired?",
-    "Mi perro se llama Eco.",
+    "Quizá alguien esté despertando entre los cables.",
 ])
 def test_enabled_free_text_reaches_model_even_with_generic_memories(
     monkeypatch, utterance,
@@ -89,3 +89,16 @@ def test_provider_failure_logs_only_sanitized_reason(monkeypatch, capsys, error,
     assert "private" not in output
     assert "secret" not in output
     assert "Hola" not in output
+
+
+def test_explicit_current_statement_is_kept_grounded_even_with_model(monkeypatch):
+    monkeypatch.setenv("LAIN_LLM_ENABLED", "1")
+    monkeypatch.setattr(
+        llm_dialogue, "_provider_reply",
+        lambda *a: pytest.fail("an explicit personal statement must be attributed"),
+    )
+    reply = llm_dialogue.generate_dialogue_reply(
+        context(), "FREE_TEXT", "Mi perro se llama Eco.",
+    )
+    assert reply.source == "CURRENT_TESTIMONY"
+    assert "Mi perro se llama Eco" in reply.text
