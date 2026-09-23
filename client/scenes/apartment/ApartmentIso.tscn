@@ -17,7 +17,7 @@
 [ext_resource type="PackedScene" path="res://art/visual05/models/Shelves.tscn" id="asset_Shelves"]
 [ext_resource type="PackedScene" path="res://art/visual05/models/Kitchen.tscn" id="asset_Kitchen"]
 [ext_resource type="PackedScene" path="res://art/apartment/models/Lighting.tscn" id="asset_Lighting"]
-[ext_resource type="PackedScene" path="res://art/characters/LainInspired.tscn" id="asset_PlayerSilhouette"]
+[ext_resource type="PackedScene" path="res://art/characters/LainSlender.tscn" id="asset_PlayerSilhouette"]
 
 [ext_resource type="Material" path="res://art/visual05/wall.tres" id="v05_wall"]
 [ext_resource type="PackedScene" path="res://art/visual05/models/ApartmentDetails.tscn" id="v05_detail"]

@@ -7,7 +7,7 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/RetroOverlay.tscn" id="5"]
 [ext_resource type="Script" path="res://scripts/world/ActorSpawner.gd" id="6"]
 
-[ext_resource type="PackedScene" path="res://art/characters/LainInspired.tscn" id="visual_avatar"]
+[ext_resource type="PackedScene" path="res://art/characters/LainSlender.tscn" id="visual_avatar"]
 [ext_resource type="PackedScene" path="res://art/visual05/models/StationDressing.tscn" id="visual_decor"]
 [ext_resource type="Script" path="res://scripts/art/ExteriorPresentation.gd" id="visual_hud"]
 
