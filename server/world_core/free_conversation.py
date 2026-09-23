@@ -10,6 +10,8 @@ from .episodic_memory import (
     save_episodic_memory,
 )
 from .llm_dialogue import generate_dialogue_reply
+from .character_sheets import generated_role_context
+from .station_echo import actor_received_case_report
 from .generated_entities import (
     create_entity_from_turn, initialize_generated_entities, suggest_entity,
     trace_reality,
@@ -110,6 +112,14 @@ def say_to_player_conversation(
         interaction_id=interaction.id,
         retrieval_query=player_line,
     )
+    # Keep each actor's role and testimony inside ITS own context. These
+    # metadata are provisional inclinations, never proof of a world event.
+    role = generated_role_context(actor_id)
+    if role is not None:
+        context["role"] = role
+        own_report = actor_received_case_report(actor_id)
+        if own_report is not None:
+            context["received_station_echo"] = own_report
     reply = generate_dialogue_reply(
         context=context, choice_id="FREE_TEXT", choice_text=player_line,
     )
