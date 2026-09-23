@@ -10,6 +10,21 @@ LOCATION_GRAPH = {
     "APARTMENT_DISTRICT": (
         "APARTMENT",
         "STATION",
+        "SCHOOL",
+        "NIGHTCLUB",
+    ),
+
+    "SCHOOL": (
+        "APARTMENT_DISTRICT",
+        "SCHOOL_LAB",
+    ),
+
+    "SCHOOL_LAB": (
+        "SCHOOL",
+    ),
+
+    "NIGHTCLUB": (
+        "APARTMENT_DISTRICT",
     ),
 
     "STATION": (
