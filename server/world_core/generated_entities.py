@@ -118,8 +118,9 @@ def suggest_entity(creator_id: str, npc_reply: str, *, location: str) -> EntityP
     if key:
         headers["Authorization"] = "Bearer " + key
     try:
+        timeout = max(1.0, min(45.0, float(os.getenv("LAIN_REALITY_TIMEOUT", "20"))))
         with urlopen(Request(_endpoint(), data=payload, headers=headers, method="POST"),
-                     timeout=6) as response:
+                     timeout=timeout) as response:
             raw = response.read(4097)
         if len(raw) > 4096:
             trace_reality("PARSER_RESPONSE_TOO_LARGE")
