@@ -6,6 +6,7 @@ on:
       - experiment/reality-0.3-visual06-integration
       - experiment/reality-0.4-character-sheets-station-echo
       - experiment/prologue-0.1-school-ryoko-terminal
+      - experiment/prologue-0.2-neighborhood-dialogue
 
 jobs:
   godot-visual:
@@ -57,5 +58,15 @@ jobs:
           /tmp/lain-godot --headless --path client --script res://tools/test_prologue01_visual.gd 2>&1 | tee /tmp/lain-prologue.log
           grep -q 'PROLOGUE01_VISUAL_OK' /tmp/lain-prologue.log
           if grep -E '^(SCRIPT ERROR:|ERROR:)' /tmp/lain-prologue.log; then
+            exit 1
+          fi
+
+      - name: Visual 0.7 environment and collision geometry
+        shell: bash
+        run: |
+          set -euo pipefail
+          /tmp/lain-godot --headless --path client --script res://tools/test_visual07_environment.gd 2>&1 | tee /tmp/lain-visual07.log
+          grep -q 'VISUAL07_ENVIRONMENT_OK' /tmp/lain-visual07.log
+          if grep -E '^(SCRIPT ERROR:|ERROR:)' /tmp/lain-visual07.log; then
             exit 1
           fi
