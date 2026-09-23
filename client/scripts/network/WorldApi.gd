@@ -64,9 +64,16 @@ func request_state(silent: bool = false) -> void:
 	if not silent:
 		print("WORLD API // GET STATE")
 
+	# The server pauses autonomous ticks only for a live, visible NPC
+	# conversation. No text, identity or memories are sent in this header.
+	var request_headers := PackedStringArray()
+	if EventDialog.visible and not EventDialog.current_owner_id.is_empty():
+		request_headers.append("X-Lain-Dialog-Active: 1")
+
 	var error := _state_request.request(
 		BASE_URL
-		+ "/api/v1/player/state"
+		+ "/api/v1/player/state",
+		request_headers
 	)
 
 	if error != OK:
