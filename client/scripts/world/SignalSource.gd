@@ -24,29 +24,38 @@ func interact() -> void:
 	if busy or EventDialog.visible:
 		return
 
+	var situation: Dictionary = WorldApi.snapshot.get("station_case", {})
+	var case_status := str(situation.get("status", "UNSEEN"))
+	var description := (
+		"Una estructura emite un pulso irregular.\n\n"
+		+ "Puedes investigarla directamente o observarla sin intervenir."
+	)
+	var choices: Array[Dictionary] = [
+		{"id": "INVESTIGATE", "text": "Investigar la señal"},
+		{"id": "OBSERVE", "text": "Observar sin intervenir"},
+	]
+	if case_status == "TRACE_FOUND":
+		description = (
+			"Has encontrado un pulso ausente dentro de la secuencia.\n"
+			+ "El rastro es tuyo: compartirlo o archivarlo tendrá "
+			+ "consecuencias distintas para quienes están aquí."
+		)
+		choices.append({
+			"id": "BROADCAST_TRACE",
+			"text": "Difundir el rastro entre los presentes",
+		})
+		choices.append({
+			"id": "ARCHIVE_TRACE",
+			"text": "Archivar el rastro sin compartirlo",
+		})
+	elif case_status == "RESOLVED":
+		description = str(situation.get("summary", description))
+	choices.append({"id": "LEAVE", "text": "Alejarse"})
 	EventDialog.show_choices(
 		str(get_instance_id()),
-		"NODE_07 // UNKNOWN SIGNAL",
-		(
-			"Una estructura emite un pulso irregular.\n\n"
-			+ "La información recibida a través de The Wired "
-			+ "sitúa aquí una señal anómala.\n\n"
-			+ "¿Qué quieres hacer?"
-		),
-		[
-			{
-				"id": "INVESTIGATE",
-				"text": "1. Investigar la señal",
-			},
-			{
-				"id": "OBSERVE",
-				"text": "2. Observar sin intervenir",
-			},
-			{
-				"id": "LEAVE",
-				"text": "3. Alejarse",
-			},
-		]
+		"NODE_07 // SEÑAL ANÓMALA",
+		description,
+		choices
 	)
 
 func _on_choice_selected(
@@ -63,7 +72,9 @@ func _on_choice_selected(
 		EventDialog.close_event()
 		return
 
-	if choice_id not in ["INVESTIGATE", "OBSERVE"]:
+	if choice_id not in [
+		"INVESTIGATE", "OBSERVE", "BROADCAST_TRACE", "ARCHIVE_TRACE"
+	]:
 		return
 
 	busy = true
@@ -107,6 +118,12 @@ func _show_rejection(
 			explanation = "La señal ya no se encuentra en esta localización."
 		"NODE_INACTIVE":
 			explanation = "La señal no está activa."
+		"CASE_NOT_DISCOVERED":
+			explanation = "Necesitas investigar NODE_07 antes de decidir."
+		"CASE_ALREADY_RESOLVED":
+			explanation = "Ya has tomado una decisión sobre este rastro."
+		"CASE_NOT_PRESENT":
+			explanation = "Debes estar junto a NODE_07 para decidir."
 		_:
 			explanation = "World Core no ha permitido ejecutar esta acción."
 
@@ -121,6 +138,19 @@ func _show_success(
 	action: String,
 	updated_snapshot: Dictionary
 ) -> void:
+	var station_case: Dictionary = updated_snapshot.get("station_case", {})
+	if action in ["BROADCAST_TRACE", "ARCHIVE_TRACE"]:
+		var witnesses := int(station_case.get("witness_count", 0))
+		var explanation := (
+			"Has compartido el rastro con %d presencias.\n"
+			+ "Sus respuestas aparecerán en el diario (J) cuando reaccionen."
+		) % witnesses if action == "BROADCAST_TRACE" else (
+			"Has archivado el rastro sin compartirlo.\n"
+			+ "Ningún personaje ha recibido este testimonio."
+		)
+		EventDialog.show_event("EL PULSO AUSENTE", explanation)
+		return
+
 	var known_nodes: Array = updated_snapshot.get(
 		"known_nodes",
 		[]
@@ -145,7 +175,9 @@ func _show_success(
 			EventDialog.show_event(
 				"INVESTIGATION COMPLETE",
 				"Has investigado la señal en profundidad.\n\n"
-				+ "La información disponible sobre NODE_07 se ha actualizado.\n\n"
+				+ "Has descubierto un pulso ausente en la secuencia. "
+				+ "Vuelve a interactuar con NODE_07 para decidir "
+				+ "si compartir el rastro o archivarlo.\n\n"
 				+ "SOURCE // " + source
 				+ "\nCONFIDENCE // %.0f%%" % confidence
 			)
