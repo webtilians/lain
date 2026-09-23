@@ -88,18 +88,28 @@ def test_location_and_legacy_connect_bypasses_are_rejected(monkeypatch):
 def test_teacher_ryoko_order_and_colocation(monkeypatch):
     sim = fresh_game(monkeypatch)
     with pytest.raises(ValueError, match="CHARACTER_NOT_PRESENT"):
-        talk_to_prologue_npc("PLAYER_1", "PROFESSOR", sim.minute)
+        talk_to_prologue_npc("PLAYER_1", "PROFESSOR", sim.minute, "ASK_STUDENT")
     relocate(sim, "SCHOOL_LAB")
-    teacher = talk_to_prologue_npc("PLAYER_1", "PROFESSOR", sim.minute)
+    introduction = talk_to_prologue_npc("PLAYER_1", "PROFESSOR", sim.minute)
+    assert introduction["stage"] == "FIND_TEACHER"
+    teacher = talk_to_prologue_npc(
+        "PLAYER_1", "PROFESSOR", sim.minute, "ASK_STUDENT",
+    )
     assert teacher["stage"] == "FIND_RYOKO"
     assert "Ryoko" in teacher["text"]
     with pytest.raises(ValueError, match="CHARACTER_NOT_PRESENT"):
-        talk_to_prologue_npc("PLAYER_1", "RYOKO", sim.minute)
+        talk_to_prologue_npc("PLAYER_1", "RYOKO", sim.minute, "ASK_ADDRESS")
     relocate(sim, "NIGHTCLUB")
-    result = talk_to_prologue_npc("PLAYER_1", "RYOKO", sim.minute)
+    introduction = talk_to_prologue_npc("PLAYER_1", "RYOKO", sim.minute)
+    assert introduction["stage"] == "FIND_RYOKO"
+    result = talk_to_prologue_npc(
+        "PLAYER_1", "RYOKO", sim.minute, "ASK_ADDRESS",
+    )
     assert result["stage"] == "FIND_TERMINAL"
-    assert "TELNET" in result["text"]
+    assert "WIRED" in result["text"]
     assert "23" in result["text"]
+    assert "TELNET" not in result["text"].upper()
+    assert "INTERNET" not in result["text"].upper()
     assert stage_for() == "FIND_TERMINAL"
     with pytest.raises(ValueError, match="TERMINAL_NOT_PRESENT"):
         submit_terminal_command("PLAYER_1", "telnet wired 23", sim.minute)
@@ -108,9 +118,9 @@ def test_teacher_ryoko_order_and_colocation(monkeypatch):
 def test_real_telnet_syntax_and_network_free_validation(monkeypatch):
     sim = fresh_game(monkeypatch)
     relocate(sim, "SCHOOL_LAB")
-    talk_to_prologue_npc("PLAYER_1", "PROFESSOR", sim.minute)
+    talk_to_prologue_npc("PLAYER_1", "PROFESSOR", sim.minute, "ASK_STUDENT")
     relocate(sim, "NIGHTCLUB")
-    talk_to_prologue_npc("PLAYER_1", "RYOKO", sim.minute)
+    talk_to_prologue_npc("PLAYER_1", "RYOKO", sim.minute, "ASK_ADDRESS")
     relocate(sim, "APARTMENT")
     for malformed in [
         "telnet wired", "connect wired 23", "telnet wired 22",
@@ -150,7 +160,7 @@ def test_real_telnet_syntax_and_network_free_validation(monkeypatch):
 def test_prologue_is_persistent_across_server_restart(monkeypatch):
     sim = fresh_game(monkeypatch)
     relocate(sim, "SCHOOL_LAB")
-    talk_to_prologue_npc("PLAYER_1", "PROFESSOR", sim.minute)
+    talk_to_prologue_npc("PLAYER_1", "PROFESSOR", sim.minute, "ASK_STUDENT")
     restart = Simulation()
     assert restart.player.location == "SCHOOL_LAB"
     assert stage_for() == "FIND_RYOKO"
@@ -195,7 +205,7 @@ def test_authored_character_sheets_are_visible_only_in_same_room(monkeypatch):
         for item in cards
     )
     assert not any(item["id"] == "RYOKO" for item in cards)
-    talk_to_prologue_npc("PLAYER_1", "PROFESSOR", sim.minute)
+    talk_to_prologue_npc("PLAYER_1", "PROFESSOR", sim.minute, "ASK_STUDENT")
     relocate(sim, "NIGHTCLUB")
     cards = build_player_snapshot()["character_sheets"]["visible_npcs"]
     assert any(item["id"] == "RYOKO" for item in cards)
@@ -207,9 +217,9 @@ def test_recover_prologue_if_server_interrupted_after_command_before_ack(monkeyp
     import server.api as api
     sim = fresh_game(monkeypatch)
     relocate(sim, "SCHOOL_LAB")
-    talk_to_prologue_npc("PLAYER_1", "PROFESSOR", sim.minute)
+    talk_to_prologue_npc("PLAYER_1", "PROFESSOR", sim.minute, "ASK_STUDENT")
     relocate(sim, "NIGHTCLUB")
-    talk_to_prologue_npc("PLAYER_1", "RYOKO", sim.minute)
+    talk_to_prologue_npc("PLAYER_1", "RYOKO", sim.minute, "ASK_ADDRESS")
     relocate(sim, "APARTMENT")
     assert submit_terminal_command(
         "PLAYER_1", "telnet wired 23", sim.minute,
