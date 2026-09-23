@@ -1,10 +1,11 @@
-[gd_scene load_steps=21 format=3]
+[gd_scene load_steps=22 format=3]
 
 [ext_resource type="Script" path="res://scripts/player/IsoController.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/world/ExitDoor.gd" id="2"]
 [ext_resource type="PackedScene" path="res://scenes/ui/RetroOverlay.tscn" id="3"]
 [ext_resource type="Script" path="res://scripts/world/ActorSpawner.gd" id="4"]
 [ext_resource type="Script" path="res://scripts/world/PrologueDistrictEntrances.gd" id="prologue_entrances"]
+[ext_resource type="Script" path="res://scripts/world/NeighborhoodEntry.gd" id="neighborhood_entry"]
 
 [ext_resource type="PackedScene" path="res://art/characters/LainSlender.tscn" id="visual_avatar"]
 [ext_resource type="PackedScene" path="res://art/visual05/models/ResidentialStreet.tscn" id="visual_decor"]
@@ -51,6 +52,7 @@ ambient_light_color = Color(0.46, 0.43, 0.54, 1)
 ambient_light_energy = 0.42
 
 [node name="ApartmentDistrict" type="Node3D"]
+script = ExtResource("neighborhood_entry")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_District")
