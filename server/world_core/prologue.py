@@ -77,8 +77,8 @@ def talk_to_prologue_npc(player_id: str, npc_id: str, minute: int) -> dict:
     stage = stage_for(player_id)
     if stage is None:
         raise ValueError("NO_ACTIVE_PROLOGUE")
-    if stage == "CONNECTED":
-        raise ValueError("PROLOGUE_ALREADY_COMPLETE")
+    # These places remain explorable after the story's first connection;
+    # the scripted characters must not turn into an HTTP error afterwards.
     if npc_id == "PROFESSOR":
         required_location = "SCHOOL_LAB"
         if stage == "FIND_TEACHER":
