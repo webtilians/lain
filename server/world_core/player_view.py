@@ -18,6 +18,7 @@ from .locations import (
 from .generated_entities import list_generated_entities
 from .character_sheets import player_sheet, visible_npc_sheets
 from .station_echo import station_case_snapshot
+from .prologue import prologue_projection
 
 from .messages import (
     list_player_messages,
@@ -331,6 +332,12 @@ def build_player_snapshot(
         player_id
     )
     station_case = station_case_snapshot(player_id)
+    prologue = prologue_projection(player_id)
+    if prologue["enabled"] and prologue["stage"] != "CONNECTED":
+        reachable_locations = [
+            place for place in reachable_locations
+            if place not in {"STATION", "OLD_DISTRICT"}
+        ]
 
     return {
         "schema_version": "0.1",
@@ -356,6 +363,7 @@ def build_player_snapshot(
             "visible_npcs": visible_npc_sheets(player_id, location),
         },
         "station_case": station_case,
+        "prologue": prologue,
         "situations": list_player_situations(
             player_id
         ),
