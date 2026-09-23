@@ -94,6 +94,25 @@ def actor_role(actor_id: str) -> str:
     return row[0] if row is not None and row[0] in ROLE_RULES else "OBSERVER"
 
 
+def generated_role_context(actor_id: str) -> dict | None:
+    """Private prompt context for THIS generated agent, not a player dossier."""
+    with get_connection() as conn:
+        row = conn.execute(
+            """SELECT p.role FROM generated_actor_profiles p
+               JOIN generated_entities g ON g.id=p.actor_id
+               WHERE p.actor_id=?""",
+            (actor_id,),
+        ).fetchone()
+    if row is None:
+        return None
+    role = row[0] if row[0] in ROLE_RULES else "OBSERVER"
+    label, focus, _cadence = ROLE_RULES[role]
+    return {
+        "role": role, "label": label, "focus": focus,
+        "assignment": "PROVISIONAL_FROM_ORIGIN",
+    }
+
+
 def role_step_due(actor_id: str, role: str, minute: int) -> bool:
     cadence = ROLE_RULES.get(role, ROLE_RULES["OBSERVER"])[2]
     phase = sum((i + 1) * ord(char) for i, char in enumerate(actor_id)) % cadence
