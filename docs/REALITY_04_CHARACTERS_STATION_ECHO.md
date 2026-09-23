@@ -135,5 +135,13 @@ El escenario se encuentra en su primera versión jugable: un rastro,
 una decisión persistente y reacciones acotadas. No se ha simulado
 una desaparición física de la señal ni se pretende que los diálogos
 generados tengan ya acceso contextual garantizado al expediente.
+El LLM de una entidad generada recibe exclusivamente su rol provisional
+y, si esa entidad fue destinataria de la difusión, su propio testimonio
+recibido y su respuesta personal. El rol NO se interpreta como prueba
+de hechos reales y un testimonio recibido no se confunde con
+DIRECT_PERCEPTION. Otros NPC, incluidos los que no estaban en la
+estación, no reciben ese expediente en el prompt. Esta primera versión
+no añade todavía diálogos espontáneos de PNJ entre sí.
+
 Las nuevas escenas, la visualización de roles y el flujo de Godot
 requieren validación manual antes de fusionar la PR experimental.
