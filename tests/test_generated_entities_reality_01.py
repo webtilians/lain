@@ -206,3 +206,31 @@ def test_scripted_npc_reply_never_creates_an_entity(monkeypatch):
         "AGENT_NORA", "¿Qué has visto?", greeting["turn_id"], sim.minute,
     )
     assert list_generated_entities() == []
+
+
+def test_wired_projection_shows_presence_not_private_memories():
+    from server.world_core.messages import INITIAL_MESSAGE_ID
+    from server.world_core.wired import process_wired_message_acknowledgement
+
+    sim = initialize()
+    with get_connection() as conn:
+        origin = insert_npc_turn(conn)
+        entity_id = create_entity_from_turn(
+            conn, creator_id="AGENT_NORA", origin_turn_id=origin,
+            proposal=EntityProposal(
+                "Eco", "Una presencia con memoria privada que nadie debe leer",
+                "OBSERVE_WORLD",
+            ), minute=sim.minute,
+        )
+    disconnected = build_player_snapshot()["wired"]
+    assert disconnected["connected"] is False
+    assert disconnected["digital_presences"] == []
+
+    process_wired_message_acknowledgement(
+        message_id=INITIAL_MESSAGE_ID, player_id="PLAYER_1", minute=sim.minute,
+    )
+    connected = build_player_snapshot()["wired"]
+    assert connected["connected"] is True
+    assert connected["digital_presences"] == [{"id": entity_id, "name": "Eco"}]
+    assert "memoria privada" not in repr(connected)
+    assert "creator_id" not in repr(connected)
