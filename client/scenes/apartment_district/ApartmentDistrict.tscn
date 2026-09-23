@@ -56,26 +56,26 @@ ambient_light_energy = 0.42
 environment = SubResource("Environment_District")
 
 [node name="Ground" type="CSGBox3D" parent="."]
-size = Vector3(12, 0.2, 36)
-position = Vector3(0, -0.1, -10)
+size = Vector3(38, 0.2, 78)
+position = Vector3(0, -0.1, -29)
 use_collision = true
 material = ExtResource("v05_road")
 
 [node name="BuildingLeft" type="CSGBox3D" parent="."]
-size = Vector3(5, 3, 36)
-position = Vector3(-5.5, 1.5, -10)
+size = Vector3(5, 3, 78)
+position = Vector3(-16.5, 1.5, -29)
 use_collision = true
 material = ExtResource("v05_wall")
 
 [node name="BuildingRight" type="CSGBox3D" parent="."]
-size = Vector3(5, 0.55, 36)
-position = Vector3(5.5, 0.275, -10)
+size = Vector3(5, 0.55, 78)
+position = Vector3(16.5, 0.275, -29)
 use_collision = true
 material = ExtResource("v05_wall")
 
 [node name="EndBlock" type="CSGBox3D" parent="."]
-size = Vector3(12, 3.8, 2)
-position = Vector3(0, 1.9, -28)
+size = Vector3(38, 3.8, 2)
+position = Vector3(0, 1.9, -69)
 use_collision = true
 material = ExtResource("v05_wall")
 
@@ -108,7 +108,7 @@ light_energy = 0.4
 omni_range = 7.0
 
 [node name="StationDoor" type="StaticBody3D" parent="."]
-position = Vector3(0, 1.15, -26.85)
+position = Vector3(0, 1.15, -67.65)
 script = ExtResource("2")
 target_location = "STATION"
 
@@ -139,13 +139,13 @@ light_energy = 0.4
 omni_range = 9.0
 
 [node name="Lamp2" type="OmniLight3D" parent="."]
-position = Vector3(1.5, 3.0, -9)
+position = Vector3(1.5, 3.0, -31)
 light_color = Color(0.4, 0.48, 0.6, 1)
 light_energy = 0.4
 omni_range = 8.0
 
 [node name="Lamp3" type="OmniLight3D" parent="."]
-position = Vector3(-1.5, 3.0, -20)
+position = Vector3(-1.5, 3.0, -54)
 light_color = Color(0.32, 0.38, 0.48, 1)
 light_energy = 0.4
 omni_range = 8.0
@@ -181,10 +181,10 @@ location_id = "APARTMENT_DISTRICT"
 position = Vector3(0, 0, -5)
 
 [node name="AGENT_NORA" type="Marker3D" parent="Actors/Spawns"]
-position = Vector3(0, 0, -15)
+position = Vector3(0, 0, -39)
 
 [node name="ENTITY_ANCHOR" type="Marker3D" parent="Actors/Spawns"]
-position = Vector3(-1.2, 0, -8.5)
+position = Vector3(-6.4, 0, -32.0)
 
 [node name="RetroOverlay" parent="." instance=ExtResource("3")]
 
@@ -214,6 +214,9 @@ horizontal_alignment = 1
 [node name="Silhouette" parent="Player" instance=ExtResource("visual_avatar")]
 
 [node name="Dressing" parent="." instance=ExtResource("visual_decor")]
+
+[node name="DressingContinuation" parent="." instance=ExtResource("visual_decor")]
+position = Vector3(0, 0, -36.5)
 
 [node name="Presentation" type="Node3D" parent="."]
 script = ExtResource("visual_hud")
