@@ -60,6 +60,7 @@ func _solid(label: String, pos: Vector3, size: Vector3, shade: Color) -> void:
 	surface.material_override = material
 	body.add_child(surface)
 	var collider := CollisionShape3D.new()
+	collider.name = "Collision"
 	var shape := BoxShape3D.new()
 	shape.size = size
 	collider.shape = shape
