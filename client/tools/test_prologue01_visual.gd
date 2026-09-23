@@ -76,6 +76,25 @@ func _run() -> void:
 			check(encounters == 0, "school corridor must not have Ryoko")
 		check(scene.get_node_or_null("HUD/Hint") != null,
 			location + ": missing readable route guidance")
+		var front: StaticBody3D = scene.get_node("FrontWall")
+		var east: StaticBody3D = scene.get_node("EastWall")
+		var front_shape: BoxShape3D = front.get_node("Collision").shape
+		var east_shape: BoxShape3D = east.get_node("Collision").shape
+		check(front_shape.size.y < 1.0 and east_shape.size.y < 1.0,
+			location + ": full height walls obstruct the isometric camera")
+		if location == "SCHOOL":
+			check(scene.get_node_or_null("Locker_2") != null,
+				"School hall lacks furnishings")
+		elif location == "SCHOOL_LAB":
+			check(scene.get_node_or_null("CRTScreen_2") != null,
+				"Computer laboratory lacks screen details")
+			check(scene.get_node_or_null("LabBoard") != null,
+				"Computer laboratory has no board")
+		elif location == "NIGHTCLUB":
+			check(scene.get_node_or_null("ClubBar") != null,
+				"Nightclub has no bar")
+			check(scene.get_node_or_null("ClubLightViolet") != null,
+				"Nightclub lacks restrained accent lighting")
 		current_scene = null
 		scene.queue_free()
 		await process_frame
@@ -88,6 +107,27 @@ func _run() -> void:
 	current_scene = district
 	await process_frame
 	var entrances: Node3D = district.get_node("PrologueEntrances")
+	check(district.get_node_or_null("Dressing") == null
+		and district.get_node_or_null("DressingContinuation") == null,
+		"Overlapping old residential street prefab not removed")
+	check(entrances.get_node_or_null("Escuela_Portico_Techo") != null
+		and entrances.get_node_or_null("Escuela_Cornisa") != null,
+		"School has no purpose-built facade or entrance portico")
+	check(entrances.get_node_or_null("Club_Marquesina") != null
+		and entrances.get_node_or_null("Club_Dintel_Neon") != null,
+		"Club has no canopy or atmospheric signage")
+	var tree_count: int = 0
+	for element in entrances.get_children():
+		if not element.name.begins_with("Arbol_"):
+			continue
+		tree_count += 1
+		var tree: Node3D = element
+		check(absf(tree.position.x) + 1.2 < 10.92,
+			"Street tree canopy intersects a building facade")
+		check(absf(tree.position.z + 20.0) > 4.0
+			and absf(tree.position.z + 53.0) > 4.0,
+			"Street tree blocks a story entrance")
+	check(tree_count >= 3, "The tree fix removed all vegetation")
 	var school_door: Node3D = entrances.get_node("Entrance_SCHOOL")
 	var club_door: Node3D = entrances.get_node("Entrance_NIGHTCLUB")
 	check(school_door.is_in_group("interactable"),
