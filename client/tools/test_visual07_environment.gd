@@ -14,6 +14,7 @@ func check(condition: bool, reason: String) -> void:
 
 
 func _run() -> void:
+	print("VISUAL07 // begin")
 	var api = root.get_node("WorldApi")
 	api.set_script(load("res://tools/offline_world_api.gd"))
 	api.snapshot = {
@@ -29,6 +30,7 @@ func _run() -> void:
 	check(street.get_node_or_null("Dressing") == null
 		and street.get_node_or_null("DressingContinuation") == null,
 		"Duplicated old residential prefab still overlaps new facades")
+	print("VISUAL07 // district built")
 	var city: Node3D = street.get_node("PrologueEntrances")
 	check(city.get_node_or_null("Escuela_Exterior") != null,
 		"School facade missing")
@@ -66,11 +68,13 @@ func _run() -> void:
 	check(school_door.global_position.distance_to(
 		club_door.global_position) > 30.0,
 		"The district is no longer explorable")
+	print("VISUAL07 // street geometry verified")
 	current_scene = null
 	street.queue_free()
 	await process_frame
 
 	for name in ["School", "ComputerLab", "Nightclub"]:
+		print("VISUAL07 // starting ", name)
 		var room: Node3D = load(
 			"res://scenes/prologue/" + name + ".tscn"
 		).instantiate()
@@ -103,6 +107,7 @@ func _run() -> void:
 				"Nightclub lost its restrained lighting")
 			check(room.get_node_or_null("RYOKO") != null,
 				"Redesign removed Ryoko")
+		print("VISUAL07 // completed ", name)
 		current_scene = null
 		room.queue_free()
 		await process_frame
