@@ -11,7 +11,8 @@ import re
 from urllib.request import Request, urlopen
 from uuid import uuid4
 
-from .database import get_connection, load_or_create_agent
+from .database import get_connection, load_or_create_agent, load_simulation_minute
+from .actor_locations import load_actor_location_belief
 from .episodic_memory import initialize_memory_provenance, save_episodic_memory
 from .locations import LOCATION_GRAPH, next_hop
 from .models import ActionIntent, Agent, GoalCandidate
@@ -258,6 +259,18 @@ class GeneratedActor:
             if actor.location != goal.believed_location:
                 return ActionIntent(actor.id, "MOVE", goal.believed_location)
             return ActionIntent(actor.id, "INVESTIGATE", goal.target_id)
+        # Do not walk out of the scene while a player is trying to talk.
+        # The actor uses its own current direct perception, not global
+        # knowledge of the player's hidden position.
+        if self.seed_goal in {"SEEK_CREATOR", "EXPLORE"}:
+            player_belief = load_actor_location_belief(actor.id, "PLAYER_1")
+            if (
+                player_belief is not None
+                and player_belief.source == "DIRECT_ACTOR_PERCEPTION"
+                and player_belief.believed_location == actor.location
+                and player_belief.updated_minute == load_simulation_minute()
+            ):
+                return ActionIntent(actor.id, "OBSERVE_AREA", actor.location)
         if self.seed_goal == "SEEK_CREATOR":
             with get_connection() as conn:
                 row = conn.execute(
