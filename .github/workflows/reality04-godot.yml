@@ -1,0 +1,49 @@
+name: LAIN Reality 0.4 Godot smoke
+
+on:
+  pull_request:
+    branches:
+      - experiment/reality-0.3-visual06-integration
+
+jobs:
+  godot-visual:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install official Godot 4.7.2
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --location --retry 3 --output /tmp/godot.zip             "https://github.com/godotengine/godot-builds/releases/download/4.7.2-stable/Godot_v4.7.2-stable_linux.x86_64.zip"
+          unzip -q /tmp/godot.zip -d /tmp/godot-download
+          GODOT_BIN="$(find /tmp/godot-download -maxdepth 2 -type f -name 'Godot_v4.7.2-stable_linux.x86_64' -print -quit)"
+          test -n "$GODOT_BIN"
+          chmod +x "$GODOT_BIN"
+          cp "$GODOT_BIN" /tmp/lain-godot
+          /tmp/lain-godot --version
+      - name: Import client and type-check all scripts
+        shell: bash
+        run: |
+          set -euo pipefail
+          /tmp/lain-godot --headless --path client --editor --import --quit 2>&1 | tee /tmp/lain-import.log
+          if grep -E '^(SCRIPT ERROR:|ERROR:)' /tmp/lain-import.log; then
+            exit 1
+          fi
+      - name: Offline journal and station case
+        shell: bash
+        run: |
+          set -euo pipefail
+          /tmp/lain-godot --headless --path client --script res://tools/test_reality04_journal.gd 2>&1 | tee /tmp/lain-journal.log
+          grep -q 'REALITY04_JOURNAL_OK' /tmp/lain-journal.log
+          if grep -E '^(SCRIPT ERROR:|ERROR:)' /tmp/lain-journal.log; then
+            exit 1
+          fi
+      - name: Visual 0.6 character rig and Reality 0.3 patrol
+        shell: bash
+        run: |
+          set -euo pipefail
+          /tmp/lain-godot --headless --path client --script res://tools/check_character06.gd 2>&1 | tee /tmp/lain-character.log
+          grep -q 'CHARACTER06_CHECK_OK' /tmp/lain-character.log
+          /tmp/lain-godot --headless --path client --script res://tools/test_reality03_visual.gd 2>&1 | tee /tmp/lain-patrol.log
+          grep -q 'REALITY03_VISUAL_OK' /tmp/lain-patrol.log
