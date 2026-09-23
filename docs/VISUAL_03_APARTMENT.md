@@ -68,3 +68,12 @@ Modelos de personaje y animaciones definitivas, telas menos geométricas, más
 objetos personales y extensión de la dirección artística al barrio y estación.
 La composición se ha revisado en una captura 1280x720 con OpenGL Compatibility;
 el rendimiento debe comprobarse en el equipo del jugador.
+
+## Recursos persistidos y descarga limpia
+
+Los ocho modelos ya están guardados como escenas en `client/art/apartment/models/`.
+La escena jugable los instancia directamente, sin generar muebles al arrancar.
+Su inventario está en `client/art/apartment/README.md`. Se incluyen textura,
+shader y scripts auxiliares necesarios; Godot reconstruye su caché al importar.
+Para actualizar una copia que ya tiene esta rama: `git pull --ff-only` con el
+editor cerrado, y después reabrir `client/project.godot`.

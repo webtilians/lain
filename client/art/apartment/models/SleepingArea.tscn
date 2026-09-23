@@ -1,0 +1,236 @@
+[gd_scene format=3]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_0kg3a"]
+albedo_color = Color(0.31764707, 0.27450982, 0.25882354, 1)
+roughness = 0.88
+
+[sub_resource type="BoxMesh" id="BoxMesh_rlpty"]
+size = Vector3(1.65, 0.2, 2.48)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_dij6t"]
+size = Vector3(1.65, 0.2, 2.48)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_v1mu2"]
+albedo_color = Color(0.7411765, 0.7176471, 0.67058825, 1)
+roughness = 0.88
+
+[sub_resource type="BoxMesh" id="BoxMesh_l27wr"]
+size = Vector3(1.57, 0.22, 2.38)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_enr3j"]
+albedo_color = Color(0.46666667, 0.44313726, 0.5254902, 1)
+roughness = 0.88
+
+[sub_resource type="BoxMesh" id="BoxMesh_lxg8d"]
+size = Vector3(1.62, 0.13, 1.87)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_gljel"]
+albedo_color = Color(0.43137255, 0.40784314, 0.49803922, 1)
+roughness = 0.88
+
+[sub_resource type="BoxMesh" id="BoxMesh_ggppj"]
+size = Vector3(0.045, 0.015, 1.82)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_kxewl"]
+albedo_color = Color(0.43137255, 0.40784314, 0.49803922, 1)
+roughness = 0.88
+
+[sub_resource type="BoxMesh" id="BoxMesh_h142k"]
+size = Vector3(0.045, 0.015, 1.82)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_m0165"]
+albedo_color = Color(0.43137255, 0.40784314, 0.49803922, 1)
+roughness = 0.88
+
+[sub_resource type="BoxMesh" id="BoxMesh_wevmp"]
+size = Vector3(0.045, 0.015, 1.82)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_et5yw"]
+albedo_color = Color(0.43137255, 0.40784314, 0.49803922, 1)
+roughness = 0.88
+
+[sub_resource type="BoxMesh" id="BoxMesh_psf4t"]
+size = Vector3(0.045, 0.015, 1.82)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_iv8gd"]
+albedo_color = Color(0.43137255, 0.40784314, 0.49803922, 1)
+roughness = 0.88
+
+[sub_resource type="BoxMesh" id="BoxMesh_6ye2f"]
+size = Vector3(0.045, 0.015, 1.82)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_l3ona"]
+albedo_color = Color(0.43137255, 0.40784314, 0.49803922, 1)
+roughness = 0.88
+
+[sub_resource type="BoxMesh" id="BoxMesh_r6s3h"]
+size = Vector3(0.045, 0.015, 1.82)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_n2tru"]
+albedo_color = Color(0.43137255, 0.40784314, 0.49803922, 1)
+roughness = 0.88
+
+[sub_resource type="BoxMesh" id="BoxMesh_nl2n8"]
+size = Vector3(0.045, 0.015, 1.82)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lkvw3"]
+albedo_color = Color(0.7176471, 0.6862745, 0.7411765, 1)
+roughness = 0.88
+
+[sub_resource type="BoxMesh" id="BoxMesh_jhecr"]
+size = Vector3(0.91, 0.19, 0.47)
+
+[sub_resource type="BoxMesh" id="BoxMesh_2uy7n"]
+size = Vector3(1.22, 0.09, 0.7)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_oid4p"]
+size = Vector3(1.22, 0.09, 0.7)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1utpl"]
+albedo_color = Color(0.09803922, 0.11372549, 0.14117648, 1)
+roughness = 0.88
+
+[sub_resource type="BoxMesh" id="BoxMesh_1r33u"]
+size = Vector3(0.08, 0.34, 0.08)
+
+[sub_resource type="BoxMesh" id="BoxMesh_v8qix"]
+size = Vector3(0.08, 0.34, 0.08)
+
+[sub_resource type="BoxMesh" id="BoxMesh_vlwy6"]
+size = Vector3(0.08, 0.34, 0.08)
+
+[sub_resource type="BoxMesh" id="BoxMesh_v484l"]
+size = Vector3(0.08, 0.34, 0.08)
+
+[sub_resource type="BoxMesh" id="BoxMesh_xvb4h"]
+size = Vector3(0.36, 0.055, 0.26)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_u03wg"]
+albedo_color = Color(0.7137255, 0.69803923, 0.6313726, 1)
+roughness = 0.88
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_nocje"]
+top_radius = 0.07
+bottom_radius = 0.07
+height = 0.14
+radial_segments = 12
+
+[node name="SleepingArea" type="Node3D" unique_id=486371242]
+
+[node name="BedBase" type="MeshInstance3D" parent="." unique_id=44827986]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.4, 0.13, 1.6)
+material_override = SubResource("StandardMaterial3D_0kg3a")
+mesh = SubResource("BoxMesh_rlpty")
+metadata/asset_group = "SleepingArea"
+
+[node name="@StaticBody3D@227" type="StaticBody3D" parent="BedBase" unique_id=1466066046]
+
+[node name="@CollisionShape3D@228" type="CollisionShape3D" parent="BedBase/@StaticBody3D@227" unique_id=797688216]
+shape = SubResource("BoxShape3D_dij6t")
+
+[node name="Futon" type="MeshInstance3D" parent="." unique_id=371346969]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.4, 0.28, 1.6)
+material_override = SubResource("StandardMaterial3D_v1mu2")
+mesh = SubResource("BoxMesh_l27wr")
+metadata/asset_group = "SleepingArea"
+
+[node name="Duvet" type="MeshInstance3D" parent="." unique_id=223534535]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.4, 0.41, 1.88)
+material_override = SubResource("StandardMaterial3D_enr3j")
+mesh = SubResource("BoxMesh_lxg8d")
+metadata/asset_group = "SleepingArea"
+
+[node name="FabricFold" type="MeshInstance3D" parent="." unique_id=562611628]
+transform = Transform3D(0.9971888, 0, -0.07492971, 0, 1, 0, 0.07492971, 0, 0.9971888, -3.05, 0.48, 1.88)
+material_override = SubResource("StandardMaterial3D_gljel")
+mesh = SubResource("BoxMesh_ggppj")
+metadata/asset_group = "SleepingArea"
+
+[node name="@MeshInstance3D@229" type="MeshInstance3D" parent="." unique_id=1354582695]
+transform = Transform3D(0.99875027, 0, -0.04997917, 0, 1, 0, 0.04997917, 0, 0.99875027, -2.83, 0.48, 1.88)
+material_override = SubResource("StandardMaterial3D_kxewl")
+mesh = SubResource("BoxMesh_h142k")
+metadata/asset_group = "SleepingArea"
+
+[node name="@MeshInstance3D@230" type="MeshInstance3D" parent="." unique_id=1436295024]
+transform = Transform3D(0.9996875, 0, -0.024997396, 0, 1, 0, 0.024997396, 0, 0.9996875, -2.61, 0.48, 1.88)
+material_override = SubResource("StandardMaterial3D_m0165")
+mesh = SubResource("BoxMesh_wevmp")
+metadata/asset_group = "SleepingArea"
+
+[node name="@MeshInstance3D@231" type="MeshInstance3D" parent="." unique_id=752796673]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.39, 0.48, 1.88)
+material_override = SubResource("StandardMaterial3D_et5yw")
+mesh = SubResource("BoxMesh_psf4t")
+metadata/asset_group = "SleepingArea"
+
+[node name="@MeshInstance3D@232" type="MeshInstance3D" parent="." unique_id=1446312228]
+transform = Transform3D(0.9996875, 0, 0.024997396, 0, 1, 0, -0.024997396, 0, 0.9996875, -2.17, 0.48, 1.88)
+material_override = SubResource("StandardMaterial3D_iv8gd")
+mesh = SubResource("BoxMesh_6ye2f")
+metadata/asset_group = "SleepingArea"
+
+[node name="@MeshInstance3D@233" type="MeshInstance3D" parent="." unique_id=927390235]
+transform = Transform3D(0.99875027, 0, 0.04997917, 0, 1, 0, -0.04997917, 0, 0.99875027, -1.95, 0.48, 1.88)
+material_override = SubResource("StandardMaterial3D_l3ona")
+mesh = SubResource("BoxMesh_r6s3h")
+metadata/asset_group = "SleepingArea"
+
+[node name="@MeshInstance3D@234" type="MeshInstance3D" parent="." unique_id=1309579112]
+transform = Transform3D(0.9971888, 0, 0.07492971, 0, 1, 0, -0.07492971, 0, 0.9971888, -1.73, 0.48, 1.88)
+material_override = SubResource("StandardMaterial3D_n2tru")
+mesh = SubResource("BoxMesh_nl2n8")
+metadata/asset_group = "SleepingArea"
+
+[node name="Pillow" type="MeshInstance3D" parent="." unique_id=1169126716]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.4, 0.46, 0.72)
+material_override = SubResource("StandardMaterial3D_lkvw3")
+mesh = SubResource("BoxMesh_jhecr")
+metadata/asset_group = "SleepingArea"
+
+[node name="LowTable" type="MeshInstance3D" parent="." unique_id=320368180]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.1, 0.36, 1.48)
+material_override = SubResource("StandardMaterial3D_0kg3a")
+mesh = SubResource("BoxMesh_2uy7n")
+metadata/asset_group = "SleepingArea"
+
+[node name="@StaticBody3D@235" type="StaticBody3D" parent="LowTable" unique_id=1143960446]
+
+[node name="@CollisionShape3D@236" type="CollisionShape3D" parent="LowTable/@StaticBody3D@235" unique_id=798300870]
+shape = SubResource("BoxShape3D_oid4p")
+
+[node name="TableLeg" type="MeshInstance3D" parent="." unique_id=666853350]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.4, 0.17, 1.23)
+material_override = SubResource("StandardMaterial3D_1utpl")
+mesh = SubResource("BoxMesh_1r33u")
+metadata/asset_group = "SleepingArea"
+
+[node name="@MeshInstance3D@237" type="MeshInstance3D" parent="." unique_id=1271591655]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.4, 0.17, 1.73)
+material_override = SubResource("StandardMaterial3D_1utpl")
+mesh = SubResource("BoxMesh_v8qix")
+metadata/asset_group = "SleepingArea"
+
+[node name="@MeshInstance3D@238" type="MeshInstance3D" parent="." unique_id=339630578]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.6, 0.17, 1.23)
+material_override = SubResource("StandardMaterial3D_1utpl")
+mesh = SubResource("BoxMesh_vlwy6")
+metadata/asset_group = "SleepingArea"
+
+[node name="@MeshInstance3D@239" type="MeshInstance3D" parent="." unique_id=1671844546]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.6, 0.17, 1.73)
+material_override = SubResource("StandardMaterial3D_1utpl")
+mesh = SubResource("BoxMesh_v484l")
+metadata/asset_group = "SleepingArea"
+
+[node name="BookOnTable" type="MeshInstance3D" parent="." unique_id=288951871]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.15, 0.435, 1.47)
+material_override = SubResource("StandardMaterial3D_v1mu2")
+mesh = SubResource("BoxMesh_xvb4h")
+metadata/asset_group = "SleepingArea"
+
+[node name="@MeshInstance3D@240" type="MeshInstance3D" parent="." unique_id=100362239]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.45, 0.49, 1.5)
+material_override = SubResource("StandardMaterial3D_u03wg")
+mesh = SubResource("CylinderMesh_nocje")
+metadata/asset_group = "SleepingArea"
