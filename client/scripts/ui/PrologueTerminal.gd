@@ -44,7 +44,7 @@ func _ready() -> void:
 	prompt.text = "C:\\>"
 	row.add_child(prompt)
 	command_line = LineEdit.new()
-	command_line.placeholder_text = "Escribe una orden real de consola..."
+	command_line.placeholder_text = ""
 	command_line.max_length = 80
 	command_line.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	command_line.text_submitted.connect(_on_command)
@@ -66,14 +66,13 @@ func open_terminal() -> void:
 	var text := (
 		"LAIN-DOS [Version 1.0]\n"
 		+ "C:\\> _\n\n"
-		+ "Directorio: C:\\WIRED\n"
-		+ "La consola esta lista. Escribe HELP si necesitas orientacion.\n"
+		+ "Unidad C: / Directorio personal\n"
+		+ "La consola esta lista.\n"
 	)
 	if stage == "FIND_TERMINAL":
 		text += (
-			"\nHay una conexion pendiente. "
-			+ "Utiliza lo aprendido de Ryoko y consulta la sintaxis real "
-			+ "de TELNET fuera del juego.\n"
+			"\nEl cursor parpadea. Las palabras de Ryoko "
+			+ "siguen dando vueltas en tu cabeza.\n"
 		)
 	elif stage == "CONNECTED":
 		text += (
@@ -124,20 +123,9 @@ func _on_command(line: String) -> void:
 		"ver":
 			transcript.text += "LAIN-DOS 1.0 // TERMINAL LOCAL\n"
 		"dir":
-			transcript.text += "C:\\WIRED\\  <DIR>    BOOT.LOG    MANUAL.TXT\n"
+			transcript.text += "C:\\USUARIO\\  <DIR>    BOOT.LOG\n"
 		"help":
 			transcript.text += "CLS: limpiar   DIR: directorio   VER: version\n"
-			var stage := str(WorldApi.snapshot.get("prologue", {}).get("stage", "LEGACY"))
-			if stage == "FIND_TERMINAL" or stage == "CONNECTED":
-				transcript.text += (
-					"Ya conoces el protocolo. Busca fuera del juego "
-					+ "la sintaxis real de TELNET para un servidor y puerto.\n"
-				)
-			else:
-				transcript.text += (
-					"MODULO REMOTO // CONOCIMIENTOS INSUFICIENTES\n"
-					+ "Quizá alguien del aula de informática pueda ayudarte.\n"
-				)
 		_:
 			command_line.editable = false
 			PrologueApi.terminal_command(command)
@@ -161,13 +149,12 @@ func _on_server_result(result: Dictionary) -> void:
 		var reason := str(result.get("reason", "UNKNOWN"))
 		if reason == "MISSING_CONNECTION_KNOWLEDGE":
 			transcript.text += (
-				"ACCESO DENEGADO: aun no has aprendido "
-				+ "como conectar. Busca al profesor y a Ryoko.\n"
+				"ACCESO DENEGADO. El sistema no dispone "
+				+ "de los datos necesarios para abrir este enlace.\n"
 			)
 		else:
 			transcript.text += (
-				"Comando o parametros no reconocidos. "
-				+ "Consulta la sintaxis real de TELNET.\n"
+				"Orden no reconocida o destino no disponible.\n"
 			)
 		command_line.grab_focus()
 
