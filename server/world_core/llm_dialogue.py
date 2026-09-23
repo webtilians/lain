@@ -212,7 +212,7 @@ def _provider_reply(context: dict, choice_text: str) -> str:
     # A cold local 7B model may need longer than 15 seconds to load.
     timeout = max(
         1.0,
-        min(60.0, float(os.getenv("LAIN_LLM_TIMEOUT", "30"))),
+        min(60.0, float(os.getenv("LAIN_LLM_TIMEOUT", "8"))),
     )
     payload = json.dumps(request_body, ensure_ascii=False).encode("utf-8")
     request = Request(
@@ -250,26 +250,25 @@ def generate_dialogue_reply(
     the recipient has direct player testimony. It does not make the claim
     a true fact of World Core and it does not cover all free-form memories.
     """
-    # A password is still handled by the verified, attributed recall path.
-    # All OTHER free-text conversation is eligible for the LLM when enabled:
-    # prior personal statements and general memories are context, not
-    # unconditional shortcuts that hide the dialogue model forever.
+    # Direct personal declarations and in-game password statements need
+    # source-attributed acknowledgement even if a provider is configured.
+    # Their immutable turns are stored in the surrounding transaction; never
+    # let an old model reply hijack the current explicit testimony.
     llm_enabled = os.getenv("LAIN_LLM_ENABLED", "0") == "1"
     if choice_id == "FREE_TEXT":
+        personal_statement = parse_personal_statement(choice_text)
+        if personal_statement is not None:
+            _trace_dialogue("BYPASS_CURRENT_TESTIMONY")
+            return DialogueReply(
+                text=f"Entendido, me dices: «{choice_text}».",
+                source="CURRENT_TESTIMONY",
+            )
         if extract_password_claim(choice_text) is not None:
             _trace_dialogue("BYPASS_PASSWORD_CLAIM")
             return DialogueReply(
                 text="Entendido, recordaré lo que me acabas de contar.",
                 source="CURRENT_TESTIMONY",
             )
-        if not llm_enabled:
-            personal_statement = parse_personal_statement(choice_text)
-            if personal_statement is not None:
-                _trace_dialogue("BYPASS_CURRENT_TESTIMONY_MODEL_DISABLED")
-                return DialogueReply(
-                    text=f"Entendido, me dices: «{choice_text}».",
-                    source="CURRENT_TESTIMONY",
-                )
 
     if asks_about_node_access_code(choice_text):
         # A player-given password cannot become a NODE_07 world rule.
@@ -293,12 +292,13 @@ def generate_dialogue_reply(
             ),
             source="GROUNDED_RECALL",
         )
-    if choice_id == "FREE_TEXT" and not llm_enabled:
+    if choice_id == "FREE_TEXT":
+        # Exact fact/experience recall is supported without a probabilistic
+        # model; keep this trusted provenance boundary in both modes.
         recalled_experience = experience_reply(context)
         if recalled_experience is not None:
             return DialogueReply(text=recalled_experience, source="GROUNDED_RECALL")
-    if (choice_id == "FREE_TEXT" and not llm_enabled
-            and context.get("knowledge_timeline") is not None):
+    if choice_id == "FREE_TEXT" and context.get("knowledge_timeline") is not None:
         return DialogueReply(
             text=temporal_reply(context["knowledge_timeline"]),
             source="GROUNDED_RECALL",
