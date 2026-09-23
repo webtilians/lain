@@ -14,7 +14,7 @@ from uuid import uuid4
 from .database import get_connection, load_or_create_agent
 from .episodic_memory import initialize_memory_provenance, save_episodic_memory
 from .locations import LOCATION_GRAPH, next_hop
-from .models import ActionIntent, Agent
+from .models import ActionIntent, Agent, GoalCandidate
 
 GOALS = frozenset({"OBSERVE_WORLD", "SEEK_CREATOR", "EXPLORE"})
 MAX_ENTITIES = 8
@@ -205,8 +205,46 @@ def list_generated_entities() -> list[tuple[str, str, str, str, str]]:
         ).fetchall()
 
 
+def belief_driven_goal(agent: Agent, minute: int) -> GoalCandidate | None:
+    """A digital observer investigates strong signals it actually perceived.
+
+    Only this actor's saved beliefs count. Unverified reports and the global
+    node table cannot trigger the decision; completed investigation retires it.
+    """
+    with get_connection() as conn:
+        candidates = conn.execute(
+            """SELECT node_id, believed_location, believed_strength, confidence
+               FROM node_beliefs
+               WHERE agent_id = ? AND source = 'DIRECT_PERCEPTION'
+                 AND believed_strength >= 0.70 AND confidence >= 0.90
+                 AND updated_minute = ?
+               ORDER BY believed_strength DESC, node_id""",
+            (agent.id, minute),
+        ).fetchall()
+        for node_id, location, strength, confidence in candidates:
+            # An investigation is a one-off reaction to an anomaly, not
+            # a permanent farming loop or a fabricated source of evidence.
+            investigated = conn.execute(
+                """SELECT 1 FROM events WHERE actor_id = ?
+                   AND action = 'INVESTIGATE' AND target = ? LIMIT 1""",
+                (agent.id, node_id),
+            ).fetchone()
+            if investigated is not None:
+                continue
+            return GoalCandidate(
+                agent_id=agent.id,
+                goal_type="INVESTIGATE_ANOMALY",
+                target_id=node_id,
+                source_situation_id=f"PERCEPTION:{node_id}",
+                priority=min(1.0, strength * confidence),
+                believed_location=location,
+                created_minute=minute,
+            )
+    return None
+
+
 class GeneratedActor:
-    """Simple independent tick behaviour; existing conversation/memory works."""
+    """Bounded autonomous digital actor: seed intent + perceived signal goals."""
     def __init__(self, agent: Agent, creator_id: str, seed_goal: str):
         self.agent = agent
         self.creator_id = creator_id
@@ -216,6 +254,10 @@ class GeneratedActor:
         actor = self.agent
         if actor.energy < 0.25:
             return ActionIntent(actor.id, "REST", actor.id)
+        if goal is not None and goal.goal_type == "INVESTIGATE_ANOMALY":
+            if actor.location != goal.believed_location:
+                return ActionIntent(actor.id, "MOVE", goal.believed_location)
+            return ActionIntent(actor.id, "INVESTIGATE", goal.target_id)
         if self.seed_goal == "SEEK_CREATOR":
             with get_connection() as conn:
                 row = conn.execute(
