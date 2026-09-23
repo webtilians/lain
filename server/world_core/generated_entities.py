@@ -50,6 +50,32 @@ def initialize_generated_entities() -> None:
             "CREATE INDEX IF NOT EXISTS idx_generated_creator "
             "ON generated_entities (creator_id)"
         )
+        # Physical within-scene waypoint is separate from semantic location.
+        # Existing saves start at waypoint zero; the first valid WANDER
+        # creates this row without altering an entity's memories or goal.
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS generated_actor_motion (
+                actor_id TEXT PRIMARY KEY,
+                waypoint INTEGER NOT NULL DEFAULT 0
+                    CHECK(waypoint BETWEEN 0 AND 3)
+            )
+        """)
+
+
+def advance_local_waypoint(actor_id: str) -> int:
+    """Persist one accepted within-scene step; caller validates actor intent."""
+    with get_connection() as conn:
+        conn.execute(
+            """INSERT INTO generated_actor_motion (actor_id, waypoint)
+               VALUES (?, 1)
+               ON CONFLICT(actor_id) DO UPDATE SET
+                   waypoint = (generated_actor_motion.waypoint + 1) % 4""",
+            (actor_id,),
+        )
+        return conn.execute(
+            "SELECT waypoint FROM generated_actor_motion WHERE actor_id = ?",
+            (actor_id,),
+        ).fetchone()[0]
 
 
 def validate_proposal(value: object) -> EntityProposal:
@@ -295,7 +321,7 @@ class GeneratedActor:
                 and player_belief.believed_location == actor.location
                 and player_belief.updated_minute == load_simulation_minute()
             ):
-                return ActionIntent(actor.id, "OBSERVE_AREA", actor.location)
+                return ActionIntent(actor.id, "WANDER", actor.location)
         if self.seed_goal == "SEEK_CREATOR":
             with get_connection() as conn:
                 row = conn.execute(
@@ -310,4 +336,6 @@ class GeneratedActor:
                 destination = neighbors[0]
                 if next_hop(actor.location, destination) is not None:
                     return ActionIntent(actor.id, "MOVE", destination)
-        return ActionIntent(actor.id, "OBSERVE_AREA", actor.location)
+        # All generated seed goals can take bounded local steps. This is
+        # not inter-location travel and does not grant extra knowledge.
+        return ActionIntent(actor.id, "WANDER", actor.location)
