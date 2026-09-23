@@ -240,7 +240,8 @@ def list_visible_actors(
             """
             SELECT a.id, a.name,
                    CASE WHEN a.controller_type = 'GENERATED'
-                        THEN COALESCE(m.waypoint, 0) ELSE 0 END
+                        THEN COALESCE(m.waypoint, 0) ELSE 0 END,
+                   a.controller_type
             FROM agents a
             LEFT JOIN generated_actor_motion m ON m.actor_id = a.id
             WHERE a.location = ?
@@ -258,7 +259,8 @@ def list_visible_actors(
         {
             "id": row[0],
             "name": row[1],
-            "patrol_step": row[2],
+            **({"patrol_step": row[2]}
+               if row[3] == "GENERATED" and row[2] != 0 else {}),
         }
         for row in rows
     ]
