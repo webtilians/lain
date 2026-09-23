@@ -297,13 +297,16 @@ def generate_dialogue_reply(
         # model; keep this trusted provenance boundary in both modes.
         recalled_experience = experience_reply(context)
         if recalled_experience is not None:
+            _trace_dialogue("BYPASS_EXPERIENCE_RECALL")
             return DialogueReply(text=recalled_experience, source="GROUNDED_RECALL")
     if choice_id == "FREE_TEXT" and context.get("knowledge_timeline") is not None:
+        _trace_dialogue("BYPASS_TEMPORAL_RECALL")
         return DialogueReply(
             text=temporal_reply(context["knowledge_timeline"]),
             source="GROUNDED_RECALL",
         )
     if choice_id == "FREE_TEXT" and not llm_enabled and context.get("general_claims"):
+        _trace_dialogue("BYPASS_GENERAL_RECALL_MODEL_DISABLED")
         statement = context["general_claims"][0]["reported_text"]
         return DialogueReply(
             text=f"Recuerdo que me dijiste: «{statement}».",
@@ -322,6 +325,7 @@ def generate_dialogue_reply(
                 normalize("Nos volvemos a encontrar"),
             }
             if choice_id == "FREE_TEXT" and normalize(model_text) in greetings:
+                _trace_dialogue("FALLBACK_REPEATED_GREETING")
                 return DialogueReply(
                     text="No he conseguido responder a tu pregunta. ¿Puedes reformularla con un poco más de detalle?",
                     source="DETERMINISTIC_FALLBACK",
@@ -329,11 +333,13 @@ def generate_dialogue_reply(
             # The prompt alone is not a reliable factuality gate.
             # Discard fabricated NODE_07 code requirements before persisting.
             if asserts_unverified_node_access_code(model_text):
+                _trace_dialogue("BYPASS_UNVERIFIED_NODE_CODE")
                 return DialogueReply(
                     text=no_verified_access_code_reply(context),
                     source="RULE_GROUNDED",
                 )
             if misattributes_player_password(model_text):
+                _trace_dialogue("BYPASS_PASSWORD_MISATTRIBUTION")
                 claims = context.get("player_claims", [])
                 if claims:
                     return DialogueReply(
@@ -348,6 +354,7 @@ def generate_dialogue_reply(
                     text="No puedo confirmar que me hayas contado esa contraseña.",
                     source="RULE_GROUNDED",
                 )
+            _trace_dialogue("ACCEPTED")
             return DialogueReply(
                 text=model_text,
                 source="LLM_DIALOGUE",
