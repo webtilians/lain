@@ -102,12 +102,16 @@ func _render_wired(next_snapshot: Dictionary) -> void:
 
 	var wired: Dictionary = next_snapshot.get("wired", {})
 	var signals: Array = wired.get("signals", [])
-	if signals.is_empty():
+	var presences: Array = wired.get("digital_presences", [])
+	if signals.is_empty() and presences.is_empty():
 		body_label.text = "NO SIGNALS DETECTED"
 		status_label.text = "CONNECTED"
 		return
 
 	var lines: Array[String] = []
+	if signals.is_empty():
+		lines.append("NO SIGNALS DETECTED")
+		lines.append("")
 	for signal_data in signals:
 		var verified := bool(signal_data.get("verified", false))
 		lines.append(str(signal_data.get("node_id", "UNKNOWN")))
@@ -119,6 +123,11 @@ func _render_wired(next_snapshot: Dictionary) -> void:
 		lines.append("CURRENT SOURCE // %s" % signal_data.get("current_source", "UNKNOWN"))
 		lines.append("")
 
+	if not presences.is_empty():
+		lines.append("DIGITAL PRESENCES // %d" % presences.size())
+		for presence in presences:
+			lines.append(str(presence.get("name", "UNKNOWN")))
+		lines.append("")
 	body_label.text = "\n".join(lines)
 	status_label.text = "WIRED LINK // ACTIVE"
 
