@@ -138,3 +138,44 @@ def test_recent_direct_belief_survives_restart_and_can_drive_later_decision():
     assert goal.target_id == "NODE_07"
     assert goal.believed_location == "STATION"
     assert belief_driven_goal(generated, 70) is None
+
+
+def test_generated_explorer_stays_when_player_present_and_can_resume_chat():
+    from server.world_core.action_queue import queue_action
+    from server.world_core.player_conversation import start_player_conversation
+    from server.world_core.free_conversation import say_to_player_conversation
+
+    sim, entity_id = make_entity("EXPLORE")
+    sim.player.location = sim.nora.agent.location
+    save_agent(sim.player)
+    sim.tick()
+    assert sim.all_agents[entity_id].location == sim.player.location
+
+    queue_action(
+        actor_id="PLAYER_1", action="CONTACT", target=entity_id,
+        source="HUMAN",
+    )
+    sim.tick()
+    with get_connection() as conn:
+        assert conn.execute(
+            """SELECT COUNT(*) FROM events
+               WHERE actor_id='PLAYER_1' AND action='CONTACT' AND target=?""",
+            (entity_id,),
+        ).fetchone()[0] == 1
+
+    greeting = start_player_conversation(entity_id, sim.minute)
+    answer = say_to_player_conversation(
+        entity_id, "¿Qué recuerdas de tu origen?",
+        greeting["turn_id"], sim.minute,
+    )
+    assert answer["actor_id"] == entity_id
+    with get_connection() as conn:
+        testimony = conn.execute(
+            """SELECT source_kind FROM agent_memory_provenance
+               WHERE memory_id IN (
+                   SELECT id FROM agent_memory WHERE agent_id=?
+               ) ORDER BY memory_id DESC LIMIT 1""",
+            (entity_id,),
+        ).fetchone()
+    assert testimony == ("PLAYER_TESTIMONY",)
+    assert start_player_conversation(entity_id, sim.minute)["turn_id"] == answer["turn_id"]
