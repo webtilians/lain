@@ -338,6 +338,10 @@ def build_player_snapshot(
             place for place in reachable_locations
             if place not in {"STATION", "OLD_DISTRICT"}
         ]
+        # The opening letter belongs to the WIRED side of the story.
+        # Keep its existing database row untouched, reveal it only AFTER
+        # the player has discovered the real terminal syntax and connected.
+        messages = []
 
     return {
         "schema_version": "0.1",
