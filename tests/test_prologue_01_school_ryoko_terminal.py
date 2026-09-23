@@ -237,3 +237,74 @@ def test_recover_prologue_if_server_interrupted_after_command_before_ack(monkeyp
         assert conn.execute(
             "SELECT COUNT(*) FROM events WHERE action='PROLOGUE_CONNECTED'"
         ).fetchone()[0] == 1
+
+
+def test_questions_drive_inference_without_automatic_reveal(monkeypatch):
+    sim = fresh_game(monkeypatch)
+    relocate(sim, "SCHOOL_LAB")
+    for choice in ("INTRO", "ASK_CLASS", "ASK_WHERE"):
+        response = talk_to_prologue_npc(
+            "PLAYER_1", "PROFESSOR", sim.minute, choice,
+        )
+        assert response["stage"] == "FIND_TEACHER"
+        assert "23" not in response["text"]
+        assert "TELNET" not in response["text"].upper()
+    with pytest.raises(ValueError, match="INVALID_PROLOGUE_QUESTION"):
+        talk_to_prologue_npc(
+            "PLAYER_1", "PROFESSOR", sim.minute, "ASK_ADDRESS",
+        )
+    result = talk_to_prologue_npc(
+        "PLAYER_1", "PROFESSOR", sim.minute, "ASK_STUDENT",
+    )
+    assert result["stage"] == "FIND_RYOKO"
+    assert "Ryoko" in result["text"]
+    assert "discoteca" not in result["text"].casefold()
+    assert talk_to_prologue_npc(
+        "PLAYER_1", "PROFESSOR", sim.minute, "ASK_STUDENT",
+    )["stage"] == "FIND_RYOKO"
+    relocate(sim, "NIGHTCLUB")
+    for choice in ("INTRO", "ASK_SCHOOL", "ASK_WIRED", "ASK_METHOD"):
+        response = talk_to_prologue_npc(
+            "PLAYER_1", "RYOKO", sim.minute, choice,
+        )
+        assert response["stage"] == "FIND_RYOKO"
+        assert "TELNET" not in response["text"].upper()
+        assert "Internet" not in response["text"]
+        assert "23" not in response["text"]
+    with pytest.raises(ValueError, match="INVALID_PROLOGUE_QUESTION"):
+        talk_to_prologue_npc(
+            "PLAYER_1", "RYOKO", sim.minute, "ASK_STUDENT",
+        )
+    assert stage_for() == "FIND_RYOKO"
+    result = talk_to_prologue_npc(
+        "PLAYER_1", "RYOKO", sim.minute, "ASK_ADDRESS",
+    )
+    assert result["stage"] == "FIND_TERMINAL"
+    assert "WIRED" in result["text"] and "23" in result["text"]
+    for spoiler in ("telnet", "Internet", "comando", "programa", "sintaxis"):
+        assert spoiler not in result["text"].casefold()
+    hint = build_player_snapshot()["prologue"]["hint"].casefold()
+    assert "23" in hint and "wired" in hint
+    for spoiler in ("telnet", "internet", "chatgpt", "sintaxis"):
+        assert spoiler not in hint
+    with get_connection() as conn:
+        assert conn.execute(
+            "SELECT COUNT(*) FROM events WHERE action='PROLOGUE_TALK'",
+        ).fetchone()[0] == 2
+
+
+def test_wrong_question_and_remote_spoiler_never_unlock_terminal(monkeypatch):
+    sim = fresh_game(monkeypatch)
+    relocate(sim, "SCHOOL_LAB")
+    talk_to_prologue_npc("PLAYER_1", "PROFESSOR", sim.minute, "ASK_CLASS")
+    assert stage_for() == "FIND_TEACHER"
+    relocate(sim, "NIGHTCLUB")
+    result = talk_to_prologue_npc(
+        "PLAYER_1", "RYOKO", sim.minute, "ASK_ADDRESS",
+    )
+    assert result["stage"] == "FIND_TEACHER"
+    assert "23" not in result["text"]
+    relocate(sim, "APARTMENT")
+    assert submit_terminal_command(
+        "PLAYER_1", "telnet wired 23", sim.minute,
+    ) == {"accepted": False, "reason": "MISSING_CONNECTION_KNOWLEDGE"}
