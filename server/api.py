@@ -334,11 +334,17 @@ def prologue_terminal(request: PrologueCommandRequest):
             result = submit_terminal_command(
                 PLAYER_ID, request.command, runtime.minute,
             )
-            if result["accepted"]:
+            if result["accepted"] or result.get("reason") == "ALREADY_CONNECTED":
+                # A terminal connection is proven by the persisted stage.
+                # If the server crashed between saving CONNECTED and the
+                # initial Wired message, a replay repairs the half-finished
+                # transition instead of stranding the player forever.
                 result["connection"] = process_wired_message_acknowledgement(
                     message_id="MSG_BOOTSTRAP_001",
                     player_id=PLAYER_ID, minute=runtime.minute,
                 )
+                result["accepted"] = True
+                result["reason"] = "LINK_ESTABLISHED"
             return {"result": result, "state": build_player_snapshot(PLAYER_ID)}
         except ValueError as error:
             raise HTTPException(status_code=409, detail=str(error))
