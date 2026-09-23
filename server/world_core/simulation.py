@@ -88,6 +88,7 @@ from .messages import (
 from .station_story import (
     ensure_station_followup,
 )
+from .prologue import initialize_prologue, gate_move
 
 from .models import (
     ActionIntent,
@@ -219,6 +220,7 @@ class Simulation:
         self.seed_initial_leads()
 
         ensure_initial_player_message()
+        initialize_prologue()
 
         ensure_station_followup(
             player_id=self.player.id,
@@ -720,6 +722,14 @@ class Simulation:
             )
 
         if action == "MOVE":
+            # Only a FRESH opted-in player save is held at the boundary.
+            # Existing saved games and autonomous NPCs retain their routes.
+            if agent.id == self.player.id:
+                allowed, reason = gate_move(agent.id, intent.target)
+                if not allowed:
+                    return allowed, reason
+            elif intent.target in {"SCHOOL", "SCHOOL_LAB", "NIGHTCLUB"}:
+                return False, "NPC_PROLOGUE_ONLY"
 
             if not is_known_location(
                 agent.location

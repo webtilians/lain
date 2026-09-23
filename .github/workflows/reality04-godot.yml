@@ -4,6 +4,7 @@ on:
   pull_request:
     branches:
       - experiment/reality-0.3-visual06-integration
+      - experiment/reality-0.4-character-sheets-station-echo
 
 jobs:
   godot-visual:
@@ -47,3 +48,13 @@ jobs:
           grep -q 'CHARACTER06_CHECK_OK' /tmp/lain-character.log
           /tmp/lain-godot --headless --path client --script res://tools/test_reality03_visual.gd 2>&1 | tee /tmp/lain-patrol.log
           grep -q 'REALITY03_VISUAL_OK' /tmp/lain-patrol.log
+
+      - name: New-game prologue physical scenes
+        shell: bash
+        run: |
+          set -euo pipefail
+          /tmp/lain-godot --headless --path client --script res://tools/test_prologue01_visual.gd 2>&1 | tee /tmp/lain-prologue.log
+          grep -q 'PROLOGUE01_VISUAL_OK' /tmp/lain-prologue.log
+          if grep -E '^(SCRIPT ERROR:|ERROR:)' /tmp/lain-prologue.log; then
+            exit 1
+          fi

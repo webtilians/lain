@@ -29,6 +29,9 @@ from server.world_core.simulation import (
     Simulation,
 )
 from server.world_core.realtime import WorldClock, world_clock_interval
+from server.world_core.prologue import (
+    talk_to_prologue_npc, submit_terminal_command,
+)
 
 from server.world_core.player_conversation import (
     start_player_conversation,
@@ -95,6 +98,10 @@ class PlayerConversationPause(BaseModel):
 class PlayerConversationSay(BaseModel):
     text: str
     after_turn_id: int
+
+
+class PrologueCommandRequest(BaseModel):
+    command: str
 
 
 def perform_player_step(
@@ -304,5 +311,40 @@ def player_conversation_say(
                 after_turn_id=request.after_turn_id,
                 minute=runtime.minute,
             )
+        except ValueError as error:
+            raise HTTPException(status_code=409, detail=str(error))
+
+
+@app.post("/api/v1/prologue/talk/{npc_id}")
+def prologue_talk(npc_id: str):
+    with _world_lock:
+        runtime = get_runtime()
+        try:
+            result = talk_to_prologue_npc(PLAYER_ID, npc_id, runtime.minute)
+            return {"result": result, "state": build_player_snapshot(PLAYER_ID)}
+        except ValueError as error:
+            raise HTTPException(status_code=409, detail=str(error))
+
+
+@app.post("/api/v1/prologue/terminal")
+def prologue_terminal(request: PrologueCommandRequest):
+    with _world_lock:
+        runtime = get_runtime()
+        try:
+            result = submit_terminal_command(
+                PLAYER_ID, request.command, runtime.minute,
+            )
+            if result["accepted"] or result.get("reason") == "ALREADY_CONNECTED":
+                # A terminal connection is proven by the persisted stage.
+                # If the server crashed between saving CONNECTED and the
+                # initial Wired message, a replay repairs the half-finished
+                # transition instead of stranding the player forever.
+                result["connection"] = process_wired_message_acknowledgement(
+                    message_id="MSG_BOOTSTRAP_001",
+                    player_id=PLAYER_ID, minute=runtime.minute,
+                )
+                result["accepted"] = True
+                result["reason"] = "LINK_ESTABLISHED"
+            return {"result": result, "state": build_player_snapshot(PLAYER_ID)}
         except ValueError as error:
             raise HTTPException(status_code=409, detail=str(error))

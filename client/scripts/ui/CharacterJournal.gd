@@ -78,6 +78,14 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	if key_event.keycode != JOURNAL_KEY:
 		return
+	# Text typed into the DOS command line is not a gameplay hotkey.
+	# Opening the journal over a terminal would also reactivate the player
+	# when it closes, while the command line still holds focus.
+	if PrologueTerminal.surface != null and PrologueTerminal.surface.visible:
+		return
+	var legacy_terminal = get_tree().get_first_node_in_group("terminal_ui")
+	if legacy_terminal != null and legacy_terminal.visible:
+		return
 	if backdrop.visible:
 		close_journal()
 	elif not EventDialog.visible:
@@ -126,7 +134,15 @@ func _refresh_navigation() -> void:
 		navigation.remove_child(child)
 		child.queue_free()
 	_add_navigation("TU FICHA", "PLAYER")
-	_add_navigation("CASO // EL PULSO AUSENTE", "CASE")
+	var prologue: Dictionary = WorldApi.snapshot.get("prologue", {})
+	var offline: bool = (
+		bool(prologue.get("enabled", false))
+		and str(prologue.get("stage", "")) != "CONNECTED"
+	)
+	if bool(prologue.get("enabled", false)):
+		_add_navigation("PRÓLOGO // ANTES DE LA WIRED", "PROLOGUE")
+	if not offline:
+		_add_navigation("CASO // EL PULSO AUSENTE", "CASE")
 	var sheets: Dictionary = WorldApi.snapshot.get("character_sheets", {})
 	var actors: Array = sheets.get("visible_npcs", [])
 	for item in actors:
@@ -149,6 +165,8 @@ func _choose_view(view: String, actor_id: String) -> void:
 
 func _render_view() -> void:
 	match current_view:
+		"PROLOGUE":
+			_render_prologue()
 		"CASE":
 			_render_case()
 		"NPC":
@@ -169,8 +187,24 @@ func _render_player() -> void:
 		+ "UBICACIÓN  " + str(data.get("location", "")) + "\n"
 		+ "ENERGÍA  %.2f\n" % float(data.get("energy", 0.0))
 		+ "NODOS CONOCIDOS  %d\n" % int(data.get("known_nodes", 0))
-		+ "INVESTIGACIÓN NODE_07  " + str(data.get("case_status", "UNSEEN"))
+		+ (
+			"CONEXIÓN A LA WIRED  PENDIENTE"
+			if str(data.get("case_status", "")) == "LOCKED"
+			else "INVESTIGACIÓN NODE_07  " + str(data.get("case_status", "UNSEEN"))
+		)
 		+ "\n\nLas fichas solo incluyen conocimientos accesibles al jugador."
+	)
+
+
+func _render_prologue() -> void:
+	var story: Dictionary = WorldApi.snapshot.get("prologue", {})
+	details.text = (
+		"PRÓLOGO // ANTES DE LA WIRED\n\n"
+		+ "ESTADO  " + str(story.get("stage", "LEGACY"))
+		+ "\n\nOBJETIVO\n" + str(story.get("hint", ""))
+		+ "\n\nLos personajes solo pueden contarte lo que saben. "
+		+ "La conexión a la Wired deberá descubrirse, no se activará "
+		+ "por el mero hecho de pulsar un botón."
 	)
 
 

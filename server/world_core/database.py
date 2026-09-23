@@ -1,10 +1,13 @@
+import os
 import sqlite3
 from pathlib import Path
 
 from .models import Agent, WorldNode, WorldState
 
 
-DB_PATH = Path("world.db")
+# A NEW GAME may use an explicit, isolated save path. Legacy saves remain
+# at world.db and existing pytest fixtures may still monkeypatch DB_PATH.
+DB_PATH = Path(os.getenv("LAIN_WORLD_DB", "world.db"))
 
 
 def get_connection():

@@ -15,6 +15,7 @@ from .messages import (
     INITIAL_MESSAGE_ID,
     acknowledge_message,
 )
+from .prologue import stage_for
 
 from .models import (
     NodeBelief,
@@ -73,6 +74,15 @@ def process_wired_message_acknowledgement(
     player_id: str,
     minute: int,
 ) -> dict:
+
+    # The legacy CONNECT button and direct API calls cannot bypass a new
+    # game's authored discovery / terminal command. Existing saves have no
+    # prologue row and continue to work exactly as before.
+    if (
+        message_id == INITIAL_MESSAGE_ID
+        and stage_for(player_id) not in (None, "CONNECTED")
+    ):
+        raise ValueError("PROLOGUE_TERMINAL_REQUIRED")
 
     newly_acknowledged = acknowledge_message(
         message_id=message_id,

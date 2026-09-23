@@ -39,8 +39,14 @@ func _ready() -> void:
 func _on_snapshot_updated(
 	snapshot: Dictionary
 ) -> void:
+	var origin: Dictionary = snapshot.get("prologue", {})
+	var offline: bool = (
+		bool(origin.get("enabled", false))
+		and str(origin.get("stage", "")) != "CONNECTED"
+	)
 	connection_label.text = (
-		"LAIN  /  CONECTADO"
+		"LAIN  /  SIN CONEXIÓN A LA WIRED"
+		if offline else "LAIN  /  CONECTADO"
 	)
 
 	var player: Dictionary = snapshot.get(
