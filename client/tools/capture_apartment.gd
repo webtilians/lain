@@ -15,7 +15,7 @@ func capture() -> void:
 	await process_frame
 	await physics_frame
 	await create_timer(0.6).timeout
-	assert(scene.get_node("Art").get_child_count() > 200)
+	assert(scene.get_node("Art").find_children("*", "MeshInstance3D", true, false).size() > 200)
 	assert(scene.get_node("ExitDoor").target_location == "APARTMENT_DISTRICT")
 	assert(scene.get_node("Monitor").has_method("interact"))
 	var options := OS.get_cmdline_user_args()
