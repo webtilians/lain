@@ -35,6 +35,9 @@ func interact() -> void:
 		{"id": "OBSERVE", "text": "Observar sin intervenir"},
 	]
 	if case_status == "TRACE_FOUND":
+		# After finding the clue, present the two meaningful decisions
+		# without crowding the existing compact dialogue panel.
+		choices.clear()
 		description = (
 			"Has encontrado un pulso ausente dentro de la secuencia.\n"
 			+ "El rastro es tuyo: compartirlo o archivarlo tendrá "
