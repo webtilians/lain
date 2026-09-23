@@ -15,6 +15,7 @@ from .interactions import (
 from .locations import (
     LOCATION_GRAPH,
 )
+from .generated_entities import list_generated_entities
 
 from .messages import (
     list_player_messages,
@@ -86,9 +87,19 @@ def build_wired_projection(
                 }
             )
 
+    # Digital presences broadcast only their identity to connected players.
+    # The Wired projection does not disclose private memories, creator
+    # identities, current goals or the authoritative locations of NPCs.
+    digital_presences = (
+        [{"id": entity_id, "name": name}
+         for entity_id, _creator, _goal, name, _location
+         in list_generated_entities()]
+        if connected else []
+    )
     return {
         "connected": connected,
         "signals": signals,
+        "digital_presences": digital_presences,
     }
 
 
