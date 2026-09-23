@@ -6,6 +6,7 @@ from server.world_core.generated_entities import (
     EntityProposal, create_entity_from_turn, initialize_generated_entities,
 )
 from server.world_core.models import ActionIntent
+from server.world_core.episodic_memory import initialize_memory_provenance
 from server.world_core.player_conversation import (
     initialize_conversation_turns, start_player_conversation,
 )
@@ -18,6 +19,7 @@ from server.world_core.simulation import Simulation
 def world_with_entity():
     sim = Simulation()
     initialize_generated_entities()
+    initialize_memory_provenance()
     initialize_conversation_turns()
     sim.player.location = sim.k.agent.location
     save_agent(sim.player)
