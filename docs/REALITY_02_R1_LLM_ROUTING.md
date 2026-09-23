@@ -10,12 +10,16 @@ con `LAIN_LLM_ENABLED=1`. Por tanto Reality nunca examinaba esos turnos para
 proponer una entidad. Ademas la conexion HTTP al modelo capturaba cualquier
 excepcion y se limitaba a mostrar un fallback sin diagnostico.
 
-Ahora, con `LAIN_LLM_ENABLED=1`, un turno **libre** usa el LLM en lugar de
-activar recuerdos genericos como atajos; el modelo recibe solo el contexto
-privado del destinatario. Se conservan las barreras deterministas de
-contraseñas declaradas por el jugador, recuerdo exacto de contraseñas y la
-inexistencia de una clave verificada de acceso a NODE_07. Con el modelo
-desactivado permanece el comportamiento determinista anterior.
+Ahora, con `LAIN_LLM_ENABLED=1`, las **preguntas abiertas y narrativas**
+llegan al LLM: el modelo recibe solo el contexto privado del destinatario.
+Las declaraciones personales explícitas (por ejemplo, `Mi perro se llama...`),
+las preguntas de memoria cronológica y los encuentros verificables mantienen
+las respuestas deterministas para no confundir recuerdos con invenciones.
+También se conservan las barreras de contraseñas y la inexistencia de una
+clave verificada de acceso a NODE_07. Solo cuando una respuesta original del
+LLM imagina una presencia y Reality acepta una propuesta válida se crea
+una entidad persistente; no está garantizada en cada turno.
+Con el modelo desactivado permanece el comportamiento determinista anterior.
 
 Al activar `LAIN_LLM_TRACE=1` (o `LAIN_REALITY_TRACE=1`), el servidor
 imprime solo codigos: `LLM // REQUESTED`, `LLM // RESPONSE_RECEIVED`,
