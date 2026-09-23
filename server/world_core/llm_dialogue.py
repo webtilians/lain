@@ -8,6 +8,8 @@ from dataclasses import dataclass
 import json
 import os
 import re
+from socket import timeout as SocketTimeout
+from urllib.error import HTTPError, URLError
 from urllib.parse import urlsplit
 from urllib.request import Request, urlopen
 
@@ -25,6 +27,27 @@ from .player_claims import (
 from .general_claims import _clean, parse_personal_statement
 from .autobiographical_memory import temporal_reply
 from .shared_experiences import experience_reply
+
+
+def _trace_dialogue(reason: str) -> None:
+    """Optional, sanitized status codes; never log text, prompts or URLs."""
+    if os.getenv("LAIN_LLM_TRACE") == "1" or os.getenv("LAIN_REALITY_TRACE") == "1":
+        print(f"LLM // {reason}", flush=True)
+
+
+def _failure_reason(error: Exception) -> str:
+    if isinstance(error, HTTPError):
+        code = error.code
+        return f"HTTP_{code}" if isinstance(code, int) and 400 <= code <= 599 else "HTTP_ERROR"
+    if isinstance(error, (TimeoutError, SocketTimeout)):
+        return "TIMEOUT"
+    if isinstance(error, URLError):
+        return "TIMEOUT" if isinstance(error.reason, (TimeoutError, SocketTimeout)) else "CONNECTION_ERROR"
+    if isinstance(error, (ValueError, TypeError, KeyError, IndexError)):
+        return "INVALID_RESPONSE_OR_CONFIGURATION"
+    if isinstance(error, OSError):
+        return "CONNECTION_ERROR"
+    return "PROVIDER_ERROR"
 
 
 @dataclass(frozen=True)
@@ -186,20 +209,97 @@ def _provider_reply(context: dict, choice_text: str) -> str:
     headers = {"Content-Type": "application/json"}
     if key:
         headers["Authorization"] = "Bearer " + key
+    # A cold local 7B model may need longer than 15 seconds to load.
     timeout = max(
         1.0,
-        min(15.0, float(os.getenv("LAIN_LLM_TIMEOUT", "8"))),
+        min(60.0, float(os.getenv("LAIN_LLM_TIMEOUT", "8"))),
     )
-    payload = json.dumps(request_body, ensure_ascii=False).encode("utf-8")
-    request = Request(
-        _endpoint(),
-        data=payload,
-        headers=headers,
-        method="POST",
-    )
-    # Limit response size; a broken provider must not exhaust game memory.
-    with urlopen(request, timeout=timeout) as response:
-        raw = response.read(65537)
+    def perform(body: dict) -> bytes:
+        payload = json.dumps(body, ensure_ascii=False).encode("utf-8")
+        request = Request(
+            _endpoint(),
+            data=payload,
+            headers=headers,
+            method="POST",
+        )
+        # Limit response size; a broken provider must not exhaust game memory.
+        with urlopen(request, timeout=timeout) as response:
+            return response.read(65537)
+
+    try:
+        raw = perform(request_body)
+    except HTTPError as error:
+        if error.code != 400:
+            raise
+        # Ollama can reject an otherwise valid OpenAI-compatible request when
+        # the real accumulated character context exceeds the model's accepted
+        # prompt budget. Retry ONCE with the same current utterance and a
+        # bounded provenance-preserving projection instead of silently falling
+        # back to deterministic dialogue.
+        _trace_dialogue("RETRY_COMPACT_HTTP_400")
+        compact_context = {
+            "identity": agent_context["identity"],
+            "situation": agent_context["situation"],
+            "beliefs": {
+                name: agent_context["beliefs"][name][-8:]
+                for name in ("nodes", "actors", "situations")
+            },
+            "memory": [str(item)[:300] for item in agent_context["memory"][-4:]],
+            "memory_records": [
+                {
+                    "text": str(item.get("text", ""))[:300],
+                    "source_kind": item.get("source_kind"),
+                    "source_actor_id": item.get("source_actor_id"),
+                    "received_minute": item.get("received_minute"),
+                    "location": item.get("location"),
+                }
+                for item in agent_context["memory_records"][-4:]
+            ],
+            "player_claims": agent_context["player_claims"][:2],
+            "general_claims": agent_context["general_claims"][:2],
+            # Exact temporal/experience questions are handled deterministically
+            # before provider routing. Omitting their potentially long bundles
+            # here does not weaken those grounded paths.
+            "knowledge_timeline": None,
+            "experiences": {
+                "request": (agent_context.get("experiences") or {}).get("request"),
+                "records": (agent_context.get("experiences") or {}).get("records", [])[:4],
+            },
+            "goals": agent_context["goals"],
+            "conversation": (
+                None if agent_context["conversation"] is None else {
+                    "id": agent_context["conversation"]["id"],
+                    "status": agent_context["conversation"]["status"],
+                    "turns": [
+                        {
+                            "speaker_id": turn["speaker_id"],
+                            "text": str(turn["text"])[:300],
+                            "source": turn["source"],
+                        }
+                        for turn in agent_context["conversation"]["turns"][-6:]
+                    ],
+                }
+            ),
+        }
+        compact_body = {
+            **request_body,
+            "messages": [
+                request_body["messages"][0],
+                {
+                    "role": "user",
+                    "content": json.dumps(
+                        {
+                            "agent_context": compact_context,
+                            "player_utterance": choice_text,
+                        },
+                        ensure_ascii=False,
+                    ),
+                },
+            ],
+        }
+        raw = perform(compact_body)
+        _trace_dialogue("COMPACT_RESPONSE_RECEIVED")
+
     if len(raw) > 65536:
         raise ValueError("LLM_RESPONSE_TOO_LARGE")
     result = json.loads(raw.decode("utf-8"))
@@ -226,19 +326,21 @@ def generate_dialogue_reply(
     the recipient has direct player testimony. It does not make the claim
     a true fact of World Core and it does not cover all free-form memories.
     """
-    # Explicit first-person declarations concern the player's CURRENT
-    # message. A deterministic acknowledgement prevents old dialogue and
-    # old model inventions from hijacking the reply. The statement itself
-    # is stored as attributed testimony in the enclosing transaction.
-    # Passwords use the existing dedicated private-claim pipeline.
+    # Direct personal declarations and in-game password statements need
+    # source-attributed acknowledgement even if a provider is configured.
+    # Their immutable turns are stored in the surrounding transaction; never
+    # let an old model reply hijack the current explicit testimony.
+    llm_enabled = os.getenv("LAIN_LLM_ENABLED", "0") == "1"
     if choice_id == "FREE_TEXT":
         personal_statement = parse_personal_statement(choice_text)
         if personal_statement is not None:
+            _trace_dialogue("BYPASS_CURRENT_TESTIMONY")
             return DialogueReply(
                 text=f"Entendido, me dices: «{choice_text}».",
                 source="CURRENT_TESTIMONY",
             )
         if extract_password_claim(choice_text) is not None:
+            _trace_dialogue("BYPASS_PASSWORD_CLAIM")
             return DialogueReply(
                 text="Entendido, recordaré lo que me acabas de contar.",
                 source="CURRENT_TESTIMONY",
@@ -246,6 +348,7 @@ def generate_dialogue_reply(
 
     if asks_about_node_access_code(choice_text):
         # A player-given password cannot become a NODE_07 world rule.
+        _trace_dialogue("BYPASS_NODE_ACCESS_RULE")
         return DialogueReply(
             text=no_verified_access_code_reply(context),
             source="RULE_GROUNDED",
@@ -257,6 +360,7 @@ def generate_dialogue_reply(
         and context.get("player_claims")
     ):
         claim = context["player_claims"][0]
+        _trace_dialogue("BYPASS_EXACT_PASSWORD_RECALL")
         return DialogueReply(
             text=(
                 f"La última contraseña que me dijiste fue "
@@ -265,23 +369,30 @@ def generate_dialogue_reply(
             source="GROUNDED_RECALL",
         )
     if choice_id == "FREE_TEXT":
+        # Exact fact/experience recall is supported without a probabilistic
+        # model; keep this trusted provenance boundary in both modes.
         recalled_experience = experience_reply(context)
         if recalled_experience is not None:
+            _trace_dialogue("BYPASS_EXPERIENCE_RECALL")
             return DialogueReply(text=recalled_experience, source="GROUNDED_RECALL")
     if choice_id == "FREE_TEXT" and context.get("knowledge_timeline") is not None:
+        _trace_dialogue("BYPASS_TEMPORAL_RECALL")
         return DialogueReply(
             text=temporal_reply(context["knowledge_timeline"]),
             source="GROUNDED_RECALL",
         )
-    if choice_id == "FREE_TEXT" and context.get("general_claims"):
+    if choice_id == "FREE_TEXT" and not llm_enabled and context.get("general_claims"):
+        _trace_dialogue("BYPASS_GENERAL_RECALL_MODEL_DISABLED")
         statement = context["general_claims"][0]["reported_text"]
         return DialogueReply(
             text=f"Recuerdo que me dijiste: «{statement}».",
             source="GROUNDED_RECALL",
         )
-    if os.getenv("LAIN_LLM_ENABLED", "0") == "1":
+    if llm_enabled:
+        _trace_dialogue("REQUESTED")
         try:
             model_text = _provider_reply(context, choice_text)
+            _trace_dialogue("RESPONSE_RECEIVED")
             # A resumed greeting is context, not an answer to a new question.
             normalize = lambda text: re.sub(r"\W+", " ", _clean(text)).strip()
             greetings = {
@@ -290,6 +401,7 @@ def generate_dialogue_reply(
                 normalize("Nos volvemos a encontrar"),
             }
             if choice_id == "FREE_TEXT" and normalize(model_text) in greetings:
+                _trace_dialogue("FALLBACK_REPEATED_GREETING")
                 return DialogueReply(
                     text="No he conseguido responder a tu pregunta. ¿Puedes reformularla con un poco más de detalle?",
                     source="DETERMINISTIC_FALLBACK",
@@ -297,11 +409,13 @@ def generate_dialogue_reply(
             # The prompt alone is not a reliable factuality gate.
             # Discard fabricated NODE_07 code requirements before persisting.
             if asserts_unverified_node_access_code(model_text):
+                _trace_dialogue("BYPASS_UNVERIFIED_NODE_CODE")
                 return DialogueReply(
                     text=no_verified_access_code_reply(context),
                     source="RULE_GROUNDED",
                 )
             if misattributes_player_password(model_text):
+                _trace_dialogue("BYPASS_PASSWORD_MISATTRIBUTION")
                 claims = context.get("player_claims", [])
                 if claims:
                     return DialogueReply(
@@ -316,14 +430,17 @@ def generate_dialogue_reply(
                     text="No puedo confirmar que me hayas contado esa contraseña.",
                     source="RULE_GROUNDED",
                 )
+            _trace_dialogue("ACCEPTED")
             return DialogueReply(
                 text=model_text,
                 source="LLM_DIALOGUE",
             )
-        except Exception:
-            # No prompts, user data, credentials or provider errors in logs.
-            # Never treat the failure as permission to reveal world state.
-            pass
+        except Exception as error:
+            # Only stable, sanitized status codes are printed; no user text,
+            # credentials, provider response bodies or raw URLs.
+            _trace_dialogue("FALLBACK_" + _failure_reason(error))
+    else:
+        _trace_dialogue("DISABLED")
     if choice_id == "FREE_TEXT":
         # No fake generative response if the model is offline.
         return DialogueReply(
