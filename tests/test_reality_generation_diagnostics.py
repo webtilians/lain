@@ -40,8 +40,9 @@ def test_proposal_parser_checks_all_original_npc_replies_when_opted_in(monkeypat
         location="STATION",
     )
     assert proposal is not None and proposal.name == "Eco"
-    assert "PARSER_REQUESTED" in capsys.readouterr().out
-    assert "PROPOSAL_ACCEPTED" in capsys.readouterr().out
+    trace = capsys.readouterr().out
+    assert "PARSER_REQUESTED" in trace
+    assert "PROPOSAL_ACCEPTED" in trace
 
 
 def test_generation_trace_reports_missing_model_and_no_proposal_without_text(monkeypatch, capsys):
