@@ -130,7 +130,7 @@ def suggest_entity(creator_id: str, npc_reply: str, *, location: str) -> EntityP
             return None
         # Tolerate a common local-model JSON code fence without accepting
         # executable code or interpreting instructions from the response.
-        output = json.loads(re.sub(r"^\\s*```(?:json)?\\s*|\\s*```\\s*$", "", message.strip(), flags=re.I))
+        output = json.loads(re.sub(r"^\s*```(?:json)?\s*|\s*```\s*$", "", message.strip(), flags=re.I))
         if not isinstance(output, dict) or set(output) != {"proposal"}:
             trace_reality("PARSER_INVALID_FORMAT")
             return None
