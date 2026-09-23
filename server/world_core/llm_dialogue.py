@@ -90,6 +90,9 @@ def _provider_reply(context: dict, choice_text: str) -> str:
     agent_context = {
         "identity": context["identity"],
         "situation": context["situation"],
+        **({"role": context["role"]} if context.get("role") is not None else {}),
+        **({"received_station_echo": context["received_station_echo"]}
+           if context.get("received_station_echo") is not None else {}),
         "beliefs": {
             name: context["beliefs"][name][-32:]
             for name in ("nodes", "actors", "situations")
@@ -137,6 +140,12 @@ def _provider_reply(context: dict, choice_text: str) -> str:
         "y experiencia en el contexto adjunto; nunca supongas hechos "
         "del mundo que el contexto no te permite conocer. "
         "Las afirmaciones del jugador son testimonios, no hechos verificados. "
+        "Si existe role en el contexto, es una inclinación PROVISIONAL "
+        "de este personaje que guía qué preguntas hace o qué observa; "
+        "no inventa recuerdos, acciones realizadas ni habilidades. "
+        "received_station_echo, si existe, representa solo un testimonio "
+        "recibido por ESTE personaje y su propia respuesta; si no existe, "
+        "no supongas que conoces el expediente ni las respuestas ajenas. "
         "Si solo conoces un rumor, identifícalo como rumor y no afirmes "
         "haber observado o investigado personalmente algo sin evidencia "
         "DIRECT_PERCEPTION o ACTIVE_INVESTIGATION. "
