@@ -16,6 +16,8 @@ from .locations import (
     LOCATION_GRAPH,
 )
 from .generated_entities import list_generated_entities
+from .character_sheets import player_sheet, visible_npc_sheets
+from .station_echo import station_case_snapshot
 
 from .messages import (
     list_player_messages,
@@ -328,6 +330,7 @@ def build_player_snapshot(
     known_nodes = list_player_known_nodes(
         player_id
     )
+    station_case = station_case_snapshot(player_id)
 
     return {
         "schema_version": "0.1",
@@ -348,6 +351,11 @@ def build_player_snapshot(
             player_id=player_id,
             player_location=location,
         ),
+        "character_sheets": {
+            "player": player_sheet(row, len(known_nodes), station_case["status"]),
+            "visible_npcs": visible_npc_sheets(player_id, location),
+        },
+        "station_case": station_case,
         "situations": list_player_situations(
             player_id
         ),
