@@ -10,6 +10,9 @@ from .episodic_memory import (
     save_episodic_memory,
 )
 from .llm_dialogue import generate_dialogue_reply
+from .generated_entities import (
+    create_entity_from_turn, initialize_generated_entities, suggest_entity,
+)
 from .player_claims import initialize_player_claims, record_player_claim
 from .general_claims import initialize_general_claims, record_general_claim
 from .player_conversation import (
@@ -82,6 +85,7 @@ def say_to_player_conversation(
     initialize_memory_provenance()
     initialize_player_claims()
     initialize_general_claims()
+    initialize_generated_entities()
 
     with get_connection() as conn:
         latest = _latest_turn(conn, interaction.id)
@@ -107,6 +111,14 @@ def say_to_player_conversation(
     )
     reply = generate_dialogue_reply(
         context=context, choice_id="FREE_TEXT", choice_text=player_line,
+    )
+    # The NPC's own utterance (not the player's testimony) can suggest a
+    # presence. Model calls happen outside the write transaction.
+    proposal = (
+        suggest_entity(
+            actor_id, reply.text, location=context["situation"]["location"],
+        )
+        if reply.source == "LLM_DIALOGUE" else None
     )
 
     # Model inference must not hold a database write lock.
@@ -154,7 +166,7 @@ def say_to_player_conversation(
                     "PLAYER_FREE_TEXT", minute,
                 ),
             )
-            conn.execute(
+            npc_turn = conn.execute(
                 """
                 INSERT INTO player_conversation_turns
                     (interaction_id, speaker_id, text, source, minute)
@@ -201,7 +213,16 @@ def say_to_player_conversation(
                     interaction.id, "FREE_TEXT",
                 ),
             )
-        # Four inserts commit together; no autonomous actions or world
-        # beliefs are inferred from a player's unverified statement.
+            if proposal is not None:
+                try:
+                    create_entity_from_turn(
+                        conn, creator_id=actor_id,
+                        origin_turn_id=npc_turn.lastrowid,
+                        proposal=proposal, minute=minute,
+                    )
+                except ValueError:
+                    # Invalid or conflicting proposals do not break dialogue.
+                    pass
+        # Player testimony never directly becomes an authoritative world fact.
 
     return conversation_payload(interaction.id, actor_id, actor_name)
