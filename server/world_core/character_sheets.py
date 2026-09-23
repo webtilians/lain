@@ -6,6 +6,7 @@ new LLM-generated facts. Public cards expose no private memory, beliefs,
 goals, creator IDs, or NPC positions outside the player's current location.
 """
 from .database import get_connection
+from .prologue import stage_for
 
 # Label and observable inclination; NOT a claim about hidden psychology.
 ROLE_RULES = {
@@ -159,4 +160,27 @@ def visible_npc_sheets(player_id: str, location: str) -> list[dict]:
             "role": role, "role_label": label, "focus": focus,
             "role_assignment": assignment, "observed_location": location,
         })
+    # Authored prologue characters are physical NPCs with a limited,
+    # stage-based dialogue; they are not given fictional omniscient memories
+    # or silently installed as autonomous GeneratedActors.
+    stage = stage_for(player_id)
+    authored = {
+        "SCHOOL_LAB": {
+            "id": "PROFESSOR", "name": "Profesor",
+            "role": "TEACHER", "role_label": "Profesor de informática",
+            "focus": "Recuerda a un antiguo alumno, no conoce su paradero actual.",
+        },
+        "NIGHTCLUB": {
+            "id": "RYOKO", "name": "Ryoko",
+            "role": "FORMER_STUDENT", "role_label": "Antiguo alumno",
+            "focus": "Conoce el protocolo de acceso, pero no ha revelado la orden completa.",
+        },
+    }
+    if stage in {"FIND_TEACHER", "FIND_RYOKO", "FIND_TERMINAL", "CONNECTED"}:
+        actor = authored.get(location)
+        if actor is not None:
+            result.append({
+                **actor, "kind": "NPC", "role_assignment": "AUTHORED_PROLOGUE",
+                "observed_location": location,
+            })
     return result
