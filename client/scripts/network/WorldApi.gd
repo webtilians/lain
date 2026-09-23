@@ -9,8 +9,12 @@ signal action_resolved(
 )
 
 const BASE_URL := "http://127.0.0.1:8000"
+const STATE_POLL_SECONDS := 1.5
 
 var snapshot: Dictionary = {}
+var _poll_elapsed := 0.0
+var _state_polling := false
+var _ignore_next_state_response := false
 
 var _state_request: HTTPRequest
 var _mutation_request: HTTPRequest
@@ -34,7 +38,21 @@ func _ready() -> void:
 # STATE
 # =====================================================
 
-func request_state() -> void:
+func _process(delta: float) -> void:
+	# The SERVER advances the world. This loop only reads its latest state;
+	# it never calls player/step and does not spend the player's energy.
+	_poll_elapsed += delta
+	if _poll_elapsed < STATE_POLL_SECONDS:
+		return
+	_poll_elapsed = 0.0
+	if _mutation_request == null:
+		return
+	if _mutation_request.get_http_client_status() != HTTPClient.STATUS_DISCONNECTED:
+		return
+	request_state(true)
+
+
+func request_state(silent: bool = false) -> void:
 	if (
 		_state_request.get_http_client_status()
 		!= HTTPClient.STATUS_DISCONNECTED
@@ -42,11 +60,20 @@ func request_state() -> void:
 		print("WORLD API // STATE REQUEST ALREADY ACTIVE")
 		return
 
-	print("WORLD API // GET STATE")
+	_state_polling = silent
+	if not silent:
+		print("WORLD API // GET STATE")
+
+	# The server pauses autonomous ticks only for a live, visible NPC
+	# conversation. No text, identity or memories are sent in this header.
+	var request_headers := PackedStringArray()
+	if EventDialog.visible and not EventDialog.current_owner_id.is_empty():
+		request_headers.append("X-Lain-Dialog-Active: 1")
 
 	var error := _state_request.request(
 		BASE_URL
-		+ "/api/v1/player/state"
+		+ "/api/v1/player/state",
+		request_headers
 	)
 
 	if error != OK:
@@ -75,6 +102,8 @@ func step(
 		return
 
 	_mutation_kind = "step"
+	if _state_request.get_http_client_status() != HTTPClient.STATUS_DISCONNECTED:
+		_ignore_next_state_response = true
 
 	var payload := {
 		"action": action,
@@ -118,6 +147,8 @@ func acknowledge_message(
 		return
 
 	_mutation_kind = "ack_message"
+	if _state_request.get_http_client_status() != HTTPClient.STATUS_DISCONNECTED:
+		_ignore_next_state_response = true
 
 	var error := _mutation_request.request(
 		BASE_URL
@@ -145,7 +176,12 @@ func _on_state_request_completed(
 	body: PackedByteArray
 ) -> void:
 	var text := body.get_string_from_utf8()
-	print("WORLD API // STATE RESPONSE ", response_code)
+	if not _state_polling:
+		print("WORLD API // STATE RESPONSE ", response_code)
+	_state_polling = false
+	if _ignore_next_state_response:
+		_ignore_next_state_response = false
+		return
 
 	if result != HTTPRequest.RESULT_SUCCESS:
 		api_error.emit(
@@ -167,9 +203,16 @@ func _on_state_request_completed(
 		)
 		return
 
+	var prior_minute := int(snapshot.get("minute", -1))
+	var next_minute := int(parsed.get("minute", -1))
+	if next_minute < prior_minute:
+		return
+	var changed := parsed != snapshot
 	snapshot = parsed
-	_debug_snapshot(snapshot)
-	snapshot_updated.emit(snapshot)
+	if changed:
+		if next_minute != prior_minute:
+			_debug_snapshot(snapshot)
+		snapshot_updated.emit(snapshot)
 
 # =====================================================
 # MUTATION RESPONSE
