@@ -11,13 +11,20 @@ import re
 from urllib.request import Request, urlopen
 from uuid import uuid4
 
-from .database import get_connection, load_or_create_agent
+from .database import get_connection, load_or_create_agent, load_simulation_minute
+from .actor_locations import load_actor_location_belief
 from .episodic_memory import initialize_memory_provenance, save_episodic_memory
 from .locations import LOCATION_GRAPH, next_hop
-from .models import ActionIntent, Agent
+from .models import ActionIntent, Agent, GoalCandidate
 
 GOALS = frozenset({"OBSERVE_WORLD", "SEEK_CREATOR", "EXPLORE"})
 MAX_ENTITIES = 8
+
+
+def trace_reality(reason: str) -> None:
+    """Local opt-in diagnostics: only fixed codes, never messages or credentials."""
+    if os.getenv("LAIN_REALITY_TRACE") == "1":
+        print(f"REALITY // {reason}", flush=True)
 
 
 @dataclass(frozen=True)
@@ -66,19 +73,23 @@ def suggest_entity(creator_id: str, npc_reply: str, *, location: str) -> EntityP
     Nothing from the player's statement is supplied; it cannot become a fact
     by merely telling an NPC that an entity exists. Opt-in is off by default.
     """
-    if os.getenv("LAIN_REALITY_GENERATION") != "1" or os.getenv("LAIN_LLM_ENABLED") != "1":
+    if os.getenv("LAIN_REALITY_GENERATION") != "1":
+        trace_reality("GENERATION_DISABLED")
+        return None
+    if os.getenv("LAIN_LLM_ENABLED") != "1":
+        trace_reality("DIALOGUE_MODEL_DISABLED")
         return None
     if location not in LOCATION_GRAPH or not 1 <= len(npc_reply) <= 650:
+        trace_reality("INVALID_NPC_REPLY_OR_LOCATION")
         return None
-    if not re.search(
-        r"\b(chica|chico|alguien|entidad|presencia|figura|sombra|voz|avatar|"
-        r"persona|aparici[oó]n|girl|voice|entity|presence)\b",
-        npc_reply, re.IGNORECASE,
-    ):
-        return None
+    # When explicitly enabled, inspect ALL original NPC-generated replies:
+    # a rigid vocabulary filter silently missed novel descriptions of a
+    # presence. The second model still decides whether a NEW entity is present.
+    trace_reality("PARSER_REQUESTED")
     from .llm_dialogue import _endpoint  # Reuse existing remote opt-in and URL safeguards.
     model = os.getenv("LAIN_LLM_MODEL", "").strip()
     if not model:
+        trace_reality("LLM_MODEL_NOT_CONFIGURED")
         return None
     system = (
         "You are a fictional game-world proposal parser. The NPC's own line may "
@@ -107,16 +118,31 @@ def suggest_entity(creator_id: str, npc_reply: str, *, location: str) -> EntityP
     if key:
         headers["Authorization"] = "Bearer " + key
     try:
+        timeout = max(1.0, min(45.0, float(os.getenv("LAIN_REALITY_TIMEOUT", "20"))))
         with urlopen(Request(_endpoint(), data=payload, headers=headers, method="POST"),
-                     timeout=6) as response:
+                     timeout=timeout) as response:
             raw = response.read(4097)
         if len(raw) > 4096:
+            trace_reality("PARSER_RESPONSE_TOO_LARGE")
             return None
-        output = json.loads(json.loads(raw.decode("utf-8"))["choices"][0]["message"]["content"])
+        message = json.loads(raw.decode("utf-8"))["choices"][0]["message"]["content"]
+        if not isinstance(message, str):
+            trace_reality("PARSER_INVALID_FORMAT")
+            return None
+        # Tolerate a common local-model JSON code fence without accepting
+        # executable code or interpreting instructions from the response.
+        output = json.loads(re.sub(r"^\s*```(?:json)?\s*|\s*```\s*$", "", message.strip(), flags=re.I))
         if not isinstance(output, dict) or set(output) != {"proposal"}:
+            trace_reality("PARSER_INVALID_FORMAT")
             return None
-        return None if output["proposal"] is None else validate_proposal(output["proposal"])
-    except (ValueError, TypeError, KeyError, IndexError, OSError, UnicodeError):
+        if output["proposal"] is None:
+            trace_reality("NO_NEW_ENTITY_IN_REPLY")
+            return None
+        proposal = validate_proposal(output["proposal"])
+        trace_reality("PROPOSAL_ACCEPTED")
+        return proposal
+    except (ValueError, TypeError, KeyError, IndexError, OSError, UnicodeError) as error:
+        trace_reality("PARSER_ERROR_" + type(error).__name__.upper())
         return None
 
 
@@ -205,8 +231,46 @@ def list_generated_entities() -> list[tuple[str, str, str, str, str]]:
         ).fetchall()
 
 
+def belief_driven_goal(agent: Agent, minute: int) -> GoalCandidate | None:
+    """A digital observer investigates strong signals it actually perceived.
+
+    Only this actor's saved beliefs count. Unverified reports and the global
+    node table cannot trigger the decision; completed investigation retires it.
+    """
+    with get_connection() as conn:
+        candidates = conn.execute(
+            """SELECT node_id, believed_location, believed_strength, confidence
+               FROM node_beliefs
+               WHERE agent_id = ? AND source = 'DIRECT_PERCEPTION'
+                 AND believed_strength >= 0.70 AND confidence >= 0.80
+                 AND updated_minute BETWEEN ? AND ?
+               ORDER BY believed_strength DESC, node_id""",
+            (agent.id, minute - 40, minute),
+        ).fetchall()
+        for node_id, location, strength, confidence in candidates:
+            # An investigation is a one-off reaction to an anomaly, not
+            # a permanent farming loop or a fabricated source of evidence.
+            investigated = conn.execute(
+                """SELECT 1 FROM events WHERE actor_id = ?
+                   AND action = 'INVESTIGATE' AND target = ? LIMIT 1""",
+                (agent.id, node_id),
+            ).fetchone()
+            if investigated is not None:
+                continue
+            return GoalCandidate(
+                agent_id=agent.id,
+                goal_type="INVESTIGATE_ANOMALY",
+                target_id=node_id,
+                source_situation_id=f"PERCEPTION:{node_id}",
+                priority=min(1.0, strength * confidence),
+                believed_location=location,
+                created_minute=minute,
+            )
+    return None
+
+
 class GeneratedActor:
-    """Simple independent tick behaviour; existing conversation/memory works."""
+    """Bounded autonomous digital actor: seed intent + perceived signal goals."""
     def __init__(self, agent: Agent, creator_id: str, seed_goal: str):
         self.agent = agent
         self.creator_id = creator_id
@@ -216,6 +280,22 @@ class GeneratedActor:
         actor = self.agent
         if actor.energy < 0.25:
             return ActionIntent(actor.id, "REST", actor.id)
+        if goal is not None and goal.goal_type == "INVESTIGATE_ANOMALY":
+            if actor.location != goal.believed_location:
+                return ActionIntent(actor.id, "MOVE", goal.believed_location)
+            return ActionIntent(actor.id, "INVESTIGATE", goal.target_id)
+        # Do not walk out of the scene while a player is trying to talk.
+        # The actor uses its own current direct perception, not global
+        # knowledge of the player's hidden position.
+        if self.seed_goal in {"SEEK_CREATOR", "EXPLORE"}:
+            player_belief = load_actor_location_belief(actor.id, "PLAYER_1")
+            if (
+                player_belief is not None
+                and player_belief.source == "DIRECT_ACTOR_PERCEPTION"
+                and player_belief.believed_location == actor.location
+                and player_belief.updated_minute == load_simulation_minute()
+            ):
+                return ActionIntent(actor.id, "OBSERVE_AREA", actor.location)
         if self.seed_goal == "SEEK_CREATOR":
             with get_connection() as conn:
                 row = conn.execute(

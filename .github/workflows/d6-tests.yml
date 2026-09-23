@@ -18,6 +18,7 @@ on:
       - experiment/reality-0.1-generated-entities
       - experiment/visual-reality-0.3-r1
       - experiment/visual-0.4-lain-environments
+      - experiment/reality-0.2-autonomy-visual04
   pull_request:
 
 jobs:

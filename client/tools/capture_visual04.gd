@@ -32,6 +32,17 @@ func run() -> void:
 	var actors: Node3D = scene.get_node("Actors")
 	check(actors.rendered_actors["AGENT_K"].get("actor_id") == "AGENT_K", "K identity changed")
 	check(actors.rendered_actors["AGENT_NORA"].get("actor_id") == "AGENT_NORA", "Nora identity changed")
+	# The same production spawner must render an arbitrary persistent ID,
+	# preserve its chat target, and remove it when World Core hides it.
+	api.snapshot["visible_actors"].append({"id":"ENTITY_TEST_01","name":"Eco"})
+	api.snapshot_updated.emit(api.snapshot)
+	await process_frame
+	check(actors.rendered_actors.size() == 3, "Generated actor not rendered")
+	check(actors.rendered_actors.has("ENTITY_TEST_01"), "Generated actor identity missing")
+	if actors.rendered_actors.has("ENTITY_TEST_01"):
+		var entity: Node3D = actors.rendered_actors["ENTITY_TEST_01"]
+		check(entity.get("actor_id") == "ENTITY_TEST_01", "Generated actor chat target changed")
+		check(entity.get_node_or_null("DigitalBody") != null, "Digital presence has no visual")
 	api.snapshot["visible_actors"] = [{"id":"AGENT_K","name":"K"}]
 	api.snapshot_updated.emit(api.snapshot)
 	await process_frame

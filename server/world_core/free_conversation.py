@@ -12,6 +12,7 @@ from .episodic_memory import (
 from .llm_dialogue import generate_dialogue_reply
 from .generated_entities import (
     create_entity_from_turn, initialize_generated_entities, suggest_entity,
+    trace_reality,
 )
 from .player_claims import initialize_player_claims, record_player_claim
 from .general_claims import initialize_general_claims, record_general_claim
@@ -114,6 +115,8 @@ def say_to_player_conversation(
     )
     # The NPC's own utterance (not the player's testimony) can suggest a
     # presence. Model calls happen outside the write transaction.
+    if reply.source != "LLM_DIALOGUE":
+        trace_reality("DIALOGUE_SOURCE_" + reply.source)
     proposal = (
         suggest_entity(
             actor_id, reply.text, location=context["situation"]["location"],
@@ -122,6 +125,7 @@ def say_to_player_conversation(
     )
 
     # Model inference must not hold a database write lock.
+    created_entity_id = None
     with get_connection() as conn:
         conn.execute("BEGIN IMMEDIATE")
         state = conn.execute(
@@ -215,14 +219,18 @@ def say_to_player_conversation(
             )
             if proposal is not None:
                 try:
-                    create_entity_from_turn(
+                    created_entity_id = create_entity_from_turn(
                         conn, creator_id=actor_id,
                         origin_turn_id=npc_turn.lastrowid,
                         proposal=proposal, minute=minute,
                     )
-                except ValueError:
-                    # Invalid or conflicting proposals do not break dialogue.
-                    pass
+                except ValueError as error:
+                    # Show only stable internal reason codes when opt-in debug
+                    # is active; never log user text or provider credentials.
+                    trace_reality("REJECTED_" + str(error))
         # Player testimony never directly becomes an authoritative world fact.
 
+    if created_entity_id is not None:
+        # This message is emitted only after SQLite commits successfully.
+        trace_reality("ENTITY_CREATED_" + created_entity_id)
     return conversation_payload(interaction.id, actor_id, actor_name)

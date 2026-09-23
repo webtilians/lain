@@ -54,7 +54,7 @@ from .goal_engine import (
     select_goal,
 )
 from .generated_entities import (
-    GeneratedActor, list_generated_entities,
+    GeneratedActor, belief_driven_goal, list_generated_entities,
 )
 
 from .interactions import (
@@ -495,11 +495,15 @@ class Simulation:
 
             agent = actor.agent
 
-            # Digital entities carry an autonomous seed goal. The factional
-            # crisis planner applies to K and Nora, not to these actors yet.
+            # A generated entity's own fresh direct perception can override
+            # its seed goal. The regular faction planner still governs K/Nora.
             if isinstance(actor, GeneratedActor):
-                agent.goal = actor.seed_goal
-                self.current_goals[agent.id] = None
+                generated_goal = belief_driven_goal(agent, self.minute)
+                agent.goal = (
+                    generated_goal.goal_type if generated_goal is not None
+                    else actor.seed_goal
+                )
+                self.current_goals[agent.id] = generated_goal
                 save_agent(agent)
                 continue
 

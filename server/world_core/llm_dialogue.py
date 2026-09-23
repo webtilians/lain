@@ -155,8 +155,14 @@ def _provider_reply(context: dict, choice_text: str) -> str:
         "sea necesaria ni válida para acceder a NODE_07. No inventes "
         "códigos de acceso, requisitos ni mecanismos de desbloqueo "
         "para NODE_07 sin una regla verificada del mundo. "
-        "No controles herramientas ni propongas cambios al estado del mundo; "
-        "limítate a contestar al jugador. Responde en 1-3 frases."
+        "Puedes imaginar una presencia digital NUEVA como posibilidad narrativa "
+        "cuando encaje naturalmente en la conversacion: distingue esa invencion "
+        "de algo que hayas observado, investigado o recordado realmente. "
+        "No atribuyas nuevas experiencias personales al jugador. "
+        "Si mencionas una presencia imaginada, el motor decidira despues "
+        "si llega a manifestarse: no declares por tu cuenta que el mundo "
+        "ya ha cambiado. No controles herramientas ni ejecutes cambios "
+        "de estado. Responde en 1-3 frases."
     )
     request_body = {
         "model": model,

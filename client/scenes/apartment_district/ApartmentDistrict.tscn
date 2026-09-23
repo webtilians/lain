@@ -176,6 +176,9 @@ position = Vector3(0, 0, -5)
 [node name="AGENT_NORA" type="Marker3D" parent="Actors/Spawns"]
 position = Vector3(0, 0, -15)
 
+[node name="ENTITY_ANCHOR" type="Marker3D" parent="Actors/Spawns"]
+position = Vector3(-1.2, 0, -8.5)
+
 [node name="RetroOverlay" parent="." instance=ExtResource("3")]
 
 [node name="HUD" type="CanvasLayer" parent="."]
