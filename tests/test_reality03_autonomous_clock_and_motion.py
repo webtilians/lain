@@ -98,6 +98,7 @@ def test_clock_pauses_during_open_player_conversation_and_resumes_after_pause():
         source_goal="UNKNOWN", minute=sim.minute,
     )
     start_player_conversation(entity_id, sim.minute)
+    clock.note_player_dialogue_active()
     start = sim.minute
     assert clock.tick_once() is False
     assert sim.minute == start
@@ -118,3 +119,47 @@ def test_legacy_actor_projection_has_no_unneeded_new_fields():
         "patrol_step" not in actor for actor in snapshot["visible_actors"]
         if actor["id"] in {"AGENT_K", "AGENT_NORA"}
     )
+
+
+def test_abandoned_open_conversation_does_not_freeze_clock_after_restart():
+    sim, entity_id = world_with_entity()
+    create_or_get_interaction(
+        initiator_id="PLAYER_1", recipient_id=entity_id,
+        topic="PLAYER_INITIATED_CONVERSATION",
+        source_goal="UNKNOWN", minute=sim.minute,
+    )
+    start_player_conversation(entity_id, sim.minute)
+    # On a new Uvicorn process the old interaction is still OPEN in world.db,
+    # but the client has not signalled any visible chat session.
+    restarted = Simulation()
+    clock = WorldClock(restarted, RLock(), interval=8)
+    starting_minute = restarted.minute
+    assert clock.tick_once() is True
+    assert restarted.minute == starting_minute + 10
+    with get_connection() as conn:
+        assert conn.execute(
+            "SELECT COUNT(*) FROM events WHERE actor_id=? AND action='WANDER'",
+            (entity_id,),
+        ).fetchone()[0] == 1
+
+
+def test_expired_dialogue_heartbeat_resumes_even_if_pause_request_was_lost(monkeypatch):
+    import server.world_core.realtime as realtime
+    sim, entity_id = world_with_entity()
+    create_or_get_interaction(
+        initiator_id="PLAYER_1", recipient_id=entity_id,
+        topic="PLAYER_INITIATED_CONVERSATION",
+        source_goal="UNKNOWN", minute=sim.minute,
+    )
+    start_player_conversation(entity_id, sim.minute)
+    now = [100.0]
+    monkeypatch.setattr(realtime, "monotonic", lambda: now[0])
+    clock = WorldClock(sim, RLock(), interval=8)
+    clock.note_player_dialogue_active()
+    assert clock.tick_once() is False
+    now[0] += 5.0
+    assert clock.tick_once() is True
+    assert sim.minute == 10
+    # The next deliberate UI heartbeat re-pauses an existing conversation.
+    clock.note_player_dialogue_active()
+    assert clock.tick_once() is False
