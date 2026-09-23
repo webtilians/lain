@@ -16,6 +16,7 @@ on:
       - experiment/isometric-0.2-d11-r1-recall
       - experiment/visual-0.3-apartment
       - experiment/reality-0.1-generated-entities
+      - experiment/visual-reality-0.3-r1
   pull_request:
 
 jobs:
