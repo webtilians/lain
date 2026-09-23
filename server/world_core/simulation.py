@@ -54,7 +54,8 @@ from .goal_engine import (
     select_goal,
 )
 from .generated_entities import (
-    GeneratedActor, belief_driven_goal, list_generated_entities,
+    GeneratedActor, advance_local_waypoint, belief_driven_goal,
+    list_generated_entities,
 )
 
 from .interactions import (
@@ -676,6 +677,7 @@ class Simulation:
             "AMPLIFY": 0.25,
             "OBSERVE": 0.02,
             "OBSERVE_AREA": 0.01,
+            "WANDER": 0.02,
             "CONTACT": 0.02,
         }
 
@@ -750,6 +752,13 @@ class Simulation:
             return True, ""
 
         if action == "OBSERVE_AREA":
+            return True, ""
+
+        if action == "WANDER":
+            # Local physical motion is private to generated agents and must
+            # target their CURRENT semantic location, never a hidden location.
+            if agent.controller_type != "GENERATED" or intent.target != agent.location:
+                return False, "INVALID_WANDER"
             return True, ""
 
         # ==============================================
@@ -1277,6 +1286,15 @@ class Simulation:
                     f"{agent.name} "
                     f"observes area"
                 )
+
+            # ==========================================
+            # LOCAL WANDER (same semantic location)
+            # ==========================================
+
+            elif action == "WANDER":
+                waypoint = advance_local_waypoint(agent.id)
+                agent.energy = max(0.0, agent.energy - 0.02)
+                details = f"Local waypoint {waypoint}"
 
             # ==========================================
             # REST
