@@ -63,6 +63,7 @@ func _block(name_text: String, pos: Vector3, size: Vector3,
 	holder.name = name_text
 	holder.position = pos
 	var mesh := MeshInstance3D.new()
+	mesh.name = "Mesh"
 	var box := BoxMesh.new()
 	box.size = size
 	mesh.mesh = box
