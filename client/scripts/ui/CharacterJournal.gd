@@ -126,6 +126,9 @@ func _refresh_navigation() -> void:
 		navigation.remove_child(child)
 		child.queue_free()
 	_add_navigation("TU FICHA", "PLAYER")
+	var prologue: Dictionary = WorldApi.snapshot.get("prologue", {})
+	if bool(prologue.get("enabled", false)):
+		_add_navigation("PRÓLOGO // ANTES DE LA WIRED", "PROLOGUE")
 	_add_navigation("CASO // EL PULSO AUSENTE", "CASE")
 	var sheets: Dictionary = WorldApi.snapshot.get("character_sheets", {})
 	var actors: Array = sheets.get("visible_npcs", [])
@@ -149,6 +152,8 @@ func _choose_view(view: String, actor_id: String) -> void:
 
 func _render_view() -> void:
 	match current_view:
+		"PROLOGUE":
+			_render_prologue()
 		"CASE":
 			_render_case()
 		"NPC":
@@ -171,6 +176,18 @@ func _render_player() -> void:
 		+ "NODOS CONOCIDOS  %d\n" % int(data.get("known_nodes", 0))
 		+ "INVESTIGACIÓN NODE_07  " + str(data.get("case_status", "UNSEEN"))
 		+ "\n\nLas fichas solo incluyen conocimientos accesibles al jugador."
+	)
+
+
+func _render_prologue() -> void:
+	var story: Dictionary = WorldApi.snapshot.get("prologue", {})
+	details.text = (
+		"PRÓLOGO // ANTES DE LA WIRED\n\n"
+		+ "ESTADO  " + str(story.get("stage", "LEGACY"))
+		+ "\n\nOBJETIVO\n" + str(story.get("hint", ""))
+		+ "\n\nLos personajes solo pueden contarte lo que saben. "
+		+ "La conexión a la Wired deberá descubrirse, no se activará "
+		+ "por el mero hecho de pulsar un botón."
 	)
 
 
