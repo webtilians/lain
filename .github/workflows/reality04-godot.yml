@@ -5,6 +5,7 @@ on:
     branches:
       - experiment/visual-0.8-city-neighborhood
       - experiment/visual-0.9-living-neighborhood
+      - experiment/visual-0.10-realism
   pull_request:
     branches:
       - experiment/reality-0.3-visual06-integration
@@ -83,6 +84,16 @@ jobs:
           timeout 90s /tmp/lain-godot --headless --path client --script res://tools/test_city09.gd 2>&1 | tee /tmp/lain-city09.log
           grep -q 'CITY09_RESIDENTS_PASS population=56 shops=6' /tmp/lain-city09.log
           if grep -E '^(SCRIPT ERROR:|ERROR:)' /tmp/lain-city09.log; then
+            exit 1
+          fi
+
+      - name: Rendering presets preserve physics in all twelve locations
+        shell: bash
+        run: |
+          set -euo pipefail
+          /tmp/lain-godot --headless --path client --script res://tools/test_realism10.gd 2>&1 | tee /tmp/lain-realism10.log
+          grep -q 'REALISM10_CHECK_OK scenes=12 presets=3 physics_unchanged=true' /tmp/lain-realism10.log
+          if grep -E '^(SCRIPT ERROR:|ERROR:)' /tmp/lain-realism10.log; then
             exit 1
           fi
 

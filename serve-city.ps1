@@ -1,5 +1,5 @@
 param(
-    [string]$WorldPath = (Join-Path $PSScriptRoot 'city09.db'),
+    [string]$WorldPath = (Join-Path $PSScriptRoot 'city10.db'),
     [string]$PythonPath = ''
 )
 $ErrorActionPreference = 'Stop'

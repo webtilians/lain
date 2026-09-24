@@ -1,0 +1,98 @@
+[
+  {
+    "file": "client/art/realism10/materials/aerial_asphalt_01_Diffuse.jpg",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/aerial_asphalt_01/aerial_asphalt_01_diff_2k.jpg",
+    "license": "CC0",
+    "md5": "4cb311fc7638c0b1d5e9641ca9c6ea78",
+    "asset": "aerial_asphalt_01",
+    "kind": "Diffuse"
+  },
+  {
+    "file": "client/art/realism10/materials/aerial_asphalt_01_nor_gl.png",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/2k/aerial_asphalt_01/aerial_asphalt_01_nor_gl_2k.png",
+    "license": "CC0",
+    "md5": "5c9651f4c10d3b1c40a73ece2808852a",
+    "asset": "aerial_asphalt_01",
+    "kind": "nor_gl"
+  },
+  {
+    "file": "client/art/realism10/materials/aerial_asphalt_01_arm.jpg",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/aerial_asphalt_01/aerial_asphalt_01_arm_2k.jpg",
+    "license": "CC0",
+    "md5": "2b02e8a625b029d537b7a0d319655272",
+    "asset": "aerial_asphalt_01",
+    "kind": "arm"
+  },
+  {
+    "file": "client/art/realism10/materials/plastered_wall_02_Diffuse.jpg",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/plastered_wall_02/plastered_wall_02_diff_2k.jpg",
+    "license": "CC0",
+    "md5": "927533b695ab50bbbdfeaf6f0519fa3f",
+    "asset": "plastered_wall_02",
+    "kind": "Diffuse"
+  },
+  {
+    "file": "client/art/realism10/materials/plastered_wall_02_nor_gl.png",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/2k/plastered_wall_02/plastered_wall_02_nor_gl_2k.png",
+    "license": "CC0",
+    "md5": "13cb48388e0d76d65d862840e72f8ff2",
+    "asset": "plastered_wall_02",
+    "kind": "nor_gl"
+  },
+  {
+    "file": "client/art/realism10/materials/plastered_wall_02_arm.jpg",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/plastered_wall_02/plastered_wall_02_arm_2k.jpg",
+    "license": "CC0",
+    "md5": "53e0b772755cdcb493be7d302e1d435e",
+    "asset": "plastered_wall_02",
+    "kind": "arm"
+  },
+  {
+    "file": "client/art/realism10/materials/wood_floor_Diffuse.jpg",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/wood_floor/wood_floor_diff_2k.jpg",
+    "license": "CC0",
+    "md5": "d209b7416b022ed06093aef068c7fe23",
+    "asset": "wood_floor",
+    "kind": "Diffuse"
+  },
+  {
+    "file": "client/art/realism10/materials/wood_floor_nor_gl.png",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/2k/wood_floor/wood_floor_nor_gl_2k.png",
+    "license": "CC0",
+    "md5": "c50f8bf962667821336e492f98ab5e73",
+    "asset": "wood_floor",
+    "kind": "nor_gl"
+  },
+  {
+    "file": "client/art/realism10/materials/wood_floor_arm.jpg",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/wood_floor/wood_floor_arm_2k.jpg",
+    "license": "CC0",
+    "md5": "d559596b2779c4cc64bb62aed3a3111e",
+    "asset": "wood_floor",
+    "kind": "arm"
+  },
+  {
+    "kind": "Diffuse",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/concrete_floor_02/concrete_floor_02_diff_2k.jpg",
+    "file": "client/art/realism10/materials/concrete_floor_02_Diffuse.jpg",
+    "license": "CC0",
+    "md5": "769c7bf30050cc57be848a67d5c20270",
+    "asset": "concrete_floor_02"
+  },
+  {
+    "kind": "nor_gl",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/2k/concrete_floor_02/concrete_floor_02_nor_gl_2k.png",
+    "file": "client/art/realism10/materials/concrete_floor_02_nor_gl.png",
+    "license": "CC0",
+    "md5": "e7bbae9a0ec85c590b82ccdf5788c46d",
+    "asset": "concrete_floor_02"
+  },
+  {
+    "kind": "arm",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/concrete_floor_02/concrete_floor_02_arm_2k.jpg",
+    "file": "client/art/realism10/materials/concrete_floor_02_arm.jpg",
+    "license": "CC0",
+    "md5": "3da4d961cbd251e76b7dd34318cf452d",
+    "asset": "concrete_floor_02"
+  }
+]

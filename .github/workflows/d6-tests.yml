@@ -22,6 +22,7 @@ on:
       - experiment/visual-0.5-illustrated
       - experiment/visual-0.8-city-neighborhood
       - experiment/visual-0.9-living-neighborhood
+      - experiment/visual-0.10-realism
   pull_request:
 
 jobs:
