@@ -15,6 +15,7 @@ var snapshot: Dictionary = {}
 var _poll_elapsed := 0.0
 var _state_polling := false
 var _ignore_next_state_response := false
+var _external_mutation := false
 
 var _state_request: HTTPRequest
 var _mutation_request: HTTPRequest
@@ -45,6 +46,8 @@ func _process(delta: float) -> void:
 	if _poll_elapsed < STATE_POLL_SECONDS:
 		return
 	_poll_elapsed = 0.0
+	if _external_mutation:
+		return
 	if _mutation_request == null:
 		return
 	if _mutation_request.get_http_client_status() != HTTPClient.STATUS_DISCONNECTED:
@@ -53,6 +56,8 @@ func _process(delta: float) -> void:
 
 
 func request_state(silent: bool = false) -> void:
+	if _external_mutation:
+		return
 	if (
 		_state_request.get_http_client_status()
 		!= HTTPClient.STATUS_DISCONNECTED
@@ -168,6 +173,14 @@ func acknowledge_message(
 # =====================================================
 # STATE RESPONSE
 # =====================================================
+
+func begin_external_mutation() -> void:
+	_external_mutation=true
+	if _state_request.get_http_client_status()!=HTTPClient.STATUS_DISCONNECTED:
+		_ignore_next_state_response=true
+
+func end_external_mutation() -> void:
+	_external_mutation=false
 
 func _on_state_request_completed(
 	result: int,

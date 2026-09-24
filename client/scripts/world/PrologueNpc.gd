@@ -19,6 +19,9 @@ func _ready() -> void:
 func interact() -> void:
 	if waiting or EventDialog.visible:
 		return
+	if ChapterOne.can_talk(npc_id):
+		ChapterOne.open_actor(npc_id,_ask.bind("INTRO"))
+		return
 	_ask("INTRO")
 
 

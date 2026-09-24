@@ -69,6 +69,10 @@ class AgentContextBuilder:
         if agent[5] == "RESIDENT":
             from .residents import resident_context
             context["resident"] = resident_context(agent_id, agent[3])
+        from .chapter_one import chapter_actor_context
+        chapter = chapter_actor_context(agent_id)
+        if chapter is not None:
+            context["chapter_memory"] = chapter
         return context
 
     def _load_agent(self, agent_id: str):

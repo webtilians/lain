@@ -23,6 +23,7 @@ CharacterJournal="*res://scripts/ui/CharacterJournal.gd"
 PrologueApi="*res://scripts/network/PrologueApi.gd"
 PrologueTerminal="*res://scripts/ui/PrologueTerminal.gd"
 GraphicsDirector="*res://scripts/art/GraphicsDirector.gd"
+ChapterOne="*res://scripts/ui/ChapterOne.gd"
 
 [display]
 

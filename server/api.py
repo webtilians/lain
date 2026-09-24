@@ -10,6 +10,7 @@ from fastapi import (
 
 from pydantic import (
     BaseModel,
+    Field,
 )
 
 from server.world_core.action_queue import (
@@ -106,6 +107,28 @@ class PrologueTalkRequest(BaseModel):
 
 class PrologueCommandRequest(BaseModel):
     command: str
+
+
+class ChapterActionRequest(BaseModel):
+    action: str = Field(max_length=32)
+    target: str = Field(default="", max_length=64)
+    data: dict[str, str] = Field(default_factory=dict)
+    request_id: str = Field(min_length=8, max_length=80)
+
+
+@app.post("/api/v1/chapter-one/action")
+def chapter_one_action(request: ChapterActionRequest):
+    from server.world_core.chapter_one import perform_chapter_action
+    with _world_lock:
+        runtime = get_runtime()
+        try:
+            result = perform_chapter_action(
+                PLAYER_ID, request.action, request.target, request.data,
+                runtime.minute, request.request_id,
+            )
+            return {"result": result, "state": build_player_snapshot(PLAYER_ID)}
+        except ValueError as error:
+            raise HTTPException(status_code=409, detail=str(error))
 
 
 def perform_player_step(

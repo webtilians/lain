@@ -44,7 +44,12 @@ func interact() -> void:
 
 	if not _actor_is_present():
 		return
+	if ChapterOne.can_talk(actor_id):
+		ChapterOne.open_actor(actor_id,_standard_menu)
+		return
+	_standard_menu()
 
+func _standard_menu() -> void:
 	EventDialog.show_choices(
 		str(get_instance_id()),
 		actor_name,

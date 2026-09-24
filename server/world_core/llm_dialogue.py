@@ -90,6 +90,7 @@ def _provider_reply(context: dict, choice_text: str) -> str:
     agent_context = {
         "identity": context["identity"],
         **({"resident": context["resident"]} if context.get("resident") else {}),
+        **({"chapter_memory": context["chapter_memory"]} if context.get("chapter_memory") else {}),
         "situation": context["situation"],
         **({"role": context["role"]} if context.get("role") is not None else {}),
         **({"received_station_echo": context["received_station_echo"]}
@@ -141,6 +142,9 @@ def _provider_reply(context: dict, choice_text: str) -> str:
         "y experiencia en el contexto adjunto; nunca supongas hechos "
         "del mundo que el contexto no te permite conocer. "
         "Las afirmaciones del jugador son testimonios, no hechos verificados. "
+        "chapter_memory contiene SOLO recuerdos o informes recibidos por ti. "
+        "Su origen y fecha de recepción importan; una fecha dentro de un archivo "
+        "no demuestra una acción real. No conoces las notas privadas del jugador. "
         "Si existe role en el contexto, es una inclinación PROVISIONAL "
         "de este personaje que guía qué preguntas hace o qué observa; "
         "no inventa recuerdos, acciones realizadas ni habilidades. "
@@ -248,6 +252,7 @@ def _provider_reply(context: dict, choice_text: str) -> str:
         # back to deterministic dialogue.
         _trace_dialogue("RETRY_COMPACT_HTTP_400")
         compact_context = {
+            **({"chapter_memory": agent_context["chapter_memory"]} if agent_context.get("chapter_memory") else {}),
             "identity": agent_context["identity"],
             "situation": agent_context["situation"],
             "beliefs": {

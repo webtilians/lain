@@ -10,6 +10,12 @@ var navigation: VBoxContainer
 var active_player: Node = null
 var current_view := "PLAYER"
 var selected_actor_id := ""
+var chapter_controls: VBoxContainer
+var first_clue: OptionButton
+var second_clue: OptionButton
+var link_kind: OptionButton
+var hypothesis: LineEdit
+var chapter_feedback: Label
 
 func _ready() -> void:
 	layer = 90
@@ -53,6 +59,7 @@ func _ready() -> void:
 	root_box.add_child(body)
 	var scroll := ScrollContainer.new()
 	scroll.custom_minimum_size = Vector2(270, 0)
+	scroll.horizontal_scroll_mode=ScrollContainer.SCROLL_MODE_DISABLED
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	body.add_child(scroll)
 	navigation = VBoxContainer.new()
@@ -67,9 +74,18 @@ func _ready() -> void:
 	details.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	details.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	details.add_theme_font_size_override("normal_font_size", 19)
-	body.add_child(details)
+	var reading := VBoxContainer.new()
+	reading.size_flags_horizontal=Control.SIZE_EXPAND_FILL
+	reading.size_flags_vertical=Control.SIZE_EXPAND_FILL
+	body.add_child(reading)
+	reading.add_child(details)
+	_build_chapter_controls(reading)
 	backdrop.visible = false
 	WorldApi.snapshot_updated.connect(_on_snapshot_updated)
+	call_deferred("_connect_chapter")
+
+func _connect_chapter() -> void:
+	ChapterOne.archive_saved.connect(_chapter_saved)
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -124,6 +140,8 @@ func _on_snapshot_updated(_snapshot: Dictionary) -> void:
 func _add_navigation(label_text: String, view: String, actor_id: String = "") -> void:
 	var button := Button.new()
 	button.text = label_text
+	button.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
+	button.tooltip_text=label_text
 	button.alignment = HORIZONTAL_ALIGNMENT_LEFT
 	button.pressed.connect(_choose_view.bind(view, actor_id))
 	navigation.add_child(button)
@@ -143,6 +161,8 @@ func _refresh_navigation() -> void:
 		_add_navigation("PRÓLOGO // ANTES DE LA WIRED", "PROLOGUE")
 	if not offline:
 		_add_navigation("CASO // EL PULSO AUSENTE", "CASE")
+	if bool(WorldApi.snapshot.get("chapter_one",{}).get("active",false)):
+		_add_navigation("ARCHIVO // YA HABÍAS ESTADO AQUÍ", "CHAPTER")
 	var sheets: Dictionary = WorldApi.snapshot.get("character_sheets", {})
 	var actors: Array = sheets.get("visible_npcs", [])
 	for item in actors:
@@ -164,7 +184,10 @@ func _choose_view(view: String, actor_id: String) -> void:
 
 
 func _render_view() -> void:
+	chapter_controls.visible=current_view=="CHAPTER"
 	match current_view:
+		"CHAPTER":
+			_render_chapter()
 		"PROLOGUE":
 			_render_prologue()
 		"CASE":
@@ -274,3 +297,92 @@ func _render_npc() -> void:
 		"Esta presencia ya no está en tu localización.\n"
 		+ "No se revela su paradero actual."
 	)
+
+func _build_chapter_controls(parent: VBoxContainer) -> void:
+	chapter_controls=VBoxContainer.new()
+	parent.add_child(chapter_controls)
+	var label := Label.new()
+	label.text="RELACIONAR DOS PISTAS · TU INTERPRETACIÓN"
+	chapter_controls.add_child(label)
+	var row := HBoxContainer.new()
+	chapter_controls.add_child(row)
+	first_clue=OptionButton.new()
+	second_clue=OptionButton.new()
+	for picker in [first_clue,second_clue]:
+		picker.size_flags_horizontal=Control.SIZE_EXPAND_FILL
+		picker.fit_to_longest_item=false
+		row.add_child(picker)
+	var actions := HBoxContainer.new()
+	chapter_controls.add_child(actions)
+	link_kind=OptionButton.new()
+	for relation in ["Se contradicen","Una apoya a la otra","Las relaciono"]:
+		link_kind.add_item(relation)
+	actions.add_child(link_kind)
+	var link_button := Button.new()
+	link_button.text="GUARDAR RELACIÓN"
+	link_button.pressed.connect(_link_clues)
+	actions.add_child(link_button)
+	var note_row := HBoxContainer.new()
+	chapter_controls.add_child(note_row)
+	hypothesis=LineEdit.new()
+	hypothesis.placeholder_text="Mi hipótesis, todavía sin verificar..."
+	hypothesis.max_length=500
+	hypothesis.size_flags_horizontal=Control.SIZE_EXPAND_FILL
+	note_row.add_child(hypothesis)
+	var save := Button.new()
+	save.text="ANOTAR"
+	save.pressed.connect(func(): ChapterOne.save_hypothesis(hypothesis.text))
+	note_row.add_child(save)
+	chapter_feedback=Label.new()
+	chapter_feedback.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
+	chapter_feedback.add_theme_font_size_override("font_size",13)
+	chapter_controls.add_child(chapter_feedback)
+	chapter_controls.hide()
+
+func _link_clues() -> void:
+	if first_clue.selected<0 or second_clue.selected<0:
+		return
+	ChapterOne.save_link(str(first_clue.get_item_metadata(first_clue.selected)),
+		str(second_clue.get_item_metadata(second_clue.selected)),
+		["CONTRADICTS","SUPPORTS","RELATED"][link_kind.selected])
+
+func _chapter_saved(message: String) -> void:
+	chapter_feedback.text=message
+
+func _render_chapter() -> void:
+	var chapter: Dictionary = WorldApi.snapshot.get("chapter_one",{})
+	var types := {"MESSAGE":"MENSAJE RECIBIDO","TESTIMONY":"TESTIMONIO",
+		"OBSERVATION":"OBSERVACIÓN PROPIA","DOCUMENT":"DOCUMENTO","RECORD":"REGISTRO · AUTENTICIDAD PENDIENTE"}
+	var text := "ARCHIVO // YA HABÍAS ESTADO AQUÍ\n\n"
+	text+="Lo que has presenciado, lo que te han contado y lo que conservan los archivos son fuentes distintas.\n"
+	var clues: Array = chapter.get("evidence",[])
+	var titles := {}
+	for clue in clues:
+		titles[str(clue.id)]=str(clue.title)
+		text+="\n────────────────────────\n"+str(clue.title)+"\n"
+		text+=str(types.get(str(clue.kind),clue.kind))+" · "+str(clue.source_label)+"\n"
+		text+="Incorporado al archivo: minuto "+str(int(clue.acquired_minute))+"\n"
+		text+="Fecha que la fuente atribuye: "+str(clue.claimed_time)+"\n\n"+str(clue.text)+"\n"
+	text+="\nRELACIONES QUE HAS ANOTADO\n"
+	for link in chapter.get("links",[]):
+		var meaning: String = {"CONTRADICTS":" ↔ contradicción ↔ ","SUPPORTS":" ↔ apoyo ↔ ","RELATED":" ↔ relación ↔ "}.get(str(link.relation)," ↔ ")
+		text+=str(titles.get(str(link.first),""))+meaning+str(titles.get(str(link.second),""))+"\n"
+	text+="\nMI HIPÓTESIS · SIN VERIFICAR\n"+str(chapter.get("hypothesis",""))+"\n"
+	if chapter.get("decision")!=null:
+		text+="\nMI DECISIÓN\n"+("Entregué la copia al profesor y autoricé que avisara a Ryoko." if chapter.decision=="DISCLOSE" else "Sellé la copia con Ryoko. El profesor solo recibió la anomalía de la fecha.")
+	if details.text!=text:
+		var scroll_position := details.get_v_scroll_bar().value
+		details.text=text
+		details.get_v_scroll_bar().set_deferred("value",scroll_position)
+	for picker in [first_clue,second_clue]:
+		var previous := str(picker.get_item_metadata(picker.selected)) if picker.selected>=0 else ""
+		picker.clear()
+		for clue in clues:
+			picker.add_item(str(clue.title))
+			picker.set_item_metadata(picker.item_count-1,str(clue.id))
+			if str(clue.id)==previous:
+				picker.select(picker.item_count-1)
+		if previous.is_empty() and picker==second_clue and clues.size()>1:
+			picker.select(1)
+	if not hypothesis.has_focus():
+		hypothesis.text=str(chapter.get("hypothesis",""))

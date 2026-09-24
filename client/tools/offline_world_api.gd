@@ -11,3 +11,7 @@ func step(_action: String, _target: String) -> void:
 	push_error("Preview cannot send actions")
 func acknowledge_message(_message_id: String) -> void:
 	pass
+func begin_external_mutation() -> void:
+	pass
+func end_external_mutation() -> void:
+	pass

@@ -171,6 +171,9 @@ func _enter_wired() -> void:
 	if not connected:
 		return
 	close_terminal()
+	if ChapterOne.active():
+		ChapterOne.open_terminal()
+		return
 	# Resume the existing REALITY 0.4 in-game mail / Wired interface.
 	var old_terminal = get_tree().get_first_node_in_group("terminal_ui")
 	if old_terminal != null:

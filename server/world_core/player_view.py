@@ -19,6 +19,7 @@ from .generated_entities import list_generated_entities
 from .character_sheets import player_sheet, visible_npc_sheets
 from .station_echo import station_case_snapshot
 from .prologue import prologue_projection
+from .chapter_one import chapter_snapshot
 
 from .messages import (
     list_player_messages,
@@ -377,6 +378,7 @@ def build_player_snapshot(
         },
         "station_case": station_case,
         "prologue": prologue,
+        "chapter_one": chapter_snapshot(player_id),
         "situations": list_player_situations(
             player_id
         ),

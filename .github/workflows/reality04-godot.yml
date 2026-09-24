@@ -6,6 +6,7 @@ on:
       - experiment/visual-0.8-city-neighborhood
       - experiment/visual-0.9-living-neighborhood
       - experiment/visual-0.10-realism
+      - experiment/chapter-0.1-already-here
   pull_request:
     branches:
       - experiment/reality-0.3-visual06-integration
@@ -94,6 +95,16 @@ jobs:
           /tmp/lain-godot --headless --path client --script res://tools/test_realism10.gd 2>&1 | tee /tmp/lain-realism10.log
           grep -q 'REALISM10_CHECK_OK scenes=12 presets=3 physics_unchanged=true' /tmp/lain-realism10.log
           if grep -E '^(SCRIPT ERROR:|ERROR:)' /tmp/lain-realism10.log; then
+            exit 1
+          fi
+
+      - name: Chapter one objects, provenance journal and dialogue layout
+        shell: bash
+        run: |
+          set -euo pipefail
+          /tmp/lain-godot --headless --path client --script res://tools/test_chapter01.gd 2>&1 | tee /tmp/lain-chapter01.log
+          grep -q 'CHAPTER01_GAMEPLAY_OK views=11' /tmp/lain-chapter01.log
+          if grep -E '^(SCRIPT ERROR:|ERROR:)' /tmp/lain-chapter01.log; then
             exit 1
           fi
 

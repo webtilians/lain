@@ -101,6 +101,9 @@ def process_wired_message_acknowledgement(
             minute=minute,
         )
 
+    from .chapter_one import activate_chapter
+    activate_chapter(player_id)
+
     return {
         "newly_acknowledged": newly_acknowledged,
         "lead_granted": lead_granted,

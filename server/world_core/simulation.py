@@ -227,6 +227,9 @@ class Simulation:
         for resident in initialize_residents():
             self.all_agents[resident.id] = resident
 
+        from .chapter_one import initialize_chapter
+        initialize_chapter()
+
         ensure_station_followup(
             player_id=self.player.id,
             minute=self.minute,
