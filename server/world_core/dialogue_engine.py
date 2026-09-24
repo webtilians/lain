@@ -18,6 +18,11 @@ class DeterministicDialogueEngine:
         )
 
         if choice_id == "ASK_IDENTITY":
+            if context.get("resident"):
+                resident = context["resident"]
+                return (f"Soy {identity['name']}. Trabajo o participo aquí como "
+                        f"{resident['role'].lower()}. "
+                        f"Mi objetivo es: {resident['public_objective']}")
             return (
                 f"Puedes llamarme {identity['name']}. "
                 "¿Qué necesitas saber?"

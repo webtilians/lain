@@ -25,3 +25,4 @@ outputs/
 !.env.example
 
 *.log
+city09*.db*

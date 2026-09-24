@@ -1,6 +1,12 @@
 extends Node
 
 const LOCATION_SCENES := {
+	"IZAKAYA": "res://scenes/city09/Izakaya.tscn",
+	"GROCERY": "res://scenes/city09/Grocery.tscn",
+	"VIDEO_CLUB": "res://scenes/city09/VideoClub.tscn",
+	"BOOKSHOP": "res://scenes/city09/Bookshop.tscn",
+	"ARCADE": "res://scenes/city09/Arcade.tscn",
+	"CAFE": "res://scenes/city09/Cafe.tscn",
 	"APARTMENT": "res://scenes/apartment/ApartmentIso.tscn",
 	"APARTMENT_DISTRICT": "res://scenes/apartment_district/ApartmentDistrict.tscn",
 	"STATION": "res://scenes/station/Station.tscn",

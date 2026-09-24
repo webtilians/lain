@@ -11,6 +11,18 @@ const WOOD = preload("res://art/visual05/textures/wood.png")
 
 func _ready() -> void:
 	_build_world()
+	var actors := Node3D.new()
+	actors.name = "Actors"
+	actors.set_script(load("res://scripts/world/ActorSpawner.gd"))
+	actors.set("location_id", location_id)
+	var spawns := Node3D.new()
+	spawns.name = "Spawns"
+	actors.add_child(spawns)
+	var entity_anchor := Marker3D.new()
+	entity_anchor.name = "ENTITY_ANCHOR"
+	entity_anchor.position = Vector3(-3,0,5)
+	spawns.add_child(entity_anchor)
+	add_child(actors)
 	WorldApi.snapshot_updated.connect(_on_snapshot)
 	_on_snapshot(WorldApi.snapshot)
 
@@ -108,14 +120,11 @@ func _npc(name_text: String, actor_id: String, pos: Vector3,
 	actor.set_script(NPC_SCRIPT)
 	actor.set("npc_id", actor_id)
 	actor.position = pos
-	var mesh := MeshInstance3D.new()
-	mesh.name = "Body"
-	var capsule := CapsuleMesh.new()
-	capsule.radius = 0.28
-	capsule.height = 1.66
-	mesh.mesh = capsule
-	mesh.material_override = _mat(shade)
-	actor.add_child(mesh)
+	var model: Node3D = load("res://art/characters/LainSlender.tscn").instantiate()
+	model.set_script(load("res://scripts/art/CitizenAvatar.gd"))
+	model.configure("teacher" if actor_id == "PROFESSOR" else "casual", 10 if actor_id == "PROFESSOR" else 11)
+	model.position.y = 0.0
+	actor.add_child(model)
 	var collider := CollisionShape3D.new()
 	var collision := CapsuleShape3D.new()
 	collision.radius = 0.28

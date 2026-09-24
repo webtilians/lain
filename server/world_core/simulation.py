@@ -89,6 +89,7 @@ from .station_story import (
     ensure_station_followup,
 )
 from .prologue import initialize_prologue, gate_move
+from .residents import initialize_residents, advance_residents
 
 from .models import (
     ActionIntent,
@@ -221,6 +222,10 @@ class Simulation:
 
         ensure_initial_player_message()
         initialize_prologue()
+        # Seed after the legacy/new-world prologue decision. Civilians keep
+        # independent private memories and do not inherit initial Wired leads.
+        for resident in initialize_residents():
+            self.all_agents[resident.id] = resident
 
         ensure_station_followup(
             player_id=self.player.id,
@@ -1468,6 +1473,7 @@ class Simulation:
         save_simulation_minute(
             self.minute
         )
+        advance_residents(self.minute)
 
         evaluate_nodes(
             world=self.world.get_state(),

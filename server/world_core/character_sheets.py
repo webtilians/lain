@@ -132,6 +132,8 @@ def player_sheet(player_row: tuple, known_nodes_count: int,
 
 
 def visible_npc_sheets(player_id: str, location: str) -> list[dict]:
+    from .residents import public_residents
+    residents = public_residents(location)
     initialize_profiles()
     with get_connection() as conn:
         rows = conn.execute(
@@ -145,6 +147,15 @@ def visible_npc_sheets(player_id: str, location: str) -> list[dict]:
         ).fetchall()
     result = []
     for actor_id, name, controller, stored_role in rows:
+        if actor_id in residents:
+            data = residents[actor_id]
+            result.append({
+                "id": actor_id, "name": name, "kind": "NPC",
+                "observed_location": location, "focus": data["activity"],
+                **{k: data[k] for k in ("role", "role_label", "skills",
+                    "public_objective", "activity", "role_assignment")},
+            })
+            continue
         if controller == "GENERATED":
             role = stored_role if stored_role in ROLE_RULES else "OBSERVER"
             label, focus, _cadence = ROLE_RULES[role]

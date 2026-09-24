@@ -262,6 +262,13 @@ func _render_npc() -> void:
 			+ "Los recuerdos, las creencias y los objetivos privados "
 			+ "no se revelan por abrir una ficha."
 		)
+		if actor.has("public_objective"):
+			details.text += "\n\nOBJETIVO PERSONAL\n" + str(actor.public_objective)
+			details.text += "\n\nAHORA\n" + str(actor.get("activity", ""))
+			details.text += "\n\nHABILIDADES (1–5)"
+			var skills: Dictionary = actor.get("skills", {})
+			for skill in skills:
+				details.text += "\n" + str(skill) + "  " + str(skills[skill]) + "/5"
 		return
 	details.text = (
 		"Esta presencia ya no está en tu localización.\n"

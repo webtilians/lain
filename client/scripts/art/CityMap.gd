@@ -33,9 +33,9 @@ func _draw() -> void:
 	for target in LAYOUT.DOORS:
 		var at := point(LAYOUT.DOORS[target])
 		draw_circle(at,3,Color("c9b993"))
-		draw_string(font,at+Vector2(5,-3),{"APARTMENT":"A","SCHOOL":"C","NIGHTCLUB":"D","STATION":"E"}[target],HORIZONTAL_ALIGNMENT_LEFT,-1,10,Color("e2dccb"))
+		draw_string(font,at+Vector2(5,-3),{"APARTMENT":"A","SCHOOL":"C","NIGHTCLUB":"D","STATION":"E","BOOKSHOP":"L","GROCERY":"T","VIDEO_CLUB":"V","CAFE":"K","IZAKAYA":"B","ARCADE":"R"}.get(target,""),HORIZONTAL_ALIGNMENT_LEFT,-1,10,Color("e2dccb"))
 	if is_instance_valid(player):
 		draw_circle(point(player.global_position),4,Color("d9eded"))
 		draw_arc(point(player.global_position),7,0,TAU,24,Color("93bbbb"),1,true)
 	draw_string(font,Vector2(14,229),"A Casa   C Colegio",HORIZONTAL_ALIGNMENT_LEFT,-1,10,Color("b4b9b3"))
-	draw_string(font,Vector2(14,244),"D Discoteca   E Estación",HORIZONTAL_ALIGNMENT_LEFT,-1,10,Color("b4b9b3"))
+	draw_string(font,Vector2(14,244),"D Disco E Estación · Locales: •",HORIZONTAL_ALIGNMENT_LEFT,-1,10,Color("b4b9b3"))

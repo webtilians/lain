@@ -209,6 +209,11 @@ def start_player_conversation(
                 if existing is None
                 else "Nos volvemos a encontrar. ¿Qué quieres contarme?"
             )
+            if actor_id.startswith("RESIDENT_"):
+                resident = conn.execute("""SELECT activity FROM city_residents
+                    WHERE actor_id=?""", (actor_id,)).fetchone()
+                if resident is not None:
+                    greeting = f"Soy {actor_name}. Ahora mismo: {resident[0].lower()}. ¿Qué necesitas?"
             greeting_turn = conn.execute(
                 """
                 INSERT INTO player_conversation_turns (

@@ -66,6 +66,9 @@ class AgentContextBuilder:
                 "id": conversation["initiator_id"],
             }
 
+        if agent[5] == "RESIDENT":
+            from .residents import resident_context
+            context["resident"] = resident_context(agent_id, agent[3])
         return context
 
     def _load_agent(self, agent_id: str):

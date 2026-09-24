@@ -258,10 +258,13 @@ def list_visible_actors(
             ),
         ).fetchall()
 
+    from .residents import public_residents
+    residents = public_residents(player_location)
     return [
         {
             "id": row[0],
             "name": row[1],
+            **residents.get(row[0], {}),
             **({"patrol_step": row[2]}
                if row[3] == "GENERATED" and row[2] != 0 else {}),
         }

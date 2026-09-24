@@ -8,6 +8,9 @@ func _ready() -> void:
 		var door := StaticBody3D.new()
 		door.name = "Entrance_" + target
 		door.position = LAYOUT.DOORS[target]
+		if target in ["BOOKSHOP","GROCERY","VIDEO_CLUB","CAFE","IZAKAYA","ARCADE"]:
+			# Sit in front of the deep wooden shopfront rather than inside its cladding.
+			door.position.z += 0.7
 		door.set_script(EXIT_SCRIPT)
 		door.set("target_location", target)
 		if target == "NIGHTCLUB":

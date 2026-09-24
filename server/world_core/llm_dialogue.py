@@ -89,6 +89,7 @@ def _provider_reply(context: dict, choice_text: str) -> str:
     conversation = context["conversation"]
     agent_context = {
         "identity": context["identity"],
+        **({"resident": context["resident"]} if context.get("resident") else {}),
         "situation": context["situation"],
         **({"role": context["role"]} if context.get("role") is not None else {}),
         **({"received_station_echo": context["received_station_echo"]}
@@ -452,6 +453,17 @@ def generate_dialogue_reply(
         _trace_dialogue("DISABLED")
     if choice_id == "FREE_TEXT":
         # No fake generative response if the model is offline.
+        resident = context.get("resident")
+        question = _clean(choice_text)
+        if resident and any(term in question for term in (
+            "que haces", "a que te dedicas", "objetivo", "trabajas", "habilidades",
+        )):
+            return DialogueReply(
+                text=(f"Soy {resident['role'].lower()}. "
+                      f"Ahora: {resident['activity'].lower()}. "
+                      f"Quiero {resident['public_objective'][0].lower() + resident['public_objective'][1:]}"),
+                source="DETERMINISTIC_RESIDENT_PROFILE",
+            )
         return DialogueReply(
             text="Te escucho, pero ahora mismo necesito un momento para responderte.",
             source="DETERMINISTIC_FALLBACK",

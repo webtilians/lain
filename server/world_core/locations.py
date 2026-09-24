@@ -12,6 +12,7 @@ LOCATION_GRAPH = {
         "STATION",
         "SCHOOL",
         "NIGHTCLUB",
+        "IZAKAYA", "GROCERY", "VIDEO_CLUB", "BOOKSHOP", "ARCADE", "CAFE",
     ),
 
     "SCHOOL": (
@@ -36,6 +37,9 @@ LOCATION_GRAPH = {
         "STATION",
     ),
 }
+
+for _shop in ("IZAKAYA", "GROCERY", "VIDEO_CLUB", "BOOKSHOP", "ARCADE", "CAFE"):
+    LOCATION_GRAPH[_shop] = ("APARTMENT_DISTRICT",)
 
 
 def is_known_location(

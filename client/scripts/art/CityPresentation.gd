@@ -54,5 +54,5 @@ func _process(_delta: float) -> void:
 	var nearby := ""
 	for target in LAYOUT.DOORS:
 		if player.position.distance_to(LAYOUT.DOORS[target]) < player.interaction_distance:
-			nearby = {"APARTMENT":"Entrar en casa","SCHOOL":"Entrar al colegio","NIGHTCLUB":"Entrar en AZUL","STATION":"Entrar a la estación"}[target]
+			nearby = "Entrar: " + LAYOUT.TITLES.get(target, target)
 	hint.text = "E  " + nearby + "     ·     J  Diario" if not nearby.is_empty() else "WASD  Caminar     E  Interactuar     J  Diario"
