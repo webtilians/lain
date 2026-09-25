@@ -24,6 +24,7 @@ on:
       - experiment/visual-0.9-living-neighborhood
       - experiment/visual-0.10-realism
       - experiment/chapter-0.1-already-here
+      - experiment/wired-0.1-corporation
   pull_request:
 
 jobs:
@@ -43,3 +44,5 @@ jobs:
         run: python -m pytest -q
       - name: Chapter one real HTTP boundary in a disposable world
         run: python tools/smoke_chapter01_http.py
+      - name: Corporate conflict HTTP and server-bound identity
+        run: python tools/smoke_chapter01_http.py --network

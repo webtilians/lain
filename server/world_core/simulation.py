@@ -229,6 +229,8 @@ class Simulation:
 
         from .chapter_one import initialize_chapter
         initialize_chapter()
+        from .network_conflict import initialize_conflict
+        initialize_conflict()
 
         ensure_station_followup(
             player_id=self.player.id,
@@ -1477,6 +1479,8 @@ class Simulation:
             self.minute
         )
         advance_residents(self.minute)
+        from .network_conflict import advance_conflict
+        advance_conflict(self.minute)
 
         evaluate_nodes(
             world=self.world.get_state(),

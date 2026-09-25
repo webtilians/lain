@@ -24,6 +24,7 @@ def main():
                    LAIN_WORLD_CLOCK="0", LAIN_MEMORY_SEMANTIC="0",
                    LAIN_CHAPTER_ONE="1", LAIN_PROLOGUE_ENABLED="0",
                    LAIN_CITY_RESIDENTS_ENABLED="1", LAIN_REALITY_GENERATION="0")
+        env["LAIN_CORPORATION"]="1" if "--network" in sys.argv else "0"
         with (Path(scratch)/"server.log").open("w", encoding="utf-8") as log:
             process = subprocess.Popen([sys.executable, "-m", "uvicorn", "server.api:app",
                 "--host", "127.0.0.1", "--port", str(port)], cwd=ROOT, env=env,
@@ -70,6 +71,28 @@ def main():
                     assert list(conn.iterdump())==before
                 conn.close()
                 print("CHAPTER01_HTTP_OK activation=true retries=idempotent errors=409,422 polling=read_only")
+                if "--network" in sys.argv:
+                    for destination in ["APARTMENT_DISTRICT","STATION"]:
+                        request("/api/v1/player/step",{"action":"MOVE","target":destination})
+                    command={"action":"INSPECT","relay":"RELAY_STATION","request_id":"http_network_inspect"}
+                    request("/api/v1/network/action",command)
+                    command.update(action="CLAIM",request_id="http_network_claim")
+                    result=request("/api/v1/network/action",command)
+                    assert len(result["state"]["network_conflict"]["pending"])==1
+                    with sqlite3.connect(db) as conn:
+                        before=list(conn.iterdump())
+                    conn.close()
+                    assert request("/api/v1/network/action",command)["result"]==result["result"]
+                    try:
+                        request("/api/v1/network/action",{**command,"actor_id":"AGENT_K"})
+                        raise AssertionError("Client-selected identity accepted")
+                    except HTTPError as error:
+                        assert error.code==422
+                    request("/api/v1/player/state")
+                    with sqlite3.connect(db) as conn:
+                        assert list(conn.iterdump())==before
+                    conn.close()
+                    print("CONFLICT01_HTTP_OK movement=authoritative identity=server_bound retry=idempotent")
             finally:
                 if os.name=="nt":
                     # The Windows venv launcher spawns a child interpreter.

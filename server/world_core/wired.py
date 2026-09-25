@@ -103,6 +103,8 @@ def process_wired_message_acknowledgement(
 
     from .chapter_one import activate_chapter
     activate_chapter(player_id)
+    from .network_conflict import enroll_connected_players
+    enroll_connected_players()
 
     return {
         "newly_acknowledged": newly_acknowledged,

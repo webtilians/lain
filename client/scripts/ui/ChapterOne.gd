@@ -145,6 +145,8 @@ func _present(event: Dictionary) -> void:
 	if normal_conversation.is_valid():
 		buttons.append({"id":"NORMAL","text":"Hablar de otra cosa."})
 	if terminal_context:
+		if NetworkConflict.active():
+			buttons.append({"id":"NETWORK","text":"Consultar el control de los enlaces."})
 		buttons.append({"id":"SIGNALS","text":"Consultar las otras señales de la Wired."})
 	buttons.append({"id":"CLOSE","text":"Cerrar la conexión." if terminal_context else "Dejarlo por ahora."})
 	EventDialog.show_choices(OWNER,str(event.get("speaker","...")),str(event.get("text","")),buttons)
@@ -160,6 +162,8 @@ func _choose(owner: String, selected: String) -> void:
 		return
 	if selected=="RETRY":
 		_dispatch() # Same id: a lost response cannot apply a choice twice.
+	elif selected=="NETWORK":
+		NetworkConflict.open_terminal()
 	elif selected=="CLOSE":
 		EventDialog.close_event()
 	elif selected=="NORMAL":

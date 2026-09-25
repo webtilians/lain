@@ -72,7 +72,7 @@ func request_state(silent: bool = false) -> void:
 	# The server pauses autonomous ticks only for a live, visible NPC
 	# conversation. No text, identity or memories are sent in this header.
 	var request_headers := PackedStringArray()
-	if EventDialog.visible and not EventDialog.current_owner_id.is_empty():
+	if EventDialog.visible and not EventDialog.current_owner_id.is_empty() and EventDialog.current_owner_id!="NETWORK_CONFLICT":
 		request_headers.append("X-Lain-Dialog-Active: 1")
 
 	var error := _state_request.request(

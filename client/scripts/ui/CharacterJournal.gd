@@ -163,6 +163,8 @@ func _refresh_navigation() -> void:
 		_add_navigation("CASO // EL PULSO AUSENTE", "CASE")
 	if bool(WorldApi.snapshot.get("chapter_one",{}).get("active",false)):
 		_add_navigation("ARCHIVO // YA HABÍAS ESTADO AQUÍ", "CHAPTER")
+	if bool(WorldApi.snapshot.get("network_conflict",{}).get("active",false)):
+		_add_navigation("RED // CONTROL DE ENLACES", "NETWORK")
 	var sheets: Dictionary = WorldApi.snapshot.get("character_sheets", {})
 	var actors: Array = sheets.get("visible_npcs", [])
 	for item in actors:
@@ -186,6 +188,8 @@ func _choose_view(view: String, actor_id: String) -> void:
 func _render_view() -> void:
 	chapter_controls.visible=current_view=="CHAPTER"
 	match current_view:
+		"NETWORK":
+			_render_network()
 		"CHAPTER":
 			_render_chapter()
 		"PROLOGUE":
@@ -217,6 +221,35 @@ func _render_player() -> void:
 		)
 		+ "\n\nLas fichas solo incluyen conocimientos accesibles al jugador."
 	)
+
+func _render_network() -> void:
+	var data: Dictionary=WorldApi.snapshot.get("network_conflict",{})
+	var locations: Dictionary={"STATION":"Estación","SCHOOL_LAB":"Aula de informática","VIDEO_CLUB":"Video Hoshi"}
+	var sources: Dictionary={"RELAY_TELEMETRY":"Lectura del enlace"}
+	var text: String="RED // CONTROL DE ENLACES\n\n"+str(data.get("corporation",""))+" controla el "+str(data.get("corporate_control",0))+"%\n"
+	text+="Tu exposición: "+str(int(data.get("trace",0)))+"/100\n"
+	text+="Examinar un armario permite conocer a su administrador. Disputar su control puede desencadenar una intervención.\n"
+	for item in data.get("relays",[]):
+		sources[str(item.id)]=str(item.name)
+		text+="\n"+str(item.name)+" · "+str(locations.get(str(item.location),item.location))+"\n"
+		text+="Administrador: "+str(int(item.corporation))+"% · Tú: "+str(int(item.mine))+"% · Defensas: "+str(int(item.defense))+"/2\n"
+	text+="\nINTERVENCIONES CONTRA TU CONEXIÓN\n"
+	if data.get("pending",[]).is_empty(): text+="Ninguna detectada.\n"
+	for op in data.get("pending",[]):
+		var title: String=str(op.relay)
+		for item in data.get("relays",[]):
+			if item.id==op.relay: title=str(item.name)
+		text+=title+": restan "+str(int(op.remaining))+" minutos del mundo.\n"
+	text+="\nCONTROL POR CUENTA\n"
+	for rank in data.get("rankings",[]):
+		text+=str(rank.name)+" · "+str(rank.control)+"%\n"
+	text+="\nINFORMES RECIBIDOS · DEL MÁS RECIENTE AL MÁS ANTIGUO\n"
+	for report in data.get("reports",[]):
+		text+="\nMinuto "+str(int(report.minute))+" · "+str(sources.get(str(report.source),report.source))+"\n"+str(report.text)+"\n"
+	if details.text!=text:
+		var scroll:=details.get_v_scroll_bar().value
+		details.text=text
+		details.get_v_scroll_bar().set_deferred("value",scroll)
 
 
 func _render_prologue() -> void:

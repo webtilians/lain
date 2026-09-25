@@ -20,6 +20,7 @@ from .character_sheets import player_sheet, visible_npc_sheets
 from .station_echo import station_case_snapshot
 from .prologue import prologue_projection
 from .chapter_one import chapter_snapshot
+from .network_conflict import network_snapshot
 
 from .messages import (
     list_player_messages,
@@ -353,6 +354,15 @@ def build_player_snapshot(
             "responses": [],
         }
 
+    conflict = network_snapshot(player_id)
+    npc_sheets = visible_npc_sheets(player_id, location)
+    for person in conflict.get("visible_personnel", []):
+        npc_sheets.append({
+            "id": person["id"], "name": person["name"], "kind": "NPC",
+            "role_label": person["role"], "observed_location": location,
+            "role_assignment": "OBSERVED_IDENTITY",
+            "focus": "Dice que revisa las líneas y los permisos de conexión de este lugar.",
+        })
     return {
         "schema_version": "0.1",
         "minute": load_simulation_minute(),
@@ -374,11 +384,12 @@ def build_player_snapshot(
         ),
         "character_sheets": {
             "player": player_sheet(row, len(known_nodes), station_case["status"]),
-            "visible_npcs": visible_npc_sheets(player_id, location),
+            "visible_npcs": npc_sheets,
         },
         "station_case": station_case,
         "prologue": prologue,
         "chapter_one": chapter_snapshot(player_id),
+        "network_conflict": conflict,
         "situations": list_player_situations(
             player_id
         ),

@@ -109,6 +109,26 @@ class PrologueCommandRequest(BaseModel):
     command: str
 
 
+class NetworkActionRequest(BaseModel):
+    model_config = {"extra": "forbid"}
+    action: str = Field(max_length=32)
+    relay: str = Field(max_length=64)
+    rival: str = Field(default="", max_length=64)
+    request_id: str = Field(min_length=8, max_length=80)
+
+
+@app.post("/api/v1/network/action")
+def network_action(request: NetworkActionRequest):
+    from server.world_core.network_conflict import perform_network_action
+    with _world_lock:
+        get_runtime()
+        try:
+            result=perform_network_action(PLAYER_ID,request.action,request.relay,request.rival,request.request_id)
+            return {"result":result,"state":build_player_snapshot(PLAYER_ID)}
+        except ValueError as error:
+            raise HTTPException(status_code=409,detail=str(error))
+
+
 class ChapterActionRequest(BaseModel):
     action: str = Field(max_length=32)
     target: str = Field(default="", max_length=64)
