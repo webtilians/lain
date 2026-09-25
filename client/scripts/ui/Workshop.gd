@@ -263,6 +263,8 @@ func _wired() -> void:
 	label(box, "Protección se ejecuta junto al armario de un enlace propio. Exploración permite consultar desde casa enlaces que ya has examinado. Compilar no conquista territorio.")
 	for relay in WorldApi.snapshot.get("network_conflict", {}).get("relays", []):
 		label(box, str(relay.name) + " · Tu control: " + str(int(relay.mine)) + "% · Defensas: " + str(int(relay.defense)) + "/2")
+		for controller in relay.get("controllers", []):
+			label(box, str(controller.name) + ": " + str(int(controller.control)) + "%")
 		if bool(relay.inspected):
 			var b := button(box, "Ejecutar Exploración", _send.bind("SCAN", {"relay":relay.id}))
 			b.disabled = not "scan" in data().get("modules", [])

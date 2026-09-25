@@ -26,6 +26,7 @@ on:
       - experiment/chapter-0.1-already-here
       - experiment/wired-0.1-corporation
       - experiment/wired-0.2-workshop
+      - experiment/wired-0.3-noema
   pull_request:
 
 jobs:
@@ -49,3 +50,5 @@ jobs:
         run: python tools/smoke_chapter01_http.py --network
       - name: Workshop HTTP lesson, equipment and replay
         run: python tools/smoke_chapter01_http.py --workshop
+      - name: NOEMA HTTP independent orders and individual evidence
+        run: python tools/smoke_chapter01_http.py --noema

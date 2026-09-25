@@ -45,7 +45,7 @@ func _process(_delta: float) -> void:
 	var threats: Array=network.get("pending",[])
 	warning.visible=(not threats.is_empty() or Time.get_ticks_msec()<notice_until) and not CharacterJournal.backdrop.visible
 	if not threats.is_empty():
-		warning.text="WIRED · INTERVENCIÓN DETECTADA\nRestan "+str(int(threats[0].remaining))+" min del mundo  ·  J: revisar enlaces"
+		warning.text="WIRED · "+str(threats.size())+" ORDEN/ÓRDENES PENDIENTES\n"+str(threats[0].get("operator","Intervención"))+" · "+str(int(threats[0].remaining))+" min del mundo  ·  J: revisar enlaces"
 	else:
 		warning.text=notice
 	var scene:=get_tree().current_scene as Node3D
@@ -58,14 +58,14 @@ func _process(_delta: float) -> void:
 	objects.set("location",str(WorldApi.snapshot.get("player",{}).get("location","")))
 	scene.add_child(objects)
 
-func interact(relay: String, personnel: bool=false) -> void:
+func interact(relay: String, personnel: bool=false, faction: String="KAGAMI") -> void:
 	if busy or EventDialog.visible:
 		return
-	_send("TALK" if personnel else "OPEN",relay,"")
+	_send("TALK" if personnel else "OPEN",relay,"",faction)
 
-func _send(action: String, relay: String, rival: String) -> void:
+func _send(action: String, relay: String, rival: String, faction: String="KAGAMI") -> void:
 	if busy: return
-	pending={"action":action,"relay":relay,"rival":rival,
+	pending={"action":action,"relay":relay,"rival":rival,"faction":faction,
 		"request_id":"network_"+str(Time.get_unix_time_from_system()).replace(".","_")+"_"+str(Time.get_ticks_usec())}
 	_dispatch()
 
@@ -95,7 +95,7 @@ func _completed(result: int, code: int, _headers: PackedStringArray, body: Packe
 			"NO_PLAYER_CONTROL":"Ya no conservas control en ese enlace.",
 			"INSPECT_RELAY_FIRST":"Examina el enlace antes de intervenir.",
 			"INVALID_RIVAL":"Esa cuenta ya no tiene control disponible.",
-			"NO_CORPORATE_CONTROL":"Todo el control de este enlace está en manos de usuarios."}
+			"NO_CORPORATE_CONTROL":"Esa corporación ya no conserva control en este enlace."}
 		_failure(messages.get(str(payload.get("detail","")),"Esta operación no está disponible ahora."))
 		return
 	WorldApi.snapshot=payload.state
@@ -128,7 +128,7 @@ func _choose(owner: String, selected: String) -> void:
 		_dispatch()
 	elif options.has(selected):
 		var option: Dictionary=options[selected]
-		_send(str(option.action),str(option.relay),str(option.get("rival","")))
+		_send(str(option.action),str(option.relay),str(option.get("rival","")),str(option.get("faction","KAGAMI")))
 
 func open_archive() -> void:
 	EventDialog.close_event()
@@ -143,6 +143,8 @@ func open_terminal() -> void:
 	var choices: Array[Dictionary]=[]
 	for relay in data.get("relays",[]):
 		text+=str(relay.name)+": tú "+str(int(relay.mine))+"%\n"
+		for controller in relay.get("controllers",[]):
+			text+="  "+str(controller.name)+": "+str(int(controller.control))+"%\n"
 		if int(relay.mine)>0:
 			choices.append({"text":"Ocultar: "+str(relay.name)+" · ceder hasta 5 puntos.","action":"GO_DARK","relay":str(relay.id)})
 	text+="\nPara disputar un enlace debes encontrar su armario en la ciudad. Desde casa puedes ocultar una conexión tuya."

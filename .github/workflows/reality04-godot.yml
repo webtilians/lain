@@ -9,6 +9,7 @@ on:
       - experiment/chapter-0.1-already-here
       - experiment/wired-0.1-corporation
       - experiment/wired-0.2-workshop
+      - experiment/wired-0.3-noema
   pull_request:
     branches:
       - experiment/reality-0.3-visual06-integration
@@ -127,6 +128,16 @@ jobs:
           /tmp/lain-godot --headless --path client --script res://tools/test_workshop01.gd 2>&1 | tee /tmp/lain-workshop01.log
           grep -q 'WORKSHOP01_GAMEPLAY_OK' /tmp/lain-workshop01.log
           if grep -E '^(SCRIPT ERROR:|ERROR:)' /tmp/lain-workshop01.log; then
+            exit 1
+          fi
+
+      - name: NOEMA physical agents, controller selection and simultaneous orders
+        shell: bash
+        run: |
+          set -euo pipefail
+          /tmp/lain-godot --headless --path client --script res://tools/test_noema01.gd 2>&1 | tee /tmp/lain-noema01.log
+          grep -q 'NOEMA01_GAMEPLAY_OK views=9 locations=4' /tmp/lain-noema01.log
+          if grep -E '^(SCRIPT ERROR:|ERROR:)' /tmp/lain-noema01.log; then
             exit 1
           fi
 

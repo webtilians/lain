@@ -135,6 +135,7 @@ class NetworkActionRequest(BaseModel):
     action: str = Field(max_length=32)
     relay: str = Field(max_length=64)
     rival: str = Field(default="", max_length=64)
+    faction: str = Field(default="KAGAMI", max_length=16)
     request_id: str = Field(min_length=8, max_length=80)
 
 
@@ -144,7 +145,7 @@ def network_action(request: NetworkActionRequest):
     with _world_lock:
         get_runtime()
         try:
-            result=perform_network_action(PLAYER_ID,request.action,request.relay,request.rival,request.request_id)
+            result=perform_network_action(PLAYER_ID,request.action,request.relay,request.rival,request.request_id,request.faction)
             return {"result":result,"state":build_player_snapshot(PLAYER_ID)}
         except ValueError as error:
             raise HTTPException(status_code=409,detail=str(error))

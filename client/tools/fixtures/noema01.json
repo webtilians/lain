@@ -1,0 +1,4083 @@
+[
+  {
+    "name": "cover-station",
+    "mode": "physical",
+    "state": {
+      "schema_version": "0.1",
+      "minute": 0,
+      "player": {
+        "id": "PLAYER_1",
+        "name": "Player",
+        "faction": "UNALIGNED",
+        "location": "STATION",
+        "goal": "UNKNOWN",
+        "energy": 1.0
+      },
+      "navigation": {
+        "reachable_locations": [
+          "APARTMENT_DISTRICT",
+          "OLD_DISTRICT"
+        ]
+      },
+      "known_nodes": [
+        {
+          "id": "NODE_07",
+          "knowledge_confidence": 0.35,
+          "knowledge_source": "WIRED_MESSAGE",
+          "belief": {
+            "location": "STATION",
+            "strength": 0.5,
+            "confidence": 0.35,
+            "source": "WIRED_MESSAGE",
+            "updated_minute": 0
+          }
+        }
+      ],
+      "visible_actors": [
+        {
+          "id": "RESIDENT_035",
+          "name": "Osamu Kaneko",
+          "role": "Empleado de estación",
+          "role_label": "Empleado de estación",
+          "skills": {
+            "Orientación": 4,
+            "Observación": 2
+          },
+          "public_objective": "Ayudar a viajeros que no encuentran el andén.",
+          "activity": "Revisa el andén",
+          "slot": 0,
+          "patrol_step": 0,
+          "appearance": "worker",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_036",
+          "name": "Etsuko Miura",
+          "role": "Oficinista",
+          "role_label": "Oficinista",
+          "skills": {
+            "Contabilidad": 5,
+            "Observación": 3
+          },
+          "public_objective": "Llegar a casa después de entregar el informe del día.",
+          "activity": "Consulta el horario",
+          "slot": 1,
+          "patrol_step": 0,
+          "appearance": "suit",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_037",
+          "name": "Takumi Imai",
+          "role": "Estudiante viajero",
+          "role_label": "Estudiante viajero",
+          "skills": {
+            "Idiomas": 3,
+            "Observación": 1
+          },
+          "public_objective": "Repasar unas tarjetas antes de que llegue su tren.",
+          "activity": "Lee una tarjeta",
+          "slot": 2,
+          "patrol_step": 0,
+          "appearance": "student",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_038",
+          "name": "Miyako Hara",
+          "role": "Vendedora de billetes",
+          "role_label": "Vendedora de billetes",
+          "skills": {
+            "Atención al público": 4,
+            "Observación": 2
+          },
+          "public_objective": "Comprobar las indicaciones del último servicio.",
+          "activity": "Revisa un aviso",
+          "slot": 3,
+          "patrol_step": 0,
+          "appearance": "worker",
+          "role_assignment": "CITY_PROVISIONAL"
+        }
+      ],
+      "character_sheets": {
+        "player": {
+          "id": "PLAYER_1",
+          "name": "Player",
+          "kind": "PLAYER",
+          "faction": "UNALIGNED",
+          "location": "STATION",
+          "energy": 1.0,
+          "known_nodes": 1,
+          "case_status": "UNSEEN",
+          "agency": "HUMAN_ONLY"
+        },
+        "visible_npcs": [
+          {
+            "id": "RESIDENT_035",
+            "name": "Osamu Kaneko",
+            "kind": "NPC",
+            "observed_location": "STATION",
+            "focus": "Revisa el andén",
+            "role": "Empleado de estación",
+            "role_label": "Empleado de estación",
+            "skills": {
+              "Orientación": 4,
+              "Observación": 2
+            },
+            "public_objective": "Ayudar a viajeros que no encuentran el andén.",
+            "activity": "Revisa el andén",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_036",
+            "name": "Etsuko Miura",
+            "kind": "NPC",
+            "observed_location": "STATION",
+            "focus": "Consulta el horario",
+            "role": "Oficinista",
+            "role_label": "Oficinista",
+            "skills": {
+              "Contabilidad": 5,
+              "Observación": 3
+            },
+            "public_objective": "Llegar a casa después de entregar el informe del día.",
+            "activity": "Consulta el horario",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_037",
+            "name": "Takumi Imai",
+            "kind": "NPC",
+            "observed_location": "STATION",
+            "focus": "Lee una tarjeta",
+            "role": "Estudiante viajero",
+            "role_label": "Estudiante viajero",
+            "skills": {
+              "Idiomas": 3,
+              "Observación": 1
+            },
+            "public_objective": "Repasar unas tarjetas antes de que llegue su tren.",
+            "activity": "Lee una tarjeta",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_038",
+            "name": "Miyako Hara",
+            "kind": "NPC",
+            "observed_location": "STATION",
+            "focus": "Revisa un aviso",
+            "role": "Vendedora de billetes",
+            "role_label": "Vendedora de billetes",
+            "skills": {
+              "Atención al público": 4,
+              "Observación": 2
+            },
+            "public_objective": "Comprobar las indicaciones del último servicio.",
+            "activity": "Revisa un aviso",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "CIVIL_101",
+            "name": "Daichi Kurose",
+            "kind": "NPC",
+            "role_label": "Técnico de telefonía",
+            "observed_location": "STATION",
+            "role_assignment": "OBSERVED_IDENTITY",
+            "focus": "Dice que revisa las líneas y los permisos de conexión de este lugar."
+          },
+          {
+            "id": "CIVIL_201",
+            "name": "Mika Senda",
+            "kind": "NPC",
+            "role_label": "Encuestadora de transporte",
+            "observed_location": "STATION",
+            "role_assignment": "OBSERVED_IDENTITY",
+            "focus": "Dice que compara horarios y registros de paso."
+          }
+        ]
+      },
+      "station_case": {
+        "id": "STATION_ECHO_07",
+        "title": "El pulso ausente",
+        "status": "UNSEEN",
+        "resolution": null,
+        "summary": "Investiga NODE_07 en la estacion para buscar el rastro.",
+        "witness_count": 0,
+        "responses": []
+      },
+      "prologue": {
+        "enabled": false,
+        "stage": "LEGACY",
+        "hint": ""
+      },
+      "chapter_one": {
+        "active": true,
+        "title": "Ya habías estado aquí",
+        "started_minute": 0,
+        "connection_minute": 0,
+        "decision": null,
+        "hypothesis": "",
+        "hypothesis_status": "UNVERIFIED",
+        "evidence": [
+          {
+            "id": "RETURN_MESSAGE",
+            "title": "Has vuelto",
+            "kind": "MESSAGE",
+            "source_id": "UNKNOWN_WIRED",
+            "source_label": "Identidad desconocida · Wired",
+            "text": "Has vuelto.",
+            "acquired_minute": 0,
+            "claimed_time": "Recibido al abrir este capítulo, minuto 0",
+            "event_id": null
+          }
+        ],
+        "links": [],
+        "contradiction_linked": false,
+        "characters": [
+          "RESIDENT_001",
+          "RESIDENT_006",
+          "PROFESSOR",
+          "RYOKO"
+        ],
+        "notification": "Has vuelto"
+      },
+      "network_conflict": {
+        "active": true,
+        "multiple_operators": true,
+        "corporation": "Administradores de la Wired",
+        "corporate_control": 100.0,
+        "trace": 0,
+        "ready_in": 0,
+        "relays": [
+          {
+            "id": "RELAY_STATION",
+            "name": "Enlace del andén",
+            "location": "STATION",
+            "corporation": 80,
+            "mine": 0,
+            "defense": 0,
+            "suppressed_until": 0,
+            "inspected": false,
+            "controllers": [
+              {
+                "slot": "LINES",
+                "name": "Administrador de líneas",
+                "control": 80,
+                "suppressed_until": 0
+              },
+              {
+                "slot": "RECORDS",
+                "name": "Administrador de registros",
+                "control": 20,
+                "suppressed_until": 0
+              }
+            ]
+          },
+          {
+            "id": "RELAY_SCHOOL",
+            "name": "Enlace del pabellón B",
+            "location": "SCHOOL_LAB",
+            "corporation": 70,
+            "mine": 0,
+            "defense": 0,
+            "suppressed_until": 0,
+            "inspected": false,
+            "controllers": [
+              {
+                "slot": "LINES",
+                "name": "Administrador de líneas",
+                "control": 70,
+                "suppressed_until": 0
+              },
+              {
+                "slot": "RECORDS",
+                "name": "Administrador de registros",
+                "control": 30,
+                "suppressed_until": 0
+              }
+            ]
+          },
+          {
+            "id": "RELAY_VIDEO",
+            "name": "Enlace del videoclub",
+            "location": "VIDEO_CLUB",
+            "corporation": 55,
+            "mine": 0,
+            "defense": 0,
+            "suppressed_until": 0,
+            "inspected": false,
+            "controllers": [
+              {
+                "slot": "LINES",
+                "name": "Administrador de líneas",
+                "control": 55,
+                "suppressed_until": 0
+              },
+              {
+                "slot": "RECORDS",
+                "name": "Administrador de registros",
+                "control": 45,
+                "suppressed_until": 0
+              }
+            ]
+          }
+        ],
+        "rankings": [
+          {
+            "actor_id": "PLAYER_1",
+            "name": "Player",
+            "control": 0.0
+          }
+        ],
+        "pending": [],
+        "reports": [
+          {
+            "id": 1,
+            "minute": 0,
+            "source": "WORKSHOP",
+            "text": "El PC dispone de un taller de código. En Kissa Café han instalado un terminal: su técnico busca ayuda para comprobar un coprocesador."
+          }
+        ],
+        "visible_personnel": [
+          {
+            "id": "CIVIL_101",
+            "relay": "RELAY_STATION",
+            "name": "Daichi Kurose",
+            "role": "Técnico de telefonía",
+            "slot": "LINES"
+          },
+          {
+            "id": "CIVIL_201",
+            "relay": "RELAY_STATION",
+            "name": "Mika Senda",
+            "role": "Encuestadora de transporte",
+            "slot": "RECORDS",
+            "focus": "Dice que compara horarios y registros de paso."
+          }
+        ],
+        "session_mode": "LOCAL"
+      },
+      "workshop": {
+        "active": true,
+        "lesson": 0,
+        "life_source": "def next_cell(alive, neighbors):\n    # Completa las reglas de nacimiento y supervivencia.\n    return False\n",
+        "draft": "use(\"routing\")\n",
+        "compiled": "use(\"routing\")\n",
+        "modules": [
+          "routing"
+        ],
+        "contract": "INDEPENDENT",
+        "best_score": 0,
+        "capacity": 4,
+        "cost": 2,
+        "assets": [
+          {
+            "id": "first_connection",
+            "kind": "CODE",
+            "model": "routing",
+            "source": "Tu primera conexión a la Wired",
+            "minute": 0,
+            "active": 0,
+            "ownership": "OWNED",
+            "name": "Enrutamiento",
+            "capacity": 0
+          },
+          {
+            "id": "home_navi",
+            "kind": "DEVICE",
+            "model": "navi",
+            "source": "Ordenador de casa",
+            "minute": 0,
+            "active": 1,
+            "ownership": "OWNED",
+            "name": "Navi A",
+            "capacity": 4
+          }
+        ],
+        "library": [
+          {
+            "id": "routing",
+            "name": "Enrutamiento",
+            "cost": 2,
+            "effect": "Conexión del montaje; conserva las acciones básicas del enlace."
+          }
+        ],
+        "offers": {},
+        "life_hint": "",
+        "session_mode": "LOCAL"
+      },
+      "situations": [],
+      "interaction": null,
+      "outgoing_interaction": null,
+      "messages": [
+        {
+          "id": "MSG_BOOTSTRAP_001",
+          "sender": "unknown@wired",
+          "subject": "NO SUBJECT",
+          "body": "NO ESTOY MUERTA.\n\nSOLO DEJÉ DE ESTAR AHÍ.",
+          "created_minute": 0,
+          "read": true,
+          "acknowledged": true,
+          "acknowledged_minute": 0
+        }
+      ],
+      "unread_messages": 0,
+      "wired": {
+        "connected": true,
+        "signals": [
+          {
+            "node_id": "NODE_07",
+            "location": "STATION",
+            "strength": 0.5,
+            "confidence": 0.35,
+            "origin_source": "WIRED_MESSAGE",
+            "current_source": "WIRED_MESSAGE",
+            "verified": false,
+            "updated_minute": 0
+          }
+        ],
+        "digital_presences": []
+      }
+    },
+    "result": {
+      "speaker": "Mika Senda",
+      "text": "«Soy Mika Senda. Solo comparo fichas. A veces un nombre figura donde no debería.»",
+      "choices": []
+    }
+  },
+  {
+    "name": "cover-school_lab",
+    "mode": "physical",
+    "state": {
+      "schema_version": "0.1",
+      "minute": 0,
+      "player": {
+        "id": "PLAYER_1",
+        "name": "Player",
+        "faction": "UNALIGNED",
+        "location": "SCHOOL_LAB",
+        "goal": "UNKNOWN",
+        "energy": 1.0
+      },
+      "navigation": {
+        "reachable_locations": [
+          "SCHOOL"
+        ]
+      },
+      "known_nodes": [
+        {
+          "id": "NODE_07",
+          "knowledge_confidence": 0.35,
+          "knowledge_source": "WIRED_MESSAGE",
+          "belief": {
+            "location": "STATION",
+            "strength": 0.5,
+            "confidence": 0.35,
+            "source": "WIRED_MESSAGE",
+            "updated_minute": 0
+          }
+        }
+      ],
+      "visible_actors": [
+        {
+          "id": "RESIDENT_025",
+          "name": "Takeshi Uno",
+          "role": "Ayudante de informática",
+          "role_label": "Ayudante de informática",
+          "skills": {
+            "Informática": 3,
+            "Observación": 1
+          },
+          "public_objective": "Recuperar un disquete con ejercicios del aula.",
+          "activity": "Comprueba una etiqueta",
+          "slot": 0,
+          "patrol_step": 0,
+          "appearance": "teacher",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_026",
+          "name": "Misaki Ito",
+          "role": "Alumna de informática",
+          "role_label": "Alumna de informática",
+          "skills": {
+            "Programación": 4,
+            "Observación": 2
+          },
+          "public_objective": "Entender por qué su primer programa no termina.",
+          "activity": "Lee su código en papel",
+          "slot": 1,
+          "patrol_step": 0,
+          "appearance": "student",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_027",
+          "name": "Jun Saito",
+          "role": "Alumno del taller",
+          "role_label": "Alumno del taller",
+          "skills": {
+            "Electrónica": 5,
+            "Observación": 3
+          },
+          "public_objective": "Preparar un pequeño catálogo de componentes usados.",
+          "activity": "Clasifica componentes",
+          "slot": 2,
+          "patrol_step": 0,
+          "appearance": "student",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_028",
+          "name": "Rina Watanabe",
+          "role": "Amiga del aula",
+          "role_label": "Amiga del aula",
+          "skills": {
+            "Informática": 3,
+            "Observación": 1
+          },
+          "public_objective": "Guardar una copia del trabajo antes de salir.",
+          "activity": "Revisa su disquete",
+          "slot": 3,
+          "patrol_step": 0,
+          "appearance": "student",
+          "role_assignment": "CITY_PROVISIONAL"
+        }
+      ],
+      "character_sheets": {
+        "player": {
+          "id": "PLAYER_1",
+          "name": "Player",
+          "kind": "PLAYER",
+          "faction": "UNALIGNED",
+          "location": "SCHOOL_LAB",
+          "energy": 1.0,
+          "known_nodes": 1,
+          "case_status": "UNSEEN",
+          "agency": "HUMAN_ONLY"
+        },
+        "visible_npcs": [
+          {
+            "id": "RESIDENT_025",
+            "name": "Takeshi Uno",
+            "kind": "NPC",
+            "observed_location": "SCHOOL_LAB",
+            "focus": "Comprueba una etiqueta",
+            "role": "Ayudante de informática",
+            "role_label": "Ayudante de informática",
+            "skills": {
+              "Informática": 3,
+              "Observación": 1
+            },
+            "public_objective": "Recuperar un disquete con ejercicios del aula.",
+            "activity": "Comprueba una etiqueta",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_026",
+            "name": "Misaki Ito",
+            "kind": "NPC",
+            "observed_location": "SCHOOL_LAB",
+            "focus": "Lee su código en papel",
+            "role": "Alumna de informática",
+            "role_label": "Alumna de informática",
+            "skills": {
+              "Programación": 4,
+              "Observación": 2
+            },
+            "public_objective": "Entender por qué su primer programa no termina.",
+            "activity": "Lee su código en papel",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_027",
+            "name": "Jun Saito",
+            "kind": "NPC",
+            "observed_location": "SCHOOL_LAB",
+            "focus": "Clasifica componentes",
+            "role": "Alumno del taller",
+            "role_label": "Alumno del taller",
+            "skills": {
+              "Electrónica": 5,
+              "Observación": 3
+            },
+            "public_objective": "Preparar un pequeño catálogo de componentes usados.",
+            "activity": "Clasifica componentes",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_028",
+            "name": "Rina Watanabe",
+            "kind": "NPC",
+            "observed_location": "SCHOOL_LAB",
+            "focus": "Revisa su disquete",
+            "role": "Amiga del aula",
+            "role_label": "Amiga del aula",
+            "skills": {
+              "Informática": 3,
+              "Observación": 1
+            },
+            "public_objective": "Guardar una copia del trabajo antes de salir.",
+            "activity": "Revisa su disquete",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "CIVIL_102",
+            "name": "Reina Asano",
+            "kind": "NPC",
+            "role_label": "Consultora de equipos",
+            "observed_location": "SCHOOL_LAB",
+            "role_assignment": "OBSERVED_IDENTITY",
+            "focus": "Dice que revisa las líneas y los permisos de conexión de este lugar."
+          },
+          {
+            "id": "CIVIL_202",
+            "name": "Ren Fujimoto",
+            "kind": "NPC",
+            "role_label": "Revisor del archivo escolar",
+            "observed_location": "SCHOOL_LAB",
+            "role_assignment": "OBSERVED_IDENTITY",
+            "focus": "Dice que revisa las autorizaciones del aula."
+          }
+        ]
+      },
+      "station_case": {
+        "id": "STATION_ECHO_07",
+        "title": "El pulso ausente",
+        "status": "UNSEEN",
+        "resolution": null,
+        "summary": "Investiga NODE_07 en la estacion para buscar el rastro.",
+        "witness_count": 0,
+        "responses": []
+      },
+      "prologue": {
+        "enabled": false,
+        "stage": "LEGACY",
+        "hint": ""
+      },
+      "chapter_one": {
+        "active": true,
+        "title": "Ya habías estado aquí",
+        "started_minute": 0,
+        "connection_minute": 0,
+        "decision": null,
+        "hypothesis": "",
+        "hypothesis_status": "UNVERIFIED",
+        "evidence": [
+          {
+            "id": "RETURN_MESSAGE",
+            "title": "Has vuelto",
+            "kind": "MESSAGE",
+            "source_id": "UNKNOWN_WIRED",
+            "source_label": "Identidad desconocida · Wired",
+            "text": "Has vuelto.",
+            "acquired_minute": 0,
+            "claimed_time": "Recibido al abrir este capítulo, minuto 0",
+            "event_id": null
+          }
+        ],
+        "links": [],
+        "contradiction_linked": false,
+        "characters": [
+          "RESIDENT_001",
+          "RESIDENT_006",
+          "PROFESSOR",
+          "RYOKO"
+        ],
+        "notification": "Has vuelto"
+      },
+      "network_conflict": {
+        "active": true,
+        "multiple_operators": true,
+        "corporation": "Administradores de la Wired",
+        "corporate_control": 100.0,
+        "trace": 0,
+        "ready_in": 0,
+        "relays": [
+          {
+            "id": "RELAY_STATION",
+            "name": "Enlace del andén",
+            "location": "STATION",
+            "corporation": 80,
+            "mine": 0,
+            "defense": 0,
+            "suppressed_until": 0,
+            "inspected": false,
+            "controllers": [
+              {
+                "slot": "LINES",
+                "name": "Administrador de líneas",
+                "control": 80,
+                "suppressed_until": 0
+              },
+              {
+                "slot": "RECORDS",
+                "name": "Administrador de registros",
+                "control": 20,
+                "suppressed_until": 0
+              }
+            ]
+          },
+          {
+            "id": "RELAY_SCHOOL",
+            "name": "Enlace del pabellón B",
+            "location": "SCHOOL_LAB",
+            "corporation": 70,
+            "mine": 0,
+            "defense": 0,
+            "suppressed_until": 0,
+            "inspected": false,
+            "controllers": [
+              {
+                "slot": "LINES",
+                "name": "Administrador de líneas",
+                "control": 70,
+                "suppressed_until": 0
+              },
+              {
+                "slot": "RECORDS",
+                "name": "Administrador de registros",
+                "control": 30,
+                "suppressed_until": 0
+              }
+            ]
+          },
+          {
+            "id": "RELAY_VIDEO",
+            "name": "Enlace del videoclub",
+            "location": "VIDEO_CLUB",
+            "corporation": 55,
+            "mine": 0,
+            "defense": 0,
+            "suppressed_until": 0,
+            "inspected": false,
+            "controllers": [
+              {
+                "slot": "LINES",
+                "name": "Administrador de líneas",
+                "control": 55,
+                "suppressed_until": 0
+              },
+              {
+                "slot": "RECORDS",
+                "name": "Administrador de registros",
+                "control": 45,
+                "suppressed_until": 0
+              }
+            ]
+          }
+        ],
+        "rankings": [
+          {
+            "actor_id": "PLAYER_1",
+            "name": "Player",
+            "control": 0.0
+          }
+        ],
+        "pending": [],
+        "reports": [
+          {
+            "id": 1,
+            "minute": 0,
+            "source": "WORKSHOP",
+            "text": "El PC dispone de un taller de código. En Kissa Café han instalado un terminal: su técnico busca ayuda para comprobar un coprocesador."
+          }
+        ],
+        "visible_personnel": [
+          {
+            "id": "CIVIL_102",
+            "relay": "RELAY_SCHOOL",
+            "name": "Reina Asano",
+            "role": "Consultora de equipos",
+            "slot": "LINES"
+          },
+          {
+            "id": "CIVIL_202",
+            "relay": "RELAY_SCHOOL",
+            "name": "Ren Fujimoto",
+            "role": "Revisor del archivo escolar",
+            "slot": "RECORDS",
+            "focus": "Dice que revisa las autorizaciones del aula."
+          }
+        ],
+        "session_mode": "LOCAL"
+      },
+      "workshop": {
+        "active": true,
+        "lesson": 0,
+        "life_source": "def next_cell(alive, neighbors):\n    # Completa las reglas de nacimiento y supervivencia.\n    return False\n",
+        "draft": "use(\"routing\")\n",
+        "compiled": "use(\"routing\")\n",
+        "modules": [
+          "routing"
+        ],
+        "contract": "INDEPENDENT",
+        "best_score": 0,
+        "capacity": 4,
+        "cost": 2,
+        "assets": [
+          {
+            "id": "first_connection",
+            "kind": "CODE",
+            "model": "routing",
+            "source": "Tu primera conexión a la Wired",
+            "minute": 0,
+            "active": 0,
+            "ownership": "OWNED",
+            "name": "Enrutamiento",
+            "capacity": 0
+          },
+          {
+            "id": "home_navi",
+            "kind": "DEVICE",
+            "model": "navi",
+            "source": "Ordenador de casa",
+            "minute": 0,
+            "active": 1,
+            "ownership": "OWNED",
+            "name": "Navi A",
+            "capacity": 4
+          }
+        ],
+        "library": [
+          {
+            "id": "routing",
+            "name": "Enrutamiento",
+            "cost": 2,
+            "effect": "Conexión del montaje; conserva las acciones básicas del enlace."
+          }
+        ],
+        "offers": {},
+        "life_hint": "",
+        "session_mode": "LOCAL"
+      },
+      "situations": [],
+      "interaction": null,
+      "outgoing_interaction": null,
+      "messages": [
+        {
+          "id": "MSG_BOOTSTRAP_001",
+          "sender": "unknown@wired",
+          "subject": "NO SUBJECT",
+          "body": "NO ESTOY MUERTA.\n\nSOLO DEJÉ DE ESTAR AHÍ.",
+          "created_minute": 0,
+          "read": true,
+          "acknowledged": true,
+          "acknowledged_minute": 0
+        }
+      ],
+      "unread_messages": 0,
+      "wired": {
+        "connected": true,
+        "signals": [
+          {
+            "node_id": "NODE_07",
+            "location": "STATION",
+            "strength": 0.5,
+            "confidence": 0.35,
+            "origin_source": "WIRED_MESSAGE",
+            "current_source": "WIRED_MESSAGE",
+            "verified": false,
+            "updated_minute": 0
+          }
+        ],
+        "digital_presences": []
+      }
+    },
+    "result": {
+      "speaker": "Ren Fujimoto",
+      "text": "«Soy Ren Fujimoto. Solo comparo fichas. A veces un nombre figura donde no debería.»",
+      "choices": []
+    }
+  },
+  {
+    "name": "cover-video_club",
+    "mode": "physical",
+    "state": {
+      "schema_version": "0.1",
+      "minute": 0,
+      "player": {
+        "id": "PLAYER_1",
+        "name": "Player",
+        "faction": "UNALIGNED",
+        "location": "VIDEO_CLUB",
+        "goal": "UNKNOWN",
+        "energy": 1.0
+      },
+      "navigation": {
+        "reachable_locations": [
+          "APARTMENT_DISTRICT"
+        ]
+      },
+      "known_nodes": [
+        {
+          "id": "NODE_07",
+          "knowledge_confidence": 0.35,
+          "knowledge_source": "WIRED_MESSAGE",
+          "belief": {
+            "location": "STATION",
+            "strength": 0.5,
+            "confidence": 0.35,
+            "source": "WIRED_MESSAGE",
+            "updated_minute": 0
+          }
+        }
+      ],
+      "visible_actors": [
+        {
+          "id": "RESIDENT_045",
+          "name": "Makoto Ishikawa",
+          "role": "Encargado del videoclub",
+          "role_label": "Encargado del videoclub",
+          "skills": {
+            "Cine": 5,
+            "Observación": 3
+          },
+          "public_objective": "Recuperar una cinta devuelta en la caja equivocada.",
+          "activity": "Revisa devoluciones",
+          "slot": 0,
+          "patrol_step": 0,
+          "appearance": "apron",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_046",
+          "name": "Satomi Kojima",
+          "role": "Aficionada al cine",
+          "role_label": "Aficionada al cine",
+          "skills": {
+            "Cine": 3,
+            "Observación": 1
+          },
+          "public_objective": "Encontrar una película que vio de pequeña.",
+          "activity": "Recuerda una escena",
+          "slot": 1,
+          "patrol_step": 0,
+          "appearance": "casual",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_047",
+          "name": "Daisuke Morita",
+          "role": "Ayudante del videoclub",
+          "role_label": "Ayudante del videoclub",
+          "skills": {
+            "Archivo": 4,
+            "Observación": 2
+          },
+          "public_objective": "Ordenar la sección de ciencia ficción por número.",
+          "activity": "Comprueba los números",
+          "slot": 2,
+          "patrol_step": 0,
+          "appearance": "worker",
+          "role_assignment": "CITY_PROVISIONAL"
+        }
+      ],
+      "character_sheets": {
+        "player": {
+          "id": "PLAYER_1",
+          "name": "Player",
+          "kind": "PLAYER",
+          "faction": "UNALIGNED",
+          "location": "VIDEO_CLUB",
+          "energy": 1.0,
+          "known_nodes": 1,
+          "case_status": "UNSEEN",
+          "agency": "HUMAN_ONLY"
+        },
+        "visible_npcs": [
+          {
+            "id": "RESIDENT_045",
+            "name": "Makoto Ishikawa",
+            "kind": "NPC",
+            "observed_location": "VIDEO_CLUB",
+            "focus": "Revisa devoluciones",
+            "role": "Encargado del videoclub",
+            "role_label": "Encargado del videoclub",
+            "skills": {
+              "Cine": 5,
+              "Observación": 3
+            },
+            "public_objective": "Recuperar una cinta devuelta en la caja equivocada.",
+            "activity": "Revisa devoluciones",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_046",
+            "name": "Satomi Kojima",
+            "kind": "NPC",
+            "observed_location": "VIDEO_CLUB",
+            "focus": "Recuerda una escena",
+            "role": "Aficionada al cine",
+            "role_label": "Aficionada al cine",
+            "skills": {
+              "Cine": 3,
+              "Observación": 1
+            },
+            "public_objective": "Encontrar una película que vio de pequeña.",
+            "activity": "Recuerda una escena",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_047",
+            "name": "Daisuke Morita",
+            "kind": "NPC",
+            "observed_location": "VIDEO_CLUB",
+            "focus": "Comprueba los números",
+            "role": "Ayudante del videoclub",
+            "role_label": "Ayudante del videoclub",
+            "skills": {
+              "Archivo": 4,
+              "Observación": 2
+            },
+            "public_objective": "Ordenar la sección de ciencia ficción por número.",
+            "activity": "Comprueba los números",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "CIVIL_103",
+            "name": "Shin Okabe",
+            "kind": "NPC",
+            "role_label": "Supervisor de mantenimiento",
+            "observed_location": "VIDEO_CLUB",
+            "role_assignment": "OBSERVED_IDENTITY",
+            "focus": "Dice que revisa las líneas y los permisos de conexión de este lugar."
+          },
+          {
+            "id": "CIVIL_203",
+            "name": "Aya Morita",
+            "kind": "NPC",
+            "role_label": "Catalogadora de cintas",
+            "observed_location": "VIDEO_CLUB",
+            "role_assignment": "OBSERVED_IDENTITY",
+            "focus": "Dice que comprueba las fichas de préstamo."
+          }
+        ]
+      },
+      "station_case": {
+        "id": "STATION_ECHO_07",
+        "title": "El pulso ausente",
+        "status": "UNSEEN",
+        "resolution": null,
+        "summary": "Investiga NODE_07 en la estacion para buscar el rastro.",
+        "witness_count": 0,
+        "responses": []
+      },
+      "prologue": {
+        "enabled": false,
+        "stage": "LEGACY",
+        "hint": ""
+      },
+      "chapter_one": {
+        "active": true,
+        "title": "Ya habías estado aquí",
+        "started_minute": 0,
+        "connection_minute": 0,
+        "decision": null,
+        "hypothesis": "",
+        "hypothesis_status": "UNVERIFIED",
+        "evidence": [
+          {
+            "id": "RETURN_MESSAGE",
+            "title": "Has vuelto",
+            "kind": "MESSAGE",
+            "source_id": "UNKNOWN_WIRED",
+            "source_label": "Identidad desconocida · Wired",
+            "text": "Has vuelto.",
+            "acquired_minute": 0,
+            "claimed_time": "Recibido al abrir este capítulo, minuto 0",
+            "event_id": null
+          }
+        ],
+        "links": [],
+        "contradiction_linked": false,
+        "characters": [
+          "RESIDENT_001",
+          "RESIDENT_006",
+          "PROFESSOR",
+          "RYOKO"
+        ],
+        "notification": "Has vuelto"
+      },
+      "network_conflict": {
+        "active": true,
+        "multiple_operators": true,
+        "corporation": "Administradores de la Wired",
+        "corporate_control": 100.0,
+        "trace": 0,
+        "ready_in": 0,
+        "relays": [
+          {
+            "id": "RELAY_STATION",
+            "name": "Enlace del andén",
+            "location": "STATION",
+            "corporation": 80,
+            "mine": 0,
+            "defense": 0,
+            "suppressed_until": 0,
+            "inspected": false,
+            "controllers": [
+              {
+                "slot": "LINES",
+                "name": "Administrador de líneas",
+                "control": 80,
+                "suppressed_until": 0
+              },
+              {
+                "slot": "RECORDS",
+                "name": "Administrador de registros",
+                "control": 20,
+                "suppressed_until": 0
+              }
+            ]
+          },
+          {
+            "id": "RELAY_SCHOOL",
+            "name": "Enlace del pabellón B",
+            "location": "SCHOOL_LAB",
+            "corporation": 70,
+            "mine": 0,
+            "defense": 0,
+            "suppressed_until": 0,
+            "inspected": false,
+            "controllers": [
+              {
+                "slot": "LINES",
+                "name": "Administrador de líneas",
+                "control": 70,
+                "suppressed_until": 0
+              },
+              {
+                "slot": "RECORDS",
+                "name": "Administrador de registros",
+                "control": 30,
+                "suppressed_until": 0
+              }
+            ]
+          },
+          {
+            "id": "RELAY_VIDEO",
+            "name": "Enlace del videoclub",
+            "location": "VIDEO_CLUB",
+            "corporation": 55,
+            "mine": 0,
+            "defense": 0,
+            "suppressed_until": 0,
+            "inspected": false,
+            "controllers": [
+              {
+                "slot": "LINES",
+                "name": "Administrador de líneas",
+                "control": 55,
+                "suppressed_until": 0
+              },
+              {
+                "slot": "RECORDS",
+                "name": "Administrador de registros",
+                "control": 45,
+                "suppressed_until": 0
+              }
+            ]
+          }
+        ],
+        "rankings": [
+          {
+            "actor_id": "PLAYER_1",
+            "name": "Player",
+            "control": 0.0
+          }
+        ],
+        "pending": [],
+        "reports": [
+          {
+            "id": 1,
+            "minute": 0,
+            "source": "WORKSHOP",
+            "text": "El PC dispone de un taller de código. En Kissa Café han instalado un terminal: su técnico busca ayuda para comprobar un coprocesador."
+          }
+        ],
+        "visible_personnel": [
+          {
+            "id": "CIVIL_103",
+            "relay": "RELAY_VIDEO",
+            "name": "Shin Okabe",
+            "role": "Supervisor de mantenimiento",
+            "slot": "LINES"
+          },
+          {
+            "id": "CIVIL_203",
+            "relay": "RELAY_VIDEO",
+            "name": "Aya Morita",
+            "role": "Catalogadora de cintas",
+            "slot": "RECORDS",
+            "focus": "Dice que comprueba las fichas de préstamo."
+          }
+        ],
+        "session_mode": "LOCAL"
+      },
+      "workshop": {
+        "active": true,
+        "lesson": 0,
+        "life_source": "def next_cell(alive, neighbors):\n    # Completa las reglas de nacimiento y supervivencia.\n    return False\n",
+        "draft": "use(\"routing\")\n",
+        "compiled": "use(\"routing\")\n",
+        "modules": [
+          "routing"
+        ],
+        "contract": "INDEPENDENT",
+        "best_score": 0,
+        "capacity": 4,
+        "cost": 2,
+        "assets": [
+          {
+            "id": "first_connection",
+            "kind": "CODE",
+            "model": "routing",
+            "source": "Tu primera conexión a la Wired",
+            "minute": 0,
+            "active": 0,
+            "ownership": "OWNED",
+            "name": "Enrutamiento",
+            "capacity": 0
+          },
+          {
+            "id": "home_navi",
+            "kind": "DEVICE",
+            "model": "navi",
+            "source": "Ordenador de casa",
+            "minute": 0,
+            "active": 1,
+            "ownership": "OWNED",
+            "name": "Navi A",
+            "capacity": 4
+          }
+        ],
+        "library": [
+          {
+            "id": "routing",
+            "name": "Enrutamiento",
+            "cost": 2,
+            "effect": "Conexión del montaje; conserva las acciones básicas del enlace."
+          }
+        ],
+        "offers": {},
+        "life_hint": "",
+        "session_mode": "LOCAL"
+      },
+      "situations": [],
+      "interaction": null,
+      "outgoing_interaction": null,
+      "messages": [
+        {
+          "id": "MSG_BOOTSTRAP_001",
+          "sender": "unknown@wired",
+          "subject": "NO SUBJECT",
+          "body": "NO ESTOY MUERTA.\n\nSOLO DEJÉ DE ESTAR AHÍ.",
+          "created_minute": 0,
+          "read": true,
+          "acknowledged": true,
+          "acknowledged_minute": 0
+        }
+      ],
+      "unread_messages": 0,
+      "wired": {
+        "connected": true,
+        "signals": [
+          {
+            "node_id": "NODE_07",
+            "location": "STATION",
+            "strength": 0.5,
+            "confidence": 0.35,
+            "origin_source": "WIRED_MESSAGE",
+            "current_source": "WIRED_MESSAGE",
+            "verified": false,
+            "updated_minute": 0
+          }
+        ],
+        "digital_presences": []
+      }
+    },
+    "result": {
+      "speaker": "Aya Morita",
+      "text": "«Soy Aya Morita. Solo comparo fichas. A veces un nombre figura donde no debería.»",
+      "choices": []
+    }
+  },
+  {
+    "name": "two-controllers",
+    "mode": "cabinet",
+    "state": {
+      "schema_version": "0.1",
+      "minute": 0,
+      "player": {
+        "id": "PLAYER_1",
+        "name": "Player",
+        "faction": "UNALIGNED",
+        "location": "SCHOOL_LAB",
+        "goal": "UNKNOWN",
+        "energy": 1.0
+      },
+      "navigation": {
+        "reachable_locations": [
+          "SCHOOL"
+        ]
+      },
+      "known_nodes": [
+        {
+          "id": "NODE_07",
+          "knowledge_confidence": 0.35,
+          "knowledge_source": "WIRED_MESSAGE",
+          "belief": {
+            "location": "STATION",
+            "strength": 0.5,
+            "confidence": 0.35,
+            "source": "WIRED_MESSAGE",
+            "updated_minute": 0
+          }
+        }
+      ],
+      "visible_actors": [
+        {
+          "id": "RESIDENT_025",
+          "name": "Takeshi Uno",
+          "role": "Ayudante de informática",
+          "role_label": "Ayudante de informática",
+          "skills": {
+            "Informática": 3,
+            "Observación": 1
+          },
+          "public_objective": "Recuperar un disquete con ejercicios del aula.",
+          "activity": "Comprueba una etiqueta",
+          "slot": 0,
+          "patrol_step": 0,
+          "appearance": "teacher",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_026",
+          "name": "Misaki Ito",
+          "role": "Alumna de informática",
+          "role_label": "Alumna de informática",
+          "skills": {
+            "Programación": 4,
+            "Observación": 2
+          },
+          "public_objective": "Entender por qué su primer programa no termina.",
+          "activity": "Lee su código en papel",
+          "slot": 1,
+          "patrol_step": 0,
+          "appearance": "student",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_027",
+          "name": "Jun Saito",
+          "role": "Alumno del taller",
+          "role_label": "Alumno del taller",
+          "skills": {
+            "Electrónica": 5,
+            "Observación": 3
+          },
+          "public_objective": "Preparar un pequeño catálogo de componentes usados.",
+          "activity": "Clasifica componentes",
+          "slot": 2,
+          "patrol_step": 0,
+          "appearance": "student",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_028",
+          "name": "Rina Watanabe",
+          "role": "Amiga del aula",
+          "role_label": "Amiga del aula",
+          "skills": {
+            "Informática": 3,
+            "Observación": 1
+          },
+          "public_objective": "Guardar una copia del trabajo antes de salir.",
+          "activity": "Revisa su disquete",
+          "slot": 3,
+          "patrol_step": 0,
+          "appearance": "student",
+          "role_assignment": "CITY_PROVISIONAL"
+        }
+      ],
+      "character_sheets": {
+        "player": {
+          "id": "PLAYER_1",
+          "name": "Player",
+          "kind": "PLAYER",
+          "faction": "UNALIGNED",
+          "location": "SCHOOL_LAB",
+          "energy": 1.0,
+          "known_nodes": 1,
+          "case_status": "UNSEEN",
+          "agency": "HUMAN_ONLY"
+        },
+        "visible_npcs": [
+          {
+            "id": "RESIDENT_025",
+            "name": "Takeshi Uno",
+            "kind": "NPC",
+            "observed_location": "SCHOOL_LAB",
+            "focus": "Comprueba una etiqueta",
+            "role": "Ayudante de informática",
+            "role_label": "Ayudante de informática",
+            "skills": {
+              "Informática": 3,
+              "Observación": 1
+            },
+            "public_objective": "Recuperar un disquete con ejercicios del aula.",
+            "activity": "Comprueba una etiqueta",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_026",
+            "name": "Misaki Ito",
+            "kind": "NPC",
+            "observed_location": "SCHOOL_LAB",
+            "focus": "Lee su código en papel",
+            "role": "Alumna de informática",
+            "role_label": "Alumna de informática",
+            "skills": {
+              "Programación": 4,
+              "Observación": 2
+            },
+            "public_objective": "Entender por qué su primer programa no termina.",
+            "activity": "Lee su código en papel",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_027",
+            "name": "Jun Saito",
+            "kind": "NPC",
+            "observed_location": "SCHOOL_LAB",
+            "focus": "Clasifica componentes",
+            "role": "Alumno del taller",
+            "role_label": "Alumno del taller",
+            "skills": {
+              "Electrónica": 5,
+              "Observación": 3
+            },
+            "public_objective": "Preparar un pequeño catálogo de componentes usados.",
+            "activity": "Clasifica componentes",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_028",
+            "name": "Rina Watanabe",
+            "kind": "NPC",
+            "observed_location": "SCHOOL_LAB",
+            "focus": "Revisa su disquete",
+            "role": "Amiga del aula",
+            "role_label": "Amiga del aula",
+            "skills": {
+              "Informática": 3,
+              "Observación": 1
+            },
+            "public_objective": "Guardar una copia del trabajo antes de salir.",
+            "activity": "Revisa su disquete",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "CIVIL_102",
+            "name": "Reina Asano",
+            "kind": "NPC",
+            "role_label": "Consultora de equipos",
+            "observed_location": "SCHOOL_LAB",
+            "role_assignment": "OBSERVED_IDENTITY",
+            "focus": "Dice que revisa las líneas y los permisos de conexión de este lugar."
+          },
+          {
+            "id": "CIVIL_202",
+            "name": "Ren Fujimoto",
+            "kind": "NPC",
+            "role_label": "Revisor del archivo escolar",
+            "observed_location": "SCHOOL_LAB",
+            "role_assignment": "OBSERVED_IDENTITY",
+            "focus": "Dice que revisa las autorizaciones del aula."
+          }
+        ]
+      },
+      "station_case": {
+        "id": "STATION_ECHO_07",
+        "title": "El pulso ausente",
+        "status": "UNSEEN",
+        "resolution": null,
+        "summary": "Investiga NODE_07 en la estacion para buscar el rastro.",
+        "witness_count": 0,
+        "responses": []
+      },
+      "prologue": {
+        "enabled": false,
+        "stage": "LEGACY",
+        "hint": ""
+      },
+      "chapter_one": {
+        "active": true,
+        "title": "Ya habías estado aquí",
+        "started_minute": 0,
+        "connection_minute": 0,
+        "decision": null,
+        "hypothesis": "",
+        "hypothesis_status": "UNVERIFIED",
+        "evidence": [
+          {
+            "id": "RETURN_MESSAGE",
+            "title": "Has vuelto",
+            "kind": "MESSAGE",
+            "source_id": "UNKNOWN_WIRED",
+            "source_label": "Identidad desconocida · Wired",
+            "text": "Has vuelto.",
+            "acquired_minute": 0,
+            "claimed_time": "Recibido al abrir este capítulo, minuto 0",
+            "event_id": null
+          }
+        ],
+        "links": [],
+        "contradiction_linked": false,
+        "characters": [
+          "RESIDENT_001",
+          "RESIDENT_006",
+          "PROFESSOR",
+          "RYOKO"
+        ],
+        "notification": "Has vuelto"
+      },
+      "network_conflict": {
+        "active": true,
+        "multiple_operators": true,
+        "corporation": "Administradores de la Wired",
+        "corporate_control": 100.0,
+        "trace": 0,
+        "ready_in": 0,
+        "relays": [
+          {
+            "id": "RELAY_STATION",
+            "name": "Enlace del andén",
+            "location": "STATION",
+            "corporation": 80,
+            "mine": 0,
+            "defense": 0,
+            "suppressed_until": 0,
+            "inspected": false,
+            "controllers": [
+              {
+                "slot": "LINES",
+                "name": "Administrador de líneas",
+                "control": 80,
+                "suppressed_until": 0
+              },
+              {
+                "slot": "RECORDS",
+                "name": "Administrador de registros",
+                "control": 20,
+                "suppressed_until": 0
+              }
+            ]
+          },
+          {
+            "id": "RELAY_SCHOOL",
+            "name": "Enlace del pabellón B",
+            "location": "SCHOOL_LAB",
+            "corporation": 70,
+            "mine": 0,
+            "defense": 0,
+            "suppressed_until": 0,
+            "inspected": true,
+            "controllers": [
+              {
+                "slot": "LINES",
+                "name": "KAGAMI",
+                "control": 70,
+                "suppressed_until": 0
+              },
+              {
+                "slot": "RECORDS",
+                "name": "NOEMA",
+                "control": 30,
+                "suppressed_until": 0
+              }
+            ]
+          },
+          {
+            "id": "RELAY_VIDEO",
+            "name": "Enlace del videoclub",
+            "location": "VIDEO_CLUB",
+            "corporation": 55,
+            "mine": 0,
+            "defense": 0,
+            "suppressed_until": 0,
+            "inspected": false,
+            "controllers": [
+              {
+                "slot": "LINES",
+                "name": "Administrador de líneas",
+                "control": 55,
+                "suppressed_until": 0
+              },
+              {
+                "slot": "RECORDS",
+                "name": "Administrador de registros",
+                "control": 45,
+                "suppressed_until": 0
+              }
+            ]
+          }
+        ],
+        "rankings": [
+          {
+            "actor_id": "PLAYER_1",
+            "name": "Player",
+            "control": 0.0
+          }
+        ],
+        "pending": [],
+        "reports": [
+          {
+            "id": 2,
+            "minute": 0,
+            "source": "RELAY_SCHOOL",
+            "text": "CONTRATO DE CESIÓN · El protocolo y sus primeras comunidades son anteriores a KAGAMI. El consorcio adquirió los puntos de acceso y sustituyó las claves de administración; no creó la Wired.\n\nANEXO DE REGISTROS · NOEMA adquirió permisos sobre identidades y archivos; tampoco creó la Wired. Controla una cuota distinta a la de KAGAMI."
+          },
+          {
+            "id": 1,
+            "minute": 0,
+            "source": "WORKSHOP",
+            "text": "El PC dispone de un taller de código. En Kissa Café han instalado un terminal: su técnico busca ayuda para comprobar un coprocesador."
+          }
+        ],
+        "visible_personnel": [
+          {
+            "id": "CIVIL_102",
+            "relay": "RELAY_SCHOOL",
+            "name": "Reina Asano",
+            "role": "Consultora de equipos",
+            "slot": "LINES"
+          },
+          {
+            "id": "CIVIL_202",
+            "relay": "RELAY_SCHOOL",
+            "name": "Ren Fujimoto",
+            "role": "Revisor del archivo escolar",
+            "slot": "RECORDS",
+            "focus": "Dice que revisa las autorizaciones del aula."
+          }
+        ],
+        "session_mode": "LOCAL"
+      },
+      "workshop": {
+        "active": true,
+        "lesson": 0,
+        "life_source": "def next_cell(alive, neighbors):\n    # Completa las reglas de nacimiento y supervivencia.\n    return False\n",
+        "draft": "use(\"routing\")\n",
+        "compiled": "use(\"routing\")\n",
+        "modules": [
+          "routing"
+        ],
+        "contract": "INDEPENDENT",
+        "best_score": 0,
+        "capacity": 4,
+        "cost": 2,
+        "assets": [
+          {
+            "id": "first_connection",
+            "kind": "CODE",
+            "model": "routing",
+            "source": "Tu primera conexión a la Wired",
+            "minute": 0,
+            "active": 0,
+            "ownership": "OWNED",
+            "name": "Enrutamiento",
+            "capacity": 0
+          },
+          {
+            "id": "home_navi",
+            "kind": "DEVICE",
+            "model": "navi",
+            "source": "Ordenador de casa",
+            "minute": 0,
+            "active": 1,
+            "ownership": "OWNED",
+            "name": "Navi A",
+            "capacity": 4
+          }
+        ],
+        "library": [
+          {
+            "id": "routing",
+            "name": "Enrutamiento",
+            "cost": 2,
+            "effect": "Conexión del montaje; conserva las acciones básicas del enlace."
+          }
+        ],
+        "offers": {},
+        "life_hint": "",
+        "session_mode": "LOCAL"
+      },
+      "situations": [],
+      "interaction": null,
+      "outgoing_interaction": null,
+      "messages": [
+        {
+          "id": "MSG_BOOTSTRAP_001",
+          "sender": "unknown@wired",
+          "subject": "NO SUBJECT",
+          "body": "NO ESTOY MUERTA.\n\nSOLO DEJÉ DE ESTAR AHÍ.",
+          "created_minute": 0,
+          "read": true,
+          "acknowledged": true,
+          "acknowledged_minute": 0
+        }
+      ],
+      "unread_messages": 0,
+      "wired": {
+        "connected": true,
+        "signals": [
+          {
+            "node_id": "NODE_07",
+            "location": "STATION",
+            "strength": 0.5,
+            "confidence": 0.35,
+            "origin_source": "WIRED_MESSAGE",
+            "current_source": "WIRED_MESSAGE",
+            "verified": false,
+            "updated_minute": 0
+          }
+        ],
+        "digital_presences": []
+      }
+    },
+    "result": {
+      "speaker": "WIRED · CONTROL DE ENLACES",
+      "text": "Enlace del pabellón B\nKAGAMI: 70% · NOEMA: 30%\nTu control: 0% · Defensas: 0/2\n\nExamina los contratos y el tráfico antes de intervenir. Cada operador mantiene órdenes y credenciales diferentes.",
+      "choices": [
+        {
+          "text": "Examinar contratos y tráfico del enlace.",
+          "action": "INSPECT",
+          "relay": "RELAY_SCHOOL",
+          "rival": ""
+        },
+        {
+          "text": "Disputar 20 puntos a KAGAMI · deja rastro.",
+          "action": "CLAIM",
+          "relay": "RELAY_SCHOOL",
+          "rival": ""
+        },
+        {
+          "text": "Disputar 20 puntos a NOEMA · deja rastro.",
+          "action": "CLAIM",
+          "relay": "RELAY_SCHOOL",
+          "rival": "",
+          "faction": "NOEMA"
+        }
+      ]
+    }
+  },
+  {
+    "name": "intercepted-orders",
+    "mode": "dialogue",
+    "state": {
+      "schema_version": "0.1",
+      "minute": 10,
+      "player": {
+        "id": "PLAYER_1",
+        "name": "Player",
+        "faction": "UNALIGNED",
+        "location": "SCHOOL_LAB",
+        "goal": "UNKNOWN",
+        "energy": 1.0
+      },
+      "navigation": {
+        "reachable_locations": [
+          "SCHOOL"
+        ]
+      },
+      "known_nodes": [
+        {
+          "id": "NODE_07",
+          "knowledge_confidence": 0.35,
+          "knowledge_source": "WIRED_MESSAGE",
+          "belief": {
+            "location": "STATION",
+            "strength": 0.5,
+            "confidence": 0.35,
+            "source": "WIRED_MESSAGE",
+            "updated_minute": 0
+          }
+        }
+      ],
+      "visible_actors": [
+        {
+          "id": "RESIDENT_025",
+          "name": "Takeshi Uno",
+          "role": "Ayudante de informática",
+          "role_label": "Ayudante de informática",
+          "skills": {
+            "Informática": 3,
+            "Observación": 1
+          },
+          "public_objective": "Recuperar un disquete con ejercicios del aula.",
+          "activity": "Comprueba una etiqueta",
+          "slot": 0,
+          "patrol_step": 0,
+          "appearance": "teacher",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_026",
+          "name": "Misaki Ito",
+          "role": "Alumna de informática",
+          "role_label": "Alumna de informática",
+          "skills": {
+            "Programación": 4,
+            "Observación": 2
+          },
+          "public_objective": "Entender por qué su primer programa no termina.",
+          "activity": "Lee su código en papel",
+          "slot": 1,
+          "patrol_step": 0,
+          "appearance": "student",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_027",
+          "name": "Jun Saito",
+          "role": "Alumno del taller",
+          "role_label": "Alumno del taller",
+          "skills": {
+            "Electrónica": 5,
+            "Observación": 3
+          },
+          "public_objective": "Preparar un pequeño catálogo de componentes usados.",
+          "activity": "Clasifica componentes",
+          "slot": 2,
+          "patrol_step": 0,
+          "appearance": "student",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_028",
+          "name": "Rina Watanabe",
+          "role": "Amiga del aula",
+          "role_label": "Amiga del aula",
+          "skills": {
+            "Informática": 3,
+            "Observación": 1
+          },
+          "public_objective": "Guardar una copia del trabajo antes de salir.",
+          "activity": "Revisa su disquete",
+          "slot": 3,
+          "patrol_step": 0,
+          "appearance": "student",
+          "role_assignment": "CITY_PROVISIONAL"
+        }
+      ],
+      "character_sheets": {
+        "player": {
+          "id": "PLAYER_1",
+          "name": "Player",
+          "kind": "PLAYER",
+          "faction": "UNALIGNED",
+          "location": "SCHOOL_LAB",
+          "energy": 1.0,
+          "known_nodes": 1,
+          "case_status": "UNSEEN",
+          "agency": "HUMAN_ONLY"
+        },
+        "visible_npcs": [
+          {
+            "id": "RESIDENT_025",
+            "name": "Takeshi Uno",
+            "kind": "NPC",
+            "observed_location": "SCHOOL_LAB",
+            "focus": "Comprueba una etiqueta",
+            "role": "Ayudante de informática",
+            "role_label": "Ayudante de informática",
+            "skills": {
+              "Informática": 3,
+              "Observación": 1
+            },
+            "public_objective": "Recuperar un disquete con ejercicios del aula.",
+            "activity": "Comprueba una etiqueta",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_026",
+            "name": "Misaki Ito",
+            "kind": "NPC",
+            "observed_location": "SCHOOL_LAB",
+            "focus": "Lee su código en papel",
+            "role": "Alumna de informática",
+            "role_label": "Alumna de informática",
+            "skills": {
+              "Programación": 4,
+              "Observación": 2
+            },
+            "public_objective": "Entender por qué su primer programa no termina.",
+            "activity": "Lee su código en papel",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_027",
+            "name": "Jun Saito",
+            "kind": "NPC",
+            "observed_location": "SCHOOL_LAB",
+            "focus": "Clasifica componentes",
+            "role": "Alumno del taller",
+            "role_label": "Alumno del taller",
+            "skills": {
+              "Electrónica": 5,
+              "Observación": 3
+            },
+            "public_objective": "Preparar un pequeño catálogo de componentes usados.",
+            "activity": "Clasifica componentes",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_028",
+            "name": "Rina Watanabe",
+            "kind": "NPC",
+            "observed_location": "SCHOOL_LAB",
+            "focus": "Revisa su disquete",
+            "role": "Amiga del aula",
+            "role_label": "Amiga del aula",
+            "skills": {
+              "Informática": 3,
+              "Observación": 1
+            },
+            "public_objective": "Guardar una copia del trabajo antes de salir.",
+            "activity": "Revisa su disquete",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "CIVIL_102",
+            "name": "Reina Asano",
+            "kind": "NPC",
+            "role_label": "Consultora de equipos",
+            "observed_location": "SCHOOL_LAB",
+            "role_assignment": "OBSERVED_IDENTITY",
+            "focus": "Dice que revisa las líneas y los permisos de conexión de este lugar."
+          },
+          {
+            "id": "CIVIL_202",
+            "name": "Ren Fujimoto",
+            "kind": "NPC",
+            "role_label": "Revisor del archivo escolar",
+            "observed_location": "SCHOOL_LAB",
+            "role_assignment": "OBSERVED_IDENTITY",
+            "focus": "Dice que revisa las autorizaciones del aula."
+          }
+        ]
+      },
+      "station_case": {
+        "id": "STATION_ECHO_07",
+        "title": "El pulso ausente",
+        "status": "UNSEEN",
+        "resolution": null,
+        "summary": "Investiga NODE_07 en la estacion para buscar el rastro.",
+        "witness_count": 0,
+        "responses": []
+      },
+      "prologue": {
+        "enabled": false,
+        "stage": "LEGACY",
+        "hint": ""
+      },
+      "chapter_one": {
+        "active": true,
+        "title": "Ya habías estado aquí",
+        "started_minute": 0,
+        "connection_minute": 0,
+        "decision": null,
+        "hypothesis": "",
+        "hypothesis_status": "UNVERIFIED",
+        "evidence": [
+          {
+            "id": "RETURN_MESSAGE",
+            "title": "Has vuelto",
+            "kind": "MESSAGE",
+            "source_id": "UNKNOWN_WIRED",
+            "source_label": "Identidad desconocida · Wired",
+            "text": "Has vuelto.",
+            "acquired_minute": 0,
+            "claimed_time": "Recibido al abrir este capítulo, minuto 0",
+            "event_id": null
+          }
+        ],
+        "links": [],
+        "contradiction_linked": false,
+        "characters": [
+          "RESIDENT_001",
+          "RESIDENT_006",
+          "PROFESSOR",
+          "RYOKO"
+        ],
+        "notification": "Has vuelto"
+      },
+      "network_conflict": {
+        "active": true,
+        "multiple_operators": true,
+        "corporation": "Administradores de la Wired",
+        "corporate_control": 86.7,
+        "trace": 60,
+        "ready_in": 10,
+        "relays": [
+          {
+            "id": "RELAY_STATION",
+            "name": "Enlace del andén",
+            "location": "STATION",
+            "corporation": 80,
+            "mine": 0,
+            "defense": 0,
+            "suppressed_until": 0,
+            "inspected": false,
+            "controllers": [
+              {
+                "slot": "LINES",
+                "name": "Administrador de líneas",
+                "control": 80,
+                "suppressed_until": 0
+              },
+              {
+                "slot": "RECORDS",
+                "name": "Administrador de registros",
+                "control": 20,
+                "suppressed_until": 0
+              }
+            ]
+          },
+          {
+            "id": "RELAY_SCHOOL",
+            "name": "Enlace del pabellón B",
+            "location": "SCHOOL_LAB",
+            "corporation": 50,
+            "mine": 40,
+            "defense": 0,
+            "suppressed_until": 0,
+            "inspected": true,
+            "controllers": [
+              {
+                "slot": "LINES",
+                "name": "KAGAMI",
+                "control": 50,
+                "suppressed_until": 0
+              },
+              {
+                "slot": "RECORDS",
+                "name": "NOEMA",
+                "control": 10,
+                "suppressed_until": 0
+              }
+            ]
+          },
+          {
+            "id": "RELAY_VIDEO",
+            "name": "Enlace del videoclub",
+            "location": "VIDEO_CLUB",
+            "corporation": 55,
+            "mine": 0,
+            "defense": 0,
+            "suppressed_until": 0,
+            "inspected": false,
+            "controllers": [
+              {
+                "slot": "LINES",
+                "name": "Administrador de líneas",
+                "control": 55,
+                "suppressed_until": 0
+              },
+              {
+                "slot": "RECORDS",
+                "name": "Administrador de registros",
+                "control": 45,
+                "suppressed_until": 0
+              }
+            ]
+          }
+        ],
+        "rankings": [
+          {
+            "actor_id": "PLAYER_1",
+            "name": "Player",
+            "control": 13.3
+          }
+        ],
+        "pending": [
+          {
+            "relay": "RELAY_SCHOOL",
+            "due_minute": 90,
+            "remaining": 80,
+            "operator": "NOEMA",
+            "kind": "Reescritura de permisos",
+            "max_loss": 20
+          },
+          {
+            "relay": "RELAY_SCHOOL",
+            "due_minute": 100,
+            "remaining": 90,
+            "operator": "KAGAMI",
+            "kind": "Intervención técnica",
+            "max_loss": 30
+          }
+        ],
+        "reports": [
+          {
+            "id": 5,
+            "minute": 10,
+            "source": "RELAY_SCHOOL",
+            "text": "CONTRATO DE CESIÓN · El protocolo y sus primeras comunidades son anteriores a KAGAMI. El consorcio adquirió los puntos de acceso y sustituyó las claves de administración; no creó la Wired.\n\nTRÁFICO ACTUAL · La orden de intervención comparte la credencial del personal de mantenimiento presente. Puedes contrastarla hablando con esa persona.\n\nANEXO DE REGISTROS · NOEMA adquirió permisos sobre identidades y archivos; tampoco creó la Wired. Controla una cuota distinta a la de KAGAMI.\n\nORDEN DE REESCRITURA · Su firma coincide con la credencial del personal de registros presente. Contrástala antes de que venza la orden."
+          },
+          {
+            "id": 4,
+            "minute": 10,
+            "source": "RELAY_TELEMETRY",
+            "text": "Enlace del pabellón B: NOEMA prepara una reescritura de permisos (hasta 20 puntos). Tienes 80 minutos del mundo para defenderte, ocultar tu enlace o examinar el tráfico y contrastar la credencial de su personal."
+          },
+          {
+            "id": 3,
+            "minute": 0,
+            "source": "RELAY_TELEMETRY",
+            "text": "Enlace del pabellón B: KAGAMI prepara una intervención técnica (hasta 30 puntos). Tienes 100 minutos del mundo para defenderte, ocultar tu enlace o examinar el tráfico y contrastar la credencial de su personal."
+          },
+          {
+            "id": 2,
+            "minute": 0,
+            "source": "RELAY_SCHOOL",
+            "text": "CONTRATO DE CESIÓN · El protocolo y sus primeras comunidades son anteriores a KAGAMI. El consorcio adquirió los puntos de acceso y sustituyó las claves de administración; no creó la Wired.\n\nANEXO DE REGISTROS · NOEMA adquirió permisos sobre identidades y archivos; tampoco creó la Wired. Controla una cuota distinta a la de KAGAMI."
+          },
+          {
+            "id": 1,
+            "minute": 0,
+            "source": "WORKSHOP",
+            "text": "El PC dispone de un taller de código. En Kissa Café han instalado un terminal: su técnico busca ayuda para comprobar un coprocesador."
+          }
+        ],
+        "visible_personnel": [
+          {
+            "id": "CIVIL_102",
+            "relay": "RELAY_SCHOOL",
+            "name": "Reina Asano",
+            "role": "Consultora de equipos",
+            "slot": "LINES"
+          },
+          {
+            "id": "CIVIL_202",
+            "relay": "RELAY_SCHOOL",
+            "name": "Ren Fujimoto",
+            "role": "Revisor del archivo escolar",
+            "slot": "RECORDS",
+            "focus": "Dice que revisa las autorizaciones del aula."
+          }
+        ],
+        "session_mode": "LOCAL"
+      },
+      "workshop": {
+        "active": true,
+        "lesson": 0,
+        "life_source": "def next_cell(alive, neighbors):\n    # Completa las reglas de nacimiento y supervivencia.\n    return False\n",
+        "draft": "use(\"routing\")\n",
+        "compiled": "use(\"routing\")\n",
+        "modules": [
+          "routing"
+        ],
+        "contract": "INDEPENDENT",
+        "best_score": 0,
+        "capacity": 4,
+        "cost": 2,
+        "assets": [
+          {
+            "id": "first_connection",
+            "kind": "CODE",
+            "model": "routing",
+            "source": "Tu primera conexión a la Wired",
+            "minute": 0,
+            "active": 0,
+            "ownership": "OWNED",
+            "name": "Enrutamiento",
+            "capacity": 0
+          },
+          {
+            "id": "home_navi",
+            "kind": "DEVICE",
+            "model": "navi",
+            "source": "Ordenador de casa",
+            "minute": 0,
+            "active": 1,
+            "ownership": "OWNED",
+            "name": "Navi A",
+            "capacity": 4
+          }
+        ],
+        "library": [
+          {
+            "id": "routing",
+            "name": "Enrutamiento",
+            "cost": 2,
+            "effect": "Conexión del montaje; conserva las acciones básicas del enlace."
+          }
+        ],
+        "offers": {},
+        "life_hint": "",
+        "session_mode": "LOCAL"
+      },
+      "situations": [],
+      "interaction": null,
+      "outgoing_interaction": null,
+      "messages": [
+        {
+          "id": "MSG_BOOTSTRAP_001",
+          "sender": "unknown@wired",
+          "subject": "NO SUBJECT",
+          "body": "NO ESTOY MUERTA.\n\nSOLO DEJÉ DE ESTAR AHÍ.",
+          "created_minute": 0,
+          "read": true,
+          "acknowledged": true,
+          "acknowledged_minute": 0
+        }
+      ],
+      "unread_messages": 0,
+      "wired": {
+        "connected": true,
+        "signals": [
+          {
+            "node_id": "NODE_07",
+            "location": "STATION",
+            "strength": 0.5,
+            "confidence": 0.35,
+            "origin_source": "WIRED_MESSAGE",
+            "current_source": "WIRED_MESSAGE",
+            "verified": false,
+            "updated_minute": 0
+          }
+        ],
+        "digital_presences": []
+      }
+    },
+    "result": {
+      "speaker": "WIRED · CONTROL DE ENLACES",
+      "text": "CONTRATO DE CESIÓN · El protocolo y sus primeras comunidades son anteriores a KAGAMI. El consorcio adquirió los puntos de acceso y sustituyó las claves de administración; no creó la Wired.\n\nTRÁFICO ACTUAL · La orden de intervención comparte la credencial del personal de mantenimiento presente. Puedes contrastarla hablando con esa persona.\n\nANEXO DE REGISTROS · NOEMA adquirió permisos sobre identidades y archivos; tampoco creó la Wired. Controla una cuota distinta a la de KAGAMI.\n\nORDEN DE REESCRITURA · Su firma coincide con la credencial del personal de registros presente. Contrástala antes de que venza la orden.",
+      "choices": [
+        {
+          "text": "Examinar contratos y tráfico del enlace.",
+          "action": "INSPECT",
+          "relay": "RELAY_SCHOOL",
+          "rival": ""
+        },
+        {
+          "text": "Disputar 20 puntos a KAGAMI · deja rastro.",
+          "action": "CLAIM",
+          "relay": "RELAY_SCHOOL",
+          "rival": ""
+        },
+        {
+          "text": "Disputar 20 puntos a NOEMA · deja rastro.",
+          "action": "CLAIM",
+          "relay": "RELAY_SCHOOL",
+          "rival": "",
+          "faction": "NOEMA"
+        },
+        {
+          "text": "Preparar una defensa del enlace.",
+          "action": "FORTIFY",
+          "relay": "RELAY_SCHOOL",
+          "rival": ""
+        },
+        {
+          "text": "Ocultar mi enlace · ceder hasta 5 puntos.",
+          "action": "GO_DARK",
+          "relay": "RELAY_SCHOOL",
+          "rival": ""
+        }
+      ]
+    }
+  },
+  {
+    "name": "two-operations",
+    "mode": "journal",
+    "state": {
+      "schema_version": "0.1",
+      "minute": 10,
+      "player": {
+        "id": "PLAYER_1",
+        "name": "Player",
+        "faction": "UNALIGNED",
+        "location": "SCHOOL_LAB",
+        "goal": "UNKNOWN",
+        "energy": 1.0
+      },
+      "navigation": {
+        "reachable_locations": [
+          "SCHOOL"
+        ]
+      },
+      "known_nodes": [
+        {
+          "id": "NODE_07",
+          "knowledge_confidence": 0.35,
+          "knowledge_source": "WIRED_MESSAGE",
+          "belief": {
+            "location": "STATION",
+            "strength": 0.5,
+            "confidence": 0.35,
+            "source": "WIRED_MESSAGE",
+            "updated_minute": 0
+          }
+        }
+      ],
+      "visible_actors": [
+        {
+          "id": "RESIDENT_025",
+          "name": "Takeshi Uno",
+          "role": "Ayudante de informática",
+          "role_label": "Ayudante de informática",
+          "skills": {
+            "Informática": 3,
+            "Observación": 1
+          },
+          "public_objective": "Recuperar un disquete con ejercicios del aula.",
+          "activity": "Comprueba una etiqueta",
+          "slot": 0,
+          "patrol_step": 0,
+          "appearance": "teacher",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_026",
+          "name": "Misaki Ito",
+          "role": "Alumna de informática",
+          "role_label": "Alumna de informática",
+          "skills": {
+            "Programación": 4,
+            "Observación": 2
+          },
+          "public_objective": "Entender por qué su primer programa no termina.",
+          "activity": "Lee su código en papel",
+          "slot": 1,
+          "patrol_step": 0,
+          "appearance": "student",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_027",
+          "name": "Jun Saito",
+          "role": "Alumno del taller",
+          "role_label": "Alumno del taller",
+          "skills": {
+            "Electrónica": 5,
+            "Observación": 3
+          },
+          "public_objective": "Preparar un pequeño catálogo de componentes usados.",
+          "activity": "Clasifica componentes",
+          "slot": 2,
+          "patrol_step": 0,
+          "appearance": "student",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_028",
+          "name": "Rina Watanabe",
+          "role": "Amiga del aula",
+          "role_label": "Amiga del aula",
+          "skills": {
+            "Informática": 3,
+            "Observación": 1
+          },
+          "public_objective": "Guardar una copia del trabajo antes de salir.",
+          "activity": "Revisa su disquete",
+          "slot": 3,
+          "patrol_step": 0,
+          "appearance": "student",
+          "role_assignment": "CITY_PROVISIONAL"
+        }
+      ],
+      "character_sheets": {
+        "player": {
+          "id": "PLAYER_1",
+          "name": "Player",
+          "kind": "PLAYER",
+          "faction": "UNALIGNED",
+          "location": "SCHOOL_LAB",
+          "energy": 1.0,
+          "known_nodes": 1,
+          "case_status": "UNSEEN",
+          "agency": "HUMAN_ONLY"
+        },
+        "visible_npcs": [
+          {
+            "id": "RESIDENT_025",
+            "name": "Takeshi Uno",
+            "kind": "NPC",
+            "observed_location": "SCHOOL_LAB",
+            "focus": "Comprueba una etiqueta",
+            "role": "Ayudante de informática",
+            "role_label": "Ayudante de informática",
+            "skills": {
+              "Informática": 3,
+              "Observación": 1
+            },
+            "public_objective": "Recuperar un disquete con ejercicios del aula.",
+            "activity": "Comprueba una etiqueta",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_026",
+            "name": "Misaki Ito",
+            "kind": "NPC",
+            "observed_location": "SCHOOL_LAB",
+            "focus": "Lee su código en papel",
+            "role": "Alumna de informática",
+            "role_label": "Alumna de informática",
+            "skills": {
+              "Programación": 4,
+              "Observación": 2
+            },
+            "public_objective": "Entender por qué su primer programa no termina.",
+            "activity": "Lee su código en papel",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_027",
+            "name": "Jun Saito",
+            "kind": "NPC",
+            "observed_location": "SCHOOL_LAB",
+            "focus": "Clasifica componentes",
+            "role": "Alumno del taller",
+            "role_label": "Alumno del taller",
+            "skills": {
+              "Electrónica": 5,
+              "Observación": 3
+            },
+            "public_objective": "Preparar un pequeño catálogo de componentes usados.",
+            "activity": "Clasifica componentes",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_028",
+            "name": "Rina Watanabe",
+            "kind": "NPC",
+            "observed_location": "SCHOOL_LAB",
+            "focus": "Revisa su disquete",
+            "role": "Amiga del aula",
+            "role_label": "Amiga del aula",
+            "skills": {
+              "Informática": 3,
+              "Observación": 1
+            },
+            "public_objective": "Guardar una copia del trabajo antes de salir.",
+            "activity": "Revisa su disquete",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "CIVIL_102",
+            "name": "Reina Asano",
+            "kind": "NPC",
+            "role_label": "Consultora de equipos",
+            "observed_location": "SCHOOL_LAB",
+            "role_assignment": "OBSERVED_IDENTITY",
+            "focus": "Dice que revisa las líneas y los permisos de conexión de este lugar."
+          },
+          {
+            "id": "CIVIL_202",
+            "name": "Ren Fujimoto",
+            "kind": "NPC",
+            "role_label": "Revisor del archivo escolar",
+            "observed_location": "SCHOOL_LAB",
+            "role_assignment": "OBSERVED_IDENTITY",
+            "focus": "Dice que revisa las autorizaciones del aula."
+          }
+        ]
+      },
+      "station_case": {
+        "id": "STATION_ECHO_07",
+        "title": "El pulso ausente",
+        "status": "UNSEEN",
+        "resolution": null,
+        "summary": "Investiga NODE_07 en la estacion para buscar el rastro.",
+        "witness_count": 0,
+        "responses": []
+      },
+      "prologue": {
+        "enabled": false,
+        "stage": "LEGACY",
+        "hint": ""
+      },
+      "chapter_one": {
+        "active": true,
+        "title": "Ya habías estado aquí",
+        "started_minute": 0,
+        "connection_minute": 0,
+        "decision": null,
+        "hypothesis": "",
+        "hypothesis_status": "UNVERIFIED",
+        "evidence": [
+          {
+            "id": "RETURN_MESSAGE",
+            "title": "Has vuelto",
+            "kind": "MESSAGE",
+            "source_id": "UNKNOWN_WIRED",
+            "source_label": "Identidad desconocida · Wired",
+            "text": "Has vuelto.",
+            "acquired_minute": 0,
+            "claimed_time": "Recibido al abrir este capítulo, minuto 0",
+            "event_id": null
+          }
+        ],
+        "links": [],
+        "contradiction_linked": false,
+        "characters": [
+          "RESIDENT_001",
+          "RESIDENT_006",
+          "PROFESSOR",
+          "RYOKO"
+        ],
+        "notification": "Has vuelto"
+      },
+      "network_conflict": {
+        "active": true,
+        "multiple_operators": true,
+        "corporation": "Administradores de la Wired",
+        "corporate_control": 86.7,
+        "trace": 60,
+        "ready_in": 10,
+        "relays": [
+          {
+            "id": "RELAY_STATION",
+            "name": "Enlace del andén",
+            "location": "STATION",
+            "corporation": 80,
+            "mine": 0,
+            "defense": 0,
+            "suppressed_until": 0,
+            "inspected": false,
+            "controllers": [
+              {
+                "slot": "LINES",
+                "name": "Administrador de líneas",
+                "control": 80,
+                "suppressed_until": 0
+              },
+              {
+                "slot": "RECORDS",
+                "name": "Administrador de registros",
+                "control": 20,
+                "suppressed_until": 0
+              }
+            ]
+          },
+          {
+            "id": "RELAY_SCHOOL",
+            "name": "Enlace del pabellón B",
+            "location": "SCHOOL_LAB",
+            "corporation": 50,
+            "mine": 40,
+            "defense": 0,
+            "suppressed_until": 0,
+            "inspected": true,
+            "controllers": [
+              {
+                "slot": "LINES",
+                "name": "KAGAMI",
+                "control": 50,
+                "suppressed_until": 0
+              },
+              {
+                "slot": "RECORDS",
+                "name": "NOEMA",
+                "control": 10,
+                "suppressed_until": 0
+              }
+            ]
+          },
+          {
+            "id": "RELAY_VIDEO",
+            "name": "Enlace del videoclub",
+            "location": "VIDEO_CLUB",
+            "corporation": 55,
+            "mine": 0,
+            "defense": 0,
+            "suppressed_until": 0,
+            "inspected": false,
+            "controllers": [
+              {
+                "slot": "LINES",
+                "name": "Administrador de líneas",
+                "control": 55,
+                "suppressed_until": 0
+              },
+              {
+                "slot": "RECORDS",
+                "name": "Administrador de registros",
+                "control": 45,
+                "suppressed_until": 0
+              }
+            ]
+          }
+        ],
+        "rankings": [
+          {
+            "actor_id": "PLAYER_1",
+            "name": "Player",
+            "control": 13.3
+          }
+        ],
+        "pending": [
+          {
+            "relay": "RELAY_SCHOOL",
+            "due_minute": 90,
+            "remaining": 80,
+            "operator": "NOEMA",
+            "kind": "Reescritura de permisos",
+            "max_loss": 20
+          },
+          {
+            "relay": "RELAY_SCHOOL",
+            "due_minute": 100,
+            "remaining": 90,
+            "operator": "KAGAMI",
+            "kind": "Intervención técnica",
+            "max_loss": 30
+          }
+        ],
+        "reports": [
+          {
+            "id": 5,
+            "minute": 10,
+            "source": "RELAY_SCHOOL",
+            "text": "CONTRATO DE CESIÓN · El protocolo y sus primeras comunidades son anteriores a KAGAMI. El consorcio adquirió los puntos de acceso y sustituyó las claves de administración; no creó la Wired.\n\nTRÁFICO ACTUAL · La orden de intervención comparte la credencial del personal de mantenimiento presente. Puedes contrastarla hablando con esa persona.\n\nANEXO DE REGISTROS · NOEMA adquirió permisos sobre identidades y archivos; tampoco creó la Wired. Controla una cuota distinta a la de KAGAMI.\n\nORDEN DE REESCRITURA · Su firma coincide con la credencial del personal de registros presente. Contrástala antes de que venza la orden."
+          },
+          {
+            "id": 4,
+            "minute": 10,
+            "source": "RELAY_TELEMETRY",
+            "text": "Enlace del pabellón B: NOEMA prepara una reescritura de permisos (hasta 20 puntos). Tienes 80 minutos del mundo para defenderte, ocultar tu enlace o examinar el tráfico y contrastar la credencial de su personal."
+          },
+          {
+            "id": 3,
+            "minute": 0,
+            "source": "RELAY_TELEMETRY",
+            "text": "Enlace del pabellón B: KAGAMI prepara una intervención técnica (hasta 30 puntos). Tienes 100 minutos del mundo para defenderte, ocultar tu enlace o examinar el tráfico y contrastar la credencial de su personal."
+          },
+          {
+            "id": 2,
+            "minute": 0,
+            "source": "RELAY_SCHOOL",
+            "text": "CONTRATO DE CESIÓN · El protocolo y sus primeras comunidades son anteriores a KAGAMI. El consorcio adquirió los puntos de acceso y sustituyó las claves de administración; no creó la Wired.\n\nANEXO DE REGISTROS · NOEMA adquirió permisos sobre identidades y archivos; tampoco creó la Wired. Controla una cuota distinta a la de KAGAMI."
+          },
+          {
+            "id": 1,
+            "minute": 0,
+            "source": "WORKSHOP",
+            "text": "El PC dispone de un taller de código. En Kissa Café han instalado un terminal: su técnico busca ayuda para comprobar un coprocesador."
+          }
+        ],
+        "visible_personnel": [
+          {
+            "id": "CIVIL_102",
+            "relay": "RELAY_SCHOOL",
+            "name": "Reina Asano",
+            "role": "Consultora de equipos",
+            "slot": "LINES"
+          },
+          {
+            "id": "CIVIL_202",
+            "relay": "RELAY_SCHOOL",
+            "name": "Ren Fujimoto",
+            "role": "Revisor del archivo escolar",
+            "slot": "RECORDS",
+            "focus": "Dice que revisa las autorizaciones del aula."
+          }
+        ],
+        "session_mode": "LOCAL"
+      },
+      "workshop": {
+        "active": true,
+        "lesson": 0,
+        "life_source": "def next_cell(alive, neighbors):\n    # Completa las reglas de nacimiento y supervivencia.\n    return False\n",
+        "draft": "use(\"routing\")\n",
+        "compiled": "use(\"routing\")\n",
+        "modules": [
+          "routing"
+        ],
+        "contract": "INDEPENDENT",
+        "best_score": 0,
+        "capacity": 4,
+        "cost": 2,
+        "assets": [
+          {
+            "id": "first_connection",
+            "kind": "CODE",
+            "model": "routing",
+            "source": "Tu primera conexión a la Wired",
+            "minute": 0,
+            "active": 0,
+            "ownership": "OWNED",
+            "name": "Enrutamiento",
+            "capacity": 0
+          },
+          {
+            "id": "home_navi",
+            "kind": "DEVICE",
+            "model": "navi",
+            "source": "Ordenador de casa",
+            "minute": 0,
+            "active": 1,
+            "ownership": "OWNED",
+            "name": "Navi A",
+            "capacity": 4
+          }
+        ],
+        "library": [
+          {
+            "id": "routing",
+            "name": "Enrutamiento",
+            "cost": 2,
+            "effect": "Conexión del montaje; conserva las acciones básicas del enlace."
+          }
+        ],
+        "offers": {},
+        "life_hint": "",
+        "session_mode": "LOCAL"
+      },
+      "situations": [],
+      "interaction": null,
+      "outgoing_interaction": null,
+      "messages": [
+        {
+          "id": "MSG_BOOTSTRAP_001",
+          "sender": "unknown@wired",
+          "subject": "NO SUBJECT",
+          "body": "NO ESTOY MUERTA.\n\nSOLO DEJÉ DE ESTAR AHÍ.",
+          "created_minute": 0,
+          "read": true,
+          "acknowledged": true,
+          "acknowledged_minute": 0
+        }
+      ],
+      "unread_messages": 0,
+      "wired": {
+        "connected": true,
+        "signals": [
+          {
+            "node_id": "NODE_07",
+            "location": "STATION",
+            "strength": 0.5,
+            "confidence": 0.35,
+            "origin_source": "WIRED_MESSAGE",
+            "current_source": "WIRED_MESSAGE",
+            "verified": false,
+            "updated_minute": 0
+          }
+        ],
+        "digital_presences": []
+      }
+    },
+    "result": {}
+  },
+  {
+    "name": "records-proof",
+    "mode": "dialogue",
+    "state": {
+      "schema_version": "0.1",
+      "minute": 10,
+      "player": {
+        "id": "PLAYER_1",
+        "name": "Player",
+        "faction": "UNALIGNED",
+        "location": "SCHOOL_LAB",
+        "goal": "UNKNOWN",
+        "energy": 1.0
+      },
+      "navigation": {
+        "reachable_locations": [
+          "SCHOOL"
+        ]
+      },
+      "known_nodes": [
+        {
+          "id": "NODE_07",
+          "knowledge_confidence": 0.35,
+          "knowledge_source": "WIRED_MESSAGE",
+          "belief": {
+            "location": "STATION",
+            "strength": 0.5,
+            "confidence": 0.35,
+            "source": "WIRED_MESSAGE",
+            "updated_minute": 0
+          }
+        }
+      ],
+      "visible_actors": [
+        {
+          "id": "RESIDENT_025",
+          "name": "Takeshi Uno",
+          "role": "Ayudante de informática",
+          "role_label": "Ayudante de informática",
+          "skills": {
+            "Informática": 3,
+            "Observación": 1
+          },
+          "public_objective": "Recuperar un disquete con ejercicios del aula.",
+          "activity": "Comprueba una etiqueta",
+          "slot": 0,
+          "patrol_step": 0,
+          "appearance": "teacher",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_026",
+          "name": "Misaki Ito",
+          "role": "Alumna de informática",
+          "role_label": "Alumna de informática",
+          "skills": {
+            "Programación": 4,
+            "Observación": 2
+          },
+          "public_objective": "Entender por qué su primer programa no termina.",
+          "activity": "Lee su código en papel",
+          "slot": 1,
+          "patrol_step": 0,
+          "appearance": "student",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_027",
+          "name": "Jun Saito",
+          "role": "Alumno del taller",
+          "role_label": "Alumno del taller",
+          "skills": {
+            "Electrónica": 5,
+            "Observación": 3
+          },
+          "public_objective": "Preparar un pequeño catálogo de componentes usados.",
+          "activity": "Clasifica componentes",
+          "slot": 2,
+          "patrol_step": 0,
+          "appearance": "student",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_028",
+          "name": "Rina Watanabe",
+          "role": "Amiga del aula",
+          "role_label": "Amiga del aula",
+          "skills": {
+            "Informática": 3,
+            "Observación": 1
+          },
+          "public_objective": "Guardar una copia del trabajo antes de salir.",
+          "activity": "Revisa su disquete",
+          "slot": 3,
+          "patrol_step": 0,
+          "appearance": "student",
+          "role_assignment": "CITY_PROVISIONAL"
+        }
+      ],
+      "character_sheets": {
+        "player": {
+          "id": "PLAYER_1",
+          "name": "Player",
+          "kind": "PLAYER",
+          "faction": "UNALIGNED",
+          "location": "SCHOOL_LAB",
+          "energy": 1.0,
+          "known_nodes": 1,
+          "case_status": "UNSEEN",
+          "agency": "HUMAN_ONLY"
+        },
+        "visible_npcs": [
+          {
+            "id": "RESIDENT_025",
+            "name": "Takeshi Uno",
+            "kind": "NPC",
+            "observed_location": "SCHOOL_LAB",
+            "focus": "Comprueba una etiqueta",
+            "role": "Ayudante de informática",
+            "role_label": "Ayudante de informática",
+            "skills": {
+              "Informática": 3,
+              "Observación": 1
+            },
+            "public_objective": "Recuperar un disquete con ejercicios del aula.",
+            "activity": "Comprueba una etiqueta",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_026",
+            "name": "Misaki Ito",
+            "kind": "NPC",
+            "observed_location": "SCHOOL_LAB",
+            "focus": "Lee su código en papel",
+            "role": "Alumna de informática",
+            "role_label": "Alumna de informática",
+            "skills": {
+              "Programación": 4,
+              "Observación": 2
+            },
+            "public_objective": "Entender por qué su primer programa no termina.",
+            "activity": "Lee su código en papel",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_027",
+            "name": "Jun Saito",
+            "kind": "NPC",
+            "observed_location": "SCHOOL_LAB",
+            "focus": "Clasifica componentes",
+            "role": "Alumno del taller",
+            "role_label": "Alumno del taller",
+            "skills": {
+              "Electrónica": 5,
+              "Observación": 3
+            },
+            "public_objective": "Preparar un pequeño catálogo de componentes usados.",
+            "activity": "Clasifica componentes",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_028",
+            "name": "Rina Watanabe",
+            "kind": "NPC",
+            "observed_location": "SCHOOL_LAB",
+            "focus": "Revisa su disquete",
+            "role": "Amiga del aula",
+            "role_label": "Amiga del aula",
+            "skills": {
+              "Informática": 3,
+              "Observación": 1
+            },
+            "public_objective": "Guardar una copia del trabajo antes de salir.",
+            "activity": "Revisa su disquete",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "CIVIL_102",
+            "name": "Reina Asano",
+            "kind": "NPC",
+            "role_label": "Consultora de equipos",
+            "observed_location": "SCHOOL_LAB",
+            "role_assignment": "OBSERVED_IDENTITY",
+            "focus": "Dice que revisa las líneas y los permisos de conexión de este lugar."
+          },
+          {
+            "id": "CIVIL_202",
+            "name": "Ren Fujimoto",
+            "kind": "NPC",
+            "role_label": "Revisor del archivo escolar",
+            "observed_location": "SCHOOL_LAB",
+            "role_assignment": "OBSERVED_IDENTITY",
+            "focus": "Dice que revisa las autorizaciones del aula."
+          }
+        ]
+      },
+      "station_case": {
+        "id": "STATION_ECHO_07",
+        "title": "El pulso ausente",
+        "status": "UNSEEN",
+        "resolution": null,
+        "summary": "Investiga NODE_07 en la estacion para buscar el rastro.",
+        "witness_count": 0,
+        "responses": []
+      },
+      "prologue": {
+        "enabled": false,
+        "stage": "LEGACY",
+        "hint": ""
+      },
+      "chapter_one": {
+        "active": true,
+        "title": "Ya habías estado aquí",
+        "started_minute": 0,
+        "connection_minute": 0,
+        "decision": null,
+        "hypothesis": "",
+        "hypothesis_status": "UNVERIFIED",
+        "evidence": [
+          {
+            "id": "RETURN_MESSAGE",
+            "title": "Has vuelto",
+            "kind": "MESSAGE",
+            "source_id": "UNKNOWN_WIRED",
+            "source_label": "Identidad desconocida · Wired",
+            "text": "Has vuelto.",
+            "acquired_minute": 0,
+            "claimed_time": "Recibido al abrir este capítulo, minuto 0",
+            "event_id": null
+          }
+        ],
+        "links": [],
+        "contradiction_linked": false,
+        "characters": [
+          "RESIDENT_001",
+          "RESIDENT_006",
+          "PROFESSOR",
+          "RYOKO"
+        ],
+        "notification": "Has vuelto"
+      },
+      "network_conflict": {
+        "active": true,
+        "multiple_operators": true,
+        "corporation": "Administradores de la Wired",
+        "corporate_control": 86.7,
+        "trace": 60,
+        "ready_in": 10,
+        "relays": [
+          {
+            "id": "RELAY_STATION",
+            "name": "Enlace del andén",
+            "location": "STATION",
+            "corporation": 80,
+            "mine": 0,
+            "defense": 0,
+            "suppressed_until": 0,
+            "inspected": false,
+            "controllers": [
+              {
+                "slot": "LINES",
+                "name": "Administrador de líneas",
+                "control": 80,
+                "suppressed_until": 0
+              },
+              {
+                "slot": "RECORDS",
+                "name": "Administrador de registros",
+                "control": 20,
+                "suppressed_until": 0
+              }
+            ]
+          },
+          {
+            "id": "RELAY_SCHOOL",
+            "name": "Enlace del pabellón B",
+            "location": "SCHOOL_LAB",
+            "corporation": 50,
+            "mine": 40,
+            "defense": 0,
+            "suppressed_until": 0,
+            "inspected": true,
+            "controllers": [
+              {
+                "slot": "LINES",
+                "name": "KAGAMI",
+                "control": 50,
+                "suppressed_until": 0
+              },
+              {
+                "slot": "RECORDS",
+                "name": "NOEMA",
+                "control": 10,
+                "suppressed_until": 0
+              }
+            ]
+          },
+          {
+            "id": "RELAY_VIDEO",
+            "name": "Enlace del videoclub",
+            "location": "VIDEO_CLUB",
+            "corporation": 55,
+            "mine": 0,
+            "defense": 0,
+            "suppressed_until": 0,
+            "inspected": false,
+            "controllers": [
+              {
+                "slot": "LINES",
+                "name": "Administrador de líneas",
+                "control": 55,
+                "suppressed_until": 0
+              },
+              {
+                "slot": "RECORDS",
+                "name": "Administrador de registros",
+                "control": 45,
+                "suppressed_until": 0
+              }
+            ]
+          }
+        ],
+        "rankings": [
+          {
+            "actor_id": "PLAYER_1",
+            "name": "Player",
+            "control": 13.3
+          }
+        ],
+        "pending": [
+          {
+            "relay": "RELAY_SCHOOL",
+            "due_minute": 90,
+            "remaining": 80,
+            "operator": "NOEMA",
+            "kind": "Reescritura de permisos",
+            "max_loss": 20
+          },
+          {
+            "relay": "RELAY_SCHOOL",
+            "due_minute": 100,
+            "remaining": 90,
+            "operator": "KAGAMI",
+            "kind": "Intervención técnica",
+            "max_loss": 30
+          }
+        ],
+        "reports": [
+          {
+            "id": 5,
+            "minute": 10,
+            "source": "RELAY_SCHOOL",
+            "text": "CONTRATO DE CESIÓN · El protocolo y sus primeras comunidades son anteriores a KAGAMI. El consorcio adquirió los puntos de acceso y sustituyó las claves de administración; no creó la Wired.\n\nTRÁFICO ACTUAL · La orden de intervención comparte la credencial del personal de mantenimiento presente. Puedes contrastarla hablando con esa persona.\n\nANEXO DE REGISTROS · NOEMA adquirió permisos sobre identidades y archivos; tampoco creó la Wired. Controla una cuota distinta a la de KAGAMI.\n\nORDEN DE REESCRITURA · Su firma coincide con la credencial del personal de registros presente. Contrástala antes de que venza la orden."
+          },
+          {
+            "id": 4,
+            "minute": 10,
+            "source": "RELAY_TELEMETRY",
+            "text": "Enlace del pabellón B: NOEMA prepara una reescritura de permisos (hasta 20 puntos). Tienes 80 minutos del mundo para defenderte, ocultar tu enlace o examinar el tráfico y contrastar la credencial de su personal."
+          },
+          {
+            "id": 3,
+            "minute": 0,
+            "source": "RELAY_TELEMETRY",
+            "text": "Enlace del pabellón B: KAGAMI prepara una intervención técnica (hasta 30 puntos). Tienes 100 minutos del mundo para defenderte, ocultar tu enlace o examinar el tráfico y contrastar la credencial de su personal."
+          },
+          {
+            "id": 2,
+            "minute": 0,
+            "source": "RELAY_SCHOOL",
+            "text": "CONTRATO DE CESIÓN · El protocolo y sus primeras comunidades son anteriores a KAGAMI. El consorcio adquirió los puntos de acceso y sustituyó las claves de administración; no creó la Wired.\n\nANEXO DE REGISTROS · NOEMA adquirió permisos sobre identidades y archivos; tampoco creó la Wired. Controla una cuota distinta a la de KAGAMI."
+          },
+          {
+            "id": 1,
+            "minute": 0,
+            "source": "WORKSHOP",
+            "text": "El PC dispone de un taller de código. En Kissa Café han instalado un terminal: su técnico busca ayuda para comprobar un coprocesador."
+          }
+        ],
+        "visible_personnel": [
+          {
+            "id": "CIVIL_102",
+            "relay": "RELAY_SCHOOL",
+            "name": "Reina Asano",
+            "role": "Consultora de equipos",
+            "slot": "LINES"
+          },
+          {
+            "id": "CIVIL_202",
+            "relay": "RELAY_SCHOOL",
+            "name": "Ren Fujimoto",
+            "role": "Revisor del archivo escolar",
+            "slot": "RECORDS",
+            "focus": "Dice que revisa las autorizaciones del aula."
+          }
+        ],
+        "session_mode": "LOCAL"
+      },
+      "workshop": {
+        "active": true,
+        "lesson": 0,
+        "life_source": "def next_cell(alive, neighbors):\n    # Completa las reglas de nacimiento y supervivencia.\n    return False\n",
+        "draft": "use(\"routing\")\n",
+        "compiled": "use(\"routing\")\n",
+        "modules": [
+          "routing"
+        ],
+        "contract": "INDEPENDENT",
+        "best_score": 0,
+        "capacity": 4,
+        "cost": 2,
+        "assets": [
+          {
+            "id": "first_connection",
+            "kind": "CODE",
+            "model": "routing",
+            "source": "Tu primera conexión a la Wired",
+            "minute": 0,
+            "active": 0,
+            "ownership": "OWNED",
+            "name": "Enrutamiento",
+            "capacity": 0
+          },
+          {
+            "id": "home_navi",
+            "kind": "DEVICE",
+            "model": "navi",
+            "source": "Ordenador de casa",
+            "minute": 0,
+            "active": 1,
+            "ownership": "OWNED",
+            "name": "Navi A",
+            "capacity": 4
+          }
+        ],
+        "library": [
+          {
+            "id": "routing",
+            "name": "Enrutamiento",
+            "cost": 2,
+            "effect": "Conexión del montaje; conserva las acciones básicas del enlace."
+          }
+        ],
+        "offers": {},
+        "life_hint": "",
+        "session_mode": "LOCAL"
+      },
+      "situations": [],
+      "interaction": null,
+      "outgoing_interaction": null,
+      "messages": [
+        {
+          "id": "MSG_BOOTSTRAP_001",
+          "sender": "unknown@wired",
+          "subject": "NO SUBJECT",
+          "body": "NO ESTOY MUERTA.\n\nSOLO DEJÉ DE ESTAR AHÍ.",
+          "created_minute": 0,
+          "read": true,
+          "acknowledged": true,
+          "acknowledged_minute": 0
+        }
+      ],
+      "unread_messages": 0,
+      "wired": {
+        "connected": true,
+        "signals": [
+          {
+            "node_id": "NODE_07",
+            "location": "STATION",
+            "strength": 0.5,
+            "confidence": 0.35,
+            "origin_source": "WIRED_MESSAGE",
+            "current_source": "WIRED_MESSAGE",
+            "verified": false,
+            "updated_minute": 0
+          }
+        ],
+        "digital_presences": []
+      }
+    },
+    "result": {
+      "speaker": "Ren Fujimoto",
+      "text": "«Soy Ren Fujimoto. Solo comparo fichas. A veces un nombre figura donde no debería.»",
+      "choices": [
+        {
+          "text": "Contrastar su credencial con la orden interceptada.",
+          "action": "EXPOSE",
+          "relay": "RELAY_SCHOOL",
+          "rival": "",
+          "faction": "NOEMA"
+        }
+      ]
+    }
+  },
+  {
+    "name": "noema-exposed",
+    "mode": "exposed",
+    "state": {
+      "schema_version": "0.1",
+      "minute": 10,
+      "player": {
+        "id": "PLAYER_1",
+        "name": "Player",
+        "faction": "UNALIGNED",
+        "location": "SCHOOL_LAB",
+        "goal": "UNKNOWN",
+        "energy": 1.0
+      },
+      "navigation": {
+        "reachable_locations": [
+          "SCHOOL"
+        ]
+      },
+      "known_nodes": [
+        {
+          "id": "NODE_07",
+          "knowledge_confidence": 0.35,
+          "knowledge_source": "WIRED_MESSAGE",
+          "belief": {
+            "location": "STATION",
+            "strength": 0.5,
+            "confidence": 0.35,
+            "source": "WIRED_MESSAGE",
+            "updated_minute": 0
+          }
+        }
+      ],
+      "visible_actors": [
+        {
+          "id": "RESIDENT_025",
+          "name": "Takeshi Uno",
+          "role": "Ayudante de informática",
+          "role_label": "Ayudante de informática",
+          "skills": {
+            "Informática": 3,
+            "Observación": 1
+          },
+          "public_objective": "Recuperar un disquete con ejercicios del aula.",
+          "activity": "Comprueba una etiqueta",
+          "slot": 0,
+          "patrol_step": 0,
+          "appearance": "teacher",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_026",
+          "name": "Misaki Ito",
+          "role": "Alumna de informática",
+          "role_label": "Alumna de informática",
+          "skills": {
+            "Programación": 4,
+            "Observación": 2
+          },
+          "public_objective": "Entender por qué su primer programa no termina.",
+          "activity": "Lee su código en papel",
+          "slot": 1,
+          "patrol_step": 0,
+          "appearance": "student",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_027",
+          "name": "Jun Saito",
+          "role": "Alumno del taller",
+          "role_label": "Alumno del taller",
+          "skills": {
+            "Electrónica": 5,
+            "Observación": 3
+          },
+          "public_objective": "Preparar un pequeño catálogo de componentes usados.",
+          "activity": "Clasifica componentes",
+          "slot": 2,
+          "patrol_step": 0,
+          "appearance": "student",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_028",
+          "name": "Rina Watanabe",
+          "role": "Amiga del aula",
+          "role_label": "Amiga del aula",
+          "skills": {
+            "Informática": 3,
+            "Observación": 1
+          },
+          "public_objective": "Guardar una copia del trabajo antes de salir.",
+          "activity": "Revisa su disquete",
+          "slot": 3,
+          "patrol_step": 0,
+          "appearance": "student",
+          "role_assignment": "CITY_PROVISIONAL"
+        }
+      ],
+      "character_sheets": {
+        "player": {
+          "id": "PLAYER_1",
+          "name": "Player",
+          "kind": "PLAYER",
+          "faction": "UNALIGNED",
+          "location": "SCHOOL_LAB",
+          "energy": 1.0,
+          "known_nodes": 1,
+          "case_status": "UNSEEN",
+          "agency": "HUMAN_ONLY"
+        },
+        "visible_npcs": [
+          {
+            "id": "RESIDENT_025",
+            "name": "Takeshi Uno",
+            "kind": "NPC",
+            "observed_location": "SCHOOL_LAB",
+            "focus": "Comprueba una etiqueta",
+            "role": "Ayudante de informática",
+            "role_label": "Ayudante de informática",
+            "skills": {
+              "Informática": 3,
+              "Observación": 1
+            },
+            "public_objective": "Recuperar un disquete con ejercicios del aula.",
+            "activity": "Comprueba una etiqueta",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_026",
+            "name": "Misaki Ito",
+            "kind": "NPC",
+            "observed_location": "SCHOOL_LAB",
+            "focus": "Lee su código en papel",
+            "role": "Alumna de informática",
+            "role_label": "Alumna de informática",
+            "skills": {
+              "Programación": 4,
+              "Observación": 2
+            },
+            "public_objective": "Entender por qué su primer programa no termina.",
+            "activity": "Lee su código en papel",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_027",
+            "name": "Jun Saito",
+            "kind": "NPC",
+            "observed_location": "SCHOOL_LAB",
+            "focus": "Clasifica componentes",
+            "role": "Alumno del taller",
+            "role_label": "Alumno del taller",
+            "skills": {
+              "Electrónica": 5,
+              "Observación": 3
+            },
+            "public_objective": "Preparar un pequeño catálogo de componentes usados.",
+            "activity": "Clasifica componentes",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_028",
+            "name": "Rina Watanabe",
+            "kind": "NPC",
+            "observed_location": "SCHOOL_LAB",
+            "focus": "Revisa su disquete",
+            "role": "Amiga del aula",
+            "role_label": "Amiga del aula",
+            "skills": {
+              "Informática": 3,
+              "Observación": 1
+            },
+            "public_objective": "Guardar una copia del trabajo antes de salir.",
+            "activity": "Revisa su disquete",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "CIVIL_102",
+            "name": "Reina Asano",
+            "kind": "NPC",
+            "role_label": "Consultora de equipos",
+            "observed_location": "SCHOOL_LAB",
+            "role_assignment": "OBSERVED_IDENTITY",
+            "focus": "Dice que revisa las líneas y los permisos de conexión de este lugar."
+          },
+          {
+            "id": "CIVIL_202",
+            "name": "Ren Fujimoto",
+            "kind": "NPC",
+            "role_label": "Agente de NOEMA · credencial comprobada",
+            "observed_location": "SCHOOL_LAB",
+            "role_assignment": "OBSERVED_IDENTITY",
+            "focus": "Dice que revisa las autorizaciones del aula."
+          }
+        ]
+      },
+      "station_case": {
+        "id": "STATION_ECHO_07",
+        "title": "El pulso ausente",
+        "status": "UNSEEN",
+        "resolution": null,
+        "summary": "Investiga NODE_07 en la estacion para buscar el rastro.",
+        "witness_count": 0,
+        "responses": []
+      },
+      "prologue": {
+        "enabled": false,
+        "stage": "LEGACY",
+        "hint": ""
+      },
+      "chapter_one": {
+        "active": true,
+        "title": "Ya habías estado aquí",
+        "started_minute": 0,
+        "connection_minute": 0,
+        "decision": null,
+        "hypothesis": "",
+        "hypothesis_status": "UNVERIFIED",
+        "evidence": [
+          {
+            "id": "RETURN_MESSAGE",
+            "title": "Has vuelto",
+            "kind": "MESSAGE",
+            "source_id": "UNKNOWN_WIRED",
+            "source_label": "Identidad desconocida · Wired",
+            "text": "Has vuelto.",
+            "acquired_minute": 0,
+            "claimed_time": "Recibido al abrir este capítulo, minuto 0",
+            "event_id": null
+          }
+        ],
+        "links": [],
+        "contradiction_linked": false,
+        "characters": [
+          "RESIDENT_001",
+          "RESIDENT_006",
+          "PROFESSOR",
+          "RYOKO"
+        ],
+        "notification": "Has vuelto"
+      },
+      "network_conflict": {
+        "active": true,
+        "multiple_operators": true,
+        "corporation": "Administradores de la Wired",
+        "corporate_control": 86.7,
+        "trace": 60,
+        "ready_in": 10,
+        "relays": [
+          {
+            "id": "RELAY_STATION",
+            "name": "Enlace del andén",
+            "location": "STATION",
+            "corporation": 80,
+            "mine": 0,
+            "defense": 0,
+            "suppressed_until": 0,
+            "inspected": false,
+            "controllers": [
+              {
+                "slot": "LINES",
+                "name": "Administrador de líneas",
+                "control": 80,
+                "suppressed_until": 0
+              },
+              {
+                "slot": "RECORDS",
+                "name": "Administrador de registros",
+                "control": 20,
+                "suppressed_until": 0
+              }
+            ]
+          },
+          {
+            "id": "RELAY_SCHOOL",
+            "name": "Enlace del pabellón B",
+            "location": "SCHOOL_LAB",
+            "corporation": 55,
+            "mine": 40,
+            "defense": 0,
+            "suppressed_until": 0,
+            "inspected": true,
+            "controllers": [
+              {
+                "slot": "LINES",
+                "name": "KAGAMI",
+                "control": 55,
+                "suppressed_until": 0
+              },
+              {
+                "slot": "RECORDS",
+                "name": "NOEMA",
+                "control": 5,
+                "suppressed_until": 130
+              }
+            ]
+          },
+          {
+            "id": "RELAY_VIDEO",
+            "name": "Enlace del videoclub",
+            "location": "VIDEO_CLUB",
+            "corporation": 55,
+            "mine": 0,
+            "defense": 0,
+            "suppressed_until": 0,
+            "inspected": false,
+            "controllers": [
+              {
+                "slot": "LINES",
+                "name": "Administrador de líneas",
+                "control": 55,
+                "suppressed_until": 0
+              },
+              {
+                "slot": "RECORDS",
+                "name": "Administrador de registros",
+                "control": 45,
+                "suppressed_until": 0
+              }
+            ]
+          }
+        ],
+        "rankings": [
+          {
+            "actor_id": "PLAYER_1",
+            "name": "Player",
+            "control": 13.3
+          }
+        ],
+        "pending": [
+          {
+            "relay": "RELAY_SCHOOL",
+            "due_minute": 100,
+            "remaining": 90,
+            "operator": "KAGAMI",
+            "kind": "Intervención técnica",
+            "max_loss": 30
+          }
+        ],
+        "reports": [
+          {
+            "id": 7,
+            "minute": 10,
+            "source": "RELAY_TELEMETRY",
+            "text": "Enlace del pabellón B: KAGAMI aprovechó la suspensión y tomó 5 puntos al otro operador. Las cuotas de los usuarios no cambiaron."
+          },
+          {
+            "id": 6,
+            "minute": 10,
+            "source": "RELAY_TELEMETRY",
+            "text": "Enlace del pabellón B: órdenes de NOEMA suspendidas durante 120 minutos del mundo. Las órdenes del otro operador, si las hay, siguen activas."
+          },
+          {
+            "id": 5,
+            "minute": 10,
+            "source": "RELAY_SCHOOL",
+            "text": "CONTRATO DE CESIÓN · El protocolo y sus primeras comunidades son anteriores a KAGAMI. El consorcio adquirió los puntos de acceso y sustituyó las claves de administración; no creó la Wired.\n\nTRÁFICO ACTUAL · La orden de intervención comparte la credencial del personal de mantenimiento presente. Puedes contrastarla hablando con esa persona.\n\nANEXO DE REGISTROS · NOEMA adquirió permisos sobre identidades y archivos; tampoco creó la Wired. Controla una cuota distinta a la de KAGAMI.\n\nORDEN DE REESCRITURA · Su firma coincide con la credencial del personal de registros presente. Contrástala antes de que venza la orden."
+          },
+          {
+            "id": 4,
+            "minute": 10,
+            "source": "RELAY_TELEMETRY",
+            "text": "Enlace del pabellón B: NOEMA prepara una reescritura de permisos (hasta 20 puntos). Tienes 80 minutos del mundo para defenderte, ocultar tu enlace o examinar el tráfico y contrastar la credencial de su personal."
+          },
+          {
+            "id": 3,
+            "minute": 0,
+            "source": "RELAY_TELEMETRY",
+            "text": "Enlace del pabellón B: KAGAMI prepara una intervención técnica (hasta 30 puntos). Tienes 100 minutos del mundo para defenderte, ocultar tu enlace o examinar el tráfico y contrastar la credencial de su personal."
+          },
+          {
+            "id": 2,
+            "minute": 0,
+            "source": "RELAY_SCHOOL",
+            "text": "CONTRATO DE CESIÓN · El protocolo y sus primeras comunidades son anteriores a KAGAMI. El consorcio adquirió los puntos de acceso y sustituyó las claves de administración; no creó la Wired.\n\nANEXO DE REGISTROS · NOEMA adquirió permisos sobre identidades y archivos; tampoco creó la Wired. Controla una cuota distinta a la de KAGAMI."
+          },
+          {
+            "id": 1,
+            "minute": 0,
+            "source": "WORKSHOP",
+            "text": "El PC dispone de un taller de código. En Kissa Café han instalado un terminal: su técnico busca ayuda para comprobar un coprocesador."
+          }
+        ],
+        "visible_personnel": [
+          {
+            "id": "CIVIL_102",
+            "relay": "RELAY_SCHOOL",
+            "name": "Reina Asano",
+            "role": "Consultora de equipos",
+            "slot": "LINES"
+          },
+          {
+            "id": "CIVIL_202",
+            "relay": "RELAY_SCHOOL",
+            "name": "Ren Fujimoto",
+            "role": "Agente de NOEMA · credencial comprobada",
+            "slot": "RECORDS",
+            "focus": "Dice que revisa las autorizaciones del aula."
+          }
+        ],
+        "session_mode": "LOCAL"
+      },
+      "workshop": {
+        "active": true,
+        "lesson": 0,
+        "life_source": "def next_cell(alive, neighbors):\n    # Completa las reglas de nacimiento y supervivencia.\n    return False\n",
+        "draft": "use(\"routing\")\n",
+        "compiled": "use(\"routing\")\n",
+        "modules": [
+          "routing"
+        ],
+        "contract": "INDEPENDENT",
+        "best_score": 0,
+        "capacity": 4,
+        "cost": 2,
+        "assets": [
+          {
+            "id": "first_connection",
+            "kind": "CODE",
+            "model": "routing",
+            "source": "Tu primera conexión a la Wired",
+            "minute": 0,
+            "active": 0,
+            "ownership": "OWNED",
+            "name": "Enrutamiento",
+            "capacity": 0
+          },
+          {
+            "id": "home_navi",
+            "kind": "DEVICE",
+            "model": "navi",
+            "source": "Ordenador de casa",
+            "minute": 0,
+            "active": 1,
+            "ownership": "OWNED",
+            "name": "Navi A",
+            "capacity": 4
+          }
+        ],
+        "library": [
+          {
+            "id": "routing",
+            "name": "Enrutamiento",
+            "cost": 2,
+            "effect": "Conexión del montaje; conserva las acciones básicas del enlace."
+          }
+        ],
+        "offers": {},
+        "life_hint": "",
+        "session_mode": "LOCAL"
+      },
+      "situations": [],
+      "interaction": null,
+      "outgoing_interaction": null,
+      "messages": [
+        {
+          "id": "MSG_BOOTSTRAP_001",
+          "sender": "unknown@wired",
+          "subject": "NO SUBJECT",
+          "body": "NO ESTOY MUERTA.\n\nSOLO DEJÉ DE ESTAR AHÍ.",
+          "created_minute": 0,
+          "read": true,
+          "acknowledged": true,
+          "acknowledged_minute": 0
+        }
+      ],
+      "unread_messages": 0,
+      "wired": {
+        "connected": true,
+        "signals": [
+          {
+            "node_id": "NODE_07",
+            "location": "STATION",
+            "strength": 0.5,
+            "confidence": 0.35,
+            "origin_source": "WIRED_MESSAGE",
+            "current_source": "WIRED_MESSAGE",
+            "verified": false,
+            "updated_minute": 0
+          }
+        ],
+        "digital_presences": []
+      }
+    },
+    "result": {
+      "speaker": "Ren Fujimoto",
+      "text": "La credencial coincide con NOEMA. Has detenido sus órdenes en este enlace para todos los usuarios durante 120 minutos del mundo. Las órdenes de la otra corporación siguen activas. KAGAMI aprovechó la caída para tomar 5 puntos a NOEMA.",
+      "choices": []
+    }
+  },
+  {
+    "name": "pc-two-corporations",
+    "mode": "pc",
+    "state": {
+      "schema_version": "0.1",
+      "minute": 10,
+      "player": {
+        "id": "PLAYER_1",
+        "name": "Player",
+        "faction": "UNALIGNED",
+        "location": "APARTMENT",
+        "goal": "UNKNOWN",
+        "energy": 1.0
+      },
+      "navigation": {
+        "reachable_locations": [
+          "APARTMENT_DISTRICT"
+        ]
+      },
+      "known_nodes": [
+        {
+          "id": "NODE_07",
+          "knowledge_confidence": 0.35,
+          "knowledge_source": "WIRED_MESSAGE",
+          "belief": {
+            "location": "STATION",
+            "strength": 0.5,
+            "confidence": 0.35,
+            "source": "WIRED_MESSAGE",
+            "updated_minute": 0
+          }
+        }
+      ],
+      "visible_actors": [],
+      "character_sheets": {
+        "player": {
+          "id": "PLAYER_1",
+          "name": "Player",
+          "kind": "PLAYER",
+          "faction": "UNALIGNED",
+          "location": "APARTMENT",
+          "energy": 1.0,
+          "known_nodes": 1,
+          "case_status": "UNSEEN",
+          "agency": "HUMAN_ONLY"
+        },
+        "visible_npcs": []
+      },
+      "station_case": {
+        "id": "STATION_ECHO_07",
+        "title": "El pulso ausente",
+        "status": "UNSEEN",
+        "resolution": null,
+        "summary": "Investiga NODE_07 en la estacion para buscar el rastro.",
+        "witness_count": 0,
+        "responses": []
+      },
+      "prologue": {
+        "enabled": false,
+        "stage": "LEGACY",
+        "hint": ""
+      },
+      "chapter_one": {
+        "active": true,
+        "title": "Ya habías estado aquí",
+        "started_minute": 0,
+        "connection_minute": 0,
+        "decision": null,
+        "hypothesis": "",
+        "hypothesis_status": "UNVERIFIED",
+        "evidence": [
+          {
+            "id": "RETURN_MESSAGE",
+            "title": "Has vuelto",
+            "kind": "MESSAGE",
+            "source_id": "UNKNOWN_WIRED",
+            "source_label": "Identidad desconocida · Wired",
+            "text": "Has vuelto.",
+            "acquired_minute": 0,
+            "claimed_time": "Recibido al abrir este capítulo, minuto 0",
+            "event_id": null
+          }
+        ],
+        "links": [],
+        "contradiction_linked": false,
+        "characters": [
+          "RESIDENT_001",
+          "RESIDENT_006",
+          "PROFESSOR",
+          "RYOKO"
+        ],
+        "notification": "Has vuelto"
+      },
+      "network_conflict": {
+        "active": true,
+        "multiple_operators": true,
+        "corporation": "Administradores de la Wired",
+        "corporate_control": 86.7,
+        "trace": 60,
+        "ready_in": 10,
+        "relays": [
+          {
+            "id": "RELAY_STATION",
+            "name": "Enlace del andén",
+            "location": "STATION",
+            "corporation": 80,
+            "mine": 0,
+            "defense": 0,
+            "suppressed_until": 0,
+            "inspected": false,
+            "controllers": [
+              {
+                "slot": "LINES",
+                "name": "Administrador de líneas",
+                "control": 80,
+                "suppressed_until": 0
+              },
+              {
+                "slot": "RECORDS",
+                "name": "Administrador de registros",
+                "control": 20,
+                "suppressed_until": 0
+              }
+            ]
+          },
+          {
+            "id": "RELAY_SCHOOL",
+            "name": "Enlace del pabellón B",
+            "location": "SCHOOL_LAB",
+            "corporation": 55,
+            "mine": 40,
+            "defense": 0,
+            "suppressed_until": 0,
+            "inspected": true,
+            "controllers": [
+              {
+                "slot": "LINES",
+                "name": "KAGAMI",
+                "control": 55,
+                "suppressed_until": 0
+              },
+              {
+                "slot": "RECORDS",
+                "name": "NOEMA",
+                "control": 5,
+                "suppressed_until": 130
+              }
+            ]
+          },
+          {
+            "id": "RELAY_VIDEO",
+            "name": "Enlace del videoclub",
+            "location": "VIDEO_CLUB",
+            "corporation": 55,
+            "mine": 0,
+            "defense": 0,
+            "suppressed_until": 0,
+            "inspected": false,
+            "controllers": [
+              {
+                "slot": "LINES",
+                "name": "Administrador de líneas",
+                "control": 55,
+                "suppressed_until": 0
+              },
+              {
+                "slot": "RECORDS",
+                "name": "Administrador de registros",
+                "control": 45,
+                "suppressed_until": 0
+              }
+            ]
+          }
+        ],
+        "rankings": [
+          {
+            "actor_id": "PLAYER_1",
+            "name": "Player",
+            "control": 13.3
+          }
+        ],
+        "pending": [
+          {
+            "relay": "RELAY_SCHOOL",
+            "due_minute": 100,
+            "remaining": 90,
+            "operator": "KAGAMI",
+            "kind": "Intervención técnica",
+            "max_loss": 30
+          }
+        ],
+        "reports": [
+          {
+            "id": 7,
+            "minute": 10,
+            "source": "RELAY_TELEMETRY",
+            "text": "Enlace del pabellón B: KAGAMI aprovechó la suspensión y tomó 5 puntos al otro operador. Las cuotas de los usuarios no cambiaron."
+          },
+          {
+            "id": 6,
+            "minute": 10,
+            "source": "RELAY_TELEMETRY",
+            "text": "Enlace del pabellón B: órdenes de NOEMA suspendidas durante 120 minutos del mundo. Las órdenes del otro operador, si las hay, siguen activas."
+          },
+          {
+            "id": 5,
+            "minute": 10,
+            "source": "RELAY_SCHOOL",
+            "text": "CONTRATO DE CESIÓN · El protocolo y sus primeras comunidades son anteriores a KAGAMI. El consorcio adquirió los puntos de acceso y sustituyó las claves de administración; no creó la Wired.\n\nTRÁFICO ACTUAL · La orden de intervención comparte la credencial del personal de mantenimiento presente. Puedes contrastarla hablando con esa persona.\n\nANEXO DE REGISTROS · NOEMA adquirió permisos sobre identidades y archivos; tampoco creó la Wired. Controla una cuota distinta a la de KAGAMI.\n\nORDEN DE REESCRITURA · Su firma coincide con la credencial del personal de registros presente. Contrástala antes de que venza la orden."
+          },
+          {
+            "id": 4,
+            "minute": 10,
+            "source": "RELAY_TELEMETRY",
+            "text": "Enlace del pabellón B: NOEMA prepara una reescritura de permisos (hasta 20 puntos). Tienes 80 minutos del mundo para defenderte, ocultar tu enlace o examinar el tráfico y contrastar la credencial de su personal."
+          },
+          {
+            "id": 3,
+            "minute": 0,
+            "source": "RELAY_TELEMETRY",
+            "text": "Enlace del pabellón B: KAGAMI prepara una intervención técnica (hasta 30 puntos). Tienes 100 minutos del mundo para defenderte, ocultar tu enlace o examinar el tráfico y contrastar la credencial de su personal."
+          },
+          {
+            "id": 2,
+            "minute": 0,
+            "source": "RELAY_SCHOOL",
+            "text": "CONTRATO DE CESIÓN · El protocolo y sus primeras comunidades son anteriores a KAGAMI. El consorcio adquirió los puntos de acceso y sustituyó las claves de administración; no creó la Wired.\n\nANEXO DE REGISTROS · NOEMA adquirió permisos sobre identidades y archivos; tampoco creó la Wired. Controla una cuota distinta a la de KAGAMI."
+          },
+          {
+            "id": 1,
+            "minute": 0,
+            "source": "WORKSHOP",
+            "text": "El PC dispone de un taller de código. En Kissa Café han instalado un terminal: su técnico busca ayuda para comprobar un coprocesador."
+          }
+        ],
+        "visible_personnel": [],
+        "session_mode": "LOCAL"
+      },
+      "workshop": {
+        "active": true,
+        "lesson": 0,
+        "life_source": "def next_cell(alive, neighbors):\n    # Completa las reglas de nacimiento y supervivencia.\n    return False\n",
+        "draft": "use(\"routing\")\n",
+        "compiled": "use(\"routing\")\n",
+        "modules": [
+          "routing"
+        ],
+        "contract": "INDEPENDENT",
+        "best_score": 0,
+        "capacity": 4,
+        "cost": 2,
+        "assets": [
+          {
+            "id": "first_connection",
+            "kind": "CODE",
+            "model": "routing",
+            "source": "Tu primera conexión a la Wired",
+            "minute": 0,
+            "active": 0,
+            "ownership": "OWNED",
+            "name": "Enrutamiento",
+            "capacity": 0
+          },
+          {
+            "id": "home_navi",
+            "kind": "DEVICE",
+            "model": "navi",
+            "source": "Ordenador de casa",
+            "minute": 0,
+            "active": 1,
+            "ownership": "OWNED",
+            "name": "Navi A",
+            "capacity": 4
+          }
+        ],
+        "library": [
+          {
+            "id": "routing",
+            "name": "Enrutamiento",
+            "cost": 2,
+            "effect": "Conexión del montaje; conserva las acciones básicas del enlace."
+          }
+        ],
+        "offers": {},
+        "life_hint": "",
+        "session_mode": "LOCAL"
+      },
+      "situations": [],
+      "interaction": null,
+      "outgoing_interaction": null,
+      "messages": [
+        {
+          "id": "MSG_BOOTSTRAP_001",
+          "sender": "unknown@wired",
+          "subject": "NO SUBJECT",
+          "body": "NO ESTOY MUERTA.\n\nSOLO DEJÉ DE ESTAR AHÍ.",
+          "created_minute": 0,
+          "read": true,
+          "acknowledged": true,
+          "acknowledged_minute": 0
+        }
+      ],
+      "unread_messages": 0,
+      "wired": {
+        "connected": true,
+        "signals": [
+          {
+            "node_id": "NODE_07",
+            "location": "STATION",
+            "strength": 0.5,
+            "confidence": 0.35,
+            "origin_source": "WIRED_MESSAGE",
+            "current_source": "WIRED_MESSAGE",
+            "verified": false,
+            "updated_minute": 0
+          }
+        ],
+        "digital_presences": []
+      }
+    },
+    "result": {}
+  }
+]

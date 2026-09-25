@@ -24,8 +24,9 @@ def main():
                    LAIN_WORLD_CLOCK="0", LAIN_MEMORY_SEMANTIC="0",
                    LAIN_CHAPTER_ONE="1", LAIN_PROLOGUE_ENABLED="0",
                    LAIN_CITY_RESIDENTS_ENABLED="1", LAIN_REALITY_GENERATION="0")
-        env["LAIN_CORPORATION"]="1" if "--network" in sys.argv or "--workshop" in sys.argv else "0"
+        env["LAIN_CORPORATION"]="1" if any(flag in sys.argv for flag in ["--network","--workshop","--noema"]) else "0"
         env["LAIN_WORKSHOP"]="1" if "--workshop" in sys.argv else "0"
+        env["LAIN_NOEMA"]="1" if "--noema" in sys.argv else "0"
         with (Path(scratch)/"server.log").open("w", encoding="utf-8") as log:
             process = subprocess.Popen([sys.executable, "-m", "uvicorn", "server.api:app",
                 "--host", "127.0.0.1", "--port", str(port)], cwd=ROOT, env=env,
@@ -94,6 +95,52 @@ def main():
                         assert list(conn.iterdump())==before
                     conn.close()
                     print("CONFLICT01_HTTP_OK movement=authoritative identity=server_bound retry=idempotent")
+                if "--noema" in sys.argv:
+                    for destination in ["APARTMENT_DISTRICT","SCHOOL","SCHOOL_LAB"]:
+                        request("/api/v1/player/step",{"action":"MOVE","target":destination})
+                    counter=0
+                    def network(action, faction="KAGAMI"):
+                        nonlocal counter
+                        counter+=1
+                        command={"action":action,"relay":"RELAY_SCHOOL","faction":faction,
+                                 "request_id":f"http_noema_{counter:04}"}
+                        response=request("/api/v1/network/action",command)
+                        assert request("/api/v1/network/action",command)["result"]==response["result"]
+                        return response
+                    network("INSPECT")
+                    network("CLAIM","NOEMA")
+                    # Movement advances the authoritative clock without changing it in SQL.
+                    for destination in ["SCHOOL","SCHOOL_LAB"]:
+                        request("/api/v1/player/step",{"action":"MOVE","target":destination})
+                    network("CLAIM","KAGAMI")
+                    network("INSPECT")
+                    response=network("TALK","NOEMA")
+                    assert len(response["state"]["network_conflict"]["pending"])==2
+                    response=network("EXPOSE","NOEMA")
+                    pending=response["state"]["network_conflict"]["pending"]
+                    assert len(pending)==1 and pending[0]["operator"]=="KAGAMI"
+                    relay=next(r for r in response["state"]["network_conflict"]["relays"] if r["id"]=="RELAY_SCHOOL")
+                    assert relay["mine"]==40
+                    assert sum(r["control"] for r in relay["controllers"])+relay["mine"]==100
+                    with sqlite3.connect(db) as conn:
+                        before=list(conn.iterdump())
+                    conn.close()
+                    for invalid, status in [
+                        ({"action":"CLAIM","relay":"RELAY_SCHOOL","faction":"NOEMA",
+                          "request_id":"http_noema_forged","actor_id":"AGENT_K"},422),
+                        ({"action":"CLAIM","relay":"RELAY_SCHOOL","faction":"MISSING",
+                          "request_id":"http_noema_invalid"},409),
+                    ]:
+                        try:
+                            request("/api/v1/network/action",invalid)
+                            raise AssertionError("Invalid corporate request accepted")
+                        except HTTPError as error:
+                            assert error.code==status
+                    request("/api/v1/player/state")
+                    with sqlite3.connect(db) as conn:
+                        assert list(conn.iterdump())==before
+                    conn.close()
+                    print("NOEMA01_HTTP_OK two_orders=true scoped_exposure=true control=conserved retries=idempotent")
                 if "--workshop" in sys.argv:
                     counter=0
                     def workshop(action, **data):

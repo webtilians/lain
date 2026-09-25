@@ -210,10 +210,16 @@ def perform_workshop_action(actor, action, data, request_id):
             if relay not in RELAYS: raise ValueError("INVALID_RELAY")
             if not has_module(c,actor,"scan"): raise ValueError("SCAN_MODULE_REQUIRED")
             if not c.execute("SELECT 1 FROM network_discoveries WHERE actor_id=? AND relay=?",(actor,relay)).fetchone(): raise ValueError("INSPECT_RELAY_FIRST")
-            ops=c.execute("SELECT due_minute FROM network_operations WHERE target=? AND relay=? AND status='PENDING' ORDER BY due_minute",(actor,relay)).fetchall()
-            result["text"]=RELAYS[relay][0]+": "+("intervención sobre tu cuenta en "+str(max(0,ops[0][0]-now))+" min del mundo." if ops else "sin intervenciones pendientes sobre tu cuenta.")
-            protection=c.execute("SELECT suppressed_until FROM network_relays WHERE id=?",(relay,)).fetchone()[0]
-            result["text"]+=f" Suspensión de nuevas órdenes: {max(0,protection-now)} min."
+            from . import corporate_factions as factions
+            ops=c.execute("SELECT id,due_minute FROM network_operations WHERE target=? AND relay=? AND status='PENDING' ORDER BY due_minute,id",(actor,relay)).fetchall()
+            lines=[RELAYS[relay][0]]
+            for op,due in ops:
+                faction=factions.operation_faction(c,op)
+                lines.append(f"{factions.label(c,actor,relay,faction)}: intervención sobre tu cuenta en {max(0,due-now)} min del mundo.")
+            if not ops: lines.append("Sin intervenciones pendientes sobre tu cuenta.")
+            for controller in factions.controllers(c,actor,relay):
+                lines.append(f"{controller['name']}: suspensión de nuevas órdenes durante {max(0,controller['suppressed_until']-now)} min.")
+            result["text"]="\n".join(lines)
             report(c,actor,now,"WORKSHOP_SCAN",result["text"])
             if player[1]=="NOEMA":
                 c.execute("INSERT INTO workshop_contract_reports VALUES(?,?,?,?,?)",(actor,"NOEMA",relay,now,len(ops)))

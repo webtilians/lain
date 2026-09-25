@@ -3,6 +3,10 @@
 Rama experimental **experiment/wired-0.2-workshop**, creada desde a86f423.
 No se fusionan ramas ni se reemplazan guardados anteriores.
 
+Este documento describe la entrega 0.2. Para continuar desde la rama actual,
+consulta [WIRED 0.3 · Dos administradores](NOEMA01_README.md), con agentes y control
+territorial de NOEMA y el guardado noema01.db.
+
 ## Primera versión jugable
 
 El PC de casa abre un taller después de la primera conexión a la Wired.

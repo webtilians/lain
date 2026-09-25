@@ -1,8 +1,9 @@
 extends Node3D
 var relay := ""
 var personnel := false
+var faction := "KAGAMI"
 func _ready() -> void:
 	add_to_group("interactable")
 func interact() -> void:
 	if NetworkConflict.active():
-		NetworkConflict.interact(relay,personnel)
+		NetworkConflict.interact(relay,personnel,faction)

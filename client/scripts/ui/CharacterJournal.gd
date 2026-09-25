@@ -228,20 +228,33 @@ func _render_network() -> void:
 	var data: Dictionary=WorldApi.snapshot.get("network_conflict",{})
 	var locations: Dictionary={"STATION":"Estación","SCHOOL_LAB":"Aula de informática","VIDEO_CLUB":"Video Hoshi"}
 	var sources: Dictionary={"RELAY_TELEMETRY":"Lectura del enlace"}
-	var text: String="RED // CONTROL DE ENLACES\n\n"+str(data.get("corporation",""))+" controla el "+str(data.get("corporate_control",0))+"%\n"
+	var text: String="RED // CONTROL DE ENLACES\n\n"+str(data.get("corporation",""))+" · control total: "+str(data.get("corporate_control",0))+"%\n"
 	text+="Tu exposición: "+str(int(data.get("trace",0)))+"/100\n"
 	text+="Examinar un armario permite conocer a su administrador. Disputar su control puede desencadenar una intervención.\n"
-	for item in data.get("relays",[]):
-		sources[str(item.id)]=str(item.name)
-		text+="\n"+str(item.name)+" · "+str(locations.get(str(item.location),item.location))+"\n"
-		text+="Administrador: "+str(int(item.corporation))+"% · Tú: "+str(int(item.mine))+"% · Defensas: "+str(int(item.defense))+"/2\n"
 	text+="\nINTERVENCIONES CONTRA TU CONEXIÓN\n"
 	if data.get("pending",[]).is_empty(): text+="Ninguna detectada.\n"
 	for op in data.get("pending",[]):
 		var title: String=str(op.relay)
 		for item in data.get("relays",[]):
 			if item.id==op.relay: title=str(item.name)
-		text+=title+": restan "+str(int(op.remaining))+" minutos del mundo.\n"
+		text+=title+": "+str(op.get("operator","Administrador"))+" · "+str(op.get("kind","Intervención"))+"\nRestan "+str(int(op.remaining))+" minutos del mundo."
+		if op.has("max_loss"): text+=" Hasta "+str(int(op.max_loss))+" puntos."
+		text+="\n"
+	if not data.get("pending",[]).is_empty():
+		text+="Las defensas se consumen en la primera orden. Puedes preparar defensas, ocultar tu enlace o examinar el armario y contrastar la credencial de su personal.\n"
+	text+="\nCUOTAS DE CONTROL\n"
+	for item in data.get("relays",[]):
+		sources[str(item.id)]=str(item.name)
+		text+="\n"+str(item.name)+" · "+str(locations.get(str(item.location),item.location))+"\n"
+		if item.has("controllers"):
+			for controller in item.controllers:
+				text+=str(controller.name)+": "+str(int(controller.control))+"%"
+				var protection:=maxi(0,int(controller.suppressed_until)-int(WorldApi.snapshot.get("minute",0)))
+				if protection>0: text+=" · órdenes suspendidas "+str(protection)+" min"
+				text+="\n"
+			text+="Tú: "+str(int(item.mine))+"% · Defensas: "+str(int(item.defense))+"/2\n"
+		else:
+			text+="Administrador: "+str(int(item.corporation))+"% · Tú: "+str(int(item.mine))+"% · Defensas: "+str(int(item.defense))+"/2\n"
 	text+="\nCONTROL POR CUENTA\n"
 	for rank in data.get("rankings",[]):
 		text+=str(rank.name)+" · "+str(rank.control)+"%\n"

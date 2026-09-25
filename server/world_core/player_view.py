@@ -362,7 +362,7 @@ def build_player_snapshot(
             "id": person["id"], "name": person["name"], "kind": "NPC",
             "role_label": person["role"], "observed_location": location,
             "role_assignment": "OBSERVED_IDENTITY",
-            "focus": "Dice que revisa las líneas y los permisos de conexión de este lugar.",
+            "focus": person.get("focus","Dice que revisa las líneas y los permisos de conexión de este lugar."),
         })
     return {
         "schema_version": "0.1",

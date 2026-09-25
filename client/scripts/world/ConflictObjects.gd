@@ -12,6 +12,13 @@ var operative: Node3D
 var cabinet_label: Label3D
 var operative_label: Label3D
 var status_lamp: MeshInstance3D
+var archivist: Node3D
+var archivist_label: Label3D
+const RECORDS_POSITIONS := {
+	"STATION":Vector3(3.0,0,-1.8),
+	"SCHOOL_LAB":Vector3(5.2,0,-3.5),
+	"VIDEO_CLUB":Vector3(3.2,0,3.3),
+}
 
 func _ready() -> void:
 	if not POSITIONS.has(location): return
@@ -31,6 +38,16 @@ func _ready() -> void:
 	model.configure("worker",101+POSITIONS.keys().find(location))
 	operative.add_child(model)
 	operative_label=caption(operative,"Mantenimiento · E",2.25)
+	if WorldApi.snapshot.get("network_conflict",{}).get("multiple_operators",false):
+		archivist=anchor("RecordsStaff",RECORDS_POSITIONS[location],true)
+		archivist.set("faction","NOEMA")
+		var records_model: Node3D=load("res://art/characters/LainSlender.tscn").instantiate()
+		records_model.set_script(load("res://scripts/art/CitizenAvatar.gd"))
+		records_model.configure("teacher",201+POSITIONS.keys().find(location))
+		archivist.add_child(records_model)
+		# A folder distinguishes the records staff without revealing allegiance.
+		box(archivist,Vector3(.25,1.05,-.12),Vector3(.30,.38,.07),Color("7e666d"))
+		archivist_label=caption(archivist,"Personal de registros · E",2.25)
 	# The cabinet alone blocks movement; people use the same lightweight
 	# nonblocking interaction bodies as the existing civilian population.
 	var body:=StaticBody3D.new()
@@ -80,10 +97,15 @@ func _process(_delta: float) -> void:
 	if player==null: return
 	cabinet_label.visible=player.global_position.distance_to(cabinet.global_position)<3.0
 	operative_label.visible=player.global_position.distance_to(operative.global_position)<3.4
+	if archivist!=null:
+		archivist_label.visible=player.global_position.distance_to(archivist.global_position)<3.4
 	var network: Dictionary=WorldApi.snapshot.get("network_conflict",{})
 	for person in network.get("visible_personnel",[]):
 		if str(person.relay)==relay:
-			operative_label.text=str(person.name)+"\n"+str(person.role)+" · E"
+			if str(person.get("slot","LINES"))=="RECORDS":
+				if archivist_label!=null: archivist_label.text=str(person.name)+"\n"+str(person.role)+" · E"
+			else:
+				operative_label.text=str(person.name)+"\n"+str(person.role)+" · E"
 	var danger:=false
 	for op in network.get("pending",[]):
 		if str(op.relay)==relay: danger=true
