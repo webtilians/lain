@@ -12,6 +12,7 @@ var title_label: Label
 var body_label: Label
 var continue_button: Button
 var choices_box: VBoxContainer
+var choices_scroll: ScrollContainer
 var message_row: HBoxContainer
 var message_input: LineEdit
 var send_button: Button
@@ -104,7 +105,14 @@ func _ready() -> void:
 		"separation",
 		6
 	)
-	layout.add_child(choices_box)
+	choices_scroll = ScrollContainer.new()
+	choices_scroll.custom_minimum_size.y = 145
+	choices_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	choices_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	layout.add_child(choices_scroll)
+	choices_scroll.add_child(choices_box)
+	choices_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	choices_box.visibility_changed.connect(func(): choices_scroll.visible=choices_box.visible)
 	choices_box.visible = false
 
 	message_row = HBoxContainer.new()

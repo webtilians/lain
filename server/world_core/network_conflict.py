@@ -88,10 +88,11 @@ def report(c, actor, now, source, text):
 
 
 def _advance(c, now):
+    from .workshop import corporate_cover
     for op,relay,actor in c.execute("SELECT id,relay,target FROM network_operations WHERE status='PENDING' AND due_minute<=? ORDER BY due_minute,id",(now,)).fetchall():
         row=c.execute("SELECT amount,defense FROM network_influence WHERE relay=? AND actor_id=?",(relay,actor)).fetchone()
         amount,defense=row or (0,0)
-        loss=min(amount,max(0,30-defense*15))
+        loss=min(amount,max(0,30-defense*15-corporate_cover(c,actor)))
         c.execute("UPDATE network_influence SET amount=amount-?,defense=0 WHERE relay=? AND actor_id=?",(loss,relay,actor))
         c.execute("UPDATE network_relays SET corporation=corporation+? WHERE id=?",(loss,relay))
         c.execute("UPDATE network_operations SET status='RESOLVED' WHERE id=?",(op,))
@@ -120,6 +121,7 @@ def _option(label, action, relay, rival=""):
 
 
 def _menu(c, actor, relay, text):
+    from .workshop import has_module
     if c.execute("SELECT location FROM agents WHERE id=?",(actor,)).fetchone()!=(RELAYS[relay][1],):
         return _page(text)
     amount,defense=_own(c,relay,actor)
@@ -130,6 +132,8 @@ def _menu(c, actor, relay, text):
         if amount>0:
             if defense<2:
                 choices.append(_option("Preparar una defensa del enlace.","FORTIFY",relay))
+                if has_module(c,actor,"shield"):
+                    choices.append(_option("Ejecutar Protección · completar ambas defensas.","PROGRAM_SHIELD",relay))
             choices.append(_option("Ocultar mi enlace · ceder hasta 5 puntos.","GO_DARK",relay))
         if c.execute("SELECT 1 FROM network_influence WHERE relay=? AND actor_id!=? AND amount>0",(relay,actor)).fetchone():
             choices.append(_option("Ver a los rivales de este enlace.","RIVALS",relay))
@@ -157,7 +161,7 @@ def perform_network_action(actor, action, relay, rival, request_id):
         if previous:
             if previous[0]!=command: raise ValueError("REQUEST_ID_REUSED")
             return json.loads(previous[1])
-        if action not in {"OPEN","INSPECT","CLAIM","FORTIFY","GO_DARK","TALK","EXPOSE","RIVALS","CONTEST"} or relay not in RELAYS:
+        if action not in {"OPEN","INSPECT","CLAIM","FORTIFY","GO_DARK","TALK","EXPOSE","RIVALS","CONTEST","PROGRAM_SHIELD"} or relay not in RELAYS:
             raise ValueError("INVALID_NETWORK_ACTION")
         location=c.execute("SELECT location FROM agents WHERE id=? AND controller_type='HUMAN'",(actor,)).fetchone()
         if location!=(RELAYS[relay][1],) and not (action=="GO_DARK" and location==("APARTMENT",)):
@@ -166,7 +170,7 @@ def perform_network_action(actor, action, relay, rival, request_id):
         _advance(c,now)
         known=c.execute("SELECT proof_operation,revealed FROM network_discoveries WHERE actor_id=? AND relay=?",(actor,relay)).fetchone()
         amount,defense=_own(c,relay,actor)
-        if action in {"CLAIM","FORTIFY","GO_DARK","CONTEST"}:
+        if action in {"CLAIM","FORTIFY","GO_DARK","CONTEST","PROGRAM_SHIELD"}:
             if known is None: raise ValueError("INSPECT_RELAY_FIRST")
             last=c.execute("SELECT last_action FROM network_players WHERE actor_id=?",(actor,)).fetchone()[0]
             if now-last<10: raise ValueError("NETWORK_COOLDOWN")
@@ -223,9 +227,12 @@ def perform_network_action(actor, action, relay, rival, request_id):
                 report(c,rival,now,"RELAY_TELEMETRY",f"Otra cuenta disputó {gain} puntos de tu control en {RELAYS[relay][0]}.")
                 _schedule(c,actor,relay,now)
                 text=f"Has transferido {gain} puntos del rival hacia tu cuenta. KAGAMI puede aprovechar vuestra rivalidad."
-            elif action=="FORTIFY":
+            elif action in {"FORTIFY","PROGRAM_SHIELD"}:
                 if amount==0 or defense>=2: raise ValueError("DEFENSE_NOT_AVAILABLE")
-                c.execute("UPDATE network_influence SET defense=defense+1 WHERE relay=? AND actor_id=?",(relay,actor))
+                if action=="PROGRAM_SHIELD":
+                    from .workshop import has_module
+                    if not has_module(c,actor,"shield"): raise ValueError("SHIELD_MODULE_REQUIRED")
+                c.execute("UPDATE network_influence SET defense=? WHERE relay=? AND actor_id=?",(2 if action=="PROGRAM_SHIELD" else defense+1,relay,actor))
                 text="Defensa preparada. Cada defensa absorbe 15 puntos de la próxima intervención; se consume cuando llega. Dos defensas detienen una intervención completa."
             else:
                 if amount==0: raise ValueError("NO_PLAYER_CONTROL")

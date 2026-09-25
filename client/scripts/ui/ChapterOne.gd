@@ -9,6 +9,7 @@ var pending: Dictionary = {}
 var choices: Dictionary = {}
 var normal_conversation := Callable()
 var terminal_context := false
+var current_actor := ""
 var installed_scene := 0
 var notified_run := -1
 var toast: Label
@@ -66,6 +67,7 @@ func open_actor(actor: String, fallback: Callable = Callable()) -> void:
 	if busy:
 		return
 	normal_conversation=fallback
+	current_actor=actor
 	terminal_context=false
 	_send("TALK",actor,{"choice":"INTRO"})
 
@@ -144,6 +146,8 @@ func _present(event: Dictionary) -> void:
 		buttons.append({"id":key,"text":str(option.get("text","..."))})
 	if normal_conversation.is_valid():
 		buttons.append({"id":"NORMAL","text":"Hablar de otra cosa."})
+		if current_actor=="PROFESSOR" and Workshop.active():
+			buttons.append({"id":"LIFE","text":"Pedir las reglas del Juego de la Vida."})
 	if terminal_context:
 		if NetworkConflict.active():
 			buttons.append({"id":"NETWORK","text":"Consultar el control de los enlaces."})
@@ -162,6 +166,8 @@ func _choose(owner: String, selected: String) -> void:
 		return
 	if selected=="RETRY":
 		_dispatch() # Same id: a lost response cannot apply a choice twice.
+	elif selected=="LIFE":
+		Workshop.open_lesson()
 	elif selected=="NETWORK":
 		NetworkConflict.open_terminal()
 	elif selected=="CLOSE":

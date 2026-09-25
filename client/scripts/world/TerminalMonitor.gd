@@ -8,6 +8,9 @@ func interact() -> void:
 	):
 		PrologueTerminal.open_terminal()
 		return
+	if Workshop.active():
+		Workshop.open_pc()
+		return
 	if ChapterOne.active():
 		ChapterOne.open_terminal()
 		return

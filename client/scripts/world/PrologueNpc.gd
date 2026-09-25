@@ -36,6 +36,8 @@ func _ask(question: String) -> void:
 
 func _choices() -> Array[Dictionary]:
 	if npc_id == "PROFESSOR":
+		if Workshop.active():
+			return [{"id":"LIFE","text":"Pedir las reglas del Juego de la Vida."},{"id":"ASK_CLASS","text":"¿Qué se enseñaba aquí?"},{"id":"GOODBYE","text":"Dejar al profesor con sus cosas."}]
 		return [
 			{"id": "ASK_CLASS", "text": "¿Qué se enseñaba aquí?"},
 			{"id": "ASK_STUDENT", "text": "¿Alguien sabía entrar en aquella red?"},
@@ -53,6 +55,9 @@ func _choices() -> Array[Dictionary]:
 
 func _on_choice(owner_id: String, choice: String) -> void:
 	if owner_id != _owner_id or waiting:
+		return
+	if choice == "LIFE":
+		Workshop.open_lesson()
 		return
 	if choice == "GOODBYE":
 		EventDialog.close_event()

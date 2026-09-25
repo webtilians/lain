@@ -25,6 +25,7 @@ PrologueTerminal="*res://scripts/ui/PrologueTerminal.gd"
 GraphicsDirector="*res://scripts/art/GraphicsDirector.gd"
 ChapterOne="*res://scripts/ui/ChapterOne.gd"
 NetworkConflict="*res://scripts/ui/NetworkConflict.gd"
+Workshop="*res://scripts/ui/Workshop.gd"
 
 [display]
 

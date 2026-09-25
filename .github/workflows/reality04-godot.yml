@@ -8,6 +8,7 @@ on:
       - experiment/visual-0.10-realism
       - experiment/chapter-0.1-already-here
       - experiment/wired-0.1-corporation
+      - experiment/wired-0.2-workshop
   pull_request:
     branches:
       - experiment/reality-0.3-visual06-integration
@@ -116,6 +117,16 @@ jobs:
           /tmp/lain-godot --headless --path client --script res://tools/test_conflict01.gd 2>&1 | tee /tmp/lain-conflict01.log
           grep -q 'CONFLICT01_GAMEPLAY_OK views=9' /tmp/lain-conflict01.log
           if grep -E '^(SCRIPT ERROR:|ERROR:)' /tmp/lain-conflict01.log; then
+            exit 1
+          fi
+
+      - name: Workshop editor, café terminal and playable practice
+        shell: bash
+        run: |
+          set -euo pipefail
+          /tmp/lain-godot --headless --path client --script res://tools/test_workshop01.gd 2>&1 | tee /tmp/lain-workshop01.log
+          grep -q 'WORKSHOP01_GAMEPLAY_OK' /tmp/lain-workshop01.log
+          if grep -E '^(SCRIPT ERROR:|ERROR:)' /tmp/lain-workshop01.log; then
             exit 1
           fi
 

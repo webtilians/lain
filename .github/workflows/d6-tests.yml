@@ -25,6 +25,7 @@ on:
       - experiment/visual-0.10-realism
       - experiment/chapter-0.1-already-here
       - experiment/wired-0.1-corporation
+      - experiment/wired-0.2-workshop
   pull_request:
 
 jobs:
@@ -46,3 +47,5 @@ jobs:
         run: python tools/smoke_chapter01_http.py
       - name: Corporate conflict HTTP and server-bound identity
         run: python tools/smoke_chapter01_http.py --network
+      - name: Workshop HTTP lesson, equipment and replay
+        run: python tools/smoke_chapter01_http.py --workshop

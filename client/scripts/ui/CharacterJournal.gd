@@ -99,6 +99,8 @@ func _unhandled_input(event: InputEvent) -> void:
 	# when it closes, while the command line still holds focus.
 	if PrologueTerminal.surface != null and PrologueTerminal.surface.visible:
 		return
+	if Workshop.is_open():
+		return
 	var legacy_terminal = get_tree().get_first_node_in_group("terminal_ui")
 	if legacy_terminal != null and legacy_terminal.visible:
 		return

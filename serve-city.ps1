@@ -1,5 +1,5 @@
 param(
-    [string]$WorldPath = (Join-Path $PSScriptRoot 'corporation01.db'),
+    [string]$WorldPath = (Join-Path $PSScriptRoot 'workshop01.db'),
     [string]$PythonPath = ''
 )
 $ErrorActionPreference = 'Stop'
@@ -29,6 +29,7 @@ $defaults = @{
     LAIN_CITY_RESIDENTS_ENABLED = '1'
     LAIN_CHAPTER_ONE = '1'
     LAIN_CORPORATION = '1'
+    LAIN_WORKSHOP = '1'
 }
 foreach ($key in $defaults.Keys) {
     if ([string]::IsNullOrWhiteSpace([Environment]::GetEnvironmentVariable($key))) {

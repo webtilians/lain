@@ -231,6 +231,8 @@ class Simulation:
         initialize_chapter()
         from .network_conflict import initialize_conflict
         initialize_conflict()
+        from .workshop import initialize_workshop
+        initialize_workshop()
 
         ensure_station_followup(
             player_id=self.player.id,

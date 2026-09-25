@@ -24,7 +24,8 @@ def main():
                    LAIN_WORLD_CLOCK="0", LAIN_MEMORY_SEMANTIC="0",
                    LAIN_CHAPTER_ONE="1", LAIN_PROLOGUE_ENABLED="0",
                    LAIN_CITY_RESIDENTS_ENABLED="1", LAIN_REALITY_GENERATION="0")
-        env["LAIN_CORPORATION"]="1" if "--network" in sys.argv else "0"
+        env["LAIN_CORPORATION"]="1" if "--network" in sys.argv or "--workshop" in sys.argv else "0"
+        env["LAIN_WORKSHOP"]="1" if "--workshop" in sys.argv else "0"
         with (Path(scratch)/"server.log").open("w", encoding="utf-8") as log:
             process = subprocess.Popen([sys.executable, "-m", "uvicorn", "server.api:app",
                 "--host", "127.0.0.1", "--port", str(port)], cwd=ROOT, env=env,
@@ -93,6 +94,37 @@ def main():
                         assert list(conn.iterdump())==before
                     conn.close()
                     print("CONFLICT01_HTTP_OK movement=authoritative identity=server_bound retry=idempotent")
+                if "--workshop" in sys.argv:
+                    counter=0
+                    def workshop(action, **data):
+                        nonlocal counter
+                        counter+=1
+                        return request("/api/v1/workshop/action",{"action":action,"data":data,"request_id":f"http_workshop_{counter:04}"})
+                    for destination in ["APARTMENT_DISTRICT","SCHOOL","SCHOOL_LAB"]:
+                        request("/api/v1/player/step",{"action":"MOVE","target":destination})
+                    workshop("LESSON")
+                    for destination in ["SCHOOL","APARTMENT_DISTRICT","APARTMENT"]:
+                        request("/api/v1/player/step",{"action":"MOVE","target":destination})
+                    source="def next_cell(alive, neighbors):\n    return neighbors == 3 or (alive and neighbors == 2)\n"
+                    result=workshop("TEST_LIFE",source=source)
+                    assert result["result"]["passed"]
+                    workshop("DEVICE",id="life_matrix",active=True)
+                    assert workshop("COMPILE",source='use("routing")\nuse("shield")')["result"]["passed"]
+                    for destination in ["APARTMENT_DISTRICT","CAFE"]:
+                        request("/api/v1/player/step",{"action":"MOVE","target":destination})
+                    start=workshop("ARCADE_START")["result"]
+                    result=workshop("ARCADE_FINISH",run_id=start["run_id"],moves="DDRDRRRRRDDDDR")
+                    assert result["result"]["won"]
+                    for invalid in [
+                        {"action":"ARCADE_START","data":{},"request_id":"http_fake_actor","actor_id":"AGENT_K"},
+                        {"action":"TEST_LIFE","data":{"source":[]},"request_id":"http_fake_source"},
+                    ]:
+                        try:
+                            request("/api/v1/workshop/action",invalid)
+                            raise AssertionError("Invalid workshop request accepted")
+                        except HTTPError as error:
+                            assert error.code==422
+                    print("WORKSHOP01_HTTP_OK lesson=true build=true arcade=true identity=server_bound")
             finally:
                 if os.name=="nt":
                     # The Windows venv launcher spawns a child interpreter.
