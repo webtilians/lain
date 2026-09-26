@@ -44,13 +44,15 @@ func _choices() -> Array[Dictionary]:
 			{"id": "ASK_WHERE", "text": "¿Dónde podría encontrar a esa persona?"},
 			{"id": "GOODBYE", "text": "Dejar al profesor con sus cosas."},
 		]
-	return [
+	var result: Array[Dictionary] = [
 		{"id": "ASK_SCHOOL", "text": "¿Estuviste en la escuela?"},
 		{"id": "ASK_WIRED", "text": "¿Qué recuerdas de aquella red?"},
 		{"id": "ASK_ADDRESS", "text": "¿Conservas algún dato de acceso?"},
 		{"id": "ASK_METHOD", "text": "¿Recuerdas cómo se entraba?"},
 		{"id": "GOODBYE", "text": "Dejar a Ryoko entre la música."},
 	]
+	if Workshop.circles_active(): result.insert(0,{"id":"CIRCLE","text":"Hablar de crear una red propia."})
+	return result
 
 
 func _on_choice(owner_id: String, choice: String) -> void:
@@ -58,6 +60,9 @@ func _on_choice(owner_id: String, choice: String) -> void:
 		return
 	if choice == "LIFE":
 		Workshop.open_lesson()
+		return
+	if choice == "CIRCLE":
+		Workshop.open_circle_contact("RYOKO")
 		return
 	if choice == "GOODBYE":
 		EventDialog.close_event()

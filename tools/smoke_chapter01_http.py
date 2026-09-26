@@ -24,9 +24,10 @@ def main():
                    LAIN_WORLD_CLOCK="0", LAIN_MEMORY_SEMANTIC="0",
                    LAIN_CHAPTER_ONE="1", LAIN_PROLOGUE_ENABLED="0",
                    LAIN_CITY_RESIDENTS_ENABLED="1", LAIN_REALITY_GENERATION="0")
-        env["LAIN_CORPORATION"]="1" if any(flag in sys.argv for flag in ["--network","--workshop","--noema"]) else "0"
-        env["LAIN_WORKSHOP"]="1" if "--workshop" in sys.argv else "0"
-        env["LAIN_NOEMA"]="1" if "--noema" in sys.argv else "0"
+        env["LAIN_CORPORATION"]="1" if any(flag in sys.argv for flag in ["--network","--workshop","--noema","--circles"]) else "0"
+        env["LAIN_WORKSHOP"]="1" if any(flag in sys.argv for flag in ["--workshop","--circles"]) else "0"
+        env["LAIN_NOEMA"]="1" if any(flag in sys.argv for flag in ["--noema","--circles"]) else "0"
+        env["LAIN_CIRCLES"]="1" if "--circles" in sys.argv else "0"
         with (Path(scratch)/"server.log").open("w", encoding="utf-8") as log:
             process = subprocess.Popen([sys.executable, "-m", "uvicorn", "server.api:app",
                 "--host", "127.0.0.1", "--port", str(port)], cwd=ROOT, env=env,
@@ -141,6 +142,64 @@ def main():
                         assert list(conn.iterdump())==before
                     conn.close()
                     print("NOEMA01_HTTP_OK two_orders=true scoped_exposure=true control=conserved retries=idempotent")
+                if "--circles" in sys.argv:
+                    counter=0
+                    def move(*destinations):
+                        for destination in destinations:
+                            request("/api/v1/player/step",{"action":"MOVE","target":destination})
+                    def action(system, verb, **data):
+                        nonlocal counter
+                        counter+=1
+                        command={"action":verb,"request_id":f"http_circles_{counter:04}"}
+                        if system=="network": command.update(data)
+                        else: command["data"]=data
+                        endpoint=f"/api/v1/{system}/action"
+                        response=request(endpoint,command)
+                        assert request(endpoint,command)["result"]==response["result"]
+                        return response
+                    move("APARTMENT_DISTRICT","SCHOOL","SCHOOL_LAB")
+                    action("workshop","LESSON")
+                    move("SCHOOL","APARTMENT_DISTRICT","APARTMENT")
+                    source="def next_cell(alive, neighbors):\n    return neighbors == 3 or (alive and neighbors == 2)\n"
+                    assert action("workshop","TEST_LIFE",source=source)["result"]["passed"]
+                    action("workshop","DEVICE",id="life_matrix",active=True)
+                    action("circles","CREATE",name="Círculo HTTP")
+                    for ident in ["home_navi","first_connection","life_matrix","life_shield"]:
+                        action("circles","CONTRIBUTE",id=ident,active=True)
+                    move("APARTMENT_DISTRICT","NIGHTCLUB")
+                    action("circles","CONTACT",target="RYOKO")
+                    move("APARTMENT_DISTRICT","APARTMENT")
+                    action("circles","INVITE",target="RYOKO")
+                    response=action("circles","COMPILE",source='use("routing")\nuse("shield")\nuse("scan")')
+                    assert response["result"]["passed"]
+                    assert response["state"]["circles"]["group"]["capacity"]==11
+                    assert response["state"]["workshop"]["modules"]==["routing"]
+                    move("APARTMENT_DISTRICT","SCHOOL","SCHOOL_LAB")
+                    action("network","INSPECT",relay="RELAY_SCHOOL")
+                    action("network","CLAIM",relay="RELAY_SCHOOL",faction="NOEMA")
+                    move("SCHOOL","SCHOOL_LAB")
+                    action("network","PROGRAM_SHIELD",relay="RELAY_SCHOOL")
+                    move("SCHOOL","APARTMENT_DISTRICT","APARTMENT")
+                    assert "NOEMA" in action("workshop","SCAN",relay="RELAY_SCHOOL")["result"]["text"]
+                    response=action("circles","REMOVE",target="RYOKO")
+                    assert response["state"]["workshop"]["shared_modules"]==[]
+                    assert response["state"]["circles"]["group"]["draft"]
+                    with sqlite3.connect(db) as conn: before=list(conn.iterdump())
+                    conn.close()
+                    for endpoint, invalid, status in [
+                        ("circles",{"action":"CREATE","data":{"name":"Falso"},"actor_id":"AGENT_K","request_id":"circles_forged_01"},422),
+                        ("circles",{"action":"CONTRIBUTE","data":{"id":"home_navi","active":1},"request_id":"circles_invalid_01"},422),
+                        ("workshop",{"action":"SCAN","data":{"relay":"RELAY_SCHOOL"},"request_id":"circles_revoked_01"},409),
+                    ]:
+                        try:
+                            request(f"/api/v1/{endpoint}/action",invalid)
+                            raise AssertionError("Invalid or revoked action accepted")
+                        except HTTPError as error:
+                            assert error.code==status
+                    request("/api/v1/player/state")
+                    with sqlite3.connect(db) as conn: assert list(conn.iterdump())==before
+                    conn.close()
+                    print("CIRCLES01_HTTP_OK consent=true capacity=11 shared_defense=true shared_scan=true revocation=true")
                 if "--workshop" in sys.argv:
                     counter=0
                     def workshop(action, **data):

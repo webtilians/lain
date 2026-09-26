@@ -148,6 +148,8 @@ func _present(event: Dictionary) -> void:
 		buttons.append({"id":"NORMAL","text":"Hablar de otra cosa."})
 		if current_actor=="PROFESSOR" and Workshop.active():
 			buttons.append({"id":"LIFE","text":"Pedir las reglas del Juego de la Vida."})
+		if current_actor=="RYOKO" and Workshop.circles_active():
+			buttons.append({"id":"CIRCLE","text":"Hablar de crear una red propia."})
 	if terminal_context:
 		if NetworkConflict.active():
 			buttons.append({"id":"NETWORK","text":"Consultar el control de los enlaces."})
@@ -168,6 +170,8 @@ func _choose(owner: String, selected: String) -> void:
 		_dispatch() # Same id: a lost response cannot apply a choice twice.
 	elif selected=="LIFE":
 		Workshop.open_lesson()
+	elif selected=="CIRCLE":
+		Workshop.open_circle_contact("RYOKO")
 	elif selected=="NETWORK":
 		NetworkConflict.open_terminal()
 	elif selected=="CLOSE":

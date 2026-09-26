@@ -27,6 +27,7 @@ on:
       - experiment/wired-0.1-corporation
       - experiment/wired-0.2-workshop
       - experiment/wired-0.3-noema
+      - experiment/wired-0.4-circles
   pull_request:
 
 jobs:
@@ -52,3 +53,5 @@ jobs:
         run: python tools/smoke_chapter01_http.py --workshop
       - name: NOEMA HTTP independent orders and individual evidence
         run: python tools/smoke_chapter01_http.py --noema
+      - name: Circles HTTP local consent, deduplication and actual shared modules
+        run: python tools/smoke_chapter01_http.py --circles

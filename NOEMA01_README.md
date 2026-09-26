@@ -3,6 +3,10 @@
 Rama experimental **experiment/wired-0.3-noema**, desde 41f6881
 (taller WIRED 0.2). No fusiona ni sustituye otras ramas.
 
+Esta guía corresponde a la entrega 0.3. Para la rama actual, consulta
+[WIRED 0.4 · Una red propia](CIRCLES01_README.md), con colaboración PNJ y
+el guardado circles01.db.
+
 NOEMA disputa ahora el control de tres enlaces y tiene personal encubierto en
 la ciudad. KAGAMI controla infraestructura; NOEMA intenta recuperar permisos
 mediante reescrituras de registros. Ninguna creó la Wired.

@@ -97,7 +97,9 @@ def has_module(c, actor, module):
     row = c.execute("SELECT modules FROM workshop_players WHERE actor=?",(actor,)).fetchone()
     if not row: return False
     modules = json.loads(row[0])
-    return module in modules and _build_valid(c,actor,modules)
+    if module in modules and _build_valid(c,actor,modules): return True
+    from .circles import shared_modules
+    return module in shared_modules(c,actor)
 
 
 def corporate_cover(c, actor):
@@ -247,6 +249,9 @@ def perform_workshop_action(actor, action, data, request_id):
                     result["text"]+=" Interfaz R y Exploración disponibles en tu PC. La recompensa se obtiene una vez."
                 c.execute("UPDATE workshop_runs SET status='FINISHED',moves=?,result=? WHERE actor=? AND id=?",(moves,json.dumps(result),actor,run))
         else: raise ValueError("INVALID_WORKSHOP_ACTION")
+        if action in {"DEVICE","CONTRACT"}:
+            from .circles import revalidate
+            revalidate(c,actor,now)
         c.execute("INSERT INTO workshop_requests VALUES(?,?,?,?)",(actor,request_id,command,json.dumps(result,ensure_ascii=False)))
         c.execute("INSERT INTO events(minute,actor_id,action,target,details) VALUES(?,?,'WORKSHOP',?,?)",(now,actor,action,result["text"]))
         return result
@@ -262,6 +267,7 @@ def workshop_snapshot(actor="PLAYER_1"):
         for a in assets:
             a["name"]=DEVICES[a["model"]][0] if a["kind"]=="DEVICE" else MODULES[a["model"]]["name"]
             a["capacity"]=DEVICES[a["model"]][1] if a["kind"]=="DEVICE" else 0
-        return {"active":True,"lesson":row[0],"life_source":row[1],"draft":row[2],"compiled":row[3],"modules":json.loads(row[4]),"contract":row[5],"best_score":row[6],"capacity":capacity,
+        from .circles import shared_modules
+        return {"active":True,"shared_modules":shared_modules(c,actor),"lesson":row[0],"life_source":row[1],"draft":row[2],"compiled":row[3],"modules":json.loads(row[4]),"contract":row[5],"best_score":row[6],"capacity":capacity,
                 "cost":sum(MODULES[m]["cost"] for m in json.loads(row[4])),"assets":assets,"library":[{"id":m,**MODULES[m]} for m in MODULES if m in owned],
                 "offers":OFFERS if row[0]>=2 else {},"life_hint":LIFE_HINT if row[0]>=1 else "","session_mode":"LOCAL"}

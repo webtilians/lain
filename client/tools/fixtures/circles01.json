@@ -1,0 +1,4358 @@
+{
+  "empty": {
+    "schema_version": "0.1",
+    "minute": 0,
+    "player": {
+      "id": "PLAYER_1",
+      "name": "Player",
+      "faction": "UNALIGNED",
+      "location": "APARTMENT",
+      "goal": "UNKNOWN",
+      "energy": 1.0
+    },
+    "navigation": {
+      "reachable_locations": [
+        "APARTMENT_DISTRICT"
+      ]
+    },
+    "known_nodes": [
+      {
+        "id": "NODE_07",
+        "knowledge_confidence": 0.35,
+        "knowledge_source": "WIRED_MESSAGE",
+        "belief": {
+          "location": "STATION",
+          "strength": 0.5,
+          "confidence": 0.35,
+          "source": "WIRED_MESSAGE",
+          "updated_minute": 0
+        }
+      }
+    ],
+    "visible_actors": [],
+    "character_sheets": {
+      "player": {
+        "id": "PLAYER_1",
+        "name": "Player",
+        "kind": "PLAYER",
+        "faction": "UNALIGNED",
+        "location": "APARTMENT",
+        "energy": 1.0,
+        "known_nodes": 1,
+        "case_status": "UNSEEN",
+        "agency": "HUMAN_ONLY"
+      },
+      "visible_npcs": []
+    },
+    "station_case": {
+      "id": "STATION_ECHO_07",
+      "title": "El pulso ausente",
+      "status": "UNSEEN",
+      "resolution": null,
+      "summary": "Investiga NODE_07 en la estacion para buscar el rastro.",
+      "witness_count": 0,
+      "responses": []
+    },
+    "prologue": {
+      "enabled": false,
+      "stage": "LEGACY",
+      "hint": ""
+    },
+    "chapter_one": {
+      "active": true,
+      "title": "Ya habías estado aquí",
+      "started_minute": 0,
+      "connection_minute": 0,
+      "decision": null,
+      "hypothesis": "",
+      "hypothesis_status": "UNVERIFIED",
+      "evidence": [
+        {
+          "id": "RETURN_MESSAGE",
+          "title": "Has vuelto",
+          "kind": "MESSAGE",
+          "source_id": "UNKNOWN_WIRED",
+          "source_label": "Identidad desconocida · Wired",
+          "text": "Has vuelto.",
+          "acquired_minute": 0,
+          "claimed_time": "Recibido al abrir este capítulo, minuto 0",
+          "event_id": null
+        }
+      ],
+      "links": [],
+      "contradiction_linked": false,
+      "characters": [
+        "RESIDENT_001",
+        "RESIDENT_006",
+        "PROFESSOR",
+        "RYOKO"
+      ],
+      "notification": "Has vuelto"
+    },
+    "network_conflict": {
+      "active": true,
+      "multiple_operators": true,
+      "corporation": "Administradores de la Wired",
+      "corporate_control": 100.0,
+      "trace": 0,
+      "ready_in": 0,
+      "relays": [
+        {
+          "id": "RELAY_STATION",
+          "name": "Enlace del andén",
+          "location": "STATION",
+          "corporation": 80,
+          "mine": 0,
+          "defense": 0,
+          "suppressed_until": 0,
+          "inspected": false,
+          "controllers": [
+            {
+              "slot": "LINES",
+              "name": "Administrador de líneas",
+              "control": 80,
+              "suppressed_until": 0
+            },
+            {
+              "slot": "RECORDS",
+              "name": "Administrador de registros",
+              "control": 20,
+              "suppressed_until": 0
+            }
+          ]
+        },
+        {
+          "id": "RELAY_SCHOOL",
+          "name": "Enlace del pabellón B",
+          "location": "SCHOOL_LAB",
+          "corporation": 70,
+          "mine": 0,
+          "defense": 0,
+          "suppressed_until": 0,
+          "inspected": false,
+          "controllers": [
+            {
+              "slot": "LINES",
+              "name": "Administrador de líneas",
+              "control": 70,
+              "suppressed_until": 0
+            },
+            {
+              "slot": "RECORDS",
+              "name": "Administrador de registros",
+              "control": 30,
+              "suppressed_until": 0
+            }
+          ]
+        },
+        {
+          "id": "RELAY_VIDEO",
+          "name": "Enlace del videoclub",
+          "location": "VIDEO_CLUB",
+          "corporation": 55,
+          "mine": 0,
+          "defense": 0,
+          "suppressed_until": 0,
+          "inspected": false,
+          "controllers": [
+            {
+              "slot": "LINES",
+              "name": "Administrador de líneas",
+              "control": 55,
+              "suppressed_until": 0
+            },
+            {
+              "slot": "RECORDS",
+              "name": "Administrador de registros",
+              "control": 45,
+              "suppressed_until": 0
+            }
+          ]
+        }
+      ],
+      "rankings": [
+        {
+          "actor_id": "PLAYER_1",
+          "name": "Player",
+          "control": 0.0
+        }
+      ],
+      "pending": [],
+      "reports": [
+        {
+          "id": 1,
+          "minute": 0,
+          "source": "WORKSHOP",
+          "text": "El PC dispone de un taller de código. En Kissa Café han instalado un terminal: su técnico busca ayuda para comprobar un coprocesador."
+        }
+      ],
+      "visible_personnel": [],
+      "session_mode": "LOCAL"
+    },
+    "workshop": {
+      "active": true,
+      "shared_modules": [],
+      "lesson": 0,
+      "life_source": "def next_cell(alive, neighbors):\n    # Completa las reglas de nacimiento y supervivencia.\n    return False\n",
+      "draft": "use(\"routing\")\n",
+      "compiled": "use(\"routing\")\n",
+      "modules": [
+        "routing"
+      ],
+      "contract": "INDEPENDENT",
+      "best_score": 0,
+      "capacity": 4,
+      "cost": 2,
+      "assets": [
+        {
+          "id": "first_connection",
+          "kind": "CODE",
+          "model": "routing",
+          "source": "Tu primera conexión a la Wired",
+          "minute": 0,
+          "active": 0,
+          "ownership": "OWNED",
+          "name": "Enrutamiento",
+          "capacity": 0
+        },
+        {
+          "id": "home_navi",
+          "kind": "DEVICE",
+          "model": "navi",
+          "source": "Ordenador de casa",
+          "minute": 0,
+          "active": 1,
+          "ownership": "OWNED",
+          "name": "Navi A",
+          "capacity": 4
+        }
+      ],
+      "library": [
+        {
+          "id": "routing",
+          "name": "Enrutamiento",
+          "cost": 2,
+          "effect": "Conexión del montaje; conserva las acciones básicas del enlace."
+        }
+      ],
+      "offers": {},
+      "life_hint": "",
+      "session_mode": "LOCAL"
+    },
+    "circles": {
+      "active": true,
+      "session_mode": "LOCAL_NPC",
+      "contacts": [
+        {
+          "id": "RYOKO",
+          "name": "Ryoko",
+          "location": "NIGHTCLUB",
+          "condition": "Completa el Juego de la Vida y sigue independiente.",
+          "motive": "Quiere que las identidades puedan circular sin depender de un administrador.",
+          "met": false,
+          "met_minute": null,
+          "ready": false,
+          "available": true,
+          "kind": "NPC"
+        },
+        {
+          "id": "KISSA_TECH",
+          "name": "Técnico de Kissa",
+          "location": "CAFE",
+          "condition": "Gana Bit Courier y sigue independiente.",
+          "motive": "Quiere mantener las máquinas del café fuera del control corporativo.",
+          "met": false,
+          "met_minute": null,
+          "ready": false,
+          "available": true,
+          "kind": "NPC"
+        }
+      ],
+      "independent": true,
+      "group": null
+    },
+    "situations": [],
+    "interaction": null,
+    "outgoing_interaction": null,
+    "messages": [
+      {
+        "id": "MSG_BOOTSTRAP_001",
+        "sender": "unknown@wired",
+        "subject": "NO SUBJECT",
+        "body": "NO ESTOY MUERTA.\n\nSOLO DEJÉ DE ESTAR AHÍ.",
+        "created_minute": 0,
+        "read": true,
+        "acknowledged": true,
+        "acknowledged_minute": 0
+      }
+    ],
+    "unread_messages": 0,
+    "wired": {
+      "connected": true,
+      "signals": [
+        {
+          "node_id": "NODE_07",
+          "location": "STATION",
+          "strength": 0.5,
+          "confidence": 0.35,
+          "origin_source": "WIRED_MESSAGE",
+          "current_source": "WIRED_MESSAGE",
+          "verified": false,
+          "updated_minute": 0
+        }
+      ],
+      "digital_presences": []
+    }
+  },
+  "club": {
+    "schema_version": "0.1",
+    "minute": 0,
+    "player": {
+      "id": "PLAYER_1",
+      "name": "Player",
+      "faction": "UNALIGNED",
+      "location": "NIGHTCLUB",
+      "goal": "UNKNOWN",
+      "energy": 1.0
+    },
+    "navigation": {
+      "reachable_locations": [
+        "APARTMENT_DISTRICT"
+      ]
+    },
+    "known_nodes": [
+      {
+        "id": "NODE_07",
+        "knowledge_confidence": 0.35,
+        "knowledge_source": "WIRED_MESSAGE",
+        "belief": {
+          "location": "STATION",
+          "strength": 0.5,
+          "confidence": 0.35,
+          "source": "WIRED_MESSAGE",
+          "updated_minute": 0
+        }
+      }
+    ],
+    "visible_actors": [
+      {
+        "id": "RESIDENT_029",
+        "name": "Koji Murata",
+        "role": "Camarero de la discoteca",
+        "role_label": "Camarero de la discoteca",
+        "skills": {
+          "Atención al público": 4,
+          "Observación": 2
+        },
+        "public_objective": "Atender a la sala sin perder los pedidos.",
+        "activity": "Repasa los pedidos",
+        "slot": 0,
+        "patrol_step": 0,
+        "appearance": "apron",
+        "role_assignment": "CITY_PROVISIONAL"
+      },
+      {
+        "id": "RESIDENT_030",
+        "name": "Erika Hoshino",
+        "role": "DJ",
+        "role_label": "DJ",
+        "skills": {
+          "Música": 5,
+          "Observación": 3
+        },
+        "public_objective": "Encontrar la siguiente pista entre sus discos.",
+        "activity": "Escucha la mezcla",
+        "slot": 1,
+        "patrol_step": 0,
+        "appearance": "casual",
+        "role_assignment": "CITY_PROVISIONAL"
+      },
+      {
+        "id": "RESIDENT_031",
+        "name": "Tatsuya Ota",
+        "role": "Técnico de sonido",
+        "role_label": "Técnico de sonido",
+        "skills": {
+          "Sonido": 3,
+          "Observación": 1
+        },
+        "public_objective": "Localizar un zumbido en el equipo de la sala.",
+        "activity": "Escucha los altavoces",
+        "slot": 2,
+        "patrol_step": 0,
+        "appearance": "worker",
+        "role_assignment": "CITY_PROVISIONAL"
+      },
+      {
+        "id": "RESIDENT_032",
+        "name": "Aya Nomura",
+        "role": "Amiga de Ryoko",
+        "role_label": "Amiga de Ryoko",
+        "skills": {
+          "Baile": 4,
+          "Observación": 2
+        },
+        "public_objective": "Esperar a su grupo antes de empezar a bailar.",
+        "activity": "Espera a sus amigos",
+        "slot": 3,
+        "patrol_step": 0,
+        "appearance": "casual",
+        "role_assignment": "CITY_PROVISIONAL"
+      },
+      {
+        "id": "RESIDENT_033",
+        "name": "Shinji Fukuda",
+        "role": "Habitual de la discoteca",
+        "role_label": "Habitual de la discoteca",
+        "skills": {
+          "Música": 5,
+          "Observación": 3
+        },
+        "public_objective": "Conseguir el nombre de la canción que sonó ayer.",
+        "activity": "Escucha la música",
+        "slot": 4,
+        "patrol_step": 0,
+        "appearance": "casual",
+        "role_assignment": "CITY_PROVISIONAL"
+      },
+      {
+        "id": "RESIDENT_034",
+        "name": "Reiko Sakai",
+        "role": "Encargada de sala",
+        "role_label": "Encargada de sala",
+        "skills": {
+          "Organización": 3,
+          "Observación": 1
+        },
+        "public_objective": "Mantener despejadas las salidas durante la sesión.",
+        "activity": "Observa la sala",
+        "slot": 5,
+        "patrol_step": 0,
+        "appearance": "worker",
+        "role_assignment": "CITY_PROVISIONAL"
+      }
+    ],
+    "character_sheets": {
+      "player": {
+        "id": "PLAYER_1",
+        "name": "Player",
+        "kind": "PLAYER",
+        "faction": "UNALIGNED",
+        "location": "NIGHTCLUB",
+        "energy": 1.0,
+        "known_nodes": 1,
+        "case_status": "UNSEEN",
+        "agency": "HUMAN_ONLY"
+      },
+      "visible_npcs": [
+        {
+          "id": "RESIDENT_029",
+          "name": "Koji Murata",
+          "kind": "NPC",
+          "observed_location": "NIGHTCLUB",
+          "focus": "Repasa los pedidos",
+          "role": "Camarero de la discoteca",
+          "role_label": "Camarero de la discoteca",
+          "skills": {
+            "Atención al público": 4,
+            "Observación": 2
+          },
+          "public_objective": "Atender a la sala sin perder los pedidos.",
+          "activity": "Repasa los pedidos",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_030",
+          "name": "Erika Hoshino",
+          "kind": "NPC",
+          "observed_location": "NIGHTCLUB",
+          "focus": "Escucha la mezcla",
+          "role": "DJ",
+          "role_label": "DJ",
+          "skills": {
+            "Música": 5,
+            "Observación": 3
+          },
+          "public_objective": "Encontrar la siguiente pista entre sus discos.",
+          "activity": "Escucha la mezcla",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_031",
+          "name": "Tatsuya Ota",
+          "kind": "NPC",
+          "observed_location": "NIGHTCLUB",
+          "focus": "Escucha los altavoces",
+          "role": "Técnico de sonido",
+          "role_label": "Técnico de sonido",
+          "skills": {
+            "Sonido": 3,
+            "Observación": 1
+          },
+          "public_objective": "Localizar un zumbido en el equipo de la sala.",
+          "activity": "Escucha los altavoces",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_032",
+          "name": "Aya Nomura",
+          "kind": "NPC",
+          "observed_location": "NIGHTCLUB",
+          "focus": "Espera a sus amigos",
+          "role": "Amiga de Ryoko",
+          "role_label": "Amiga de Ryoko",
+          "skills": {
+            "Baile": 4,
+            "Observación": 2
+          },
+          "public_objective": "Esperar a su grupo antes de empezar a bailar.",
+          "activity": "Espera a sus amigos",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_033",
+          "name": "Shinji Fukuda",
+          "kind": "NPC",
+          "observed_location": "NIGHTCLUB",
+          "focus": "Escucha la música",
+          "role": "Habitual de la discoteca",
+          "role_label": "Habitual de la discoteca",
+          "skills": {
+            "Música": 5,
+            "Observación": 3
+          },
+          "public_objective": "Conseguir el nombre de la canción que sonó ayer.",
+          "activity": "Escucha la música",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_034",
+          "name": "Reiko Sakai",
+          "kind": "NPC",
+          "observed_location": "NIGHTCLUB",
+          "focus": "Observa la sala",
+          "role": "Encargada de sala",
+          "role_label": "Encargada de sala",
+          "skills": {
+            "Organización": 3,
+            "Observación": 1
+          },
+          "public_objective": "Mantener despejadas las salidas durante la sesión.",
+          "activity": "Observa la sala",
+          "role_assignment": "CITY_PROVISIONAL"
+        }
+      ]
+    },
+    "station_case": {
+      "id": "STATION_ECHO_07",
+      "title": "El pulso ausente",
+      "status": "UNSEEN",
+      "resolution": null,
+      "summary": "Investiga NODE_07 en la estacion para buscar el rastro.",
+      "witness_count": 0,
+      "responses": []
+    },
+    "prologue": {
+      "enabled": false,
+      "stage": "LEGACY",
+      "hint": ""
+    },
+    "chapter_one": {
+      "active": true,
+      "title": "Ya habías estado aquí",
+      "started_minute": 0,
+      "connection_minute": 0,
+      "decision": null,
+      "hypothesis": "",
+      "hypothesis_status": "UNVERIFIED",
+      "evidence": [
+        {
+          "id": "RETURN_MESSAGE",
+          "title": "Has vuelto",
+          "kind": "MESSAGE",
+          "source_id": "UNKNOWN_WIRED",
+          "source_label": "Identidad desconocida · Wired",
+          "text": "Has vuelto.",
+          "acquired_minute": 0,
+          "claimed_time": "Recibido al abrir este capítulo, minuto 0",
+          "event_id": null
+        }
+      ],
+      "links": [],
+      "contradiction_linked": false,
+      "characters": [
+        "RESIDENT_001",
+        "RESIDENT_006",
+        "PROFESSOR",
+        "RYOKO"
+      ],
+      "notification": "Has vuelto"
+    },
+    "network_conflict": {
+      "active": true,
+      "multiple_operators": true,
+      "corporation": "Administradores de la Wired",
+      "corporate_control": 100.0,
+      "trace": 0,
+      "ready_in": 0,
+      "relays": [
+        {
+          "id": "RELAY_STATION",
+          "name": "Enlace del andén",
+          "location": "STATION",
+          "corporation": 80,
+          "mine": 0,
+          "defense": 0,
+          "suppressed_until": 0,
+          "inspected": false,
+          "controllers": [
+            {
+              "slot": "LINES",
+              "name": "Administrador de líneas",
+              "control": 80,
+              "suppressed_until": 0
+            },
+            {
+              "slot": "RECORDS",
+              "name": "Administrador de registros",
+              "control": 20,
+              "suppressed_until": 0
+            }
+          ]
+        },
+        {
+          "id": "RELAY_SCHOOL",
+          "name": "Enlace del pabellón B",
+          "location": "SCHOOL_LAB",
+          "corporation": 70,
+          "mine": 0,
+          "defense": 0,
+          "suppressed_until": 0,
+          "inspected": false,
+          "controllers": [
+            {
+              "slot": "LINES",
+              "name": "Administrador de líneas",
+              "control": 70,
+              "suppressed_until": 0
+            },
+            {
+              "slot": "RECORDS",
+              "name": "Administrador de registros",
+              "control": 30,
+              "suppressed_until": 0
+            }
+          ]
+        },
+        {
+          "id": "RELAY_VIDEO",
+          "name": "Enlace del videoclub",
+          "location": "VIDEO_CLUB",
+          "corporation": 55,
+          "mine": 0,
+          "defense": 0,
+          "suppressed_until": 0,
+          "inspected": false,
+          "controllers": [
+            {
+              "slot": "LINES",
+              "name": "Administrador de líneas",
+              "control": 55,
+              "suppressed_until": 0
+            },
+            {
+              "slot": "RECORDS",
+              "name": "Administrador de registros",
+              "control": 45,
+              "suppressed_until": 0
+            }
+          ]
+        }
+      ],
+      "rankings": [
+        {
+          "actor_id": "PLAYER_1",
+          "name": "Player",
+          "control": 0.0
+        }
+      ],
+      "pending": [],
+      "reports": [
+        {
+          "id": 1,
+          "minute": 0,
+          "source": "WORKSHOP",
+          "text": "El PC dispone de un taller de código. En Kissa Café han instalado un terminal: su técnico busca ayuda para comprobar un coprocesador."
+        }
+      ],
+      "visible_personnel": [],
+      "session_mode": "LOCAL"
+    },
+    "workshop": {
+      "active": true,
+      "shared_modules": [],
+      "lesson": 2,
+      "life_source": "def next_cell(alive, neighbors):\n    if alive:\n        return neighbors == 2 or neighbors == 3\n    return neighbors == 3\n",
+      "draft": "use(\"routing\")\n",
+      "compiled": "use(\"routing\")\n",
+      "modules": [
+        "routing"
+      ],
+      "contract": "INDEPENDENT",
+      "best_score": 0,
+      "capacity": 8,
+      "cost": 2,
+      "assets": [
+        {
+          "id": "first_connection",
+          "kind": "CODE",
+          "model": "routing",
+          "source": "Tu primera conexión a la Wired",
+          "minute": 0,
+          "active": 0,
+          "ownership": "OWNED",
+          "name": "Enrutamiento",
+          "capacity": 0
+        },
+        {
+          "id": "home_navi",
+          "kind": "DEVICE",
+          "model": "navi",
+          "source": "Ordenador de casa",
+          "minute": 0,
+          "active": 1,
+          "ownership": "OWNED",
+          "name": "Navi A",
+          "capacity": 4
+        },
+        {
+          "id": "life_matrix",
+          "kind": "DEVICE",
+          "model": "matrix",
+          "source": "Juego de la Vida · validado en el PC",
+          "minute": 0,
+          "active": 1,
+          "ownership": "OWNED",
+          "name": "Coprocesador M",
+          "capacity": 4
+        },
+        {
+          "id": "life_shield",
+          "kind": "CODE",
+          "model": "shield",
+          "source": "Juego de la Vida · módulo del coprocesador",
+          "minute": 0,
+          "active": 0,
+          "ownership": "OWNED",
+          "name": "Protección",
+          "capacity": 0
+        }
+      ],
+      "library": [
+        {
+          "id": "routing",
+          "name": "Enrutamiento",
+          "cost": 2,
+          "effect": "Conexión del montaje; conserva las acciones básicas del enlace."
+        },
+        {
+          "id": "shield",
+          "name": "Protección",
+          "cost": 4,
+          "effect": "Preparar las dos defensas de un enlace propio con una operación local."
+        }
+      ],
+      "offers": {
+        "KAGAMI": "Contrato local KAGAMI: préstamo de un segundo Navi A y cobertura que absorbe 15 puntos de cada intervención. La copia no duplica capacidad. Reservas 1 unidad de cálculo mientras dure el acuerdo. Puedes terminarlo desde este PC; se retiran préstamo y cobertura. No se envían conversaciones ni recuerdos.",
+        "NOEMA": "Contrato local NOEMA: acceso prestado al módulo Exploración. Reserva 1 unidad de cálculo. Los escaneos posteriores entregan a NOEMA únicamente relay, minuto y número de intervenciones sobre tu cuenta. Puedes terminarlo; se retira el permiso, no tus fragmentos propios. No incluye testimonios ni memorias privadas."
+      },
+      "life_hint": "def next_cell(alive, neighbors):\n    if alive:\n        return neighbors == 2 or neighbors == 3\n    return neighbors == 3\n",
+      "session_mode": "LOCAL"
+    },
+    "circles": {
+      "active": true,
+      "session_mode": "LOCAL_NPC",
+      "contacts": [
+        {
+          "id": "RYOKO",
+          "name": "Ryoko",
+          "location": "NIGHTCLUB",
+          "condition": "Completa el Juego de la Vida y sigue independiente.",
+          "motive": "Quiere que las identidades puedan circular sin depender de un administrador.",
+          "met": true,
+          "met_minute": 0,
+          "ready": true,
+          "available": true,
+          "kind": "NPC"
+        },
+        {
+          "id": "KISSA_TECH",
+          "name": "Técnico de Kissa",
+          "location": "CAFE",
+          "condition": "Gana Bit Courier y sigue independiente.",
+          "motive": "Quiere mantener las máquinas del café fuera del control corporativo.",
+          "met": false,
+          "met_minute": null,
+          "ready": false,
+          "available": true,
+          "kind": "NPC"
+        }
+      ],
+      "independent": true,
+      "group": {
+        "id": 1,
+        "name": "El ruido de fondo",
+        "leader": "PLAYER_1",
+        "draft": "",
+        "compiled": "",
+        "modules": [],
+        "capacity": 8,
+        "cost": 0,
+        "library": [
+          {
+            "id": "routing",
+            "name": "Enrutamiento",
+            "cost": 2,
+            "effect": "Conexión del montaje; conserva las acciones básicas del enlace."
+          },
+          {
+            "id": "shield",
+            "name": "Protección",
+            "cost": 4,
+            "effect": "Preparar las dos defensas de un enlace propio con una operación local."
+          }
+        ],
+        "contributions": [
+          {
+            "actor": "PLAYER_1",
+            "owner": "Player",
+            "asset": "first_connection",
+            "kind": "CODE",
+            "model": "routing",
+            "name": "Enrutamiento",
+            "source": "Tu primera conexión a la Wired",
+            "acquired_minute": 0,
+            "shared_minute": 0,
+            "available": true,
+            "counted": true,
+            "reason": ""
+          },
+          {
+            "actor": "PLAYER_1",
+            "owner": "Player",
+            "asset": "home_navi",
+            "kind": "DEVICE",
+            "model": "navi",
+            "name": "Navi A",
+            "source": "Ordenador de casa",
+            "acquired_minute": 0,
+            "shared_minute": 0,
+            "available": true,
+            "counted": true,
+            "reason": ""
+          },
+          {
+            "actor": "PLAYER_1",
+            "owner": "Player",
+            "asset": "life_matrix",
+            "kind": "DEVICE",
+            "model": "matrix",
+            "name": "Coprocesador M",
+            "source": "Juego de la Vida · validado en el PC",
+            "acquired_minute": 0,
+            "shared_minute": 0,
+            "available": true,
+            "counted": true,
+            "reason": ""
+          },
+          {
+            "actor": "PLAYER_1",
+            "owner": "Player",
+            "asset": "life_shield",
+            "kind": "CODE",
+            "model": "shield",
+            "name": "Protección",
+            "source": "Juego de la Vida · módulo del coprocesador",
+            "acquired_minute": 0,
+            "shared_minute": 0,
+            "available": true,
+            "counted": true,
+            "reason": ""
+          }
+        ],
+        "eligible": [
+          {
+            "id": "first_connection",
+            "kind": "CODE",
+            "model": "routing",
+            "available": true,
+            "reason": "",
+            "shared": true
+          },
+          {
+            "id": "home_navi",
+            "kind": "DEVICE",
+            "model": "navi",
+            "available": true,
+            "reason": "",
+            "shared": true
+          },
+          {
+            "id": "life_matrix",
+            "kind": "DEVICE",
+            "model": "matrix",
+            "available": true,
+            "reason": "",
+            "shared": true
+          },
+          {
+            "id": "life_shield",
+            "kind": "CODE",
+            "model": "shield",
+            "available": true,
+            "reason": "",
+            "shared": true
+          }
+        ],
+        "members": [
+          {
+            "id": "PLAYER_1",
+            "name": "Player",
+            "kind": "HUMAN",
+            "joined_minute": 0
+          }
+        ],
+        "events": [
+          {
+            "minute": 0,
+            "text": "Player: Aportación conectada."
+          },
+          {
+            "minute": 0,
+            "text": "Player: Aportación conectada."
+          },
+          {
+            "minute": 0,
+            "text": "Player: Aportación conectada."
+          },
+          {
+            "minute": 0,
+            "text": "Player: Aportación conectada."
+          },
+          {
+            "minute": 0,
+            "text": "Player fundó el círculo. Aún no hay aportaciones ni programa activo."
+          }
+        ]
+      }
+    },
+    "situations": [],
+    "interaction": null,
+    "outgoing_interaction": null,
+    "messages": [
+      {
+        "id": "MSG_BOOTSTRAP_001",
+        "sender": "unknown@wired",
+        "subject": "NO SUBJECT",
+        "body": "NO ESTOY MUERTA.\n\nSOLO DEJÉ DE ESTAR AHÍ.",
+        "created_minute": 0,
+        "read": true,
+        "acknowledged": true,
+        "acknowledged_minute": 0
+      }
+    ],
+    "unread_messages": 0,
+    "wired": {
+      "connected": true,
+      "signals": [
+        {
+          "node_id": "NODE_07",
+          "location": "STATION",
+          "strength": 0.5,
+          "confidence": 0.35,
+          "origin_source": "WIRED_MESSAGE",
+          "current_source": "WIRED_MESSAGE",
+          "verified": false,
+          "updated_minute": 0
+        }
+      ],
+      "digital_presences": []
+    }
+  },
+  "contact": {
+    "text": "Ryoko: «Quiero que las identidades puedan circular sin depender de un administrador.»\nCompleta el Juego de la Vida y sigue independiente.\nAceptará tu invitación desde el PC."
+  },
+  "cafe": {
+    "schema_version": "0.1",
+    "minute": 0,
+    "player": {
+      "id": "PLAYER_1",
+      "name": "Player",
+      "faction": "UNALIGNED",
+      "location": "CAFE",
+      "goal": "UNKNOWN",
+      "energy": 1.0
+    },
+    "navigation": {
+      "reachable_locations": [
+        "APARTMENT_DISTRICT"
+      ]
+    },
+    "known_nodes": [
+      {
+        "id": "NODE_07",
+        "knowledge_confidence": 0.35,
+        "knowledge_source": "WIRED_MESSAGE",
+        "belief": {
+          "location": "STATION",
+          "strength": 0.5,
+          "confidence": 0.35,
+          "source": "WIRED_MESSAGE",
+          "updated_minute": 0
+        }
+      }
+    ],
+    "visible_actors": [
+      {
+        "id": "RESIDENT_054",
+        "name": "Keiko Oshima",
+        "role": "Dueña del café",
+        "role_label": "Dueña del café",
+        "skills": {
+          "Cocina": 5,
+          "Observación": 3
+        },
+        "public_objective": "Preparar la mesa para la reunión del club de lectura.",
+        "activity": "Revisa las reservas",
+        "slot": 0,
+        "patrol_step": 0,
+        "appearance": "apron",
+        "role_assignment": "CITY_PROVISIONAL"
+      },
+      {
+        "id": "RESIDENT_055",
+        "name": "Yusuke Sano",
+        "role": "Camarero",
+        "role_label": "Camarero",
+        "skills": {
+          "Atención al público": 3,
+          "Observación": 1
+        },
+        "public_objective": "Aprender los pedidos sin tener que mirar la libreta.",
+        "activity": "Repasa su libreta",
+        "slot": 1,
+        "patrol_step": 0,
+        "appearance": "apron",
+        "role_assignment": "CITY_PROVISIONAL"
+      },
+      {
+        "id": "RESIDENT_056",
+        "name": "Natsumi Honda",
+        "role": "Estudiante del café",
+        "role_label": "Estudiante del café",
+        "skills": {
+          "Escritura": 4,
+          "Observación": 2
+        },
+        "public_objective": "Terminar una carta antes de tomar el tren.",
+        "activity": "Relee su carta",
+        "slot": 2,
+        "patrol_step": 0,
+        "appearance": "student",
+        "role_assignment": "CITY_PROVISIONAL"
+      }
+    ],
+    "character_sheets": {
+      "player": {
+        "id": "PLAYER_1",
+        "name": "Player",
+        "kind": "PLAYER",
+        "faction": "UNALIGNED",
+        "location": "CAFE",
+        "energy": 1.0,
+        "known_nodes": 1,
+        "case_status": "UNSEEN",
+        "agency": "HUMAN_ONLY"
+      },
+      "visible_npcs": [
+        {
+          "id": "RESIDENT_054",
+          "name": "Keiko Oshima",
+          "kind": "NPC",
+          "observed_location": "CAFE",
+          "focus": "Revisa las reservas",
+          "role": "Dueña del café",
+          "role_label": "Dueña del café",
+          "skills": {
+            "Cocina": 5,
+            "Observación": 3
+          },
+          "public_objective": "Preparar la mesa para la reunión del club de lectura.",
+          "activity": "Revisa las reservas",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_055",
+          "name": "Yusuke Sano",
+          "kind": "NPC",
+          "observed_location": "CAFE",
+          "focus": "Repasa su libreta",
+          "role": "Camarero",
+          "role_label": "Camarero",
+          "skills": {
+            "Atención al público": 3,
+            "Observación": 1
+          },
+          "public_objective": "Aprender los pedidos sin tener que mirar la libreta.",
+          "activity": "Repasa su libreta",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_056",
+          "name": "Natsumi Honda",
+          "kind": "NPC",
+          "observed_location": "CAFE",
+          "focus": "Relee su carta",
+          "role": "Estudiante del café",
+          "role_label": "Estudiante del café",
+          "skills": {
+            "Escritura": 4,
+            "Observación": 2
+          },
+          "public_objective": "Terminar una carta antes de tomar el tren.",
+          "activity": "Relee su carta",
+          "role_assignment": "CITY_PROVISIONAL"
+        }
+      ]
+    },
+    "station_case": {
+      "id": "STATION_ECHO_07",
+      "title": "El pulso ausente",
+      "status": "UNSEEN",
+      "resolution": null,
+      "summary": "Investiga NODE_07 en la estacion para buscar el rastro.",
+      "witness_count": 0,
+      "responses": []
+    },
+    "prologue": {
+      "enabled": false,
+      "stage": "LEGACY",
+      "hint": ""
+    },
+    "chapter_one": {
+      "active": true,
+      "title": "Ya habías estado aquí",
+      "started_minute": 0,
+      "connection_minute": 0,
+      "decision": null,
+      "hypothesis": "",
+      "hypothesis_status": "UNVERIFIED",
+      "evidence": [
+        {
+          "id": "RETURN_MESSAGE",
+          "title": "Has vuelto",
+          "kind": "MESSAGE",
+          "source_id": "UNKNOWN_WIRED",
+          "source_label": "Identidad desconocida · Wired",
+          "text": "Has vuelto.",
+          "acquired_minute": 0,
+          "claimed_time": "Recibido al abrir este capítulo, minuto 0",
+          "event_id": null
+        }
+      ],
+      "links": [],
+      "contradiction_linked": false,
+      "characters": [
+        "RESIDENT_001",
+        "RESIDENT_006",
+        "PROFESSOR",
+        "RYOKO"
+      ],
+      "notification": "Has vuelto"
+    },
+    "network_conflict": {
+      "active": true,
+      "multiple_operators": true,
+      "corporation": "Administradores de la Wired",
+      "corporate_control": 100.0,
+      "trace": 0,
+      "ready_in": 0,
+      "relays": [
+        {
+          "id": "RELAY_STATION",
+          "name": "Enlace del andén",
+          "location": "STATION",
+          "corporation": 80,
+          "mine": 0,
+          "defense": 0,
+          "suppressed_until": 0,
+          "inspected": false,
+          "controllers": [
+            {
+              "slot": "LINES",
+              "name": "Administrador de líneas",
+              "control": 80,
+              "suppressed_until": 0
+            },
+            {
+              "slot": "RECORDS",
+              "name": "Administrador de registros",
+              "control": 20,
+              "suppressed_until": 0
+            }
+          ]
+        },
+        {
+          "id": "RELAY_SCHOOL",
+          "name": "Enlace del pabellón B",
+          "location": "SCHOOL_LAB",
+          "corporation": 70,
+          "mine": 0,
+          "defense": 0,
+          "suppressed_until": 0,
+          "inspected": false,
+          "controllers": [
+            {
+              "slot": "LINES",
+              "name": "Administrador de líneas",
+              "control": 70,
+              "suppressed_until": 0
+            },
+            {
+              "slot": "RECORDS",
+              "name": "Administrador de registros",
+              "control": 30,
+              "suppressed_until": 0
+            }
+          ]
+        },
+        {
+          "id": "RELAY_VIDEO",
+          "name": "Enlace del videoclub",
+          "location": "VIDEO_CLUB",
+          "corporation": 55,
+          "mine": 0,
+          "defense": 0,
+          "suppressed_until": 0,
+          "inspected": false,
+          "controllers": [
+            {
+              "slot": "LINES",
+              "name": "Administrador de líneas",
+              "control": 55,
+              "suppressed_until": 0
+            },
+            {
+              "slot": "RECORDS",
+              "name": "Administrador de registros",
+              "control": 45,
+              "suppressed_until": 0
+            }
+          ]
+        }
+      ],
+      "rankings": [
+        {
+          "actor_id": "PLAYER_1",
+          "name": "Player",
+          "control": 0.0
+        }
+      ],
+      "pending": [],
+      "reports": [
+        {
+          "id": 1,
+          "minute": 0,
+          "source": "WORKSHOP",
+          "text": "El PC dispone de un taller de código. En Kissa Café han instalado un terminal: su técnico busca ayuda para comprobar un coprocesador."
+        }
+      ],
+      "visible_personnel": [],
+      "session_mode": "LOCAL"
+    },
+    "workshop": {
+      "active": true,
+      "shared_modules": [],
+      "lesson": 2,
+      "life_source": "def next_cell(alive, neighbors):\n    if alive:\n        return neighbors == 2 or neighbors == 3\n    return neighbors == 3\n",
+      "draft": "use(\"routing\")\n",
+      "compiled": "use(\"routing\")\n",
+      "modules": [
+        "routing"
+      ],
+      "contract": "INDEPENDENT",
+      "best_score": 0,
+      "capacity": 8,
+      "cost": 2,
+      "assets": [
+        {
+          "id": "first_connection",
+          "kind": "CODE",
+          "model": "routing",
+          "source": "Tu primera conexión a la Wired",
+          "minute": 0,
+          "active": 0,
+          "ownership": "OWNED",
+          "name": "Enrutamiento",
+          "capacity": 0
+        },
+        {
+          "id": "home_navi",
+          "kind": "DEVICE",
+          "model": "navi",
+          "source": "Ordenador de casa",
+          "minute": 0,
+          "active": 1,
+          "ownership": "OWNED",
+          "name": "Navi A",
+          "capacity": 4
+        },
+        {
+          "id": "life_matrix",
+          "kind": "DEVICE",
+          "model": "matrix",
+          "source": "Juego de la Vida · validado en el PC",
+          "minute": 0,
+          "active": 1,
+          "ownership": "OWNED",
+          "name": "Coprocesador M",
+          "capacity": 4
+        },
+        {
+          "id": "life_shield",
+          "kind": "CODE",
+          "model": "shield",
+          "source": "Juego de la Vida · módulo del coprocesador",
+          "minute": 0,
+          "active": 0,
+          "ownership": "OWNED",
+          "name": "Protección",
+          "capacity": 0
+        }
+      ],
+      "library": [
+        {
+          "id": "routing",
+          "name": "Enrutamiento",
+          "cost": 2,
+          "effect": "Conexión del montaje; conserva las acciones básicas del enlace."
+        },
+        {
+          "id": "shield",
+          "name": "Protección",
+          "cost": 4,
+          "effect": "Preparar las dos defensas de un enlace propio con una operación local."
+        }
+      ],
+      "offers": {
+        "KAGAMI": "Contrato local KAGAMI: préstamo de un segundo Navi A y cobertura que absorbe 15 puntos de cada intervención. La copia no duplica capacidad. Reservas 1 unidad de cálculo mientras dure el acuerdo. Puedes terminarlo desde este PC; se retiran préstamo y cobertura. No se envían conversaciones ni recuerdos.",
+        "NOEMA": "Contrato local NOEMA: acceso prestado al módulo Exploración. Reserva 1 unidad de cálculo. Los escaneos posteriores entregan a NOEMA únicamente relay, minuto y número de intervenciones sobre tu cuenta. Puedes terminarlo; se retira el permiso, no tus fragmentos propios. No incluye testimonios ni memorias privadas."
+      },
+      "life_hint": "def next_cell(alive, neighbors):\n    if alive:\n        return neighbors == 2 or neighbors == 3\n    return neighbors == 3\n",
+      "session_mode": "LOCAL"
+    },
+    "circles": {
+      "active": true,
+      "session_mode": "LOCAL_NPC",
+      "contacts": [
+        {
+          "id": "RYOKO",
+          "name": "Ryoko",
+          "location": "NIGHTCLUB",
+          "condition": "Completa el Juego de la Vida y sigue independiente.",
+          "motive": "Quiere que las identidades puedan circular sin depender de un administrador.",
+          "met": true,
+          "met_minute": 0,
+          "ready": true,
+          "available": false,
+          "kind": "NPC"
+        },
+        {
+          "id": "KISSA_TECH",
+          "name": "Técnico de Kissa",
+          "location": "CAFE",
+          "condition": "Gana Bit Courier y sigue independiente.",
+          "motive": "Quiere mantener las máquinas del café fuera del control corporativo.",
+          "met": false,
+          "met_minute": null,
+          "ready": false,
+          "available": true,
+          "kind": "NPC"
+        }
+      ],
+      "independent": true,
+      "group": {
+        "id": 1,
+        "name": "El ruido de fondo",
+        "leader": "PLAYER_1",
+        "draft": "",
+        "compiled": "",
+        "modules": [],
+        "capacity": 11,
+        "cost": 0,
+        "library": [
+          {
+            "id": "routing",
+            "name": "Enrutamiento",
+            "cost": 2,
+            "effect": "Conexión del montaje; conserva las acciones básicas del enlace."
+          },
+          {
+            "id": "shield",
+            "name": "Protección",
+            "cost": 4,
+            "effect": "Preparar las dos defensas de un enlace propio con una operación local."
+          },
+          {
+            "id": "scan",
+            "name": "Exploración",
+            "cost": 3,
+            "effect": "Desde casa, leer la actividad de un enlace previamente examinado."
+          }
+        ],
+        "contributions": [
+          {
+            "actor": "PLAYER_1",
+            "owner": "Player",
+            "asset": "first_connection",
+            "kind": "CODE",
+            "model": "routing",
+            "name": "Enrutamiento",
+            "source": "Tu primera conexión a la Wired",
+            "acquired_minute": 0,
+            "shared_minute": 0,
+            "available": true,
+            "counted": true,
+            "reason": ""
+          },
+          {
+            "actor": "PLAYER_1",
+            "owner": "Player",
+            "asset": "home_navi",
+            "kind": "DEVICE",
+            "model": "navi",
+            "name": "Navi A",
+            "source": "Ordenador de casa",
+            "acquired_minute": 0,
+            "shared_minute": 0,
+            "available": true,
+            "counted": true,
+            "reason": ""
+          },
+          {
+            "actor": "PLAYER_1",
+            "owner": "Player",
+            "asset": "life_matrix",
+            "kind": "DEVICE",
+            "model": "matrix",
+            "name": "Coprocesador M",
+            "source": "Juego de la Vida · validado en el PC",
+            "acquired_minute": 0,
+            "shared_minute": 0,
+            "available": true,
+            "counted": true,
+            "reason": ""
+          },
+          {
+            "actor": "PLAYER_1",
+            "owner": "Player",
+            "asset": "life_shield",
+            "kind": "CODE",
+            "model": "shield",
+            "name": "Protección",
+            "source": "Juego de la Vida · módulo del coprocesador",
+            "acquired_minute": 0,
+            "shared_minute": 0,
+            "available": true,
+            "counted": true,
+            "reason": ""
+          },
+          {
+            "actor": "RYOKO",
+            "owner": "Ryoko",
+            "asset": "CODE:scan",
+            "kind": "CODE",
+            "model": "scan",
+            "name": "Exploración",
+            "source": "Equipo de Ryoko",
+            "acquired_minute": null,
+            "shared_minute": 0,
+            "available": true,
+            "counted": true,
+            "reason": ""
+          },
+          {
+            "actor": "RYOKO",
+            "owner": "Ryoko",
+            "asset": "DEVICE:interface",
+            "kind": "DEVICE",
+            "model": "interface",
+            "name": "Interfaz R",
+            "source": "Equipo de Ryoko",
+            "acquired_minute": null,
+            "shared_minute": 0,
+            "available": true,
+            "counted": true,
+            "reason": ""
+          },
+          {
+            "actor": "RYOKO",
+            "owner": "Ryoko",
+            "asset": "DEVICE:navi",
+            "kind": "DEVICE",
+            "model": "navi",
+            "name": "Navi A",
+            "source": "Equipo de Ryoko",
+            "acquired_minute": null,
+            "shared_minute": 0,
+            "available": true,
+            "counted": false,
+            "reason": "Copia: ya está representada en el círculo."
+          }
+        ],
+        "eligible": [
+          {
+            "id": "first_connection",
+            "kind": "CODE",
+            "model": "routing",
+            "available": true,
+            "reason": "",
+            "shared": true
+          },
+          {
+            "id": "home_navi",
+            "kind": "DEVICE",
+            "model": "navi",
+            "available": true,
+            "reason": "",
+            "shared": true
+          },
+          {
+            "id": "life_matrix",
+            "kind": "DEVICE",
+            "model": "matrix",
+            "available": true,
+            "reason": "",
+            "shared": true
+          },
+          {
+            "id": "life_shield",
+            "kind": "CODE",
+            "model": "shield",
+            "available": true,
+            "reason": "",
+            "shared": true
+          }
+        ],
+        "members": [
+          {
+            "id": "PLAYER_1",
+            "name": "Player",
+            "kind": "HUMAN",
+            "joined_minute": 0
+          },
+          {
+            "id": "RYOKO",
+            "name": "Ryoko",
+            "kind": "NPC",
+            "joined_minute": 0
+          }
+        ],
+        "events": [
+          {
+            "minute": 0,
+            "text": "Ryoko acepta y conecta sus recursos. Siguen siendo suyos."
+          },
+          {
+            "minute": 0,
+            "text": "Player: Aportación conectada."
+          },
+          {
+            "minute": 0,
+            "text": "Player: Aportación conectada."
+          },
+          {
+            "minute": 0,
+            "text": "Player: Aportación conectada."
+          },
+          {
+            "minute": 0,
+            "text": "Player: Aportación conectada."
+          },
+          {
+            "minute": 0,
+            "text": "Player fundó el círculo. Aún no hay aportaciones ni programa activo."
+          }
+        ]
+      }
+    },
+    "situations": [],
+    "interaction": null,
+    "outgoing_interaction": null,
+    "messages": [
+      {
+        "id": "MSG_BOOTSTRAP_001",
+        "sender": "unknown@wired",
+        "subject": "NO SUBJECT",
+        "body": "NO ESTOY MUERTA.\n\nSOLO DEJÉ DE ESTAR AHÍ.",
+        "created_minute": 0,
+        "read": true,
+        "acknowledged": true,
+        "acknowledged_minute": 0
+      }
+    ],
+    "unread_messages": 0,
+    "wired": {
+      "connected": true,
+      "signals": [
+        {
+          "node_id": "NODE_07",
+          "location": "STATION",
+          "strength": 0.5,
+          "confidence": 0.35,
+          "origin_source": "WIRED_MESSAGE",
+          "current_source": "WIRED_MESSAGE",
+          "verified": false,
+          "updated_minute": 0
+        }
+      ],
+      "digital_presences": []
+    }
+  },
+  "active": {
+    "schema_version": "0.1",
+    "minute": 0,
+    "player": {
+      "id": "PLAYER_1",
+      "name": "Player",
+      "faction": "UNALIGNED",
+      "location": "APARTMENT",
+      "goal": "UNKNOWN",
+      "energy": 1.0
+    },
+    "navigation": {
+      "reachable_locations": [
+        "APARTMENT_DISTRICT"
+      ]
+    },
+    "known_nodes": [
+      {
+        "id": "NODE_07",
+        "knowledge_confidence": 0.35,
+        "knowledge_source": "WIRED_MESSAGE",
+        "belief": {
+          "location": "STATION",
+          "strength": 0.5,
+          "confidence": 0.35,
+          "source": "WIRED_MESSAGE",
+          "updated_minute": 0
+        }
+      }
+    ],
+    "visible_actors": [],
+    "character_sheets": {
+      "player": {
+        "id": "PLAYER_1",
+        "name": "Player",
+        "kind": "PLAYER",
+        "faction": "UNALIGNED",
+        "location": "APARTMENT",
+        "energy": 1.0,
+        "known_nodes": 1,
+        "case_status": "UNSEEN",
+        "agency": "HUMAN_ONLY"
+      },
+      "visible_npcs": []
+    },
+    "station_case": {
+      "id": "STATION_ECHO_07",
+      "title": "El pulso ausente",
+      "status": "UNSEEN",
+      "resolution": null,
+      "summary": "Investiga NODE_07 en la estacion para buscar el rastro.",
+      "witness_count": 0,
+      "responses": []
+    },
+    "prologue": {
+      "enabled": false,
+      "stage": "LEGACY",
+      "hint": ""
+    },
+    "chapter_one": {
+      "active": true,
+      "title": "Ya habías estado aquí",
+      "started_minute": 0,
+      "connection_minute": 0,
+      "decision": null,
+      "hypothesis": "",
+      "hypothesis_status": "UNVERIFIED",
+      "evidence": [
+        {
+          "id": "RETURN_MESSAGE",
+          "title": "Has vuelto",
+          "kind": "MESSAGE",
+          "source_id": "UNKNOWN_WIRED",
+          "source_label": "Identidad desconocida · Wired",
+          "text": "Has vuelto.",
+          "acquired_minute": 0,
+          "claimed_time": "Recibido al abrir este capítulo, minuto 0",
+          "event_id": null
+        }
+      ],
+      "links": [],
+      "contradiction_linked": false,
+      "characters": [
+        "RESIDENT_001",
+        "RESIDENT_006",
+        "PROFESSOR",
+        "RYOKO"
+      ],
+      "notification": "Has vuelto"
+    },
+    "network_conflict": {
+      "active": true,
+      "multiple_operators": true,
+      "corporation": "Administradores de la Wired",
+      "corporate_control": 100.0,
+      "trace": 0,
+      "ready_in": 0,
+      "relays": [
+        {
+          "id": "RELAY_STATION",
+          "name": "Enlace del andén",
+          "location": "STATION",
+          "corporation": 80,
+          "mine": 0,
+          "defense": 0,
+          "suppressed_until": 0,
+          "inspected": false,
+          "controllers": [
+            {
+              "slot": "LINES",
+              "name": "Administrador de líneas",
+              "control": 80,
+              "suppressed_until": 0
+            },
+            {
+              "slot": "RECORDS",
+              "name": "Administrador de registros",
+              "control": 20,
+              "suppressed_until": 0
+            }
+          ]
+        },
+        {
+          "id": "RELAY_SCHOOL",
+          "name": "Enlace del pabellón B",
+          "location": "SCHOOL_LAB",
+          "corporation": 70,
+          "mine": 0,
+          "defense": 0,
+          "suppressed_until": 0,
+          "inspected": false,
+          "controllers": [
+            {
+              "slot": "LINES",
+              "name": "Administrador de líneas",
+              "control": 70,
+              "suppressed_until": 0
+            },
+            {
+              "slot": "RECORDS",
+              "name": "Administrador de registros",
+              "control": 30,
+              "suppressed_until": 0
+            }
+          ]
+        },
+        {
+          "id": "RELAY_VIDEO",
+          "name": "Enlace del videoclub",
+          "location": "VIDEO_CLUB",
+          "corporation": 55,
+          "mine": 0,
+          "defense": 0,
+          "suppressed_until": 0,
+          "inspected": false,
+          "controllers": [
+            {
+              "slot": "LINES",
+              "name": "Administrador de líneas",
+              "control": 55,
+              "suppressed_until": 0
+            },
+            {
+              "slot": "RECORDS",
+              "name": "Administrador de registros",
+              "control": 45,
+              "suppressed_until": 0
+            }
+          ]
+        }
+      ],
+      "rankings": [
+        {
+          "actor_id": "PLAYER_1",
+          "name": "Player",
+          "control": 0.0
+        }
+      ],
+      "pending": [],
+      "reports": [
+        {
+          "id": 1,
+          "minute": 0,
+          "source": "WORKSHOP",
+          "text": "El PC dispone de un taller de código. En Kissa Café han instalado un terminal: su técnico busca ayuda para comprobar un coprocesador."
+        }
+      ],
+      "visible_personnel": [],
+      "session_mode": "LOCAL"
+    },
+    "workshop": {
+      "active": true,
+      "shared_modules": [
+        "routing",
+        "shield",
+        "scan"
+      ],
+      "lesson": 2,
+      "life_source": "def next_cell(alive, neighbors):\n    if alive:\n        return neighbors == 2 or neighbors == 3\n    return neighbors == 3\n",
+      "draft": "use(\"routing\")\n",
+      "compiled": "use(\"routing\")\n",
+      "modules": [
+        "routing"
+      ],
+      "contract": "INDEPENDENT",
+      "best_score": 272,
+      "capacity": 8,
+      "cost": 2,
+      "assets": [
+        {
+          "id": "courier_interface",
+          "kind": "DEVICE",
+          "model": "interface",
+          "source": "Bit Courier · desafío local completado",
+          "minute": 0,
+          "active": 0,
+          "ownership": "OWNED",
+          "name": "Interfaz R",
+          "capacity": 3
+        },
+        {
+          "id": "courier_scan",
+          "kind": "CODE",
+          "model": "scan",
+          "source": "Bit Courier · desafío local completado",
+          "minute": 0,
+          "active": 0,
+          "ownership": "OWNED",
+          "name": "Exploración",
+          "capacity": 0
+        },
+        {
+          "id": "first_connection",
+          "kind": "CODE",
+          "model": "routing",
+          "source": "Tu primera conexión a la Wired",
+          "minute": 0,
+          "active": 0,
+          "ownership": "OWNED",
+          "name": "Enrutamiento",
+          "capacity": 0
+        },
+        {
+          "id": "home_navi",
+          "kind": "DEVICE",
+          "model": "navi",
+          "source": "Ordenador de casa",
+          "minute": 0,
+          "active": 1,
+          "ownership": "OWNED",
+          "name": "Navi A",
+          "capacity": 4
+        },
+        {
+          "id": "life_matrix",
+          "kind": "DEVICE",
+          "model": "matrix",
+          "source": "Juego de la Vida · validado en el PC",
+          "minute": 0,
+          "active": 1,
+          "ownership": "OWNED",
+          "name": "Coprocesador M",
+          "capacity": 4
+        },
+        {
+          "id": "life_shield",
+          "kind": "CODE",
+          "model": "shield",
+          "source": "Juego de la Vida · módulo del coprocesador",
+          "minute": 0,
+          "active": 0,
+          "ownership": "OWNED",
+          "name": "Protección",
+          "capacity": 0
+        }
+      ],
+      "library": [
+        {
+          "id": "routing",
+          "name": "Enrutamiento",
+          "cost": 2,
+          "effect": "Conexión del montaje; conserva las acciones básicas del enlace."
+        },
+        {
+          "id": "shield",
+          "name": "Protección",
+          "cost": 4,
+          "effect": "Preparar las dos defensas de un enlace propio con una operación local."
+        },
+        {
+          "id": "scan",
+          "name": "Exploración",
+          "cost": 3,
+          "effect": "Desde casa, leer la actividad de un enlace previamente examinado."
+        }
+      ],
+      "offers": {
+        "KAGAMI": "Contrato local KAGAMI: préstamo de un segundo Navi A y cobertura que absorbe 15 puntos de cada intervención. La copia no duplica capacidad. Reservas 1 unidad de cálculo mientras dure el acuerdo. Puedes terminarlo desde este PC; se retiran préstamo y cobertura. No se envían conversaciones ni recuerdos.",
+        "NOEMA": "Contrato local NOEMA: acceso prestado al módulo Exploración. Reserva 1 unidad de cálculo. Los escaneos posteriores entregan a NOEMA únicamente relay, minuto y número de intervenciones sobre tu cuenta. Puedes terminarlo; se retira el permiso, no tus fragmentos propios. No incluye testimonios ni memorias privadas."
+      },
+      "life_hint": "def next_cell(alive, neighbors):\n    if alive:\n        return neighbors == 2 or neighbors == 3\n    return neighbors == 3\n",
+      "session_mode": "LOCAL"
+    },
+    "circles": {
+      "active": true,
+      "session_mode": "LOCAL_NPC",
+      "contacts": [
+        {
+          "id": "RYOKO",
+          "name": "Ryoko",
+          "location": "NIGHTCLUB",
+          "condition": "Completa el Juego de la Vida y sigue independiente.",
+          "motive": "Quiere que las identidades puedan circular sin depender de un administrador.",
+          "met": true,
+          "met_minute": 0,
+          "ready": true,
+          "available": false,
+          "kind": "NPC"
+        },
+        {
+          "id": "KISSA_TECH",
+          "name": "Técnico de Kissa",
+          "location": "CAFE",
+          "condition": "Gana Bit Courier y sigue independiente.",
+          "motive": "Quiere mantener las máquinas del café fuera del control corporativo.",
+          "met": true,
+          "met_minute": 0,
+          "ready": true,
+          "available": false,
+          "kind": "NPC"
+        }
+      ],
+      "independent": true,
+      "group": {
+        "id": 1,
+        "name": "El ruido de fondo",
+        "leader": "PLAYER_1",
+        "draft": "use(\"routing\")\nuse(\"shield\")\nuse(\"scan\")\n",
+        "compiled": "use(\"routing\")\nuse(\"shield\")\nuse(\"scan\")\n",
+        "modules": [
+          "routing",
+          "shield",
+          "scan"
+        ],
+        "capacity": 11,
+        "cost": 9,
+        "library": [
+          {
+            "id": "routing",
+            "name": "Enrutamiento",
+            "cost": 2,
+            "effect": "Conexión del montaje; conserva las acciones básicas del enlace."
+          },
+          {
+            "id": "shield",
+            "name": "Protección",
+            "cost": 4,
+            "effect": "Preparar las dos defensas de un enlace propio con una operación local."
+          },
+          {
+            "id": "scan",
+            "name": "Exploración",
+            "cost": 3,
+            "effect": "Desde casa, leer la actividad de un enlace previamente examinado."
+          }
+        ],
+        "contributions": [
+          {
+            "actor": "KISSA_TECH",
+            "owner": "Técnico de Kissa",
+            "asset": "CODE:shield",
+            "kind": "CODE",
+            "model": "shield",
+            "name": "Protección",
+            "source": "Equipo de Técnico de Kissa",
+            "acquired_minute": null,
+            "shared_minute": 0,
+            "available": true,
+            "counted": true,
+            "reason": ""
+          },
+          {
+            "actor": "KISSA_TECH",
+            "owner": "Técnico de Kissa",
+            "asset": "DEVICE:matrix",
+            "kind": "DEVICE",
+            "model": "matrix",
+            "name": "Coprocesador M",
+            "source": "Equipo de Técnico de Kissa",
+            "acquired_minute": null,
+            "shared_minute": 0,
+            "available": true,
+            "counted": true,
+            "reason": ""
+          },
+          {
+            "actor": "PLAYER_1",
+            "owner": "Player",
+            "asset": "first_connection",
+            "kind": "CODE",
+            "model": "routing",
+            "name": "Enrutamiento",
+            "source": "Tu primera conexión a la Wired",
+            "acquired_minute": 0,
+            "shared_minute": 0,
+            "available": true,
+            "counted": true,
+            "reason": ""
+          },
+          {
+            "actor": "PLAYER_1",
+            "owner": "Player",
+            "asset": "home_navi",
+            "kind": "DEVICE",
+            "model": "navi",
+            "name": "Navi A",
+            "source": "Ordenador de casa",
+            "acquired_minute": 0,
+            "shared_minute": 0,
+            "available": true,
+            "counted": true,
+            "reason": ""
+          },
+          {
+            "actor": "PLAYER_1",
+            "owner": "Player",
+            "asset": "life_matrix",
+            "kind": "DEVICE",
+            "model": "matrix",
+            "name": "Coprocesador M",
+            "source": "Juego de la Vida · validado en el PC",
+            "acquired_minute": 0,
+            "shared_minute": 0,
+            "available": true,
+            "counted": false,
+            "reason": "Copia: ya está representada en el círculo."
+          },
+          {
+            "actor": "PLAYER_1",
+            "owner": "Player",
+            "asset": "life_shield",
+            "kind": "CODE",
+            "model": "shield",
+            "name": "Protección",
+            "source": "Juego de la Vida · módulo del coprocesador",
+            "acquired_minute": 0,
+            "shared_minute": 0,
+            "available": true,
+            "counted": false,
+            "reason": "Copia: ya está representada en el círculo."
+          },
+          {
+            "actor": "RYOKO",
+            "owner": "Ryoko",
+            "asset": "CODE:scan",
+            "kind": "CODE",
+            "model": "scan",
+            "name": "Exploración",
+            "source": "Equipo de Ryoko",
+            "acquired_minute": null,
+            "shared_minute": 0,
+            "available": true,
+            "counted": true,
+            "reason": ""
+          },
+          {
+            "actor": "RYOKO",
+            "owner": "Ryoko",
+            "asset": "DEVICE:interface",
+            "kind": "DEVICE",
+            "model": "interface",
+            "name": "Interfaz R",
+            "source": "Equipo de Ryoko",
+            "acquired_minute": null,
+            "shared_minute": 0,
+            "available": true,
+            "counted": true,
+            "reason": ""
+          },
+          {
+            "actor": "RYOKO",
+            "owner": "Ryoko",
+            "asset": "DEVICE:navi",
+            "kind": "DEVICE",
+            "model": "navi",
+            "name": "Navi A",
+            "source": "Equipo de Ryoko",
+            "acquired_minute": null,
+            "shared_minute": 0,
+            "available": true,
+            "counted": false,
+            "reason": "Copia: ya está representada en el círculo."
+          }
+        ],
+        "eligible": [
+          {
+            "id": "courier_interface",
+            "kind": "DEVICE",
+            "model": "interface",
+            "available": false,
+            "reason": "Dispositivo desconectado.",
+            "shared": false
+          },
+          {
+            "id": "courier_scan",
+            "kind": "CODE",
+            "model": "scan",
+            "available": true,
+            "reason": "",
+            "shared": false
+          },
+          {
+            "id": "first_connection",
+            "kind": "CODE",
+            "model": "routing",
+            "available": true,
+            "reason": "",
+            "shared": true
+          },
+          {
+            "id": "home_navi",
+            "kind": "DEVICE",
+            "model": "navi",
+            "available": true,
+            "reason": "",
+            "shared": true
+          },
+          {
+            "id": "life_matrix",
+            "kind": "DEVICE",
+            "model": "matrix",
+            "available": true,
+            "reason": "",
+            "shared": true
+          },
+          {
+            "id": "life_shield",
+            "kind": "CODE",
+            "model": "shield",
+            "available": true,
+            "reason": "",
+            "shared": true
+          }
+        ],
+        "members": [
+          {
+            "id": "KISSA_TECH",
+            "name": "Técnico de Kissa",
+            "kind": "NPC",
+            "joined_minute": 0
+          },
+          {
+            "id": "PLAYER_1",
+            "name": "Player",
+            "kind": "HUMAN",
+            "joined_minute": 0
+          },
+          {
+            "id": "RYOKO",
+            "name": "Ryoko",
+            "kind": "NPC",
+            "joined_minute": 0
+          }
+        ],
+        "events": [
+          {
+            "minute": 0,
+            "text": "Montaje compartido compilado: Enrutamiento, Protección, Exploración."
+          },
+          {
+            "minute": 0,
+            "text": "Técnico de Kissa acepta y conecta sus recursos. Siguen siendo suyos."
+          },
+          {
+            "minute": 0,
+            "text": "Ryoko acepta y conecta sus recursos. Siguen siendo suyos."
+          },
+          {
+            "minute": 0,
+            "text": "Player: Aportación conectada."
+          },
+          {
+            "minute": 0,
+            "text": "Player: Aportación conectada."
+          },
+          {
+            "minute": 0,
+            "text": "Player: Aportación conectada."
+          },
+          {
+            "minute": 0,
+            "text": "Player: Aportación conectada."
+          },
+          {
+            "minute": 0,
+            "text": "Player fundó el círculo. Aún no hay aportaciones ni programa activo."
+          }
+        ]
+      }
+    },
+    "situations": [],
+    "interaction": null,
+    "outgoing_interaction": null,
+    "messages": [
+      {
+        "id": "MSG_BOOTSTRAP_001",
+        "sender": "unknown@wired",
+        "subject": "NO SUBJECT",
+        "body": "NO ESTOY MUERTA.\n\nSOLO DEJÉ DE ESTAR AHÍ.",
+        "created_minute": 0,
+        "read": true,
+        "acknowledged": true,
+        "acknowledged_minute": 0
+      }
+    ],
+    "unread_messages": 0,
+    "wired": {
+      "connected": true,
+      "signals": [
+        {
+          "node_id": "NODE_07",
+          "location": "STATION",
+          "strength": 0.5,
+          "confidence": 0.35,
+          "origin_source": "WIRED_MESSAGE",
+          "current_source": "WIRED_MESSAGE",
+          "verified": false,
+          "updated_minute": 0
+        }
+      ],
+      "digital_presences": []
+    }
+  },
+  "defense": {
+    "speaker": "WIRED · CONTROL DE ENLACES",
+    "text": "Defensa preparada. Cada defensa absorbe 15 puntos de la próxima intervención; se consume cuando llega. Dos defensas detienen una intervención completa.",
+    "choices": [
+      {
+        "text": "Examinar contratos y tráfico del enlace.",
+        "action": "INSPECT",
+        "relay": "RELAY_SCHOOL",
+        "rival": ""
+      },
+      {
+        "text": "Disputar 20 puntos a KAGAMI · deja rastro.",
+        "action": "CLAIM",
+        "relay": "RELAY_SCHOOL",
+        "rival": ""
+      },
+      {
+        "text": "Disputar 20 puntos a NOEMA · deja rastro.",
+        "action": "CLAIM",
+        "relay": "RELAY_SCHOOL",
+        "rival": "",
+        "faction": "NOEMA"
+      },
+      {
+        "text": "Ocultar mi enlace · ceder hasta 5 puntos.",
+        "action": "GO_DARK",
+        "relay": "RELAY_SCHOOL",
+        "rival": ""
+      }
+    ]
+  },
+  "lab": {
+    "schema_version": "0.1",
+    "minute": 10,
+    "player": {
+      "id": "PLAYER_1",
+      "name": "Player",
+      "faction": "UNALIGNED",
+      "location": "SCHOOL_LAB",
+      "goal": "UNKNOWN",
+      "energy": 1.0
+    },
+    "navigation": {
+      "reachable_locations": [
+        "SCHOOL"
+      ]
+    },
+    "known_nodes": [
+      {
+        "id": "NODE_07",
+        "knowledge_confidence": 0.35,
+        "knowledge_source": "WIRED_MESSAGE",
+        "belief": {
+          "location": "STATION",
+          "strength": 0.5,
+          "confidence": 0.35,
+          "source": "WIRED_MESSAGE",
+          "updated_minute": 0
+        }
+      }
+    ],
+    "visible_actors": [
+      {
+        "id": "RESIDENT_025",
+        "name": "Takeshi Uno",
+        "role": "Ayudante de informática",
+        "role_label": "Ayudante de informática",
+        "skills": {
+          "Informática": 3,
+          "Observación": 1
+        },
+        "public_objective": "Recuperar un disquete con ejercicios del aula.",
+        "activity": "Comprueba una etiqueta",
+        "slot": 0,
+        "patrol_step": 0,
+        "appearance": "teacher",
+        "role_assignment": "CITY_PROVISIONAL"
+      },
+      {
+        "id": "RESIDENT_026",
+        "name": "Misaki Ito",
+        "role": "Alumna de informática",
+        "role_label": "Alumna de informática",
+        "skills": {
+          "Programación": 4,
+          "Observación": 2
+        },
+        "public_objective": "Entender por qué su primer programa no termina.",
+        "activity": "Lee su código en papel",
+        "slot": 1,
+        "patrol_step": 0,
+        "appearance": "student",
+        "role_assignment": "CITY_PROVISIONAL"
+      },
+      {
+        "id": "RESIDENT_027",
+        "name": "Jun Saito",
+        "role": "Alumno del taller",
+        "role_label": "Alumno del taller",
+        "skills": {
+          "Electrónica": 5,
+          "Observación": 3
+        },
+        "public_objective": "Preparar un pequeño catálogo de componentes usados.",
+        "activity": "Clasifica componentes",
+        "slot": 2,
+        "patrol_step": 0,
+        "appearance": "student",
+        "role_assignment": "CITY_PROVISIONAL"
+      },
+      {
+        "id": "RESIDENT_028",
+        "name": "Rina Watanabe",
+        "role": "Amiga del aula",
+        "role_label": "Amiga del aula",
+        "skills": {
+          "Informática": 3,
+          "Observación": 1
+        },
+        "public_objective": "Guardar una copia del trabajo antes de salir.",
+        "activity": "Revisa su disquete",
+        "slot": 3,
+        "patrol_step": 0,
+        "appearance": "student",
+        "role_assignment": "CITY_PROVISIONAL"
+      }
+    ],
+    "character_sheets": {
+      "player": {
+        "id": "PLAYER_1",
+        "name": "Player",
+        "kind": "PLAYER",
+        "faction": "UNALIGNED",
+        "location": "SCHOOL_LAB",
+        "energy": 1.0,
+        "known_nodes": 1,
+        "case_status": "UNSEEN",
+        "agency": "HUMAN_ONLY"
+      },
+      "visible_npcs": [
+        {
+          "id": "RESIDENT_025",
+          "name": "Takeshi Uno",
+          "kind": "NPC",
+          "observed_location": "SCHOOL_LAB",
+          "focus": "Comprueba una etiqueta",
+          "role": "Ayudante de informática",
+          "role_label": "Ayudante de informática",
+          "skills": {
+            "Informática": 3,
+            "Observación": 1
+          },
+          "public_objective": "Recuperar un disquete con ejercicios del aula.",
+          "activity": "Comprueba una etiqueta",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_026",
+          "name": "Misaki Ito",
+          "kind": "NPC",
+          "observed_location": "SCHOOL_LAB",
+          "focus": "Lee su código en papel",
+          "role": "Alumna de informática",
+          "role_label": "Alumna de informática",
+          "skills": {
+            "Programación": 4,
+            "Observación": 2
+          },
+          "public_objective": "Entender por qué su primer programa no termina.",
+          "activity": "Lee su código en papel",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_027",
+          "name": "Jun Saito",
+          "kind": "NPC",
+          "observed_location": "SCHOOL_LAB",
+          "focus": "Clasifica componentes",
+          "role": "Alumno del taller",
+          "role_label": "Alumno del taller",
+          "skills": {
+            "Electrónica": 5,
+            "Observación": 3
+          },
+          "public_objective": "Preparar un pequeño catálogo de componentes usados.",
+          "activity": "Clasifica componentes",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_028",
+          "name": "Rina Watanabe",
+          "kind": "NPC",
+          "observed_location": "SCHOOL_LAB",
+          "focus": "Revisa su disquete",
+          "role": "Amiga del aula",
+          "role_label": "Amiga del aula",
+          "skills": {
+            "Informática": 3,
+            "Observación": 1
+          },
+          "public_objective": "Guardar una copia del trabajo antes de salir.",
+          "activity": "Revisa su disquete",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "CIVIL_102",
+          "name": "Reina Asano",
+          "kind": "NPC",
+          "role_label": "Consultora de equipos",
+          "observed_location": "SCHOOL_LAB",
+          "role_assignment": "OBSERVED_IDENTITY",
+          "focus": "Dice que revisa las líneas y los permisos de conexión de este lugar."
+        },
+        {
+          "id": "CIVIL_202",
+          "name": "Ren Fujimoto",
+          "kind": "NPC",
+          "role_label": "Revisor del archivo escolar",
+          "observed_location": "SCHOOL_LAB",
+          "role_assignment": "OBSERVED_IDENTITY",
+          "focus": "Dice que revisa las autorizaciones del aula."
+        }
+      ]
+    },
+    "station_case": {
+      "id": "STATION_ECHO_07",
+      "title": "El pulso ausente",
+      "status": "UNSEEN",
+      "resolution": null,
+      "summary": "Investiga NODE_07 en la estacion para buscar el rastro.",
+      "witness_count": 0,
+      "responses": []
+    },
+    "prologue": {
+      "enabled": false,
+      "stage": "LEGACY",
+      "hint": ""
+    },
+    "chapter_one": {
+      "active": true,
+      "title": "Ya habías estado aquí",
+      "started_minute": 0,
+      "connection_minute": 0,
+      "decision": null,
+      "hypothesis": "",
+      "hypothesis_status": "UNVERIFIED",
+      "evidence": [
+        {
+          "id": "RETURN_MESSAGE",
+          "title": "Has vuelto",
+          "kind": "MESSAGE",
+          "source_id": "UNKNOWN_WIRED",
+          "source_label": "Identidad desconocida · Wired",
+          "text": "Has vuelto.",
+          "acquired_minute": 0,
+          "claimed_time": "Recibido al abrir este capítulo, minuto 0",
+          "event_id": null
+        }
+      ],
+      "links": [],
+      "contradiction_linked": false,
+      "characters": [
+        "RESIDENT_001",
+        "RESIDENT_006",
+        "PROFESSOR",
+        "RYOKO"
+      ],
+      "notification": "Has vuelto"
+    },
+    "network_conflict": {
+      "active": true,
+      "multiple_operators": true,
+      "corporation": "Administradores de la Wired",
+      "corporate_control": 93.3,
+      "trace": 30,
+      "ready_in": 10,
+      "relays": [
+        {
+          "id": "RELAY_STATION",
+          "name": "Enlace del andén",
+          "location": "STATION",
+          "corporation": 80,
+          "mine": 0,
+          "defense": 0,
+          "suppressed_until": 0,
+          "inspected": false,
+          "controllers": [
+            {
+              "slot": "LINES",
+              "name": "Administrador de líneas",
+              "control": 80,
+              "suppressed_until": 0
+            },
+            {
+              "slot": "RECORDS",
+              "name": "Administrador de registros",
+              "control": 20,
+              "suppressed_until": 0
+            }
+          ]
+        },
+        {
+          "id": "RELAY_SCHOOL",
+          "name": "Enlace del pabellón B",
+          "location": "SCHOOL_LAB",
+          "corporation": 70,
+          "mine": 20,
+          "defense": 2,
+          "suppressed_until": 0,
+          "inspected": true,
+          "controllers": [
+            {
+              "slot": "LINES",
+              "name": "KAGAMI",
+              "control": 70,
+              "suppressed_until": 0
+            },
+            {
+              "slot": "RECORDS",
+              "name": "NOEMA",
+              "control": 10,
+              "suppressed_until": 0
+            }
+          ]
+        },
+        {
+          "id": "RELAY_VIDEO",
+          "name": "Enlace del videoclub",
+          "location": "VIDEO_CLUB",
+          "corporation": 55,
+          "mine": 0,
+          "defense": 0,
+          "suppressed_until": 0,
+          "inspected": false,
+          "controllers": [
+            {
+              "slot": "LINES",
+              "name": "Administrador de líneas",
+              "control": 55,
+              "suppressed_until": 0
+            },
+            {
+              "slot": "RECORDS",
+              "name": "Administrador de registros",
+              "control": 45,
+              "suppressed_until": 0
+            }
+          ]
+        }
+      ],
+      "rankings": [
+        {
+          "actor_id": "PLAYER_1",
+          "name": "Player",
+          "control": 6.7
+        }
+      ],
+      "pending": [
+        {
+          "relay": "RELAY_SCHOOL",
+          "due_minute": 80,
+          "remaining": 70,
+          "operator": "NOEMA",
+          "kind": "Reescritura de permisos",
+          "max_loss": 20
+        }
+      ],
+      "reports": [
+        {
+          "id": 3,
+          "minute": 0,
+          "source": "RELAY_TELEMETRY",
+          "text": "Enlace del pabellón B: NOEMA prepara una reescritura de permisos (hasta 20 puntos). Tienes 80 minutos del mundo para defenderte, ocultar tu enlace o examinar el tráfico y contrastar la credencial de su personal."
+        },
+        {
+          "id": 2,
+          "minute": 0,
+          "source": "RELAY_SCHOOL",
+          "text": "CONTRATO DE CESIÓN · El protocolo y sus primeras comunidades son anteriores a KAGAMI. El consorcio adquirió los puntos de acceso y sustituyó las claves de administración; no creó la Wired.\n\nANEXO DE REGISTROS · NOEMA adquirió permisos sobre identidades y archivos; tampoco creó la Wired. Controla una cuota distinta a la de KAGAMI."
+        },
+        {
+          "id": 1,
+          "minute": 0,
+          "source": "WORKSHOP",
+          "text": "El PC dispone de un taller de código. En Kissa Café han instalado un terminal: su técnico busca ayuda para comprobar un coprocesador."
+        }
+      ],
+      "visible_personnel": [
+        {
+          "id": "CIVIL_102",
+          "relay": "RELAY_SCHOOL",
+          "name": "Reina Asano",
+          "role": "Consultora de equipos",
+          "slot": "LINES"
+        },
+        {
+          "id": "CIVIL_202",
+          "relay": "RELAY_SCHOOL",
+          "name": "Ren Fujimoto",
+          "role": "Revisor del archivo escolar",
+          "slot": "RECORDS",
+          "focus": "Dice que revisa las autorizaciones del aula."
+        }
+      ],
+      "session_mode": "LOCAL"
+    },
+    "workshop": {
+      "active": true,
+      "shared_modules": [
+        "routing",
+        "shield",
+        "scan"
+      ],
+      "lesson": 2,
+      "life_source": "def next_cell(alive, neighbors):\n    if alive:\n        return neighbors == 2 or neighbors == 3\n    return neighbors == 3\n",
+      "draft": "use(\"routing\")\n",
+      "compiled": "use(\"routing\")\n",
+      "modules": [
+        "routing"
+      ],
+      "contract": "INDEPENDENT",
+      "best_score": 272,
+      "capacity": 8,
+      "cost": 2,
+      "assets": [
+        {
+          "id": "courier_interface",
+          "kind": "DEVICE",
+          "model": "interface",
+          "source": "Bit Courier · desafío local completado",
+          "minute": 0,
+          "active": 0,
+          "ownership": "OWNED",
+          "name": "Interfaz R",
+          "capacity": 3
+        },
+        {
+          "id": "courier_scan",
+          "kind": "CODE",
+          "model": "scan",
+          "source": "Bit Courier · desafío local completado",
+          "minute": 0,
+          "active": 0,
+          "ownership": "OWNED",
+          "name": "Exploración",
+          "capacity": 0
+        },
+        {
+          "id": "first_connection",
+          "kind": "CODE",
+          "model": "routing",
+          "source": "Tu primera conexión a la Wired",
+          "minute": 0,
+          "active": 0,
+          "ownership": "OWNED",
+          "name": "Enrutamiento",
+          "capacity": 0
+        },
+        {
+          "id": "home_navi",
+          "kind": "DEVICE",
+          "model": "navi",
+          "source": "Ordenador de casa",
+          "minute": 0,
+          "active": 1,
+          "ownership": "OWNED",
+          "name": "Navi A",
+          "capacity": 4
+        },
+        {
+          "id": "life_matrix",
+          "kind": "DEVICE",
+          "model": "matrix",
+          "source": "Juego de la Vida · validado en el PC",
+          "minute": 0,
+          "active": 1,
+          "ownership": "OWNED",
+          "name": "Coprocesador M",
+          "capacity": 4
+        },
+        {
+          "id": "life_shield",
+          "kind": "CODE",
+          "model": "shield",
+          "source": "Juego de la Vida · módulo del coprocesador",
+          "minute": 0,
+          "active": 0,
+          "ownership": "OWNED",
+          "name": "Protección",
+          "capacity": 0
+        }
+      ],
+      "library": [
+        {
+          "id": "routing",
+          "name": "Enrutamiento",
+          "cost": 2,
+          "effect": "Conexión del montaje; conserva las acciones básicas del enlace."
+        },
+        {
+          "id": "shield",
+          "name": "Protección",
+          "cost": 4,
+          "effect": "Preparar las dos defensas de un enlace propio con una operación local."
+        },
+        {
+          "id": "scan",
+          "name": "Exploración",
+          "cost": 3,
+          "effect": "Desde casa, leer la actividad de un enlace previamente examinado."
+        }
+      ],
+      "offers": {
+        "KAGAMI": "Contrato local KAGAMI: préstamo de un segundo Navi A y cobertura que absorbe 15 puntos de cada intervención. La copia no duplica capacidad. Reservas 1 unidad de cálculo mientras dure el acuerdo. Puedes terminarlo desde este PC; se retiran préstamo y cobertura. No se envían conversaciones ni recuerdos.",
+        "NOEMA": "Contrato local NOEMA: acceso prestado al módulo Exploración. Reserva 1 unidad de cálculo. Los escaneos posteriores entregan a NOEMA únicamente relay, minuto y número de intervenciones sobre tu cuenta. Puedes terminarlo; se retira el permiso, no tus fragmentos propios. No incluye testimonios ni memorias privadas."
+      },
+      "life_hint": "def next_cell(alive, neighbors):\n    if alive:\n        return neighbors == 2 or neighbors == 3\n    return neighbors == 3\n",
+      "session_mode": "LOCAL"
+    },
+    "circles": {
+      "active": true,
+      "session_mode": "LOCAL_NPC",
+      "contacts": [
+        {
+          "id": "RYOKO",
+          "name": "Ryoko",
+          "location": "NIGHTCLUB",
+          "condition": "Completa el Juego de la Vida y sigue independiente.",
+          "motive": "Quiere que las identidades puedan circular sin depender de un administrador.",
+          "met": true,
+          "met_minute": 0,
+          "ready": true,
+          "available": false,
+          "kind": "NPC"
+        },
+        {
+          "id": "KISSA_TECH",
+          "name": "Técnico de Kissa",
+          "location": "CAFE",
+          "condition": "Gana Bit Courier y sigue independiente.",
+          "motive": "Quiere mantener las máquinas del café fuera del control corporativo.",
+          "met": true,
+          "met_minute": 0,
+          "ready": true,
+          "available": false,
+          "kind": "NPC"
+        }
+      ],
+      "independent": true,
+      "group": {
+        "id": 1,
+        "name": "El ruido de fondo",
+        "leader": "PLAYER_1",
+        "draft": "use(\"routing\")\nuse(\"shield\")\nuse(\"scan\")\n",
+        "compiled": "use(\"routing\")\nuse(\"shield\")\nuse(\"scan\")\n",
+        "modules": [
+          "routing",
+          "shield",
+          "scan"
+        ],
+        "capacity": 11,
+        "cost": 9,
+        "library": [
+          {
+            "id": "routing",
+            "name": "Enrutamiento",
+            "cost": 2,
+            "effect": "Conexión del montaje; conserva las acciones básicas del enlace."
+          },
+          {
+            "id": "shield",
+            "name": "Protección",
+            "cost": 4,
+            "effect": "Preparar las dos defensas de un enlace propio con una operación local."
+          },
+          {
+            "id": "scan",
+            "name": "Exploración",
+            "cost": 3,
+            "effect": "Desde casa, leer la actividad de un enlace previamente examinado."
+          }
+        ],
+        "contributions": [
+          {
+            "actor": "KISSA_TECH",
+            "owner": "Técnico de Kissa",
+            "asset": "CODE:shield",
+            "kind": "CODE",
+            "model": "shield",
+            "name": "Protección",
+            "source": "Equipo de Técnico de Kissa",
+            "acquired_minute": null,
+            "shared_minute": 0,
+            "available": true,
+            "counted": true,
+            "reason": ""
+          },
+          {
+            "actor": "KISSA_TECH",
+            "owner": "Técnico de Kissa",
+            "asset": "DEVICE:matrix",
+            "kind": "DEVICE",
+            "model": "matrix",
+            "name": "Coprocesador M",
+            "source": "Equipo de Técnico de Kissa",
+            "acquired_minute": null,
+            "shared_minute": 0,
+            "available": true,
+            "counted": true,
+            "reason": ""
+          },
+          {
+            "actor": "PLAYER_1",
+            "owner": "Player",
+            "asset": "first_connection",
+            "kind": "CODE",
+            "model": "routing",
+            "name": "Enrutamiento",
+            "source": "Tu primera conexión a la Wired",
+            "acquired_minute": 0,
+            "shared_minute": 0,
+            "available": true,
+            "counted": true,
+            "reason": ""
+          },
+          {
+            "actor": "PLAYER_1",
+            "owner": "Player",
+            "asset": "home_navi",
+            "kind": "DEVICE",
+            "model": "navi",
+            "name": "Navi A",
+            "source": "Ordenador de casa",
+            "acquired_minute": 0,
+            "shared_minute": 0,
+            "available": true,
+            "counted": true,
+            "reason": ""
+          },
+          {
+            "actor": "PLAYER_1",
+            "owner": "Player",
+            "asset": "life_matrix",
+            "kind": "DEVICE",
+            "model": "matrix",
+            "name": "Coprocesador M",
+            "source": "Juego de la Vida · validado en el PC",
+            "acquired_minute": 0,
+            "shared_minute": 0,
+            "available": true,
+            "counted": false,
+            "reason": "Copia: ya está representada en el círculo."
+          },
+          {
+            "actor": "PLAYER_1",
+            "owner": "Player",
+            "asset": "life_shield",
+            "kind": "CODE",
+            "model": "shield",
+            "name": "Protección",
+            "source": "Juego de la Vida · módulo del coprocesador",
+            "acquired_minute": 0,
+            "shared_minute": 0,
+            "available": true,
+            "counted": false,
+            "reason": "Copia: ya está representada en el círculo."
+          },
+          {
+            "actor": "RYOKO",
+            "owner": "Ryoko",
+            "asset": "CODE:scan",
+            "kind": "CODE",
+            "model": "scan",
+            "name": "Exploración",
+            "source": "Equipo de Ryoko",
+            "acquired_minute": null,
+            "shared_minute": 0,
+            "available": true,
+            "counted": true,
+            "reason": ""
+          },
+          {
+            "actor": "RYOKO",
+            "owner": "Ryoko",
+            "asset": "DEVICE:interface",
+            "kind": "DEVICE",
+            "model": "interface",
+            "name": "Interfaz R",
+            "source": "Equipo de Ryoko",
+            "acquired_minute": null,
+            "shared_minute": 0,
+            "available": true,
+            "counted": true,
+            "reason": ""
+          },
+          {
+            "actor": "RYOKO",
+            "owner": "Ryoko",
+            "asset": "DEVICE:navi",
+            "kind": "DEVICE",
+            "model": "navi",
+            "name": "Navi A",
+            "source": "Equipo de Ryoko",
+            "acquired_minute": null,
+            "shared_minute": 0,
+            "available": true,
+            "counted": false,
+            "reason": "Copia: ya está representada en el círculo."
+          }
+        ],
+        "eligible": [
+          {
+            "id": "courier_interface",
+            "kind": "DEVICE",
+            "model": "interface",
+            "available": false,
+            "reason": "Dispositivo desconectado.",
+            "shared": false
+          },
+          {
+            "id": "courier_scan",
+            "kind": "CODE",
+            "model": "scan",
+            "available": true,
+            "reason": "",
+            "shared": false
+          },
+          {
+            "id": "first_connection",
+            "kind": "CODE",
+            "model": "routing",
+            "available": true,
+            "reason": "",
+            "shared": true
+          },
+          {
+            "id": "home_navi",
+            "kind": "DEVICE",
+            "model": "navi",
+            "available": true,
+            "reason": "",
+            "shared": true
+          },
+          {
+            "id": "life_matrix",
+            "kind": "DEVICE",
+            "model": "matrix",
+            "available": true,
+            "reason": "",
+            "shared": true
+          },
+          {
+            "id": "life_shield",
+            "kind": "CODE",
+            "model": "shield",
+            "available": true,
+            "reason": "",
+            "shared": true
+          }
+        ],
+        "members": [
+          {
+            "id": "KISSA_TECH",
+            "name": "Técnico de Kissa",
+            "kind": "NPC",
+            "joined_minute": 0
+          },
+          {
+            "id": "PLAYER_1",
+            "name": "Player",
+            "kind": "HUMAN",
+            "joined_minute": 0
+          },
+          {
+            "id": "RYOKO",
+            "name": "Ryoko",
+            "kind": "NPC",
+            "joined_minute": 0
+          }
+        ],
+        "events": [
+          {
+            "minute": 0,
+            "text": "Montaje compartido compilado: Enrutamiento, Protección, Exploración."
+          },
+          {
+            "minute": 0,
+            "text": "Técnico de Kissa acepta y conecta sus recursos. Siguen siendo suyos."
+          },
+          {
+            "minute": 0,
+            "text": "Ryoko acepta y conecta sus recursos. Siguen siendo suyos."
+          },
+          {
+            "minute": 0,
+            "text": "Player: Aportación conectada."
+          },
+          {
+            "minute": 0,
+            "text": "Player: Aportación conectada."
+          },
+          {
+            "minute": 0,
+            "text": "Player: Aportación conectada."
+          },
+          {
+            "minute": 0,
+            "text": "Player: Aportación conectada."
+          },
+          {
+            "minute": 0,
+            "text": "Player fundó el círculo. Aún no hay aportaciones ni programa activo."
+          }
+        ]
+      }
+    },
+    "situations": [],
+    "interaction": null,
+    "outgoing_interaction": null,
+    "messages": [
+      {
+        "id": "MSG_BOOTSTRAP_001",
+        "sender": "unknown@wired",
+        "subject": "NO SUBJECT",
+        "body": "NO ESTOY MUERTA.\n\nSOLO DEJÉ DE ESTAR AHÍ.",
+        "created_minute": 0,
+        "read": true,
+        "acknowledged": true,
+        "acknowledged_minute": 0
+      }
+    ],
+    "unread_messages": 0,
+    "wired": {
+      "connected": true,
+      "signals": [
+        {
+          "node_id": "NODE_07",
+          "location": "STATION",
+          "strength": 0.5,
+          "confidence": 0.35,
+          "origin_source": "WIRED_MESSAGE",
+          "current_source": "WIRED_MESSAGE",
+          "verified": false,
+          "updated_minute": 0
+        }
+      ],
+      "digital_presences": []
+    }
+  },
+  "wired": {
+    "schema_version": "0.1",
+    "minute": 10,
+    "player": {
+      "id": "PLAYER_1",
+      "name": "Player",
+      "faction": "UNALIGNED",
+      "location": "APARTMENT",
+      "goal": "UNKNOWN",
+      "energy": 1.0
+    },
+    "navigation": {
+      "reachable_locations": [
+        "APARTMENT_DISTRICT"
+      ]
+    },
+    "known_nodes": [
+      {
+        "id": "NODE_07",
+        "knowledge_confidence": 0.35,
+        "knowledge_source": "WIRED_MESSAGE",
+        "belief": {
+          "location": "STATION",
+          "strength": 0.5,
+          "confidence": 0.35,
+          "source": "WIRED_MESSAGE",
+          "updated_minute": 0
+        }
+      }
+    ],
+    "visible_actors": [],
+    "character_sheets": {
+      "player": {
+        "id": "PLAYER_1",
+        "name": "Player",
+        "kind": "PLAYER",
+        "faction": "UNALIGNED",
+        "location": "APARTMENT",
+        "energy": 1.0,
+        "known_nodes": 1,
+        "case_status": "UNSEEN",
+        "agency": "HUMAN_ONLY"
+      },
+      "visible_npcs": []
+    },
+    "station_case": {
+      "id": "STATION_ECHO_07",
+      "title": "El pulso ausente",
+      "status": "UNSEEN",
+      "resolution": null,
+      "summary": "Investiga NODE_07 en la estacion para buscar el rastro.",
+      "witness_count": 0,
+      "responses": []
+    },
+    "prologue": {
+      "enabled": false,
+      "stage": "LEGACY",
+      "hint": ""
+    },
+    "chapter_one": {
+      "active": true,
+      "title": "Ya habías estado aquí",
+      "started_minute": 0,
+      "connection_minute": 0,
+      "decision": null,
+      "hypothesis": "",
+      "hypothesis_status": "UNVERIFIED",
+      "evidence": [
+        {
+          "id": "RETURN_MESSAGE",
+          "title": "Has vuelto",
+          "kind": "MESSAGE",
+          "source_id": "UNKNOWN_WIRED",
+          "source_label": "Identidad desconocida · Wired",
+          "text": "Has vuelto.",
+          "acquired_minute": 0,
+          "claimed_time": "Recibido al abrir este capítulo, minuto 0",
+          "event_id": null
+        }
+      ],
+      "links": [],
+      "contradiction_linked": false,
+      "characters": [
+        "RESIDENT_001",
+        "RESIDENT_006",
+        "PROFESSOR",
+        "RYOKO"
+      ],
+      "notification": "Has vuelto"
+    },
+    "network_conflict": {
+      "active": true,
+      "multiple_operators": true,
+      "corporation": "Administradores de la Wired",
+      "corporate_control": 93.3,
+      "trace": 30,
+      "ready_in": 10,
+      "relays": [
+        {
+          "id": "RELAY_STATION",
+          "name": "Enlace del andén",
+          "location": "STATION",
+          "corporation": 80,
+          "mine": 0,
+          "defense": 0,
+          "suppressed_until": 0,
+          "inspected": false,
+          "controllers": [
+            {
+              "slot": "LINES",
+              "name": "Administrador de líneas",
+              "control": 80,
+              "suppressed_until": 0
+            },
+            {
+              "slot": "RECORDS",
+              "name": "Administrador de registros",
+              "control": 20,
+              "suppressed_until": 0
+            }
+          ]
+        },
+        {
+          "id": "RELAY_SCHOOL",
+          "name": "Enlace del pabellón B",
+          "location": "SCHOOL_LAB",
+          "corporation": 70,
+          "mine": 20,
+          "defense": 2,
+          "suppressed_until": 0,
+          "inspected": true,
+          "controllers": [
+            {
+              "slot": "LINES",
+              "name": "KAGAMI",
+              "control": 70,
+              "suppressed_until": 0
+            },
+            {
+              "slot": "RECORDS",
+              "name": "NOEMA",
+              "control": 10,
+              "suppressed_until": 0
+            }
+          ]
+        },
+        {
+          "id": "RELAY_VIDEO",
+          "name": "Enlace del videoclub",
+          "location": "VIDEO_CLUB",
+          "corporation": 55,
+          "mine": 0,
+          "defense": 0,
+          "suppressed_until": 0,
+          "inspected": false,
+          "controllers": [
+            {
+              "slot": "LINES",
+              "name": "Administrador de líneas",
+              "control": 55,
+              "suppressed_until": 0
+            },
+            {
+              "slot": "RECORDS",
+              "name": "Administrador de registros",
+              "control": 45,
+              "suppressed_until": 0
+            }
+          ]
+        }
+      ],
+      "rankings": [
+        {
+          "actor_id": "PLAYER_1",
+          "name": "Player",
+          "control": 6.7
+        }
+      ],
+      "pending": [
+        {
+          "relay": "RELAY_SCHOOL",
+          "due_minute": 80,
+          "remaining": 70,
+          "operator": "NOEMA",
+          "kind": "Reescritura de permisos",
+          "max_loss": 20
+        }
+      ],
+      "reports": [
+        {
+          "id": 3,
+          "minute": 0,
+          "source": "RELAY_TELEMETRY",
+          "text": "Enlace del pabellón B: NOEMA prepara una reescritura de permisos (hasta 20 puntos). Tienes 80 minutos del mundo para defenderte, ocultar tu enlace o examinar el tráfico y contrastar la credencial de su personal."
+        },
+        {
+          "id": 2,
+          "minute": 0,
+          "source": "RELAY_SCHOOL",
+          "text": "CONTRATO DE CESIÓN · El protocolo y sus primeras comunidades son anteriores a KAGAMI. El consorcio adquirió los puntos de acceso y sustituyó las claves de administración; no creó la Wired.\n\nANEXO DE REGISTROS · NOEMA adquirió permisos sobre identidades y archivos; tampoco creó la Wired. Controla una cuota distinta a la de KAGAMI."
+        },
+        {
+          "id": 1,
+          "minute": 0,
+          "source": "WORKSHOP",
+          "text": "El PC dispone de un taller de código. En Kissa Café han instalado un terminal: su técnico busca ayuda para comprobar un coprocesador."
+        }
+      ],
+      "visible_personnel": [],
+      "session_mode": "LOCAL"
+    },
+    "workshop": {
+      "active": true,
+      "shared_modules": [
+        "routing",
+        "shield",
+        "scan"
+      ],
+      "lesson": 2,
+      "life_source": "def next_cell(alive, neighbors):\n    if alive:\n        return neighbors == 2 or neighbors == 3\n    return neighbors == 3\n",
+      "draft": "use(\"routing\")\n",
+      "compiled": "use(\"routing\")\n",
+      "modules": [
+        "routing"
+      ],
+      "contract": "INDEPENDENT",
+      "best_score": 272,
+      "capacity": 8,
+      "cost": 2,
+      "assets": [
+        {
+          "id": "courier_interface",
+          "kind": "DEVICE",
+          "model": "interface",
+          "source": "Bit Courier · desafío local completado",
+          "minute": 0,
+          "active": 0,
+          "ownership": "OWNED",
+          "name": "Interfaz R",
+          "capacity": 3
+        },
+        {
+          "id": "courier_scan",
+          "kind": "CODE",
+          "model": "scan",
+          "source": "Bit Courier · desafío local completado",
+          "minute": 0,
+          "active": 0,
+          "ownership": "OWNED",
+          "name": "Exploración",
+          "capacity": 0
+        },
+        {
+          "id": "first_connection",
+          "kind": "CODE",
+          "model": "routing",
+          "source": "Tu primera conexión a la Wired",
+          "minute": 0,
+          "active": 0,
+          "ownership": "OWNED",
+          "name": "Enrutamiento",
+          "capacity": 0
+        },
+        {
+          "id": "home_navi",
+          "kind": "DEVICE",
+          "model": "navi",
+          "source": "Ordenador de casa",
+          "minute": 0,
+          "active": 1,
+          "ownership": "OWNED",
+          "name": "Navi A",
+          "capacity": 4
+        },
+        {
+          "id": "life_matrix",
+          "kind": "DEVICE",
+          "model": "matrix",
+          "source": "Juego de la Vida · validado en el PC",
+          "minute": 0,
+          "active": 1,
+          "ownership": "OWNED",
+          "name": "Coprocesador M",
+          "capacity": 4
+        },
+        {
+          "id": "life_shield",
+          "kind": "CODE",
+          "model": "shield",
+          "source": "Juego de la Vida · módulo del coprocesador",
+          "minute": 0,
+          "active": 0,
+          "ownership": "OWNED",
+          "name": "Protección",
+          "capacity": 0
+        }
+      ],
+      "library": [
+        {
+          "id": "routing",
+          "name": "Enrutamiento",
+          "cost": 2,
+          "effect": "Conexión del montaje; conserva las acciones básicas del enlace."
+        },
+        {
+          "id": "shield",
+          "name": "Protección",
+          "cost": 4,
+          "effect": "Preparar las dos defensas de un enlace propio con una operación local."
+        },
+        {
+          "id": "scan",
+          "name": "Exploración",
+          "cost": 3,
+          "effect": "Desde casa, leer la actividad de un enlace previamente examinado."
+        }
+      ],
+      "offers": {
+        "KAGAMI": "Contrato local KAGAMI: préstamo de un segundo Navi A y cobertura que absorbe 15 puntos de cada intervención. La copia no duplica capacidad. Reservas 1 unidad de cálculo mientras dure el acuerdo. Puedes terminarlo desde este PC; se retiran préstamo y cobertura. No se envían conversaciones ni recuerdos.",
+        "NOEMA": "Contrato local NOEMA: acceso prestado al módulo Exploración. Reserva 1 unidad de cálculo. Los escaneos posteriores entregan a NOEMA únicamente relay, minuto y número de intervenciones sobre tu cuenta. Puedes terminarlo; se retira el permiso, no tus fragmentos propios. No incluye testimonios ni memorias privadas."
+      },
+      "life_hint": "def next_cell(alive, neighbors):\n    if alive:\n        return neighbors == 2 or neighbors == 3\n    return neighbors == 3\n",
+      "session_mode": "LOCAL"
+    },
+    "circles": {
+      "active": true,
+      "session_mode": "LOCAL_NPC",
+      "contacts": [
+        {
+          "id": "RYOKO",
+          "name": "Ryoko",
+          "location": "NIGHTCLUB",
+          "condition": "Completa el Juego de la Vida y sigue independiente.",
+          "motive": "Quiere que las identidades puedan circular sin depender de un administrador.",
+          "met": true,
+          "met_minute": 0,
+          "ready": true,
+          "available": false,
+          "kind": "NPC"
+        },
+        {
+          "id": "KISSA_TECH",
+          "name": "Técnico de Kissa",
+          "location": "CAFE",
+          "condition": "Gana Bit Courier y sigue independiente.",
+          "motive": "Quiere mantener las máquinas del café fuera del control corporativo.",
+          "met": true,
+          "met_minute": 0,
+          "ready": true,
+          "available": false,
+          "kind": "NPC"
+        }
+      ],
+      "independent": true,
+      "group": {
+        "id": 1,
+        "name": "El ruido de fondo",
+        "leader": "PLAYER_1",
+        "draft": "use(\"routing\")\nuse(\"shield\")\nuse(\"scan\")\n",
+        "compiled": "use(\"routing\")\nuse(\"shield\")\nuse(\"scan\")\n",
+        "modules": [
+          "routing",
+          "shield",
+          "scan"
+        ],
+        "capacity": 11,
+        "cost": 9,
+        "library": [
+          {
+            "id": "routing",
+            "name": "Enrutamiento",
+            "cost": 2,
+            "effect": "Conexión del montaje; conserva las acciones básicas del enlace."
+          },
+          {
+            "id": "shield",
+            "name": "Protección",
+            "cost": 4,
+            "effect": "Preparar las dos defensas de un enlace propio con una operación local."
+          },
+          {
+            "id": "scan",
+            "name": "Exploración",
+            "cost": 3,
+            "effect": "Desde casa, leer la actividad de un enlace previamente examinado."
+          }
+        ],
+        "contributions": [
+          {
+            "actor": "KISSA_TECH",
+            "owner": "Técnico de Kissa",
+            "asset": "CODE:shield",
+            "kind": "CODE",
+            "model": "shield",
+            "name": "Protección",
+            "source": "Equipo de Técnico de Kissa",
+            "acquired_minute": null,
+            "shared_minute": 0,
+            "available": true,
+            "counted": true,
+            "reason": ""
+          },
+          {
+            "actor": "KISSA_TECH",
+            "owner": "Técnico de Kissa",
+            "asset": "DEVICE:matrix",
+            "kind": "DEVICE",
+            "model": "matrix",
+            "name": "Coprocesador M",
+            "source": "Equipo de Técnico de Kissa",
+            "acquired_minute": null,
+            "shared_minute": 0,
+            "available": true,
+            "counted": true,
+            "reason": ""
+          },
+          {
+            "actor": "PLAYER_1",
+            "owner": "Player",
+            "asset": "first_connection",
+            "kind": "CODE",
+            "model": "routing",
+            "name": "Enrutamiento",
+            "source": "Tu primera conexión a la Wired",
+            "acquired_minute": 0,
+            "shared_minute": 0,
+            "available": true,
+            "counted": true,
+            "reason": ""
+          },
+          {
+            "actor": "PLAYER_1",
+            "owner": "Player",
+            "asset": "home_navi",
+            "kind": "DEVICE",
+            "model": "navi",
+            "name": "Navi A",
+            "source": "Ordenador de casa",
+            "acquired_minute": 0,
+            "shared_minute": 0,
+            "available": true,
+            "counted": true,
+            "reason": ""
+          },
+          {
+            "actor": "PLAYER_1",
+            "owner": "Player",
+            "asset": "life_matrix",
+            "kind": "DEVICE",
+            "model": "matrix",
+            "name": "Coprocesador M",
+            "source": "Juego de la Vida · validado en el PC",
+            "acquired_minute": 0,
+            "shared_minute": 0,
+            "available": true,
+            "counted": false,
+            "reason": "Copia: ya está representada en el círculo."
+          },
+          {
+            "actor": "PLAYER_1",
+            "owner": "Player",
+            "asset": "life_shield",
+            "kind": "CODE",
+            "model": "shield",
+            "name": "Protección",
+            "source": "Juego de la Vida · módulo del coprocesador",
+            "acquired_minute": 0,
+            "shared_minute": 0,
+            "available": true,
+            "counted": false,
+            "reason": "Copia: ya está representada en el círculo."
+          },
+          {
+            "actor": "RYOKO",
+            "owner": "Ryoko",
+            "asset": "CODE:scan",
+            "kind": "CODE",
+            "model": "scan",
+            "name": "Exploración",
+            "source": "Equipo de Ryoko",
+            "acquired_minute": null,
+            "shared_minute": 0,
+            "available": true,
+            "counted": true,
+            "reason": ""
+          },
+          {
+            "actor": "RYOKO",
+            "owner": "Ryoko",
+            "asset": "DEVICE:interface",
+            "kind": "DEVICE",
+            "model": "interface",
+            "name": "Interfaz R",
+            "source": "Equipo de Ryoko",
+            "acquired_minute": null,
+            "shared_minute": 0,
+            "available": true,
+            "counted": true,
+            "reason": ""
+          },
+          {
+            "actor": "RYOKO",
+            "owner": "Ryoko",
+            "asset": "DEVICE:navi",
+            "kind": "DEVICE",
+            "model": "navi",
+            "name": "Navi A",
+            "source": "Equipo de Ryoko",
+            "acquired_minute": null,
+            "shared_minute": 0,
+            "available": true,
+            "counted": false,
+            "reason": "Copia: ya está representada en el círculo."
+          }
+        ],
+        "eligible": [
+          {
+            "id": "courier_interface",
+            "kind": "DEVICE",
+            "model": "interface",
+            "available": false,
+            "reason": "Dispositivo desconectado.",
+            "shared": false
+          },
+          {
+            "id": "courier_scan",
+            "kind": "CODE",
+            "model": "scan",
+            "available": true,
+            "reason": "",
+            "shared": false
+          },
+          {
+            "id": "first_connection",
+            "kind": "CODE",
+            "model": "routing",
+            "available": true,
+            "reason": "",
+            "shared": true
+          },
+          {
+            "id": "home_navi",
+            "kind": "DEVICE",
+            "model": "navi",
+            "available": true,
+            "reason": "",
+            "shared": true
+          },
+          {
+            "id": "life_matrix",
+            "kind": "DEVICE",
+            "model": "matrix",
+            "available": true,
+            "reason": "",
+            "shared": true
+          },
+          {
+            "id": "life_shield",
+            "kind": "CODE",
+            "model": "shield",
+            "available": true,
+            "reason": "",
+            "shared": true
+          }
+        ],
+        "members": [
+          {
+            "id": "KISSA_TECH",
+            "name": "Técnico de Kissa",
+            "kind": "NPC",
+            "joined_minute": 0
+          },
+          {
+            "id": "PLAYER_1",
+            "name": "Player",
+            "kind": "HUMAN",
+            "joined_minute": 0
+          },
+          {
+            "id": "RYOKO",
+            "name": "Ryoko",
+            "kind": "NPC",
+            "joined_minute": 0
+          }
+        ],
+        "events": [
+          {
+            "minute": 0,
+            "text": "Montaje compartido compilado: Enrutamiento, Protección, Exploración."
+          },
+          {
+            "minute": 0,
+            "text": "Técnico de Kissa acepta y conecta sus recursos. Siguen siendo suyos."
+          },
+          {
+            "minute": 0,
+            "text": "Ryoko acepta y conecta sus recursos. Siguen siendo suyos."
+          },
+          {
+            "minute": 0,
+            "text": "Player: Aportación conectada."
+          },
+          {
+            "minute": 0,
+            "text": "Player: Aportación conectada."
+          },
+          {
+            "minute": 0,
+            "text": "Player: Aportación conectada."
+          },
+          {
+            "minute": 0,
+            "text": "Player: Aportación conectada."
+          },
+          {
+            "minute": 0,
+            "text": "Player fundó el círculo. Aún no hay aportaciones ni programa activo."
+          }
+        ]
+      }
+    },
+    "situations": [],
+    "interaction": null,
+    "outgoing_interaction": null,
+    "messages": [
+      {
+        "id": "MSG_BOOTSTRAP_001",
+        "sender": "unknown@wired",
+        "subject": "NO SUBJECT",
+        "body": "NO ESTOY MUERTA.\n\nSOLO DEJÉ DE ESTAR AHÍ.",
+        "created_minute": 0,
+        "read": true,
+        "acknowledged": true,
+        "acknowledged_minute": 0
+      }
+    ],
+    "unread_messages": 0,
+    "wired": {
+      "connected": true,
+      "signals": [
+        {
+          "node_id": "NODE_07",
+          "location": "STATION",
+          "strength": 0.5,
+          "confidence": 0.35,
+          "origin_source": "WIRED_MESSAGE",
+          "current_source": "WIRED_MESSAGE",
+          "verified": false,
+          "updated_minute": 0
+        }
+      ],
+      "digital_presences": []
+    }
+  },
+  "removed": {
+    "schema_version": "0.1",
+    "minute": 10,
+    "player": {
+      "id": "PLAYER_1",
+      "name": "Player",
+      "faction": "UNALIGNED",
+      "location": "APARTMENT",
+      "goal": "UNKNOWN",
+      "energy": 1.0
+    },
+    "navigation": {
+      "reachable_locations": [
+        "APARTMENT_DISTRICT"
+      ]
+    },
+    "known_nodes": [
+      {
+        "id": "NODE_07",
+        "knowledge_confidence": 0.35,
+        "knowledge_source": "WIRED_MESSAGE",
+        "belief": {
+          "location": "STATION",
+          "strength": 0.5,
+          "confidence": 0.35,
+          "source": "WIRED_MESSAGE",
+          "updated_minute": 0
+        }
+      }
+    ],
+    "visible_actors": [],
+    "character_sheets": {
+      "player": {
+        "id": "PLAYER_1",
+        "name": "Player",
+        "kind": "PLAYER",
+        "faction": "UNALIGNED",
+        "location": "APARTMENT",
+        "energy": 1.0,
+        "known_nodes": 1,
+        "case_status": "UNSEEN",
+        "agency": "HUMAN_ONLY"
+      },
+      "visible_npcs": []
+    },
+    "station_case": {
+      "id": "STATION_ECHO_07",
+      "title": "El pulso ausente",
+      "status": "UNSEEN",
+      "resolution": null,
+      "summary": "Investiga NODE_07 en la estacion para buscar el rastro.",
+      "witness_count": 0,
+      "responses": []
+    },
+    "prologue": {
+      "enabled": false,
+      "stage": "LEGACY",
+      "hint": ""
+    },
+    "chapter_one": {
+      "active": true,
+      "title": "Ya habías estado aquí",
+      "started_minute": 0,
+      "connection_minute": 0,
+      "decision": null,
+      "hypothesis": "",
+      "hypothesis_status": "UNVERIFIED",
+      "evidence": [
+        {
+          "id": "RETURN_MESSAGE",
+          "title": "Has vuelto",
+          "kind": "MESSAGE",
+          "source_id": "UNKNOWN_WIRED",
+          "source_label": "Identidad desconocida · Wired",
+          "text": "Has vuelto.",
+          "acquired_minute": 0,
+          "claimed_time": "Recibido al abrir este capítulo, minuto 0",
+          "event_id": null
+        }
+      ],
+      "links": [],
+      "contradiction_linked": false,
+      "characters": [
+        "RESIDENT_001",
+        "RESIDENT_006",
+        "PROFESSOR",
+        "RYOKO"
+      ],
+      "notification": "Has vuelto"
+    },
+    "network_conflict": {
+      "active": true,
+      "multiple_operators": true,
+      "corporation": "Administradores de la Wired",
+      "corporate_control": 93.3,
+      "trace": 30,
+      "ready_in": 10,
+      "relays": [
+        {
+          "id": "RELAY_STATION",
+          "name": "Enlace del andén",
+          "location": "STATION",
+          "corporation": 80,
+          "mine": 0,
+          "defense": 0,
+          "suppressed_until": 0,
+          "inspected": false,
+          "controllers": [
+            {
+              "slot": "LINES",
+              "name": "Administrador de líneas",
+              "control": 80,
+              "suppressed_until": 0
+            },
+            {
+              "slot": "RECORDS",
+              "name": "Administrador de registros",
+              "control": 20,
+              "suppressed_until": 0
+            }
+          ]
+        },
+        {
+          "id": "RELAY_SCHOOL",
+          "name": "Enlace del pabellón B",
+          "location": "SCHOOL_LAB",
+          "corporation": 70,
+          "mine": 20,
+          "defense": 2,
+          "suppressed_until": 0,
+          "inspected": true,
+          "controllers": [
+            {
+              "slot": "LINES",
+              "name": "KAGAMI",
+              "control": 70,
+              "suppressed_until": 0
+            },
+            {
+              "slot": "RECORDS",
+              "name": "NOEMA",
+              "control": 10,
+              "suppressed_until": 0
+            }
+          ]
+        },
+        {
+          "id": "RELAY_VIDEO",
+          "name": "Enlace del videoclub",
+          "location": "VIDEO_CLUB",
+          "corporation": 55,
+          "mine": 0,
+          "defense": 0,
+          "suppressed_until": 0,
+          "inspected": false,
+          "controllers": [
+            {
+              "slot": "LINES",
+              "name": "Administrador de líneas",
+              "control": 55,
+              "suppressed_until": 0
+            },
+            {
+              "slot": "RECORDS",
+              "name": "Administrador de registros",
+              "control": 45,
+              "suppressed_until": 0
+            }
+          ]
+        }
+      ],
+      "rankings": [
+        {
+          "actor_id": "PLAYER_1",
+          "name": "Player",
+          "control": 6.7
+        }
+      ],
+      "pending": [
+        {
+          "relay": "RELAY_SCHOOL",
+          "due_minute": 80,
+          "remaining": 70,
+          "operator": "NOEMA",
+          "kind": "Reescritura de permisos",
+          "max_loss": 20
+        }
+      ],
+      "reports": [
+        {
+          "id": 3,
+          "minute": 0,
+          "source": "RELAY_TELEMETRY",
+          "text": "Enlace del pabellón B: NOEMA prepara una reescritura de permisos (hasta 20 puntos). Tienes 80 minutos del mundo para defenderte, ocultar tu enlace o examinar el tráfico y contrastar la credencial de su personal."
+        },
+        {
+          "id": 2,
+          "minute": 0,
+          "source": "RELAY_SCHOOL",
+          "text": "CONTRATO DE CESIÓN · El protocolo y sus primeras comunidades son anteriores a KAGAMI. El consorcio adquirió los puntos de acceso y sustituyó las claves de administración; no creó la Wired.\n\nANEXO DE REGISTROS · NOEMA adquirió permisos sobre identidades y archivos; tampoco creó la Wired. Controla una cuota distinta a la de KAGAMI."
+        },
+        {
+          "id": 1,
+          "minute": 0,
+          "source": "WORKSHOP",
+          "text": "El PC dispone de un taller de código. En Kissa Café han instalado un terminal: su técnico busca ayuda para comprobar un coprocesador."
+        }
+      ],
+      "visible_personnel": [],
+      "session_mode": "LOCAL"
+    },
+    "workshop": {
+      "active": true,
+      "shared_modules": [],
+      "lesson": 2,
+      "life_source": "def next_cell(alive, neighbors):\n    if alive:\n        return neighbors == 2 or neighbors == 3\n    return neighbors == 3\n",
+      "draft": "use(\"routing\")\n",
+      "compiled": "use(\"routing\")\n",
+      "modules": [
+        "routing"
+      ],
+      "contract": "INDEPENDENT",
+      "best_score": 272,
+      "capacity": 8,
+      "cost": 2,
+      "assets": [
+        {
+          "id": "courier_interface",
+          "kind": "DEVICE",
+          "model": "interface",
+          "source": "Bit Courier · desafío local completado",
+          "minute": 0,
+          "active": 0,
+          "ownership": "OWNED",
+          "name": "Interfaz R",
+          "capacity": 3
+        },
+        {
+          "id": "courier_scan",
+          "kind": "CODE",
+          "model": "scan",
+          "source": "Bit Courier · desafío local completado",
+          "minute": 0,
+          "active": 0,
+          "ownership": "OWNED",
+          "name": "Exploración",
+          "capacity": 0
+        },
+        {
+          "id": "first_connection",
+          "kind": "CODE",
+          "model": "routing",
+          "source": "Tu primera conexión a la Wired",
+          "minute": 0,
+          "active": 0,
+          "ownership": "OWNED",
+          "name": "Enrutamiento",
+          "capacity": 0
+        },
+        {
+          "id": "home_navi",
+          "kind": "DEVICE",
+          "model": "navi",
+          "source": "Ordenador de casa",
+          "minute": 0,
+          "active": 1,
+          "ownership": "OWNED",
+          "name": "Navi A",
+          "capacity": 4
+        },
+        {
+          "id": "life_matrix",
+          "kind": "DEVICE",
+          "model": "matrix",
+          "source": "Juego de la Vida · validado en el PC",
+          "minute": 0,
+          "active": 1,
+          "ownership": "OWNED",
+          "name": "Coprocesador M",
+          "capacity": 4
+        },
+        {
+          "id": "life_shield",
+          "kind": "CODE",
+          "model": "shield",
+          "source": "Juego de la Vida · módulo del coprocesador",
+          "minute": 0,
+          "active": 0,
+          "ownership": "OWNED",
+          "name": "Protección",
+          "capacity": 0
+        }
+      ],
+      "library": [
+        {
+          "id": "routing",
+          "name": "Enrutamiento",
+          "cost": 2,
+          "effect": "Conexión del montaje; conserva las acciones básicas del enlace."
+        },
+        {
+          "id": "shield",
+          "name": "Protección",
+          "cost": 4,
+          "effect": "Preparar las dos defensas de un enlace propio con una operación local."
+        },
+        {
+          "id": "scan",
+          "name": "Exploración",
+          "cost": 3,
+          "effect": "Desde casa, leer la actividad de un enlace previamente examinado."
+        }
+      ],
+      "offers": {
+        "KAGAMI": "Contrato local KAGAMI: préstamo de un segundo Navi A y cobertura que absorbe 15 puntos de cada intervención. La copia no duplica capacidad. Reservas 1 unidad de cálculo mientras dure el acuerdo. Puedes terminarlo desde este PC; se retiran préstamo y cobertura. No se envían conversaciones ni recuerdos.",
+        "NOEMA": "Contrato local NOEMA: acceso prestado al módulo Exploración. Reserva 1 unidad de cálculo. Los escaneos posteriores entregan a NOEMA únicamente relay, minuto y número de intervenciones sobre tu cuenta. Puedes terminarlo; se retira el permiso, no tus fragmentos propios. No incluye testimonios ni memorias privadas."
+      },
+      "life_hint": "def next_cell(alive, neighbors):\n    if alive:\n        return neighbors == 2 or neighbors == 3\n    return neighbors == 3\n",
+      "session_mode": "LOCAL"
+    },
+    "circles": {
+      "active": true,
+      "session_mode": "LOCAL_NPC",
+      "contacts": [
+        {
+          "id": "RYOKO",
+          "name": "Ryoko",
+          "location": "NIGHTCLUB",
+          "condition": "Completa el Juego de la Vida y sigue independiente.",
+          "motive": "Quiere que las identidades puedan circular sin depender de un administrador.",
+          "met": true,
+          "met_minute": 0,
+          "ready": true,
+          "available": true,
+          "kind": "NPC"
+        },
+        {
+          "id": "KISSA_TECH",
+          "name": "Técnico de Kissa",
+          "location": "CAFE",
+          "condition": "Gana Bit Courier y sigue independiente.",
+          "motive": "Quiere mantener las máquinas del café fuera del control corporativo.",
+          "met": true,
+          "met_minute": 0,
+          "ready": true,
+          "available": false,
+          "kind": "NPC"
+        }
+      ],
+      "independent": true,
+      "group": {
+        "id": 1,
+        "name": "El ruido de fondo",
+        "leader": "PLAYER_1",
+        "draft": "use(\"routing\")\nuse(\"shield\")\nuse(\"scan\")\n",
+        "compiled": "",
+        "modules": [],
+        "capacity": 8,
+        "cost": 0,
+        "library": [
+          {
+            "id": "routing",
+            "name": "Enrutamiento",
+            "cost": 2,
+            "effect": "Conexión del montaje; conserva las acciones básicas del enlace."
+          },
+          {
+            "id": "shield",
+            "name": "Protección",
+            "cost": 4,
+            "effect": "Preparar las dos defensas de un enlace propio con una operación local."
+          }
+        ],
+        "contributions": [
+          {
+            "actor": "KISSA_TECH",
+            "owner": "Técnico de Kissa",
+            "asset": "CODE:shield",
+            "kind": "CODE",
+            "model": "shield",
+            "name": "Protección",
+            "source": "Equipo de Técnico de Kissa",
+            "acquired_minute": null,
+            "shared_minute": 0,
+            "available": true,
+            "counted": true,
+            "reason": ""
+          },
+          {
+            "actor": "KISSA_TECH",
+            "owner": "Técnico de Kissa",
+            "asset": "DEVICE:matrix",
+            "kind": "DEVICE",
+            "model": "matrix",
+            "name": "Coprocesador M",
+            "source": "Equipo de Técnico de Kissa",
+            "acquired_minute": null,
+            "shared_minute": 0,
+            "available": true,
+            "counted": true,
+            "reason": ""
+          },
+          {
+            "actor": "PLAYER_1",
+            "owner": "Player",
+            "asset": "first_connection",
+            "kind": "CODE",
+            "model": "routing",
+            "name": "Enrutamiento",
+            "source": "Tu primera conexión a la Wired",
+            "acquired_minute": 0,
+            "shared_minute": 0,
+            "available": true,
+            "counted": true,
+            "reason": ""
+          },
+          {
+            "actor": "PLAYER_1",
+            "owner": "Player",
+            "asset": "home_navi",
+            "kind": "DEVICE",
+            "model": "navi",
+            "name": "Navi A",
+            "source": "Ordenador de casa",
+            "acquired_minute": 0,
+            "shared_minute": 0,
+            "available": true,
+            "counted": true,
+            "reason": ""
+          },
+          {
+            "actor": "PLAYER_1",
+            "owner": "Player",
+            "asset": "life_matrix",
+            "kind": "DEVICE",
+            "model": "matrix",
+            "name": "Coprocesador M",
+            "source": "Juego de la Vida · validado en el PC",
+            "acquired_minute": 0,
+            "shared_minute": 0,
+            "available": true,
+            "counted": false,
+            "reason": "Copia: ya está representada en el círculo."
+          },
+          {
+            "actor": "PLAYER_1",
+            "owner": "Player",
+            "asset": "life_shield",
+            "kind": "CODE",
+            "model": "shield",
+            "name": "Protección",
+            "source": "Juego de la Vida · módulo del coprocesador",
+            "acquired_minute": 0,
+            "shared_minute": 0,
+            "available": true,
+            "counted": false,
+            "reason": "Copia: ya está representada en el círculo."
+          }
+        ],
+        "eligible": [
+          {
+            "id": "courier_interface",
+            "kind": "DEVICE",
+            "model": "interface",
+            "available": false,
+            "reason": "Dispositivo desconectado.",
+            "shared": false
+          },
+          {
+            "id": "courier_scan",
+            "kind": "CODE",
+            "model": "scan",
+            "available": true,
+            "reason": "",
+            "shared": false
+          },
+          {
+            "id": "first_connection",
+            "kind": "CODE",
+            "model": "routing",
+            "available": true,
+            "reason": "",
+            "shared": true
+          },
+          {
+            "id": "home_navi",
+            "kind": "DEVICE",
+            "model": "navi",
+            "available": true,
+            "reason": "",
+            "shared": true
+          },
+          {
+            "id": "life_matrix",
+            "kind": "DEVICE",
+            "model": "matrix",
+            "available": true,
+            "reason": "",
+            "shared": true
+          },
+          {
+            "id": "life_shield",
+            "kind": "CODE",
+            "model": "shield",
+            "available": true,
+            "reason": "",
+            "shared": true
+          }
+        ],
+        "members": [
+          {
+            "id": "KISSA_TECH",
+            "name": "Técnico de Kissa",
+            "kind": "NPC",
+            "joined_minute": 0
+          },
+          {
+            "id": "PLAYER_1",
+            "name": "Player",
+            "kind": "HUMAN",
+            "joined_minute": 0
+          }
+        ],
+        "events": [
+          {
+            "minute": 10,
+            "text": "Montaje detenido: faltan recursos o permisos. El borrador se conserva; recompila cuando el círculo esté listo."
+          },
+          {
+            "minute": 10,
+            "text": "Ryoko sale con sus recursos. Conservas los tuyos."
+          },
+          {
+            "minute": 0,
+            "text": "Montaje compartido compilado: Enrutamiento, Protección, Exploración."
+          },
+          {
+            "minute": 0,
+            "text": "Técnico de Kissa acepta y conecta sus recursos. Siguen siendo suyos."
+          },
+          {
+            "minute": 0,
+            "text": "Ryoko acepta y conecta sus recursos. Siguen siendo suyos."
+          },
+          {
+            "minute": 0,
+            "text": "Player: Aportación conectada."
+          },
+          {
+            "minute": 0,
+            "text": "Player: Aportación conectada."
+          },
+          {
+            "minute": 0,
+            "text": "Player: Aportación conectada."
+          },
+          {
+            "minute": 0,
+            "text": "Player: Aportación conectada."
+          },
+          {
+            "minute": 0,
+            "text": "Player fundó el círculo. Aún no hay aportaciones ni programa activo."
+          }
+        ]
+      }
+    },
+    "situations": [],
+    "interaction": null,
+    "outgoing_interaction": null,
+    "messages": [
+      {
+        "id": "MSG_BOOTSTRAP_001",
+        "sender": "unknown@wired",
+        "subject": "NO SUBJECT",
+        "body": "NO ESTOY MUERTA.\n\nSOLO DEJÉ DE ESTAR AHÍ.",
+        "created_minute": 0,
+        "read": true,
+        "acknowledged": true,
+        "acknowledged_minute": 0
+      }
+    ],
+    "unread_messages": 0,
+    "wired": {
+      "connected": true,
+      "signals": [
+        {
+          "node_id": "NODE_07",
+          "location": "STATION",
+          "strength": 0.5,
+          "confidence": 0.35,
+          "origin_source": "WIRED_MESSAGE",
+          "current_source": "WIRED_MESSAGE",
+          "verified": false,
+          "updated_minute": 0
+        }
+      ],
+      "digital_presences": []
+    }
+  }
+}

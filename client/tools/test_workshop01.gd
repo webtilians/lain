@@ -45,9 +45,14 @@ func run() -> void:
 				check(Rect2(Vector2.ZERO,root.get_visible_rect().size).encloses(ws.content.get_global_rect()), "Page overflow: "+page)
 			ws._select("Código")
 			var editor: CodeEdit = ws.content.find_children("*","CodeEdit",true,false)[0]
-			editor.text += 'use("shield")' + "\n"
+			editor.set_caret_line(editor.get_line_count()-1)
+			editor.insert_text_at_caret("# prueba de borrador\n")
 			await process_frame
-			check('use("shield")' in ws.program_draft, "Editor does not preserve draft")
+			check("# prueba de borrador" in ws.program_draft, "Editor does not preserve draft")
+			var shield_count: int = ws.program_draft.count('use("shield")')
+			for b in ws.content.find_children("*","Button",true,false):
+				if b.text=="Insertar Protección": b.pressed.emit()
+			check(ws.program_draft.count('use("shield")')==shield_count+1, "Inserted module not saved in draft")
 			ws._select("Correo")
 			ws._select("Código")
 			check(ws.content.find_children("*","CodeEdit",true,false)[0].text == ws.program_draft, "Switching tabs loses draft")

@@ -233,6 +233,8 @@ class Simulation:
         initialize_conflict()
         from .workshop import initialize_workshop
         initialize_workshop()
+        from .circles import initialize_circles
+        initialize_circles()
 
         ensure_station_followup(
             player_id=self.player.id,
