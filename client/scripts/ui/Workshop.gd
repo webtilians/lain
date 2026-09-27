@@ -32,6 +32,7 @@ var circle_tab := "Grupo"
 var circle_confirm_leave := false
 var circle_panel = preload("res://scripts/ui/CirclePanel.gd").new()
 var event_panel = preload("res://scripts/ui/CafeEventPanel.gd").new()
+var exchange_panel = preload("res://scripts/ui/ExchangePanel.gd").new()
 var run_endpoint := "workshop"
 var run_event := ""
 var run_closes := 0
@@ -108,6 +109,16 @@ func data() -> Dictionary:
 func circle_data() -> Dictionary:
 	return WorldApi.snapshot.get("circles", {})
 
+func exchange_data() -> Dictionary:
+	return WorldApi.snapshot.get("code_exchange", {})
+
+func exchange_active() -> bool:
+	return bool(exchange_data().get("active",false))
+
+func open_exchange_contact(peer: String) -> void:
+	_open("EXCHANGE_CONTACT")
+	_send_exchange("CONTACT",{"peer":peer})
+
 func circles_active() -> bool:
 	return bool(circle_data().get("active",false))
 
@@ -152,6 +163,7 @@ func _open(kind: String) -> void:
 	page = "Correo"
 	status = ""
 	circle_confirm_leave = false
+	exchange_panel.confirm_offer = ""
 	if not drafts_loaded:
 		program_draft = str(data().get("draft", ""))
 		life_draft = str(data().get("life_source", ""))
@@ -240,9 +252,15 @@ func _render() -> void:
 		label(content,"Esperando respuesta…" if busy else status).add_theme_font_size_override("font_size",22)
 		footer.text = "Cuando cumplas su condición, podrás enviarle la invitación desde Círculo, en el PC de casa."
 		return
+	if mode == "EXCHANGE_CONTACT":
+		heading.text = "CONVERSACIÓN // INTERCAMBIAR CÓDIGO"
+		label(content,"Esperando respuesta…" if busy else status).add_theme_font_size_override("font_size",22)
+		footer.text = "Consulta la propuesta en PC → Intercambios. Allí eliges qué copia compartir y revisas el acuerdo."
+		return
 	var pages: Array = ["Correo", "Código", "Juego de la Vida", "Dispositivos", "Wired"]
 	if circles_active(): pages.append("Círculo")
 	if bool(event_data().get("active", false)): pages.append("Eventos")
+	if exchange_active(): pages.append("Intercambios")
 	for title in pages:
 		var tab := button(tabs, title, _select.bind(title))
 		tab.disabled = title == page
@@ -254,6 +272,7 @@ func _render() -> void:
 		"Wired": _wired()
 		"Círculo": circle_panel.render(self)
 		"Eventos": event_panel.render(self, false)
+		"Intercambios": exchange_panel.render(self)
 
 func scrolling(parent: Node) -> VBoxContainer:
 	var scroll := ScrollContainer.new()
@@ -277,6 +296,9 @@ func _mail() -> void:
 		button(box, "Consultar eventos del café", _select.bind("Eventos"))
 	if circles_active():
 		label(box,"UNA RED PROPIA\nRyoko y el técnico de Kissa quieren colaborar fuera de las corporaciones. Habla con ellos de crear una red. En Círculo puedes reunir sus aportaciones y compilar un programa compartido.")
+	if exchange_active():
+		label(box,"CÓDIGO ENTRE CONTACTOS\nRyoko, en AZUL, y el técnico de Kissa proponen intercambiar fragmentos. Habla con cada uno de intercambiar código y revisa sus condiciones aquí. Un premio del café puede abrir otro camino para ampliar tu programa.")
+		button(box,"Consultar intercambios",_select.bind("Intercambios"))
 	var offers: Dictionary = data().get("offers", {})
 	if offers.is_empty():
 		label(box, "CORREO CORPORATIVO\nTodavía no hay ofertas. Tus avances pueden llamar la atención de otras redes.")
@@ -377,6 +399,8 @@ func _render_cafe() -> void:
 		button(actions, "Torneos y clasificación", _open.bind("CAFE_EVENTS"))
 	if circles_active():
 		button(actions,"Hablar de una red propia",open_circle_contact.bind("KISSA_TECH"))
+	if exchange_active():
+		button(actions,"Intercambiar código",open_exchange_contact.bind("KISSA_TECH"))
 	if is_snake() and run_endpoint == "workshop":
 		label(content, "SERPIENTE DE SEÑAL · " + str(arcade.get("rules","")) + "\nPráctica sin premio · Mejor marca: " + str(int(data().get("snake_best_score",0))))
 	else:
@@ -485,6 +509,12 @@ func _send_circle(action: String, payload: Dictionary) -> void:
 	pending = {"action":action,"data":payload,"request_id":"circle_"+str(Time.get_unix_time_from_system()).replace(".","_")+"_"+str(Time.get_ticks_usec())}
 	_dispatch()
 
+func _send_exchange(action: String, payload: Dictionary) -> void:
+	if busy: return
+	pending_endpoint = "code-exchange"
+	pending = {"action":action,"data":payload,"request_id":"exchange_"+str(Time.get_unix_time_from_system()).replace(".","_")+"_"+str(Time.get_ticks_usec())}
+	_dispatch()
+
 func _dispatch() -> void:
 	if busy: return
 	retry_button.hide()
@@ -522,6 +552,11 @@ func _completed(result: int, code: int, _headers: PackedStringArray, body: Packe
 		return
 	var payload: Dictionary = decoder.data
 	if code < 200 or code >= 300:
+		var exchange_errors := {"EXCHANGE_PC_REQUIRED":"Confirma el intercambio en el PC de casa.","MEET_EXCHANGE_PEER_FIRST":"Habla de intercambiar código con esa persona primero.","EXCHANGE_OWNED_CODE_REQUIRED":"Necesitas esa copia propia. Un préstamo o una aportación de otra persona no sirve.","EXCHANGE_DISABLED":"Los intercambios no están activos en este servidor.","INDEPENDENT_REQUIRED":"Termina tu contrato corporativo en Correo para intercambiar."}
+		exchange_errors.merge({"PARTNER_NOT_PRESENT":"Debes hablar con esa persona en su localización.","WIRED_CONNECTION_REQUIRED":"Completa primero tu conexión a la Wired."})
+		if pending_endpoint == "code-exchange":
+			_failure(str(exchange_errors.get(str(payload.get("detail","")),payload.get("detail","No se pudo completar el intercambio."))),code >= 500)
+			return
 		var errors := {"WORKSHOP_WRONG_LOCATION":"Debes usar el PC de casa, el aula o el terminal del café según la acción.", "LESSON_REQUIRED":"Pide las reglas al profesor primero.", "SCAN_MODULE_REQUIRED":"Compila Exploración y conecta suficientes equipos.", "INSPECT_RELAY_FIRST":"Examina ese armario en persona antes de escanearlo.", "OFFERS_NOT_AVAILABLE":"Las ofertas llegan al completar la misión del Juego de la Vida."}
 		errors.merge({"PARTNER_NOT_PRESENT":"Debes hablar con esa persona en su localización.", "INDEPENDENT_REQUIRED":"Termina tu contrato corporativo para colaborar como independiente.", "PARTNER_CONDITION_REQUIRED":"Todavía no cumples la condición de ese colaborador.", "MEET_PARTNER_FIRST":"Habla de la red con esa persona antes de invitarla.", "ASSET_NOT_AVAILABLE":"Conecta el equipo y comprueba que sea tuyo, sin préstamo corporativo.", "CIRCLE_PC_REQUIRED":"Gestiona el círculo desde el PC de casa.", "INVALID_CIRCLE_NAME":"Escribe un nombre de entre 1 y 32 caracteres.", "PARTNER_ALREADY_COMMITTED":"Esa persona ya participa en un círculo.", "ALREADY_IN_CIRCLE":"Ya perteneces a un círculo."})
 		errors.merge({"CAFE_REQUIRED":"Debes jugar desde el terminal de Kissa Café.", "EVENT_NOT_OPEN":"Esta edición aún no ha abierto o ya ha cerrado. Consulta el calendario.", "EVENT_ATTEMPTS_USED":"Has utilizado los tres intentos de esta edición.", "EVENT_RUN_REQUIRED":"Abre un intento de este torneo desde el terminal.", "EVENT_ALREADY_FINISHED":"Ese intento ya tiene un resultado guardado."})

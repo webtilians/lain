@@ -5,6 +5,9 @@ El café incorpora un segundo minijuego propio de estética retro, práctica con
 marcas separadas y un catálogo editable de futuras ediciones. Los rivales siguen
 siendo PNJ; esta fase no añade cuentas ni partidas entre personas.
 
+La continuación está en [WIRED 0.7 · Copias entre contactos](EXCHANGE01_README.md),
+con intercambios de fragmentos propios y recibos individuales.
+
 ![Serpiente en el café](docs/arcade01/practice-playing.png)
 
 ## Probar el nuevo juego

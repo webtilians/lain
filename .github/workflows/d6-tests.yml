@@ -30,6 +30,7 @@ on:
       - experiment/wired-0.4-circles
       - experiment/wired-0.5-cafe-events
       - experiment/wired-0.6-arcade-catalog
+      - experiment/wired-0.7-code-exchange
   pull_request:
 
 jobs:
@@ -61,3 +62,5 @@ jobs:
         run: python tools/smoke_chapter01_http.py --events
       - name: Snake practice, custom catalogue and authoritative tournament replay
         run: python tools/smoke_chapter01_http.py --events --arcade
+      - name: Tournament prize, two NPC exchanges and individual provenance over HTTP
+        run: python tools/smoke_chapter01_http.py --events --exchange

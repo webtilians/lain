@@ -13,6 +13,7 @@ on:
       - experiment/wired-0.4-circles
       - experiment/wired-0.5-cafe-events
       - experiment/wired-0.6-arcade-catalog
+      - experiment/wired-0.7-code-exchange
   pull_request:
     branches:
       - experiment/reality-0.3-visual06-integration
@@ -171,6 +172,16 @@ jobs:
           /tmp/lain-godot --headless --path client --script res://tools/test_arcade01.gd 2>&1 | tee /tmp/lain-arcade01.log
           grep -q 'ARCADE01_GAMEPLAY_OK views=6 rule_steps=182' /tmp/lain-arcade01.log
           if grep -E '^(SCRIPT ERROR:|ERROR:)' /tmp/lain-arcade01.log; then
+            exit 1
+          fi
+
+      - name: Physical code contacts, copy review, receipts and stable retries
+        shell: bash
+        run: |
+          set -euo pipefail
+          /tmp/lain-godot --headless --path client --script res://tools/test_exchange01.gd 2>&1 | tee /tmp/lain-exchange01.log
+          grep -q 'EXCHANGE01_GAMEPLAY_OK views=8 contacts=2 retry=stable' /tmp/lain-exchange01.log
+          if grep -E '^(SCRIPT ERROR:|ERROR:)' /tmp/lain-exchange01.log; then
             exit 1
           fi
 

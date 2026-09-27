@@ -52,6 +52,7 @@ func _choices() -> Array[Dictionary]:
 		{"id": "GOODBYE", "text": "Dejar a Ryoko entre la música."},
 	]
 	if Workshop.circles_active(): result.insert(0,{"id":"CIRCLE","text":"Hablar de crear una red propia."})
+	if Workshop.exchange_active(): result.insert(0,{"id":"EXCHANGE","text":"Hablar de intercambiar código."})
 	return result
 
 
@@ -63,6 +64,9 @@ func _on_choice(owner_id: String, choice: String) -> void:
 		return
 	if choice == "CIRCLE":
 		Workshop.open_circle_contact("RYOKO")
+		return
+	if choice == "EXCHANGE":
+		Workshop.open_exchange_contact("RYOKO")
 		return
 	if choice == "GOODBYE":
 		EventDialog.close_event()

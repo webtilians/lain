@@ -156,6 +156,25 @@ def cafe_event_action(request: CafeEventRequest):
             raise HTTPException(status_code=409, detail=str(error))
 
 
+class ExchangeActionRequest(BaseModel):
+    model_config = {"extra": "forbid"}
+    action: str = Field(max_length=16)
+    data: dict[str, StrictStr] = Field(max_length=2)
+    request_id: str = Field(min_length=8, max_length=80)
+
+
+@app.post("/api/v1/code-exchange/action")
+def code_exchange_action(request: ExchangeActionRequest):
+    from server.world_core.code_exchange import perform_exchange_action
+    with _world_lock:
+        get_runtime()
+        try:
+            result = perform_exchange_action(PLAYER_ID, request.action, request.data, request.request_id)
+            return {"result":result,"state":build_player_snapshot(PLAYER_ID)}
+        except ValueError as error:
+            raise HTTPException(status_code=409, detail=str(error))
+
+
 @app.post("/api/v1/circles/action")
 def circle_action(request: CircleActionRequest):
     from server.world_core.circles import perform_circle_action

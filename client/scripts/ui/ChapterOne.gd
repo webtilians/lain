@@ -150,6 +150,8 @@ func _present(event: Dictionary) -> void:
 			buttons.append({"id":"LIFE","text":"Pedir las reglas del Juego de la Vida."})
 		if current_actor=="RYOKO" and Workshop.circles_active():
 			buttons.append({"id":"CIRCLE","text":"Hablar de crear una red propia."})
+		if current_actor=="RYOKO" and Workshop.exchange_active():
+			buttons.append({"id":"EXCHANGE","text":"Hablar de intercambiar código."})
 	if terminal_context:
 		if NetworkConflict.active():
 			buttons.append({"id":"NETWORK","text":"Consultar el control de los enlaces."})
@@ -172,6 +174,8 @@ func _choose(owner: String, selected: String) -> void:
 		Workshop.open_lesson()
 	elif selected=="CIRCLE":
 		Workshop.open_circle_contact("RYOKO")
+	elif selected=="EXCHANGE":
+		Workshop.open_exchange_contact("RYOKO")
 	elif selected=="NETWORK":
 		NetworkConflict.open_terminal()
 	elif selected=="CLOSE":

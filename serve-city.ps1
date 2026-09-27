@@ -1,5 +1,5 @@
 param(
-    [string]$WorldPath = (Join-Path $PSScriptRoot 'arcade01.db'),
+    [string]$WorldPath = (Join-Path $PSScriptRoot 'exchange01.db'),
     [string]$PythonPath = ''
 )
 $ErrorActionPreference = 'Stop'
@@ -34,6 +34,7 @@ $defaults = @{
     LAIN_CIRCLES = '1'
     LAIN_CAFE_EVENTS = '1'
     LAIN_ARCADE_CATALOG = '1'
+    LAIN_CODE_EXCHANGE = '1'
 }
 foreach ($key in $defaults.Keys) {
     if ([string]::IsNullOrWhiteSpace([Environment]::GetEnvironmentVariable($key))) {

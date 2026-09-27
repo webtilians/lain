@@ -30,6 +30,7 @@ def main():
         env["LAIN_CIRCLES"]="1" if "--circles" in sys.argv else "0"
         env["LAIN_CAFE_EVENTS"]="1" if "--events" in sys.argv else "0"
         env["LAIN_ARCADE_CATALOG"]="1" if "--arcade" in sys.argv else "0"
+        env["LAIN_CODE_EXCHANGE"]="1" if "--exchange" in sys.argv else "0"
         if "--arcade" in sys.argv:
             spec=json.loads((ROOT/"server/content/cafe_catalog.json").read_text(encoding="utf-8"))
             entry=spec["entries"][0]
@@ -140,6 +141,37 @@ def main():
                     print("CAFE_EVENTS_HTTP_OK calendar=true location=true score=replayed reward=once compilation=true")
                     if "--arcade" in sys.argv:
                         print("ARCADE_CATALOG_HTTP_OK custom_catalog=true snake_replay=true practice_has_no_prize=true")
+                    if "--exchange" in sys.argv:
+                        def trade(action, data, key):
+                            return request("/api/v1/code-exchange/action",{"action":action,"data":data,"request_id":key})
+                        for destination in ["APARTMENT_DISTRICT","NIGHTCLUB"]: move_event(destination)
+                        trade("CONTACT",{"peer":"RYOKO"},"http_exchange_ryoko")
+                        for destination in ["APARTMENT_DISTRICT","CAFE"]: move_event(destination)
+                        trade("CONTACT",{"peer":"KISSA_TECH"},"http_exchange_tech")
+                        command={"action":"ACCEPT","data":{"offer":"ryoko_scan_v1","asset":"event_"+item["id"]},"request_id":"http_exchange_accept"}
+                        for invalid,status in [({**command,"actor_id":"AGENT_K"},422),(command,409),
+                            ({**command,"data":{"offer":"ryoko_scan_v1","asset":True}},422)]:
+                            try:
+                                request("/api/v1/code-exchange/action",invalid)
+                                raise AssertionError("Invalid exchange accepted")
+                            except HTTPError as error: assert error.code==status
+                        for destination in ["APARTMENT_DISTRICT","APARTMENT"]: move_event(destination)
+                        result=request("/api/v1/code-exchange/action",command)
+                        assert result["result"]["sent"]["source"].startswith("Kissa")
+                        assert result["result"]["received"]["model"]=="scan"
+                        with sqlite3.connect(db) as conn: before=list(conn.iterdump())
+                        conn.close()
+                        assert request("/api/v1/code-exchange/action",command)["result"]==result["result"]
+                        request("/api/v1/player/state")
+                        with sqlite3.connect(db) as conn: assert list(conn.iterdump())==before
+                        conn.close()
+                        second=trade("ACCEPT",{"offer":"kissa_shield_v1","asset":result["result"]["received"]["asset"]},"http_exchange_second")
+                        assert second["result"]["sent"]["source"]==result["result"]["received"]["source"]
+                        assets=second["state"]["workshop"]["assets"]
+                        assert {"event_"+item["id"],"exchange_ryoko_scan_v1","exchange_kissa_shield_v1"} <= {a["id"] for a in assets}
+                        assert second["state"]["workshop"]["modules"]==["routing","buffer"]
+                        assert len(second["state"]["code_exchange"]["history"])==2
+                        print("CODE_EXCHANGE_HTTP_OK prize_to_copy=true two_contacts=true provenance=true retries=once own_program=preserved")
                 if "--network" in sys.argv:
                     for destination in ["APARTMENT_DISTRICT","STATION"]:
                         request("/api/v1/player/step",{"action":"MOVE","target":destination})

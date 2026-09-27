@@ -235,6 +235,8 @@ class Simulation:
         initialize_workshop()
         from .circles import initialize_circles
         initialize_circles()
+        from .code_exchange import initialize_exchange
+        initialize_exchange()
 
         ensure_station_followup(
             player_id=self.player.id,
