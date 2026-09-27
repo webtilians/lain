@@ -1,0 +1,9 @@
+{
+  "revision": 1,
+  "entries": [
+    {"id":"courier_buffer","game":"bit_courier","orientations":[0,1,2,3],"prize":{"kind":"CODE","model":"buffer"}},
+    {"id":"snake_cache","game":"signal_snake","orientations":[0,1,2,3],"prize":{"kind":"DEVICE","model":"cache"}},
+    {"id":"courier_shield","game":"bit_courier","orientations":[1,2,3,0],"prize":{"kind":"CODE","model":"shield"}},
+    {"id":"snake_scan","game":"signal_snake","orientations":[1,2,3,0],"prize":{"kind":"CODE","model":"scan"}}
+  ]
+}

@@ -29,6 +29,7 @@ on:
       - experiment/wired-0.3-noema
       - experiment/wired-0.4-circles
       - experiment/wired-0.5-cafe-events
+      - experiment/wired-0.6-arcade-catalog
   pull_request:
 
 jobs:
@@ -58,3 +59,5 @@ jobs:
         run: python tools/smoke_chapter01_http.py --circles
       - name: Cafe tournaments HTTP window, verified replay and awarded module
         run: python tools/smoke_chapter01_http.py --events
+      - name: Snake practice, custom catalogue and authoritative tournament replay
+        run: python tools/smoke_chapter01_http.py --events --arcade

@@ -11,6 +11,7 @@ import re
 
 from .network_conflict import connection, report
 from . import workshop as ws
+from . import arcade_catalog as catalog, signal_snake
 
 LEAD = 60
 DURATION = 300
@@ -105,14 +106,15 @@ def _seed(c, index, epoch):
     ident = f"KISSA_{edition:06d}"
     if c.execute("SELECT 1 FROM cafe_events WHERE id=?", (ident,)).fetchone():
         return
-    board = board_for(edition)
+    board, prize = catalog.event_spec(index) if catalog.active() else (board_for(edition), PRIZES[index % len(PRIZES)])
     opens = epoch + index * PERIOD
     c.execute("INSERT INTO cafe_events VALUES(?,?,?,?,?,?,?,?,0)",
-              (ident, edition, opens, opens + DURATION, json.dumps(board), *PRIZES[index % len(PRIZES)]))
+              (ident, edition, opens, opens + DURATION, json.dumps(board), *prize))
     for actor, name, required, offset in [
         ("CAFE_NPC_AKI", "Aki", 3, 40), ("CAFE_NPC_MIKA", "Mika", 4, 120),
     ]:
-        replay = ws.arcade_replay(npc_route(board["variant"], required), board)
+        path = signal_snake.npc_route(board["variant"], required) if board.get("game_id") == "signal_snake" else npc_route(board["variant"], required)
+        replay = catalog.replay(path, board)
         c.execute("INSERT INTO cafe_entries VALUES(?,?,?,?,?,?)",
                   (ident, actor, name, 1, replay["score"], opens + offset))
 
@@ -218,7 +220,7 @@ def perform_event_action(actor, action, data, request_id):
         else:
             if run[1] != "OPEN":
                 raise ValueError("EVENT_RUN_REQUIRED")
-            replay = ws.arcade_replay(data["moves"], board)
+            replay = catalog.replay(data["moves"], board)
             if not replay["finished"] and len(data["moves"]) < board["max_moves"]:
                 raise ValueError("ARCADE_NOT_FINISHED")
             if replay["won"]:
@@ -226,7 +228,7 @@ def perform_event_action(actor, action, data, request_id):
                     ON CONFLICT(event,actor) DO UPDATE SET score=excluded.score,submitted=excluded.submitted
                     WHERE excluded.score>cafe_entries.score""", (event, actor, player[0], replay["score"], now))
             result = {**replay, "event_id": event, "text": f"Resultado verificado: {replay['score']} puntos. " +
-                      ("Se conserva tu mejor marca; el premio se adjudica al cierre." if replay["won"] else "Necesitas al menos tres paquetes y llegar a la salida para clasificar.")}
+                      ("Se conserva tu mejor marca; el premio se adjudica al cierre." if replay["won"] else "No alcanzaste el mínimo de esta prueba. Consulta sus reglas en el tablón.")}
             c.execute("UPDATE cafe_runs SET status='FINISHED',moves=?,result=? WHERE actor=? AND id=?",
                       (data["moves"], json.dumps(result, ensure_ascii=False), actor, data["run_id"]))
         c.execute("INSERT INTO cafe_requests VALUES(?,?,?,?)", (actor, request_id, command, json.dumps(result, ensure_ascii=False)))
@@ -239,9 +241,10 @@ def event_snapshot(actor="PLAYER_1"):
             return {"active": False}
         now = c.execute("SELECT minute FROM simulation_state WHERE id=1").fetchone()[0]
         items = []
-        rows = c.execute("""SELECT id,edition,opens,closes,prize_name,settled FROM cafe_events
+        rows = c.execute("""SELECT id,edition,opens,closes,prize_name,settled,board FROM cafe_events
             ORDER BY opens DESC LIMIT 5""").fetchall()
-        for ident, edition, opens, closes, prize, settled in reversed(rows):
+        for ident, edition, opens, closes, prize, settled, saved_board in reversed(rows):
+            layout = json.loads(saved_board)
             ranking = _ranking(c, ident, min(now, closes - 1))
             for row in ranking:
                 row["mine"] = row.pop("actor") == actor
@@ -251,6 +254,10 @@ def event_snapshot(actor="PLAYER_1"):
             state = "CLOSED" if now >= closes else "UPCOMING" if now < opens else "OPEN"
             items.append(dict(id=ident, edition=edition, opens=opens, closes=closes, prize=prize,
                               status=state, settled=bool(settled), ranking=ranking, attempts=used,
-                              run_id=opened[0] if opened and state == "OPEN" else "", won=won))
+                              run_id=opened[0] if opened and state == "OPEN" else "", won=won,
+                              game_id=layout.get("game_id","bit_courier"), game_name=layout.get("game_name","Bit Courier"),
+                              game_rules=layout.get("rules","Recoge al menos 3 paquetes y alcanza la salida. Máximo 80 movimientos; los choques también cuentan."),
+                              catalog_entry=layout.get("catalog_entry","legacy_courier"),
+                              catalog_revision=layout.get("catalog_revision",0)))
         return dict(active=True, minute=now, attempts_limit=ATTEMPTS, events=items,
                     rules="Clasificación local con PNJ. Tres intentos por edición; cuenta tu mejor marca válida. Empatar en primer puesto comparte el premio. El cierre usa el reloj del mundo, que no avanza con el servidor apagado.")

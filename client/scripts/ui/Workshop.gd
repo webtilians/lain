@@ -6,6 +6,7 @@ var footer: Label
 var heading: Label
 var tabs: HBoxContainer
 var request: HTTPRequest
+var retry_button: Button
 var active_player: Node
 var busy := false
 var pending: Dictionary = {}
@@ -35,6 +36,9 @@ var run_endpoint := "workshop"
 var run_event := ""
 var run_closes := 0
 var event_projection_cache := ""
+var snake_model = preload("res://scripts/ui/SignalSnake.gd").new()
+var snake_elapsed := 0.0
+var snake_autoplay := true
 
 func _ready() -> void:
 	layer = 104
@@ -59,6 +63,8 @@ func _ready() -> void:
 	heading = Label.new()
 	heading.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	bar.add_child(heading)
+	retry_button = button(bar, "Reintentar envío", func(): _retry(pending.duplicate(true), pending_endpoint))
+	retry_button.hide()
 	button(bar, "Cerrar · Esc", close_pc)
 	tabs = HBoxContainer.new()
 	layout.add_child(tabs)
@@ -179,7 +185,12 @@ func _input(event: InputEvent) -> void:
 			_move(directions[event.keycode])
 			get_viewport().set_input_as_handled()
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
+	if snake_autoplay and is_snake() and _arcade_allowed() and not snake_model.finished:
+		snake_elapsed += minf(delta, 0.25)
+		if snake_elapsed >= 0.25:
+			snake_elapsed = 0.0
+			_snake_step()
 	var scene := get_tree().current_scene as Node3D
 	if not active() or scene == null or scene.get_instance_id() == installed_scene: return
 	installed_scene = scene.get_instance_id()
@@ -355,23 +366,58 @@ func _wired() -> void:
 		NetworkConflict.open_terminal())
 
 func _render_cafe() -> void:
-	label(content, "KISSA // TERMINAL DEL CAFÉ · BIT COURIER")
+	label(content, "KISSA // TERMINAL DEL CAFÉ · PRÁCTICA")
 	var actions := HBoxContainer.new()
 	content.add_child(actions)
 	button(actions, "Hablar con el técnico", _send.bind("TECHNICIAN", {}))
 	button(actions, "Nueva práctica", _send.bind("ARCADE_START", {}))
+	if bool(data().get("arcade_catalog",false)):
+		button(actions, "Practicar Serpiente", _send.bind("ARCADE_START", {"game":"signal_snake"}))
 	if bool(event_data().get("active", false)):
 		button(actions, "Torneos y clasificación", _open.bind("CAFE_EVENTS"))
 	if circles_active():
 		button(actions,"Hablar de una red propia",open_circle_contact.bind("KISSA_TECH"))
-	label(content, "Recoge al menos 3 paquetes y llega a la salida. Máximo 80 movimientos, incluidos los choques con paredes. Flechas del teclado o botones. Mejor puntuación local: " + str(int(data().get("best_score", 0))))
+	if is_snake() and run_endpoint == "workshop":
+		label(content, "SERPIENTE DE SEÑAL · " + str(arcade.get("rules","")) + "\nPráctica sin premio · Mejor marca: " + str(int(data().get("snake_best_score",0))))
+	else:
+		label(content, "Recoge al menos 3 paquetes y llega a la salida. Máximo 80 movimientos, incluidos los choques con paredes. Flechas del teclado o botones. Mejor puntuación local: " + str(int(data().get("best_score", 0))))
 	if not arcade.is_empty() and run_endpoint == "workshop":
 		_board(content)
 		var controls := HBoxContainer.new()
 		content.add_child(controls)
 		for direction in ["U", "D", "L", "R"]:
 			button(controls, {"U":"Arriba", "D":"Abajo", "L":"Izquierda", "R":"Derecha"}[direction], _move.bind(direction))
-		label(content, "Movimientos: " + str(moves.length()) + "/80 · Paquetes: " + str(collected.size()) + "/5 · Azul: tú / Amarillo: paquete / Verde: salida")
+		label(content, arcade_status())
+
+func is_snake() -> bool:
+	return arcade.get("game_id","bit_courier") == "signal_snake"
+
+func arcade_status() -> String:
+	if is_snake():
+		return "Pasos: " + str(moves.length()) + "/80 · Señales: " + str(snake_model.collected) + "/6 · Azul: cabeza · Verde: cuerpo · Amarillo: señal" + (" · FINALIZADO" if snake_model.finished else "")
+	return "Movimientos: " + str(moves.length()) + "/80 · Paquetes: " + str(collected.size()) + "/5 · Azul: tú / Amarillo: paquete / Verde: salida"
+
+func _arcade_allowed() -> bool:
+	if not is_open() or busy or arcade.is_empty() or run_id.is_empty(): return false
+	for picker in content.find_children("*", "OptionButton", true, false):
+		if picker.get_popup().visible: return false
+	if mode == "CAFE": return run_endpoint == "workshop"
+	if mode == "CAFE_EVENTS":
+		return run_endpoint == "cafe-events" and event_panel.selected == run_event and int(event_data().get("minute",0)) < run_closes
+	return false
+
+func _snake_step() -> void:
+	if not _arcade_allowed() or snake_model.finished: return
+	snake_model.step()
+	moves = snake_model.moves
+	_render()
+	if snake_model.finished: _finish_arcade()
+
+func _finish_arcade() -> void:
+	if run_endpoint == "cafe-events":
+		_send_event("FINISH", {"run_id":run_id,"moves":moves})
+	else:
+		_send("ARCADE_FINISH", {"run_id":run_id,"moves":moves})
 
 func _board(parent: Node, minimum: int = 260) -> Control:
 	var view := Control.new()
@@ -387,10 +433,15 @@ func _draw_board(view: Control) -> void:
 		for x in range(8):
 			var tint := Color("25383f")
 			if mode in ["CAFE", "CAFE_EVENTS"]:
-				if _contains(arcade.get("walls", []), Vector2i(x,y)): tint = Color("75868a")
-				elif _contains([arcade.get("exit", [-1,-1])], Vector2i(x,y)): tint = Color("61b592")
-				elif _contains(arcade.get("chips", []), Vector2i(x,y)) and not Vector2i(x,y) in collected: tint = Color("dcc37d")
-				if courier == Vector2i(x,y): tint = Color("73aee3")
+				if is_snake():
+					if Vector2i(x,y) in snake_model.body: tint = Color("61b592")
+					if Vector2i(x,y) == snake_model.food: tint = Color("dcc37d")
+					if not snake_model.body.is_empty() and Vector2i(x,y) == snake_model.body[0]: tint = Color("73aee3")
+				else:
+					if _contains(arcade.get("walls", []), Vector2i(x,y)): tint = Color("75868a")
+					elif _contains([arcade.get("exit", [-1,-1])], Vector2i(x,y)): tint = Color("61b592")
+					elif _contains(arcade.get("chips", []), Vector2i(x,y)) and not Vector2i(x,y) in collected: tint = Color("dcc37d")
+					if courier == Vector2i(x,y): tint = Color("73aee3")
 			elif not frames.is_empty() and int(frames[frame_index][y][x]) == 1:
 				tint = Color("a6cdb2")
 			view.draw_rect(Rect2(Vector2(x,y)*cell, Vector2.ONE*(cell-2)), tint)
@@ -401,11 +452,10 @@ func _contains(points: Array, point: Vector2i) -> bool:
 	return false
 
 func _move(direction: String) -> void:
-	if busy or arcade.is_empty() or run_id.is_empty(): return
-	if mode == "CAFE" and run_endpoint != "workshop": return
-	if mode == "CAFE_EVENTS":
-		if run_endpoint != "cafe-events" or event_panel.selected != run_event: return
-		if int(event_data().get("minute", 0)) >= run_closes: return
+	if not _arcade_allowed(): return
+	if is_snake():
+		snake_model.turn(direction)
+		return
 	if moves.length() >= 80 or _contains([arcade.exit], courier): return
 	var offsets := {"U":Vector2i.UP,"D":Vector2i.DOWN,"L":Vector2i.LEFT,"R":Vector2i.RIGHT}
 	var next: Vector2i = courier + offsets[direction]
@@ -415,10 +465,7 @@ func _move(direction: String) -> void:
 	if _contains(arcade.chips, courier) and not courier in collected: collected.append(courier)
 	_render()
 	if moves.length() >= 80 or _contains([arcade.exit], courier):
-		if run_endpoint == "cafe-events":
-			_send_event("FINISH", {"run_id":run_id,"moves":moves})
-		else:
-			_send("ARCADE_FINISH", {"run_id":run_id,"moves":moves})
+		_finish_arcade()
 
 func _send_event(action: String, payload: Dictionary) -> void:
 	if busy: return
@@ -440,6 +487,7 @@ func _send_circle(action: String, payload: Dictionary) -> void:
 
 func _dispatch() -> void:
 	if busy: return
+	retry_button.hide()
 	busy = true
 	footer.text = "Esperando respuesta…"
 	WorldApi.begin_external_mutation()
@@ -451,9 +499,9 @@ func _dispatch() -> void:
 
 func _failure(text: String, retry: bool) -> void:
 	status = text
+	retry_button.visible = retry
 	if not is_open(): return
 	footer.text = status
-	if retry: button(content, "Reintentar la misma petición", _retry.bind(pending.duplicate(true),pending_endpoint))
 
 func _retry(command: Dictionary, endpoint: String = "workshop") -> void:
 	if busy: return
@@ -463,11 +511,16 @@ func _retry(command: Dictionary, endpoint: String = "workshop") -> void:
 
 func _completed(result: int, code: int, _headers: PackedStringArray, body: PackedByteArray) -> void:
 	busy = false
+	retry_button.hide()
 	WorldApi.end_external_mutation()
-	var payload = JSON.parse_string(body.get_string_from_utf8())
-	if result != HTTPRequest.RESULT_SUCCESS or typeof(payload) != TYPE_DICTIONARY:
+	if result != HTTPRequest.RESULT_SUCCESS:
 		_failure("Respuesta perdida. Reintentar conserva el identificador y no duplica recompensas.", true)
 		return
+	var decoder := JSON.new()
+	if decoder.parse(body.get_string_from_utf8()) != OK or typeof(decoder.data) != TYPE_DICTIONARY:
+		_failure("Respuesta no válida. Puedes reintentar el mismo envío.", true)
+		return
+	var payload: Dictionary = decoder.data
 	if code < 200 or code >= 300:
 		var errors := {"WORKSHOP_WRONG_LOCATION":"Debes usar el PC de casa, el aula o el terminal del café según la acción.", "LESSON_REQUIRED":"Pide las reglas al profesor primero.", "SCAN_MODULE_REQUIRED":"Compila Exploración y conecta suficientes equipos.", "INSPECT_RELAY_FIRST":"Examina ese armario en persona antes de escanearlo.", "OFFERS_NOT_AVAILABLE":"Las ofertas llegan al completar la misión del Juego de la Vida."}
 		errors.merge({"PARTNER_NOT_PRESENT":"Debes hablar con esa persona en su localización.", "INDEPENDENT_REQUIRED":"Termina tu contrato corporativo para colaborar como independiente.", "PARTNER_CONDITION_REQUIRED":"Todavía no cumples la condición de ese colaborador.", "MEET_PARTNER_FIRST":"Habla de la red con esa persona antes de invitarla.", "ASSET_NOT_AVAILABLE":"Conecta el equipo y comprueba que sea tuyo, sin préstamo corporativo.", "CIRCLE_PC_REQUIRED":"Gestiona el círculo desde el PC de casa.", "INVALID_CIRCLE_NAME":"Escribe un nombre de entre 1 y 32 caracteres.", "PARTNER_ALREADY_COMMITTED":"Esa persona ya participa en un círculo.", "ALREADY_IN_CIRCLE":"Ya perteneces a un círculo."})
@@ -490,4 +543,7 @@ func _completed(result: int, code: int, _headers: PackedStringArray, body: Packe
 		moves = ""
 		courier = Vector2i(int(arcade.start[0]), int(arcade.start[1]))
 		collected.clear()
+		if is_snake():
+			snake_model.reset(arcade)
+			snake_elapsed = -0.75
 	if is_open(): _render()

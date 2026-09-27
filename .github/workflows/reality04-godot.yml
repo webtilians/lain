@@ -12,6 +12,7 @@ on:
       - experiment/wired-0.3-noema
       - experiment/wired-0.4-circles
       - experiment/wired-0.5-cafe-events
+      - experiment/wired-0.6-arcade-catalog
   pull_request:
     branches:
       - experiment/reality-0.3-visual06-integration
@@ -160,6 +161,16 @@ jobs:
           /tmp/lain-godot --headless --path client --script res://tools/test_events01.gd 2>&1 | tee /tmp/lain-events01.log
           grep -q 'EVENTS01_GAMEPLAY_OK views=7' /tmp/lain-events01.log
           if grep -E '^(SCRIPT ERROR:|ERROR:)' /tmp/lain-events01.log; then
+            exit 1
+          fi
+
+      - name: Snake animation rules, practice, tournaments and lost-response retry
+        shell: bash
+        run: |
+          set -euo pipefail
+          /tmp/lain-godot --headless --path client --script res://tools/test_arcade01.gd 2>&1 | tee /tmp/lain-arcade01.log
+          grep -q 'ARCADE01_GAMEPLAY_OK views=6 rule_steps=182' /tmp/lain-arcade01.log
+          if grep -E '^(SCRIPT ERROR:|ERROR:)' /tmp/lain-arcade01.log; then
             exit 1
           fi
 

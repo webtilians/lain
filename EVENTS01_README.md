@@ -6,6 +6,9 @@ intentos por edición, clasificación persistente y premios utilizables en el PC
 Los dos contrincantes, Aki y Mika, aparecen identificados como **PNJ**.
 No hay otros usuarios conectados ni sesiones multijugador en esta entrega.
 
+La siguiente fase está en [WIRED 0.6 · Serpiente de señal](ARCADE01_README.md),
+con un segundo juego y un catálogo ampliable de futuras ediciones.
+
 ![Torneo en el café](docs/events01/playing.png)
 
 ## Probarlo

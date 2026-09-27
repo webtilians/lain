@@ -9,6 +9,7 @@ import re
 
 from .code_lab import LIFE_TEMPLATE, LIFE_HINT, LessonError, program_modules, test_life
 from .network_conflict import connection, report, RELAYS
+from . import arcade_catalog as catalog, signal_snake
 
 MODULES = {
     "routing": {"name": "Enrutamiento", "cost": 2, "effect": "Conexión del montaje; conserva las acciones básicas del enlace."},
@@ -41,6 +42,7 @@ def _grant(c, actor, ident, kind, model, source, now, active=0):
 
 def initialize_workshop():
     if os.getenv("LAIN_WORKSHOP", "0") != "1" or os.getenv("LAIN_CORPORATION", "0") != "1": return
+    if catalog.active(): catalog.current()
     with connection() as c:
         c.executescript("""
         CREATE TABLE IF NOT EXISTS workshop_players (
@@ -60,6 +62,7 @@ def initialize_workshop():
           actor TEXT NOT NULL, recipient TEXT NOT NULL, relay TEXT NOT NULL, minute INTEGER NOT NULL,
           pending INTEGER NOT NULL);
         """)
+        if catalog.active(): catalog.initialize_practice(c)
     enroll_workshop()
 
 
@@ -231,9 +234,17 @@ def perform_workshop_action(actor, action, data, request_id):
                 c.execute("INSERT INTO workshop_contract_reports VALUES(?,?,?,?,?)",(actor,"NOEMA",relay,now,len(ops)))
                 result["text"]+=" NOEMA recibió: identificador del enlace, minuto y número de intervenciones sobre tu cuenta."
         elif action=="ARCADE_START":
+            game = data.get("game","bit_courier")
+            if game not in {"bit_courier","signal_snake"} or (game == "signal_snake" and not catalog.active()):
+                raise ValueError("ARCADE_GAME_UNAVAILABLE")
+            board = signal_snake.board() if game == "signal_snake" else ARCADE
             c.execute("UPDATE workshop_runs SET status='ABANDONED' WHERE actor=? AND status='OPEN'",(actor,))
             c.execute("INSERT INTO workshop_runs(actor,id,minute,status) VALUES(?,?,?,'OPEN')",(actor,request_id,now))
             result={"text":"BIT COURIER · Práctica local. Recoge al menos tres paquetes y llega a la salida en un máximo de 80 movimientos. Las paredes también consumen un movimiento. Sin clasificación online.","run_id":request_id,"board":ARCADE}
+            if game == "signal_snake":
+                catalog.initialize_practice(c)
+                c.execute("INSERT INTO workshop_run_boards VALUES(?,?,?)",(actor,request_id,json.dumps(board)))
+                result.update(board=board,text="SERPIENTE DE SEÑAL · Práctica sin premio. " + signal_snake.RULES)
         elif action=="ARCADE_FINISH":
             run=data.get("run_id","")
             row=c.execute("SELECT status,moves,result FROM workshop_runs WHERE actor=? AND id=?",(actor,run)).fetchone()
@@ -243,11 +254,14 @@ def perform_workshop_action(actor, action, data, request_id):
                 if row[1]!=moves: raise ValueError("ARCADE_ALREADY_FINISHED")
                 result=json.loads(row[2])
             else:
-                replay=arcade_replay(moves)
+                board = catalog.practice_board(c,actor,run)
+                snake = board.get("game_id") == "signal_snake"
+                replay=catalog.replay(moves,board)
                 if not replay["finished"] and len(moves)<80: raise ValueError("ARCADE_NOT_FINISHED")
-                c.execute("UPDATE workshop_players SET best_score=max(best_score,?) WHERE actor=?",(replay["score"],actor))
-                result={**replay,"text":f"Puntuación verificada: {replay['score']} · paquetes: {replay['collected']}/5."}
-                if replay["won"]:
+                if not snake:
+                    c.execute("UPDATE workshop_players SET best_score=max(best_score,?) WHERE actor=?",(replay["score"],actor))
+                result={**replay,"text":f"Puntuación verificada: {replay['score']} · señales: {replay['collected']}." + (" Práctica sin premio; los torneos se juegan desde su tablón." if snake else "")}
+                if replay["won"] and not snake:
                     _grant(c,actor,"courier_interface","DEVICE","interface","Bit Courier · desafío local completado",now)
                     _grant(c,actor,"courier_scan","CODE","scan","Bit Courier · desafío local completado",now)
                     result["text"]+=" Interfaz R y Exploración disponibles en tu PC. La recompensa se obtiene una vez."
@@ -272,6 +286,11 @@ def workshop_snapshot(actor="PLAYER_1"):
             a["name"]=DEVICES[a["model"]][0] if a["kind"]=="DEVICE" else MODULES[a["model"]]["name"]
             a["capacity"]=DEVICES[a["model"]][1] if a["kind"]=="DEVICE" else 0
         from .circles import shared_modules
-        return {"active":True,"shared_modules":shared_modules(c,actor),"lesson":row[0],"life_source":row[1],"draft":row[2],"compiled":row[3],"modules":json.loads(row[4]),"contract":row[5],"best_score":row[6],"capacity":capacity,
+        snake_best = 0
+        if c.execute("SELECT 1 FROM sqlite_master WHERE name='workshop_run_boards'").fetchone():
+            snake_best = c.execute("""SELECT coalesce(max(json_extract(r.result,'$.score')),0)
+                FROM workshop_runs r JOIN workshop_run_boards b ON b.actor=r.actor AND b.id=r.id
+                WHERE r.actor=? AND r.status='FINISHED' AND json_extract(b.board,'$.game_id')='signal_snake'""",(actor,)).fetchone()[0]
+        return {"active":True,"arcade_catalog":catalog.active(),"snake_best_score":snake_best,"shared_modules":shared_modules(c,actor),"lesson":row[0],"life_source":row[1],"draft":row[2],"compiled":row[3],"modules":json.loads(row[4]),"contract":row[5],"best_score":row[6],"capacity":capacity,
                 "cost":sum(MODULES[m]["cost"] for m in json.loads(row[4])),"assets":assets,"library":[{"id":m,**MODULES[m]} for m in MODULES if m in owned],
                 "offers":OFFERS if row[0]>=2 else {},"life_hint":LIFE_HINT if row[0]>=1 else "","session_mode":"LOCAL"}

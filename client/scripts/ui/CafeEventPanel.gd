@@ -25,7 +25,7 @@ func render(ws: Node, at_cafe: bool) -> void:
 	var current: Dictionary = {}
 	for item in events:
 		var state := str({"OPEN":"Abierto", "UPCOMING":"Próximamente", "CLOSED":"Cerrado"}.get(str(item.status), ""))
-		picker.add_item("Torneo " + str(int(item.edition)) + " · " + state + " · " + str(item.prize))
+		picker.add_item("Torneo " + str(int(item.edition)) + " · " + str(item.get("game_name","Bit Courier")) + " · " + state + " · " + str(item.prize))
 		if item.id == selected:
 			picker.select(picker.item_count - 1)
 			current = item
@@ -38,6 +38,8 @@ func render(ws: Node, at_cafe: bool) -> void:
 	columns.add_theme_constant_override("separation", 24)
 	ws.content.add_child(columns)
 	var left: VBoxContainer = ws.scrolling(columns)
+	ws.label(left, str(current.get("game_name","Bit Courier")).to_upper())
+	ws.label(left, str(current.get("game_rules","Recoge 3 paquetes y alcanza la salida.")))
 	ws.label(left, "PREMIO · " + str(current.prize)).add_theme_font_size_override("font_size", 22)
 	var now := int(data.get("minute", 0))
 	ws.label(left, "Reloj del mundo: " + str(now) + "\nApertura: " + str(int(current.opens)) + " · Cierre: " + str(int(current.closes)))
@@ -50,7 +52,7 @@ func render(ws: Node, at_cafe: bool) -> void:
 	ws.label(left, "Intentos iniciados: " + str(int(current.attempts)) + "/" + str(int(data.get("attempts_limit", 3))) )
 	if bool(current.won):
 		ws.label(left, "PREMIO RECIBIDO · Disponible en Dispositivos o en la biblioteca de Código. Conserva la procedencia de esta edición.")
-	ws.label(left, "MEJORES MARCAS · 100 por paquete − 2 por movimiento\nNecesitas 3 paquetes y alcanzar la salida. Empates comparten puesto.")
+	ws.label(left, "MEJORES MARCAS · 100 por señal − 2 por movimiento\nEmpates comparten puesto.")
 	if current.ranking.is_empty(): ws.label(left, "Todavía no hay marcas publicadas.")
 	for entry in current.ranking:
 		ws.label(left, str(int(entry.rank)) + ". " + ("Tú" if bool(entry.mine) else ("PNJ · " if bool(entry.npc) else "") + str(entry.name)) + "     " + str(int(entry.score)) + " puntos")
@@ -70,6 +72,6 @@ func render(ws: Node, at_cafe: bool) -> void:
 		for direction in ["U", "D", "L", "R"]:
 			var b: Button = ws.button(controls, {"U":"↑", "D":"↓", "L":"←", "R":"→"}[direction], ws._move.bind(direction))
 			b.disabled = ws.busy or current.status != "OPEN"
-		ws.label(right, "Movimientos: " + str(ws.moves.length()) + "/80 · Paquetes: " + str(ws.collected.size()) + "/5\nAzul: tú · Amarillo: paquete · Verde: salida")
+		ws.label(right, ws.arcade_status())
 	else:
-		ws.label(right, "Bit Courier\nRecoge paquetes, evita los muros y busca la salida. Cada edición cambia la orientación del tablero.")
+		ws.label(right, str(current.get("game_name","Bit Courier")) + "\nConsulta las reglas y el premio de esta edición antes de iniciar el intento.")

@@ -29,6 +29,15 @@ def main():
         env["LAIN_NOEMA"]="1" if any(flag in sys.argv for flag in ["--noema","--circles"]) else "0"
         env["LAIN_CIRCLES"]="1" if "--circles" in sys.argv else "0"
         env["LAIN_CAFE_EVENTS"]="1" if "--events" in sys.argv else "0"
+        env["LAIN_ARCADE_CATALOG"]="1" if "--arcade" in sys.argv else "0"
+        if "--arcade" in sys.argv:
+            spec=json.loads((ROOT/"server/content/cafe_catalog.json").read_text(encoding="utf-8"))
+            entry=spec["entries"][0]
+            entry.update(id="http_snake_buffer",game="signal_snake")
+            spec["entries"]=[entry]
+            custom=Path(scratch)/"catalog.json"
+            custom.write_text(json.dumps(spec),encoding="utf-8")
+            env["LAIN_ARCADE_CATALOG_PATH"]=str(custom)
         with (Path(scratch)/"server.log").open("w", encoding="utf-8") as log:
             process = subprocess.Popen([sys.executable, "-m", "uvicorn", "server.api:app",
                 "--host", "127.0.0.1", "--port", str(port)], cwd=ROOT, env=env,
@@ -94,13 +103,21 @@ def main():
                         return request("/api/v1/player/state")
                     move_event("APARTMENT_DISTRICT")
                     state = move_event("CAFE")
+                    if "--arcade" in sys.argv:
+                        practice=request("/api/v1/workshop/action",{"action":"ARCADE_START","data":{"game":"signal_snake"},"request_id":"http_snake_practice"})
+                        result=request("/api/v1/workshop/action",{"action":"ARCADE_FINISH","data":{"run_id":practice["result"]["run_id"],"moves":"RRRRRDDDLLDLLDL"},"request_id":"http_snake_finish"})
+                        assert result["result"]["won"]
+                        assert result["state"]["workshop"]["snake_best_score"]==570
+                        assert len(result["state"]["workshop"]["assets"])==2
+                        assert result["state"]["workshop"]["best_score"]==0
                     while state["minute"] < item["opens"] or state["player"]["location"] != "CAFE":
                         state = move_event("APARTMENT_DISTRICT" if state["player"]["location"] == "CAFE" else "CAFE")
                     run = request("/api/v1/cafe-events/action", command)["result"]
                     # Five-package path, independently checked by the actual server.
                     sys.path.insert(0,str(ROOT))
                     from tests.test_cafe_events import route
-                    finish = {"action":"FINISH","data":{"run_id":run["run_id"],"moves":route(run["board"])},"request_id":"http_event_finish"}
+                    moves="RRRRRDDDLLDLLDL" if run["board"].get("game_id")=="signal_snake" else route(run["board"])
+                    finish = {"action":"FINISH","data":{"run_id":run["run_id"],"moves":moves},"request_id":"http_event_finish"}
                     result = request("/api/v1/cafe-events/action",finish)
                     assert result["result"]["won"]
                     assert not result["state"]["cafe_events"]["events"][0]["won"]
@@ -121,6 +138,8 @@ def main():
                     with sqlite3.connect(db) as conn: assert list(conn.iterdump())==before
                     conn.close()
                     print("CAFE_EVENTS_HTTP_OK calendar=true location=true score=replayed reward=once compilation=true")
+                    if "--arcade" in sys.argv:
+                        print("ARCADE_CATALOG_HTTP_OK custom_catalog=true snake_replay=true practice_has_no_prize=true")
                 if "--network" in sys.argv:
                     for destination in ["APARTMENT_DISTRICT","STATION"]:
                         request("/api/v1/player/step",{"action":"MOVE","target":destination})
