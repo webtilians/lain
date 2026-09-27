@@ -34,13 +34,11 @@ jobs:
           python -m pip install -r requirements.txt "pyinstaller==6.16.0"
           if ($LASTEXITCODE -ne 0) { throw "Python dependencies failed" }
 
-      - name: Validate packaging isolation and run Python regression
+      - name: Verify packaging isolation (full World Core suite runs separately)
         shell: pwsh
         run: |
           python -m unittest discover -s packaging -p "test_*.py" -v
           if ($LASTEXITCODE -ne 0) { throw "Packaging tests failed" }
-          python -m pytest -q
-          if ($LASTEXITCODE -ne 0) { throw "World Core tests failed" }
 
       - name: Freeze private local World Core and visible launcher
         shell: pwsh
