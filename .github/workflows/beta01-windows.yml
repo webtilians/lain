@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - experiment/distribution-0.1-windows-beta
+  pull_request:
+    branches:
+      - experiment/wired-0.7-code-exchange
   workflow_dispatch:
 
 permissions:
