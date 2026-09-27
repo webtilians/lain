@@ -1,4 +1,4 @@
-"""LAIN Beta 0.1: double-click Windows launcher, no Python or Godot installation."""
+"""LAIN Beta 0.2: double-click Windows launcher, no Python or Godot installation."""
 from __future__ import annotations
 
 import ctypes
@@ -11,6 +11,7 @@ import sys
 import time
 import traceback
 from urllib.request import urlopen
+from urllib.parse import urlsplit
 
 
 PORT = 8000
@@ -86,17 +87,48 @@ def local_model_available() -> bool:
         return False
 
 
-def server_environment(data: Path, use_ai: bool) -> dict[str, str]:
+def shared_ai_url(root: Path) -> str:
+    path = root / "lain-ai.json"
+    if not path.exists():
+        return ""
+    try:
+        if path.stat().st_size > 2048:
+            raise ValueError()
+        config = json.loads(path.read_text(encoding="utf-8-sig"))
+        if not isinstance(config, dict) or set(config) != {"gateway_url"}:
+            raise ValueError()
+        if not isinstance(config["gateway_url"], str):
+            raise ValueError()
+        url = config["gateway_url"].strip().rstrip("/")
+        if not url:
+            return ""
+        parsed = urlsplit(url)
+        if (parsed.scheme != "https" or not parsed.hostname or parsed.username
+                or parsed.password or parsed.path or parsed.query or parsed.fragment
+                or parsed.port not in (None, 443)):
+            raise ValueError()
+        return url
+    except (OSError, ValueError, TypeError):
+        raise ValueError("Revisa lain-ai.json: solo debe contener gateway_url con la dirección HTTPS del servicio, sin claves.") from None
+
+
+def server_environment(data: Path, use_ai: bool, gateway: str = "") -> dict[str, str]:
     env = os.environ.copy()
     # Mandatory isolation: never inherit the developer's world.db or API key.
     env.update({
         "LAIN_WORLD_DB": str((data / "save.db").resolve()),
-        "LAIN_LLM_ENABLED": "1" if use_ai else "0",
+        "LAIN_LLM_ENABLED": "1" if use_ai or gateway else "0",
         "LAIN_LLM_MODEL": MODEL,
         "LAIN_LLM_ENDPOINT": "http://127.0.0.1:11434/v1/chat/completions",
         "LAIN_LLM_ALLOW_REMOTE": "0",
         "LAIN_LLM_API_KEY": "",
         "LAIN_LLM_TRACE": "0",
+        "LAIN_REALITY_TRACE": "0",
+        "LAIN_AI_GATEWAY_URL": gateway,
+        "LAIN_AI_SESSION_FILE": str((data / "ai-session.json").resolve()) if gateway else "",
+        "LAIN_LLM_TIMEOUT": "25" if gateway else "60",
+        "LAIN_REALITY_TIMEOUT": "25",
+        "LAIN_MEMORY_SEMANTIC": "0",
         "LAIN_REALITY_GENERATION": "1",
         "LAIN_WORLD_CLOCK": "1",
         "LAIN_WORLD_TICK_SECONDS": "8",
@@ -140,13 +172,13 @@ def main() -> int:
     server_exe = root / "Server" / "LainServer.exe"
     game_exe = root / "Game" / "LAIN-Game.exe"
     if not server_exe.is_file() or not game_exe.is_file():
-        message("LAIN Beta 0.1", "Faltan archivos de la distribución. Descomprime TODO el ZIP antes de abrir LAIN.exe.")
+        message("LAIN Beta 0.2", "Faltan archivos de la distribución. Descomprime TODO el ZIP antes de abrir LAIN.exe.")
         return 1
 
     data = data_directory()
     lock = acquire_lock(data)
     if lock is None:
-        message("LAIN Beta 0.1", "Ya hay una instancia de LAIN abierta para este usuario.")
+        message("LAIN Beta 0.2", "Ya hay una instancia de LAIN abierta para este usuario.")
         return 1
     server = None
     log = None
@@ -156,14 +188,15 @@ def main() -> int:
                 "El puerto 8000 está ocupado. Cierra el servidor anterior de LAIN "
                 "antes de abrir esta versión. No se conectará a una partida ajena."
             )
-        use_ai = local_model_available() and message(
+        gateway = shared_ai_url(root)
+        use_ai = not gateway and local_model_available() and message(
             "LAIN · IA local opcional",
             "Se ha detectado lain-qwen7b en Ollama local.\n\n"
             "¿Quieres activar las conversaciones con IA?\n"
             "No se necesita IA para jugar.",
             MB_YESNO,
         ) == IDYES
-        env = server_environment(data, use_ai)
+        env = server_environment(data, use_ai, gateway)
         log = (data / "server.log").open("ab", buffering=0)
         server = subprocess.Popen(
             [str(server_exe)],
@@ -185,7 +218,7 @@ def main() -> int:
             handle.write(time.strftime("%Y-%m-%d %H:%M:%S") + "\n")
             handle.write(traceback.format_exc() + "\n")
         message(
-            "LAIN Beta 0.1 · Error",
+            "LAIN Beta 0.2 · Error",
             "%s\n\nDiagnóstico: %s\nNo se ha borrado tu partida." %
             (error, data / "launcher.log"),
         )

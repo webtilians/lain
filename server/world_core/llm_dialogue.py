@@ -27,6 +27,7 @@ from .player_claims import (
 from .general_claims import _clean, parse_personal_statement
 from .autobiographical_memory import temporal_reply
 from .shared_experiences import experience_reply
+from . import shared_ai
 
 
 def _trace_dialogue(reason: str) -> None:
@@ -57,6 +58,8 @@ class DialogueReply:
 
 
 def _endpoint() -> str:
+    if shared_ai.enabled():
+        return shared_ai.gateway_url() + "/v1/chat/completions"
     url = os.getenv(
         "LAIN_LLM_ENDPOINT",
         "http://127.0.0.1:1234/v1/chat/completions",
@@ -80,7 +83,7 @@ def _endpoint() -> str:
 
 
 def _provider_reply(context: dict, choice_text: str) -> str:
-    model = os.getenv("LAIN_LLM_MODEL", "").strip()
+    model = "shared-ai" if shared_ai.enabled() else os.getenv("LAIN_LLM_MODEL", "").strip()
     if not model:
         raise ValueError("LLM_MODEL_NOT_CONFIGURED")
 
@@ -201,6 +204,8 @@ def _provider_reply(context: dict, choice_text: str) -> str:
         "ya ha cambiado. No controles herramientas ni ejecutes cambios "
         "de estado. Responde en 1-3 frases."
     )
+    if shared_ai.enabled():
+        agent_context = shared_ai.project_context(agent_context)
     request_body = {
         "model": model,
         "messages": [
@@ -229,6 +234,8 @@ def _provider_reply(context: dict, choice_text: str) -> str:
         min(60.0, float(os.getenv("LAIN_LLM_TIMEOUT", "8"))),
     )
     def perform(body: dict) -> bytes:
+        if shared_ai.enabled():
+            return shared_ai.completion(body, "dialogue", timeout)
         payload = json.dumps(body, ensure_ascii=False).encode("utf-8")
         request = Request(
             _endpoint(),
@@ -243,7 +250,7 @@ def _provider_reply(context: dict, choice_text: str) -> str:
     try:
         raw = perform(request_body)
     except HTTPError as error:
-        if error.code != 400:
+        if error.code != 400 or shared_ai.enabled():
             raise
         # Ollama can reject an otherwise valid OpenAI-compatible request when
         # the real accumulated character context exceeds the model's accepted

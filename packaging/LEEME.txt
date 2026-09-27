@@ -1,11 +1,11 @@
-LAIN — BETA 0.1 PARA WINDOWS (64 BITS)
+LAIN — BETA 0.2 PARA WINDOWS (64 BITS)
 =====================================
 
 Esta version de prueba se ejecuta sin instalar Python, Godot ni Git.
 NO es un juego multijugador: el servidor solo funciona en este ordenador.
 
 1. Extrae TODO el contenido del ZIP en una carpeta, por ejemplo
-   C:\Juegos\LAIN-Beta-0.1. No ejecutes LAIN.exe dentro del ZIP.
+   C:\Juegos\LAIN-Beta-0.2. No ejecutes LAIN.exe dentro del ZIP.
 2. Haz doble clic en LAIN.exe. El arranque puede tardar unos segundos
    durante la primera creacion del mundo.
 3. El juego crea tu propia partida en:
@@ -15,15 +15,26 @@ NO es un juego multijugador: el servidor solo funciona en este ordenador.
 5. Cierra el juego normalmente para cerrar tambien su servidor.
 
 INTELIGENCIA ARTIFICIAL: OPCIONAL
+- Si el autor ha configurado lain-ai.json, las conversaciones con IA
+  funcionan por internet. No necesitas registrarte, instalar un modelo
+  ni aportar una clave. La cuenta y la cuota las proporciona el autor.
+- En ese modo, tu mensaje y los recuerdos seleccionados del personaje
+  se envian mediante Cloudflare a Groq para generar la respuesta.
+  El guardado completo se queda en tu ordenador. No escribas datos
+  personales reales en las conversaciones si no quieres enviarlos.
+- Si se agota la cuota o falla internet, el juego sigue funcionando;
+  algunas respuestas libres quedan limitadas hasta recuperar el acceso.
+  Compartir la IA NO convierte las partidas en un mundo multijugador.
 - Sin Ollama funciona el prologo, las mecanicas y las conversaciones
   deterministas. Algunas respuestas libres son limitadas.
 - Si ya tienes Ollama local con el modelo lain-qwen7b, el lanzador te
   preguntara si quieres activar las conversaciones generativas.
-- Nunca se configura por defecto un proveedor de IA remoto ni se
-  incluyen claves personales.
+- Con gateway_url vacio se mantiene el modo local anterior.
+  lain-ai.json solo contiene una direccion publica, nunca claves.
 
 IMPORTANTE
 - No compartas tus guardados, claves API ni archivos .env.
+  Tampoco compartas ai-session.json de AppData.
 - El servidor usa exclusivamente 127.0.0.1:8000; si ese puerto esta
   ocupado, cierra el servidor anterior antes de ejecutar LAIN.
 - Para ver un problema de inicio, abre:

@@ -42,3 +42,10 @@ exchange01*.db*
 /dist/
 /release/
 /LAIN-Beta-*.zip
+
+# Shared AI deployment secrets and build cache
+node_modules/
+.wrangler/
+.dev.vars*
+ai-session.json
+ai-session.tmp

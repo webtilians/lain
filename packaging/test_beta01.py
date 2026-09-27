@@ -55,6 +55,41 @@ class Beta01PackagingTests(unittest.TestCase):
         with patch.object(launcher, "urlopen", side_effect=OSError("offline")):
             self.assertFalse(launcher.local_model_available())
 
+    def test_relay_mode_has_no_provider_key_and_uses_existing_save(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            with patch.dict(os.environ, {"LAIN_LLM_API_KEY": "private", "LAIN_AI_GATEWAY_URL": "https://wrong.example"}):
+                environment = launcher.server_environment(Path(temporary), False, "https://lain.example")
+            self.assertEqual(environment["LAIN_LLM_ENABLED"], "1")
+            self.assertEqual(environment["LAIN_AI_GATEWAY_URL"], "https://lain.example")
+            self.assertEqual(environment["LAIN_LLM_API_KEY"], "")
+            self.assertEqual(environment["LAIN_WORLD_DB"], str((Path(temporary) / "save.db").resolve()))
+            self.assertEqual(environment["LAIN_AI_SESSION_FILE"], str((Path(temporary) / "ai-session.json").resolve()))
+
+    def test_offline_mode_does_not_inherit_remote_relay(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            with patch.dict(os.environ, {"LAIN_AI_GATEWAY_URL": "https://wrong.example", "LAIN_AI_SESSION_FILE": "private.json"}):
+                environment = launcher.server_environment(Path(temporary), False)
+            self.assertEqual(environment["LAIN_AI_GATEWAY_URL"], "")
+            self.assertEqual(environment["LAIN_AI_SESSION_FILE"], "")
+
+    def test_public_configuration_and_optional_empty_url(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            self.assertEqual(launcher.shared_ai_url(root), "")
+            (root / "lain-ai.json").write_text('{"gateway_url":"https://lain.example/"}')
+            self.assertEqual(launcher.shared_ai_url(root), "https://lain.example")
+            (root / "lain-ai.json").write_text('{"gateway_url":""}')
+            self.assertEqual(launcher.shared_ai_url(root), "")
+
+    def test_rejects_secret_or_insecure_public_configuration(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            for content in ['{"gateway_url":"http://example.com"}', '{"gateway_url":"https://example.com?key=secret"}',
+                            '{"gateway_url":"https://example.com","api_key":"secret"}']:
+                (root / "lain-ai.json").write_text(content)
+                with self.assertRaises(ValueError):
+                    launcher.shared_ai_url(root)
+
     def _zip(self, path, extra=None, drop=None):
         entries = {name: b"example" for name in check_zip.REQUIRED}
         entries.pop("LEEME.txt", None)
@@ -92,6 +127,18 @@ class Beta01PackagingTests(unittest.TestCase):
             self._zip(target, drop="Game/LAIN-Game.pck")
             with self.assertRaisesRegex(ValueError, "Missing output"):
                 check_zip.verify(target)
+
+    def test_zip_allows_only_public_ai_url_and_never_session(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            target = Path(temporary) / "release.zip"
+            self._zip(target, {"lain-ai.json": b'{"gateway_url":"https://lain.example"}'})
+            check_zip.verify(target)
+            for extra in [{"lain-ai.json": b'{"gateway_url":"","api_key":"secret"}'},
+                          {"Server/ai-session.json": b"private-session"},
+                          {"Server/.dev.vars": b"secret"}]:
+                self._zip(target, extra)
+                with self.assertRaises(ValueError):
+                    check_zip.verify(target)
 
 
 if __name__ == "__main__":

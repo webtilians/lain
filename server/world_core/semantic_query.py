@@ -12,6 +12,7 @@ from functools import lru_cache
 from urllib.request import Request, urlopen
 
 from .llm_dialogue import _endpoint
+from . import shared_ai
 
 MODEL_TIMEOUT = 4.0
 MAX_EXPANSIONS = 4
@@ -47,8 +48,11 @@ def _ask_local_model(query: str, model: str, endpoint: str) -> str:
         endpoint, data=json.dumps(data, ensure_ascii=False).encode("utf-8"),
         headers=headers, method="POST",
     )
-    with urlopen(request, timeout=MODEL_TIMEOUT) as response:
-        body = response.read(8193)
+    if shared_ai.enabled():
+        body = shared_ai.completion(data, "search", MODEL_TIMEOUT)
+    else:
+        with urlopen(request, timeout=MODEL_TIMEOUT) as response:
+            body = response.read(8193)
     if len(body) > 8192:
         return ""
     payload = json.loads(body.decode("utf-8"))
@@ -61,7 +65,7 @@ def expanded_query(query: str | None) -> str:
         return query or ""
     if os.getenv("LAIN_LLM_ENABLED", "0") != "1":
         return query
-    model = os.getenv("LAIN_LLM_MODEL", "").strip()
+    model = "shared-ai" if shared_ai.enabled() else os.getenv("LAIN_LLM_MODEL", "").strip()
     if not model:
         return query
     try:

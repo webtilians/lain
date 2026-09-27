@@ -1,0 +1,13 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "lain-shared-ai",
+  "main": "src/worker.mjs",
+  "compatibility_date": "2026-09-27",
+  "workers_dev": true,
+  "observability": { "enabled": false },
+  "vars": { "GROQ_MODEL": "qwen/qwen3.8-27b" },
+  "durable_objects": {
+    "bindings": [{ "name": "AI_BUDGET", "class_name": "AIBudget" }]
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["AIBudget"] }]
+}

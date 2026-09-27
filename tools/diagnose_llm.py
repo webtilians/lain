@@ -9,6 +9,7 @@ from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
 from server.world_core.llm_dialogue import _endpoint, _failure_reason, _provider_reply
+from server.world_core import shared_ai
 
 
 def synthetic_context() -> dict:
@@ -30,6 +31,15 @@ def synthetic_context() -> dict:
 
 
 def run() -> int:
+    if shared_ai.enabled():
+        # A real relay check uses only synthetic NPC data, never the save file.
+        try:
+            reply = _provider_reply(synthetic_context(), "Saluda en una frase breve.")
+        except Exception as error:
+            print("LAIN_DIAG // SHARED_AI_" + _failure_reason(error))
+            return 1
+        print("LAIN_DIAG // SHARED_AI_OK; CHARS =", len(reply))
+        return 0
     print("LAIN_DIAG // LLM_ENABLED =", os.getenv("LAIN_LLM_ENABLED") == "1")
     print("LAIN_DIAG // REALITY_GENERATION =", os.getenv("LAIN_REALITY_GENERATION") == "1")
     print("LAIN_DIAG // MODEL_CONFIGURED =", bool(os.getenv("LAIN_LLM_MODEL", "").strip()))

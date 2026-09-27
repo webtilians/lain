@@ -1,9 +1,10 @@
-name: LAIN Beta 0.1 — Windows portable ZIP
+name: LAIN Beta 0.2 — Windows portable ZIP
 
 on:
   push:
     branches:
       - experiment/distribution-0.1-windows-beta
+      - experiment/distribution-0.2-shared-ai
   pull_request:
     branches:
       - experiment/wired-0.7-code-exchange
@@ -132,15 +133,16 @@ jobs:
           Copy-Item "dist/LainServer/*" "release/Server" -Recurse -Force
           Copy-Item "dist/LAIN.exe" "release/LAIN.exe"
           Copy-Item "packaging/LEEME.txt" "release/LEEME.txt"
-          Compress-Archive -Path "release/*" -DestinationPath "LAIN-Beta-0.1-Windows.zip" -CompressionLevel Optimal
-          python packaging/check_zip.py "LAIN-Beta-0.1-Windows.zip"
+          Copy-Item "packaging/lain-ai.json" "release/lain-ai.json"
+          Compress-Archive -Path "release/*" -DestinationPath "LAIN-Beta-0.2-Windows.zip" -CompressionLevel Optimal
+          python packaging/check_zip.py "LAIN-Beta-0.2-Windows.zip"
           if ($LASTEXITCODE -ne 0) { throw "Distribution validation failed" }
-          Get-FileHash "LAIN-Beta-0.1-Windows.zip" -Algorithm SHA256
+          Get-FileHash "LAIN-Beta-0.2-Windows.zip" -Algorithm SHA256
 
       - name: Upload downloadable beta ZIP (no auto-release)
         uses: actions/upload-artifact@v4
         with:
-          name: LAIN-Beta-0.1-Windows
-          path: LAIN-Beta-0.1-Windows.zip
+          name: LAIN-Beta-0.2-Windows
+          path: LAIN-Beta-0.2-Windows.zip
           if-no-files-found: error
           retention-days: 14

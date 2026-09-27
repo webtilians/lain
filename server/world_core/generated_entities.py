@@ -118,7 +118,8 @@ def suggest_entity(creator_id: str, npc_reply: str, *, location: str) -> EntityP
     # presence. The second model still decides whether a NEW entity is present.
     trace_reality("PARSER_REQUESTED")
     from .llm_dialogue import _endpoint  # Reuse existing remote opt-in and URL safeguards.
-    model = os.getenv("LAIN_LLM_MODEL", "").strip()
+    from . import shared_ai
+    model = "shared-ai" if shared_ai.enabled() else os.getenv("LAIN_LLM_MODEL", "").strip()
     if not model:
         trace_reality("LLM_MODEL_NOT_CONFIGURED")
         return None
@@ -150,9 +151,12 @@ def suggest_entity(creator_id: str, npc_reply: str, *, location: str) -> EntityP
         headers["Authorization"] = "Bearer " + key
     try:
         timeout = max(1.0, min(45.0, float(os.getenv("LAIN_REALITY_TIMEOUT", "20"))))
-        with urlopen(Request(_endpoint(), data=payload, headers=headers, method="POST"),
-                     timeout=timeout) as response:
-            raw = response.read(4097)
+        if shared_ai.enabled():
+            raw = shared_ai.completion(json.loads(payload), "entity", timeout)
+        else:
+            with urlopen(Request(_endpoint(), data=payload, headers=headers, method="POST"),
+                         timeout=timeout) as response:
+                raw = response.read(4097)
         if len(raw) > 4096:
             trace_reality("PARSER_RESPONSE_TOO_LARGE")
             return None
