@@ -1,0 +1,146 @@
+name: LAIN Beta 0.1 — Windows portable ZIP
+
+on:
+  push:
+    branches:
+      - experiment/distribution-0.1-windows-beta
+  pull_request:
+    branches:
+      - experiment/wired-0.7-code-exchange
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  windows-beta:
+    runs-on: windows-2022
+    timeout-minutes: 60
+    env:
+      LAIN_LLM_ENABLED: "0"
+      PYTHONUTF8: "1"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install build tools and server requirements
+        shell: pwsh
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt "pyinstaller==6.16.0"
+          if ($LASTEXITCODE -ne 0) { throw "Python dependencies failed" }
+
+      - name: Verify packaging isolation (full World Core suite runs separately)
+        shell: pwsh
+        run: |
+          python -m unittest discover -s packaging -p "test_*.py" -v
+          if ($LASTEXITCODE -ne 0) { throw "Packaging tests failed" }
+
+      - name: Freeze private local World Core and visible launcher
+        shell: pwsh
+        run: |
+          python -m PyInstaller --noconfirm --clean --onedir --name LainServer --collect-submodules server --collect-submodules uvicorn --collect-data server --add-data "server/content;server/content" --add-data "server/world_core/data;server/world_core/data" packaging/beta_server.py
+          if ($LASTEXITCODE -ne 0) { throw "Server packaging failed" }
+          python -m PyInstaller --noconfirm --clean --onefile --windowed --name LAIN packaging/launcher.py
+          if ($LASTEXITCODE -ne 0) { throw "Launcher packaging failed" }
+          if (!(Test-Path "dist/LainServer/LainServer.exe") -or !(Test-Path "dist/LAIN.exe")) { throw "Missing frozen binary" }
+
+      - name: Smoke packaged HTTP server in an isolated, disposable SQLite world
+        shell: pwsh
+        run: |
+          $env:LAIN_WORLD_DB = Join-Path $env:RUNNER_TEMP "LAIN-beta-smoke.db"
+          $env:LAIN_LLM_ENABLED = "0"
+          $env:LAIN_PROLOGUE_ENABLED = "1"
+          $env:LAIN_CITY_RESIDENTS_ENABLED = "1"
+          $env:LAIN_CHAPTER_ONE = "1"
+          $env:LAIN_CORPORATION = "1"
+          $env:LAIN_WORKSHOP = "1"
+          $env:LAIN_NOEMA = "1"
+          $env:LAIN_CIRCLES = "1"
+          $env:LAIN_CAFE_EVENTS = "1"
+          $env:LAIN_ARCADE_CATALOG = "1"
+          $env:LAIN_CODE_EXCHANGE = "1"
+          $env:LAIN_WORLD_CLOCK = "0"
+          $out = Join-Path $env:RUNNER_TEMP "lain-beta-server-stdout.log"
+          $err = Join-Path $env:RUNNER_TEMP "lain-beta-server-stderr.log"
+          $server = Start-Process -FilePath (Resolve-Path "dist/LainServer/LainServer.exe") -PassThru -WindowStyle Hidden -RedirectStandardOutput $out -RedirectStandardError $err
+          try {
+            $ready = $false
+            for ($i = 0; $i -lt 90; $i++) {
+              if ($server.HasExited) { throw "Server closed on startup: $($server.ExitCode); $(Get-Content $err -Tail 25 | Out-String)" }
+              try {
+                $snapshot = Invoke-RestMethod "http://127.0.0.1:8000/api/v1/player/state" -TimeoutSec 2
+                if ($snapshot.player.location -eq "APARTMENT" -and $snapshot.prologue.enabled -eq $true) { $ready = $true; break }
+              } catch { }
+              Start-Sleep -Milliseconds 700
+            }
+            if (!$ready) { throw "Frozen server did not return a new playable prologue: $(Get-Content $err -Tail 25 | Out-String)" }
+            if (!(Test-Path $env:LAIN_WORLD_DB)) { throw "Disposable database was not created" }
+            Write-Host "BETA01_FROZEN_SERVER_OK"
+          } finally {
+            if (!$server.HasExited) { Stop-Process -Id $server.Id -Force }
+          }
+
+      - name: Download official Godot 4.7.2 editor and Windows export template
+        shell: pwsh
+        run: |
+          $base = "https://github.com/godotengine/godot-builds/releases/download/4.7.2-stable"
+          $editorZip = Join-Path $env:RUNNER_TEMP "godot-4.7.2.zip"
+          $templateZip = Join-Path $env:RUNNER_TEMP "godot-templates.zip"
+          curl.exe --fail --location --retry 3 --output $editorZip "$base/Godot_v4.7.2-stable_win64.exe.zip"
+          if ($LASTEXITCODE -ne 0) { throw "Godot editor download failed" }
+          Expand-Archive -Path $editorZip -DestinationPath (Join-Path $env:RUNNER_TEMP "godot") -Force
+          $editor = Get-ChildItem (Join-Path $env:RUNNER_TEMP "godot") -Filter "*win64_console.exe" -Recurse | Select-Object -First 1
+          if ($null -eq $editor) { throw "Godot Windows console editor missing" }
+          $editor.FullName | Set-Content (Join-Path $env:RUNNER_TEMP "godot-editor-path.txt")
+
+          curl.exe --fail --location --retry 3 --output $templateZip "$base/Godot_v4.7.2-stable_export_templates.tpz"
+          if ($LASTEXITCODE -ne 0) { throw "Godot export templates download failed" }
+          Expand-Archive -Path $templateZip -DestinationPath (Join-Path $env:RUNNER_TEMP "godot-export") -Force
+          $template = Get-ChildItem (Join-Path $env:RUNNER_TEMP "godot-export") -Filter "windows_release_x86_64.exe" -Recurse | Select-Object -First 1
+          if ($null -eq $template) { throw "Windows release template missing" }
+          $target = Join-Path $env:APPDATA "Godot/export_templates/4.7.2.stable"
+          New-Item -ItemType Directory -Force $target | Out-Null
+          Copy-Item $template.FullName (Join-Path $target "windows_release_x86_64.exe") -Force
+          $version = Join-Path $template.DirectoryName "version.txt"
+          if (Test-Path $version) { Copy-Item $version $target -Force }
+          Write-Host "Godot editor: $($editor.FullName)"
+
+      - name: Import resources and export Windows x64 Godot client
+        shell: pwsh
+        run: |
+          $godot = Get-Content (Join-Path $env:RUNNER_TEMP "godot-editor-path.txt") -Raw
+          $godot = $godot.Trim()
+          New-Item -ItemType Directory -Force "release/Game" | Out-Null
+          & $godot --headless --path client --editor --import --quit
+          if ($LASTEXITCODE -ne 0) { throw "Godot import failed" }
+          $out = Join-Path (Resolve-Path "release/Game") "LAIN-Game.exe"
+          & $godot --headless --path client --export-release "Windows Desktop" $out
+          if ($LASTEXITCODE -ne 0) { throw "Godot export failed" }
+          if (!(Test-Path "release/Game/LAIN-Game.exe") -or !(Test-Path "release/Game/LAIN-Game.pck")) {
+            throw "Windows game or accompanying PCK missing"
+          }
+
+      - name: Assemble portable ZIP without world.db or any developer secrets
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force "release/Server" | Out-Null
+          Copy-Item "dist/LainServer/*" "release/Server" -Recurse -Force
+          Copy-Item "dist/LAIN.exe" "release/LAIN.exe"
+          Copy-Item "packaging/LEEME.txt" "release/LEEME.txt"
+          Compress-Archive -Path "release/*" -DestinationPath "LAIN-Beta-0.1-Windows.zip" -CompressionLevel Optimal
+          python packaging/check_zip.py "LAIN-Beta-0.1-Windows.zip"
+          if ($LASTEXITCODE -ne 0) { throw "Distribution validation failed" }
+          Get-FileHash "LAIN-Beta-0.1-Windows.zip" -Algorithm SHA256
+
+      - name: Upload downloadable beta ZIP (no auto-release)
+        uses: actions/upload-artifact@v4
+        with:
+          name: LAIN-Beta-0.1-Windows
+          path: LAIN-Beta-0.1-Windows.zip
+          if-no-files-found: error
+          retention-days: 14

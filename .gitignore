@@ -35,3 +35,10 @@ circles01*.db*
 events01*.db*
 arcade01*.db*
 exchange01*.db*
+
+# Generated Windows beta packages (never commit compiled builds or saves)
+*.spec
+/build/
+/dist/
+/release/
+/LAIN-Beta-*.zip

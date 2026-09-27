@@ -1,0 +1,39 @@
+LAIN — BETA 0.1 PARA WINDOWS (64 BITS)
+=====================================
+
+Esta version de prueba se ejecuta sin instalar Python, Godot ni Git.
+NO es un juego multijugador: el servidor solo funciona en este ordenador.
+
+1. Extrae TODO el contenido del ZIP en una carpeta, por ejemplo
+   C:\Juegos\LAIN-Beta-0.1. No ejecutes LAIN.exe dentro del ZIP.
+2. Haz doble clic en LAIN.exe. El arranque puede tardar unos segundos
+   durante la primera creacion del mundo.
+3. El juego crea tu propia partida en:
+   %LOCALAPPDATA%\LAIN\Beta01\save.db
+4. WASD para moverte, E para interactuar, J para el diario, F6 para
+   cambiar la calidad grafica.
+5. Cierra el juego normalmente para cerrar tambien su servidor.
+
+INTELIGENCIA ARTIFICIAL: OPCIONAL
+- Sin Ollama funciona el prologo, las mecanicas y las conversaciones
+  deterministas. Algunas respuestas libres son limitadas.
+- Si ya tienes Ollama local con el modelo lain-qwen7b, el lanzador te
+  preguntara si quieres activar las conversaciones generativas.
+- Nunca se configura por defecto un proveedor de IA remoto ni se
+  incluyen claves personales.
+
+IMPORTANTE
+- No compartas tus guardados, claves API ni archivos .env.
+- El servidor usa exclusivamente 127.0.0.1:8000; si ese puerto esta
+  ocupado, cierra el servidor anterior antes de ejecutar LAIN.
+- Para ver un problema de inicio, abre:
+  %LOCALAPPDATA%\LAIN\Beta01\launcher.log
+  %LOCALAPPDATA%\LAIN\Beta01\server.log
+  Al pedir ayuda, no compartas registros con contenido personal.
+- Esta es una beta sin firma digital: Windows SmartScreen puede pedir
+  confirmacion. Descargala solo del enlace que te ha dado el autor.
+- Los archivos del juego pueden borrarse o sustituirse sin borrar
+  automaticamente el guardado en AppData. Haz una copia de seguridad
+  de save.db antes de migrar a una version futura.
+- El origen y los materiales de terceros estan documentados en el
+  repositorio webtilians/lain. Uso solo para pruebas iniciales.
