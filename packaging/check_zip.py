@@ -12,6 +12,7 @@ REQUIRED = {
     "Game/LAIN-Game.pck",
     "Server/LainServer.exe",
     "Server/_internal/server/content/cafe_catalog.json",
+    "Server/_internal/server/world_core/data/residents09.json",
     "LEEME.txt",
 }
 ALLOWED_PREFIXES = ("Game/", "Server/")
