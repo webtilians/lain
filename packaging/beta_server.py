@@ -21,6 +21,9 @@ def main() -> None:
         access_log=False,
         log_level="warning",
         lifespan="on",
+        loop="asyncio",
+        http="h11",
+        ws="none",
     )
 
 
