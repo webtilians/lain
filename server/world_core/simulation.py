@@ -1485,6 +1485,8 @@ class Simulation:
         advance_residents(self.minute)
         from .network_conflict import advance_conflict
         advance_conflict(self.minute)
+        from .cafe_events import advance_events
+        advance_events(self.minute)
 
         evaluate_nodes(
             world=self.world.get_state(),

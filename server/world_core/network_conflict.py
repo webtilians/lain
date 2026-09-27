@@ -90,18 +90,19 @@ def report(c, actor, now, source, text):
 
 
 def _advance(c, now):
-    from .workshop import corporate_cover
+    from .workshop import corporate_cover, has_module
     for op,relay,actor in c.execute("SELECT id,relay,target FROM network_operations WHERE status='PENDING' AND due_minute<=? ORDER BY due_minute,id",(now,)).fetchall():
         faction=factions.operation_faction(c,op)
         strength=20 if faction==factions.NOEMA else 30
         row=c.execute("SELECT amount,defense FROM network_influence WHERE relay=? AND actor_id=?",(relay,actor)).fetchone()
         amount,defense=row or (0,0)
-        loss=min(amount,max(0,strength-defense*15-corporate_cover(c,actor)))
+        buffer = 5 if has_module(c,actor,"buffer") else 0
+        loss=min(amount,max(0,strength-defense*15-corporate_cover(c,actor)-buffer))
         c.execute("UPDATE network_influence SET amount=amount-?,defense=0 WHERE relay=? AND actor_id=?",(loss,relay,actor))
         factions.add_control(c,relay,faction,loss)
         c.execute("UPDATE network_operations SET status='RESOLVED' WHERE id=?",(op,))
         c.execute("UPDATE network_players SET trace=max(0,trace-20) WHERE actor_id=?",(actor,))
-        report(c,actor,now,"RELAY_TELEMETRY",f"{RELAYS[relay][0]}: intervención ejecutada. {faction} recuperó {loss} puntos de tu control. Las defensas utilizadas se agotaron.")
+        report(c,actor,now,"RELAY_TELEMETRY",f"{RELAYS[relay][0]}: intervención ejecutada. {faction} recuperó {loss} puntos de tu control. Las defensas utilizadas se agotaron." + (" Amortiguación absorbió hasta 5 puntos." if buffer else ""))
 
 
 def advance_conflict(now):

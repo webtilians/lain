@@ -14,8 +14,9 @@ MODULES = {
     "routing": {"name": "Enrutamiento", "cost": 2, "effect": "Conexión del montaje; conserva las acciones básicas del enlace."},
     "shield": {"name": "Protección", "cost": 4, "effect": "Preparar las dos defensas de un enlace propio con una operación local."},
     "scan": {"name": "Exploración", "cost": 3, "effect": "Desde casa, leer la actividad de un enlace previamente examinado."},
+    "buffer": {"name": "Amortiguación", "cost": 2, "effect": "Absorbe 5 puntos de pérdida en cada intervención corporativa mientras esté compilada. No se acumula con otra copia."},
 }
-DEVICES = {"navi": ("Navi A", 4), "matrix": ("Coprocesador M", 4), "interface": ("Interfaz R", 3)}
+DEVICES = {"navi": ("Navi A", 4), "matrix": ("Coprocesador M", 4), "interface": ("Interfaz R", 3), "cache": ("Memoria de enlace B", 2)}
 ARCADE = {"size": 8, "start": [0, 0], "exit": [7, 7],
           "walls": [[2,0],[2,1],[2,2],[4,2],[5,2],[6,2],[1,4],[2,4],[3,4],[5,4],[5,5],[5,6]],
           "chips": [[1,2],[3,1],[6,3],[2,6],[6,6]], "max_moves": 80, "version": 1}
@@ -74,6 +75,8 @@ def enroll_workshop():
                 _grant(c,actor,"home_navi","DEVICE","navi","Ordenador de casa",now,1)
                 _grant(c,actor,"first_connection","CODE","routing","Tu primera conexión a la Wired",now)
                 report(c,actor,now,"WORKSHOP","El PC dispone de un taller de código. En Kissa Café han instalado un terminal: su técnico busca ayuda para comprobar un coprocesador.")
+    from .cafe_events import initialize_events
+    initialize_events()
 
 
 def resources(c, actor):
@@ -116,13 +119,14 @@ def _repair_build(c, actor):
     return ""
 
 
-def arcade_replay(moves):
-    if not isinstance(moves,str) or len(moves)>ARCADE["max_moves"] or any(ch not in "UDLR" for ch in moves):
+def arcade_replay(moves, board=None):
+    board = ARCADE if board is None else board
+    if not isinstance(moves,str) or len(moves)>board["max_moves"] or any(ch not in "UDLR" for ch in moves):
         raise ValueError("INVALID_ARCADE_MOVES")
-    x,y=ARCADE["start"]
+    x,y=board["start"]
     collected=set()
-    walls={tuple(p) for p in ARCADE["walls"]}
-    chips={tuple(p) for p in ARCADE["chips"]}
+    walls={tuple(p) for p in board["walls"]}
+    chips={tuple(p) for p in board["chips"]}
     finished=False
     for index,direction in enumerate(moves):
         if finished: raise ValueError("ARCADE_ALREADY_FINISHED")
@@ -130,7 +134,7 @@ def arcade_replay(moves):
         nx,ny=x+dx,y+dy
         if 0<=nx<8 and 0<=ny<8 and (nx,ny) not in walls: x,y=nx,ny
         if (x,y) in chips: collected.add((x,y))
-        finished=[x,y]==ARCADE["exit"]
+        finished=[x,y]==board["exit"]
     score=max(0,len(collected)*100-len(moves)*2) if finished else 0
     return {"score":score,"collected":len(collected),"finished":finished,"won":finished and len(collected)>=3}
 

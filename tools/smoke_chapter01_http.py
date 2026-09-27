@@ -24,10 +24,11 @@ def main():
                    LAIN_WORLD_CLOCK="0", LAIN_MEMORY_SEMANTIC="0",
                    LAIN_CHAPTER_ONE="1", LAIN_PROLOGUE_ENABLED="0",
                    LAIN_CITY_RESIDENTS_ENABLED="1", LAIN_REALITY_GENERATION="0")
-        env["LAIN_CORPORATION"]="1" if any(flag in sys.argv for flag in ["--network","--workshop","--noema","--circles"]) else "0"
-        env["LAIN_WORKSHOP"]="1" if any(flag in sys.argv for flag in ["--workshop","--circles"]) else "0"
+        env["LAIN_CORPORATION"]="1" if any(flag in sys.argv for flag in ["--network","--workshop","--noema","--circles","--events"]) else "0"
+        env["LAIN_WORKSHOP"]="1" if any(flag in sys.argv for flag in ["--workshop","--circles","--events"]) else "0"
         env["LAIN_NOEMA"]="1" if any(flag in sys.argv for flag in ["--noema","--circles"]) else "0"
         env["LAIN_CIRCLES"]="1" if "--circles" in sys.argv else "0"
+        env["LAIN_CAFE_EVENTS"]="1" if "--events" in sys.argv else "0"
         with (Path(scratch)/"server.log").open("w", encoding="utf-8") as log:
             process = subprocess.Popen([sys.executable, "-m", "uvicorn", "server.api:app",
                 "--host", "127.0.0.1", "--port", str(port)], cwd=ROOT, env=env,
@@ -74,6 +75,52 @@ def main():
                     assert list(conn.iterdump())==before
                 conn.close()
                 print("CHAPTER01_HTTP_OK activation=true retries=idempotent errors=409,422 polling=read_only")
+                if "--events" in sys.argv:
+                    state = request("/api/v1/player/state")
+                    item = state["cafe_events"]["events"][0]
+                    command = {"action":"START","data":{"event":item["id"]},"request_id":"http_event_start"}
+                    for invalid, status in [
+                        ({**command,"actor_id":"AGENT_K"},422),
+                        ({**command,"data":{"event":item["id"],"score":"99999"}},409),
+                        (command,409),
+                    ]:
+                        try:
+                            request("/api/v1/cafe-events/action",invalid)
+                            raise AssertionError("Forged event request accepted")
+                        except HTTPError as error:
+                            assert error.code == status
+                    def move_event(destination):
+                        request("/api/v1/player/step",{"action":"MOVE","target":destination})
+                        return request("/api/v1/player/state")
+                    move_event("APARTMENT_DISTRICT")
+                    state = move_event("CAFE")
+                    while state["minute"] < item["opens"] or state["player"]["location"] != "CAFE":
+                        state = move_event("APARTMENT_DISTRICT" if state["player"]["location"] == "CAFE" else "CAFE")
+                    run = request("/api/v1/cafe-events/action", command)["result"]
+                    # Five-package path, independently checked by the actual server.
+                    sys.path.insert(0,str(ROOT))
+                    from tests.test_cafe_events import route
+                    finish = {"action":"FINISH","data":{"run_id":run["run_id"],"moves":route(run["board"])},"request_id":"http_event_finish"}
+                    result = request("/api/v1/cafe-events/action",finish)
+                    assert result["result"]["won"]
+                    assert not result["state"]["cafe_events"]["events"][0]["won"]
+                    assert request("/api/v1/cafe-events/action",finish)["result"] == result["result"]
+                    state = result["state"]
+                    while state["minute"] < item["closes"]:
+                        state = move_event("APARTMENT_DISTRICT" if state["player"]["location"] == "CAFE" else "CAFE")
+                    closed = next(e for e in state["cafe_events"]["events"] if e["id"] == item["id"])
+                    assert closed["won"] and closed["settled"]
+                    if state["player"]["location"] == "CAFE":
+                        move_event("APARTMENT_DISTRICT")
+                    move_event("APARTMENT")
+                    compiled = request("/api/v1/workshop/action",{"action":"COMPILE","data":{"source":'use("routing")\nuse("buffer")\n'},"request_id":"http_event_compile"})
+                    assert compiled["result"]["passed"]
+                    with sqlite3.connect(db) as conn: before=list(conn.iterdump())
+                    conn.close()
+                    request("/api/v1/player/state")
+                    with sqlite3.connect(db) as conn: assert list(conn.iterdump())==before
+                    conn.close()
+                    print("CAFE_EVENTS_HTTP_OK calendar=true location=true score=replayed reward=once compilation=true")
                 if "--network" in sys.argv:
                     for destination in ["APARTMENT_DISTRICT","STATION"]:
                         request("/api/v1/player/step",{"action":"MOVE","target":destination})

@@ -5,6 +5,9 @@ Rama experimental **experiment/wired-0.4-circles**, desde ae731c1
 individuales y un programa compartido. Esta fase se juega con colaboradores PNJ.
 No hay sesiones multijugador ni invitaciones a amigos reales todavía.
 
+La siguiente entrega está en [WIRED 0.5 · Las noches de Kissa](EVENTS01_README.md):
+torneos locales del café con calendario, clasificación y premios de código.
+
 ![Programa compartido](docs/circles01/circle-Programa.png)
 
 ## Primer recorrido

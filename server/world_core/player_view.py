@@ -23,6 +23,7 @@ from .chapter_one import chapter_snapshot
 from .network_conflict import network_snapshot
 from .workshop import workshop_snapshot
 from .circles import circle_snapshot
+from .cafe_events import event_snapshot
 
 from .messages import (
     list_player_messages,
@@ -394,6 +395,7 @@ def build_player_snapshot(
         "network_conflict": conflict,
         "workshop": workshop_snapshot(player_id),
         "circles": circle_snapshot(player_id),
+        "cafe_events": event_snapshot(player_id),
         "situations": list_player_situations(
             player_id
         ),

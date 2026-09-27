@@ -137,6 +137,25 @@ class CircleActionRequest(BaseModel):
     request_id: str = Field(min_length=8, max_length=80)
 
 
+class CafeEventRequest(BaseModel):
+    model_config = {"extra": "forbid"}
+    action: str = Field(max_length=16)
+    data: dict[str, StrictStr] = Field(max_length=2)
+    request_id: str = Field(min_length=8, max_length=80)
+
+
+@app.post("/api/v1/cafe-events/action")
+def cafe_event_action(request: CafeEventRequest):
+    from server.world_core.cafe_events import perform_event_action
+    with _world_lock:
+        get_runtime()
+        try:
+            result = perform_event_action(PLAYER_ID, request.action, request.data, request.request_id)
+            return {"result": result, "state": build_player_snapshot(PLAYER_ID)}
+        except ValueError as error:
+            raise HTTPException(status_code=409, detail=str(error))
+
+
 @app.post("/api/v1/circles/action")
 def circle_action(request: CircleActionRequest):
     from server.world_core.circles import perform_circle_action

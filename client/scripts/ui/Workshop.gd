@@ -30,6 +30,11 @@ var circle_name_draft := ""
 var circle_tab := "Grupo"
 var circle_confirm_leave := false
 var circle_panel = preload("res://scripts/ui/CirclePanel.gd").new()
+var event_panel = preload("res://scripts/ui/CafeEventPanel.gd").new()
+var run_endpoint := "workshop"
+var run_event := ""
+var run_closes := 0
+var event_projection_cache := ""
 
 func _ready() -> void:
 	layer = 104
@@ -67,6 +72,23 @@ func _ready() -> void:
 	footer.add_theme_color_override("font_color", Color("b7d8c5"))
 	layout.add_child(footer)
 	surface.hide()
+	WorldApi.snapshot_updated.connect(_event_snapshot_changed)
+
+func event_data() -> Dictionary:
+	return WorldApi.snapshot.get("cafe_events", {})
+
+func _event_snapshot_changed(_snapshot: Dictionary) -> void:
+	if is_open() and not busy and (mode == "CAFE_EVENTS" or (mode == "PC" and page == "Eventos")):
+		if JSON.stringify(event_data()) == event_projection_cache: return
+		for picker in content.find_children("*", "OptionButton", true, false):
+			if picker.get_popup().visible: return
+		var positions: Array[int] = []
+		for scroll in content.find_children("*", "ScrollContainer", true, false):
+			positions.append(scroll.scroll_vertical)
+		_render()
+		var scrolls := content.find_children("*", "ScrollContainer", true, false)
+		for i in range(mini(positions.size(), scrolls.size())):
+			scrolls[i].set_deferred("scroll_vertical", positions[i])
 
 func active() -> bool:
 	return bool(WorldApi.snapshot.get("workshop", {}).get("active", false))
@@ -149,7 +171,9 @@ func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_cancel"):
 		close_pc()
 		get_viewport().set_input_as_handled()
-	elif mode == "CAFE" and not arcade.is_empty() and event is InputEventKey and event.pressed and not event.echo:
+	elif mode in ["CAFE", "CAFE_EVENTS"] and not arcade.is_empty() and event is InputEventKey and event.pressed and not event.echo:
+		for picker in content.find_children("*", "OptionButton", true, false):
+			if picker.get_popup().visible: return
 		var directions := {KEY_UP:"U", KEY_DOWN:"D", KEY_LEFT:"L", KEY_RIGHT:"R"}
 		if directions.has(event.keycode):
 			_move(directions[event.keycode])
@@ -195,6 +219,10 @@ func _render() -> void:
 	if mode == "CAFE":
 		_render_cafe()
 		return
+	if mode == "CAFE_EVENTS":
+		button(tabs, "Volver a práctica y técnico", _open.bind("CAFE"))
+		event_panel.render(self, true)
+		return
 	if mode == "CIRCLE_CONTACT":
 		heading.text = "CONVERSACIÓN // UNA RED PROPIA"
 		label(content,"Hablad de colaborar fuera de las corporaciones.")
@@ -203,6 +231,7 @@ func _render() -> void:
 		return
 	var pages: Array = ["Correo", "Código", "Juego de la Vida", "Dispositivos", "Wired"]
 	if circles_active(): pages.append("Círculo")
+	if bool(event_data().get("active", false)): pages.append("Eventos")
 	for title in pages:
 		var tab := button(tabs, title, _select.bind(title))
 		tab.disabled = title == page
@@ -213,6 +242,7 @@ func _render() -> void:
 		"Dispositivos": _devices()
 		"Wired": _wired()
 		"Círculo": circle_panel.render(self)
+		"Eventos": event_panel.render(self, false)
 
 func scrolling(parent: Node) -> VBoxContainer:
 	var scroll := ScrollContainer.new()
@@ -231,6 +261,9 @@ func _mail() -> void:
 	label(box, "UNA MÁQUINA QUE SUEÑA")
 	label(box, "En Kissa Café hay un terminal y un coprocesador por reparar. Habla con el técnico allí y pide las reglas al profesor en el aula de informática. Después completa el ejercicio en este PC.")
 	label(box, "BIT COURIER · PRÁCTICA LOCAL\nRecoge tres paquetes y alcanza la salida del minijuego del café. Consigue una interfaz de red y el módulo Exploración. No hay otros jugadores conectados en esta versión.")
+	if bool(event_data().get("active", false)):
+		label(box, "TORNEOS DE KISSA\nEl café organiza ediciones con tres intentos, clasificación y premios de código o equipo. Consulta Eventos; compite en el terminal del café. Los rivales de esta fase son PNJ.")
+		button(box, "Consultar eventos del café", _select.bind("Eventos"))
 	if circles_active():
 		label(box,"UNA RED PROPIA\nRyoko y el técnico de Kissa quieren colaborar fuera de las corporaciones. Habla con ellos de crear una red. En Círculo puedes reunir sus aportaciones y compilar un programa compartido.")
 	var offers: Dictionary = data().get("offers", {})
@@ -327,10 +360,12 @@ func _render_cafe() -> void:
 	content.add_child(actions)
 	button(actions, "Hablar con el técnico", _send.bind("TECHNICIAN", {}))
 	button(actions, "Nueva práctica", _send.bind("ARCADE_START", {}))
+	if bool(event_data().get("active", false)):
+		button(actions, "Torneos y clasificación", _open.bind("CAFE_EVENTS"))
 	if circles_active():
 		button(actions,"Hablar de una red propia",open_circle_contact.bind("KISSA_TECH"))
 	label(content, "Recoge al menos 3 paquetes y llega a la salida. Máximo 80 movimientos, incluidos los choques con paredes. Flechas del teclado o botones. Mejor puntuación local: " + str(int(data().get("best_score", 0))))
-	if not arcade.is_empty():
+	if not arcade.is_empty() and run_endpoint == "workshop":
 		_board(content)
 		var controls := HBoxContainer.new()
 		content.add_child(controls)
@@ -351,7 +386,7 @@ func _draw_board(view: Control) -> void:
 	for y in range(8):
 		for x in range(8):
 			var tint := Color("25383f")
-			if mode == "CAFE":
+			if mode in ["CAFE", "CAFE_EVENTS"]:
 				if _contains(arcade.get("walls", []), Vector2i(x,y)): tint = Color("75868a")
 				elif _contains([arcade.get("exit", [-1,-1])], Vector2i(x,y)): tint = Color("61b592")
 				elif _contains(arcade.get("chips", []), Vector2i(x,y)) and not Vector2i(x,y) in collected: tint = Color("dcc37d")
@@ -367,6 +402,10 @@ func _contains(points: Array, point: Vector2i) -> bool:
 
 func _move(direction: String) -> void:
 	if busy or arcade.is_empty() or run_id.is_empty(): return
+	if mode == "CAFE" and run_endpoint != "workshop": return
+	if mode == "CAFE_EVENTS":
+		if run_endpoint != "cafe-events" or event_panel.selected != run_event: return
+		if int(event_data().get("minute", 0)) >= run_closes: return
 	if moves.length() >= 80 or _contains([arcade.exit], courier): return
 	var offsets := {"U":Vector2i.UP,"D":Vector2i.DOWN,"L":Vector2i.LEFT,"R":Vector2i.RIGHT}
 	var next: Vector2i = courier + offsets[direction]
@@ -376,7 +415,16 @@ func _move(direction: String) -> void:
 	if _contains(arcade.chips, courier) and not courier in collected: collected.append(courier)
 	_render()
 	if moves.length() >= 80 or _contains([arcade.exit], courier):
-		_send("ARCADE_FINISH", {"run_id":run_id,"moves":moves})
+		if run_endpoint == "cafe-events":
+			_send_event("FINISH", {"run_id":run_id,"moves":moves})
+		else:
+			_send("ARCADE_FINISH", {"run_id":run_id,"moves":moves})
+
+func _send_event(action: String, payload: Dictionary) -> void:
+	if busy: return
+	pending_endpoint = "cafe-events"
+	pending = {"action":action,"data":payload,"request_id":"event_"+str(Time.get_unix_time_from_system()).replace(".","_")+"_"+str(Time.get_ticks_usec())}
+	_dispatch()
 
 func _send(action: String, payload: Dictionary) -> void:
 	if busy: return
@@ -423,6 +471,7 @@ func _completed(result: int, code: int, _headers: PackedStringArray, body: Packe
 	if code < 200 or code >= 300:
 		var errors := {"WORKSHOP_WRONG_LOCATION":"Debes usar el PC de casa, el aula o el terminal del café según la acción.", "LESSON_REQUIRED":"Pide las reglas al profesor primero.", "SCAN_MODULE_REQUIRED":"Compila Exploración y conecta suficientes equipos.", "INSPECT_RELAY_FIRST":"Examina ese armario en persona antes de escanearlo.", "OFFERS_NOT_AVAILABLE":"Las ofertas llegan al completar la misión del Juego de la Vida."}
 		errors.merge({"PARTNER_NOT_PRESENT":"Debes hablar con esa persona en su localización.", "INDEPENDENT_REQUIRED":"Termina tu contrato corporativo para colaborar como independiente.", "PARTNER_CONDITION_REQUIRED":"Todavía no cumples la condición de ese colaborador.", "MEET_PARTNER_FIRST":"Habla de la red con esa persona antes de invitarla.", "ASSET_NOT_AVAILABLE":"Conecta el equipo y comprueba que sea tuyo, sin préstamo corporativo.", "CIRCLE_PC_REQUIRED":"Gestiona el círculo desde el PC de casa.", "INVALID_CIRCLE_NAME":"Escribe un nombre de entre 1 y 32 caracteres.", "PARTNER_ALREADY_COMMITTED":"Esa persona ya participa en un círculo.", "ALREADY_IN_CIRCLE":"Ya perteneces a un círculo."})
+		errors.merge({"CAFE_REQUIRED":"Debes jugar desde el terminal de Kissa Café.", "EVENT_NOT_OPEN":"Esta edición aún no ha abierto o ya ha cerrado. Consulta el calendario.", "EVENT_ATTEMPTS_USED":"Has utilizado los tres intentos de esta edición.", "EVENT_RUN_REQUIRED":"Abre un intento de este torneo desde el terminal.", "EVENT_ALREADY_FINISHED":"Ese intento ya tiene un resultado guardado."})
 		_failure(str(errors.get(str(payload.get("detail", "")), "Acción rechazada: " + str(payload.get("detail", "respuesta no válida")))), false)
 		return
 	WorldApi.snapshot = payload.state
@@ -435,7 +484,10 @@ func _completed(result: int, code: int, _headers: PackedStringArray, body: Packe
 	if response.has("board"):
 		arcade = response.board
 		run_id = response.run_id
+		run_endpoint = pending_endpoint
+		run_event = str(response.get("event_id", ""))
+		run_closes = int(response.get("closes", 0))
 		moves = ""
-		courier = Vector2i(0,0)
+		courier = Vector2i(int(arcade.start[0]), int(arcade.start[1]))
 		collected.clear()
 	if is_open(): _render()

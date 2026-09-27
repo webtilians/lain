@@ -28,6 +28,7 @@ on:
       - experiment/wired-0.2-workshop
       - experiment/wired-0.3-noema
       - experiment/wired-0.4-circles
+      - experiment/wired-0.5-cafe-events
   pull_request:
 
 jobs:
@@ -55,3 +56,5 @@ jobs:
         run: python tools/smoke_chapter01_http.py --noema
       - name: Circles HTTP local consent, deduplication and actual shared modules
         run: python tools/smoke_chapter01_http.py --circles
+      - name: Cafe tournaments HTTP window, verified replay and awarded module
+        run: python tools/smoke_chapter01_http.py --events
