@@ -43,7 +43,7 @@ jobs:
       - name: Freeze private local World Core and visible launcher
         shell: pwsh
         run: |
-          python -m PyInstaller --noconfirm --clean --onedir --name LainServer --collect-submodules server --collect-submodules uvicorn --add-data "server/content;server/content" packaging/beta_server.py
+          python -m PyInstaller --noconfirm --clean --onedir --name LainServer --collect-submodules server --collect-submodules uvicorn --collect-data server --add-data "server/content;server/content" --add-data "server/world_core/data;server/world_core/data" packaging/beta_server.py
           if ($LASTEXITCODE -ne 0) { throw "Server packaging failed" }
           python -m PyInstaller --noconfirm --clean --onefile --windowed --name LAIN packaging/launcher.py
           if ($LASTEXITCODE -ne 0) { throw "Launcher packaging failed" }
@@ -71,14 +71,14 @@ jobs:
           try {
             $ready = $false
             for ($i = 0; $i -lt 90; $i++) {
-              if ($server.HasExited) { throw "Server closed on startup: $($server.ExitCode); $(Get-Content $err -Raw)" }
+              if ($server.HasExited) { throw "Server closed on startup: $($server.ExitCode); $(Get-Content $err -Tail 25 | Out-String)" }
               try {
                 $snapshot = Invoke-RestMethod "http://127.0.0.1:8000/api/v1/player/state" -TimeoutSec 2
                 if ($snapshot.player.location -eq "APARTMENT" -and $snapshot.prologue.enabled -eq $true) { $ready = $true; break }
               } catch { }
               Start-Sleep -Milliseconds 700
             }
-            if (!$ready) { throw "Frozen server did not return a new playable prologue: $(Get-Content $err -Raw)" }
+            if (!$ready) { throw "Frozen server did not return a new playable prologue: $(Get-Content $err -Tail 25 | Out-String)" }
             if (!(Test-Path $env:LAIN_WORLD_DB)) { throw "Disposable database was not created" }
             Write-Host "BETA01_FROZEN_SERVER_OK"
           } finally {
