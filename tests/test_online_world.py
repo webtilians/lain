@@ -46,7 +46,8 @@ def test_online_npc_recognizes_the_current_players_signal_testimony(world):
         headers=headers[bob],
         json={"choice_id": "ASK_SIGNAL", "after_turn_id": other["turn_id"]},
     )
-    assert "Recuerdo" not in response.json()["line"]
+    assert response.status_code == 200, response.text
+    assert "recuerdo" not in response.json()["line"].lower()
 
 
 def test_chat_ids_remain_unique_when_server_memory_is_restarted(world):
