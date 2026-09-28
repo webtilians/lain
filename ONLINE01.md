@@ -90,3 +90,7 @@ python tools/smoke_online01.py --godot godot
 ```
 
 La integración crea un mundo temporal y dos procesos de Godot, verifica identidad, avatares, chat y cambios de escena independientes, y cierra sus propios procesos. No usa partidas del usuario. `--capture outputs/online-smoke/online-city.png` genera una captura durante esa prueba con renderizado real.
+
+Para comprobar además el juego exportado, usa `python tools/smoke_online01.py --godot RUTA/LAIN-Game.exe --exported`. Esa comprobación arranca dos ejecutables con su PCK y verifica que publican presencia con identidades diferentes. También se ejecuta antes de generar el ZIP de Windows en GitHub.
+
+Validación inicial: 493 pruebas Python, 12 comprobaciones de escenas y mecánicas de Godot, integración HTTP con dos clientes y comprobación de dos ejecutables exportados. La captura de desarrollo está en `outputs/online-smoke/online-city.png`.

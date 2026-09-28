@@ -13,7 +13,7 @@ import sys
 import tempfile
 import threading
 import time
-from urllib.request import urlopen
+from urllib.request import Request, urlopen
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
@@ -22,6 +22,11 @@ sys.path.insert(0, str(ROOT))
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--godot")
+    parser.add_argument(
+        "--exported",
+        action="store_true",
+        help="Use the exported game and its PCK instead of source resources",
+    )
     parser.add_argument("--prepare-world", type=Path, help=argparse.SUPPRESS)
     parser.add_argument("--serve-world", type=int, help=argparse.SUPPRESS)
     parser.add_argument(
@@ -62,7 +67,10 @@ def main():
 
         with contextlib.redirect_stdout(None):
             Simulation()
-            people = {name: online.create_player(name) for name in ("Alice", "Bob")}
+            people = {
+                name: online.create_player(name)
+                for name in ("Alice", "Bob", "Observer")
+            }
         with database.get_connection() as conn:
             for actor, _token in people.values():
                 conn.execute(
@@ -159,6 +167,8 @@ def main():
                     raise RuntimeError("Test server did not start")
                 clients = []
                 for name, (_actor, token) in people.items():
+                    if name == "Observer":
+                        continue
                     client_env = {
                         **environment,
                         "LAIN_SERVER_URL": url,
@@ -166,13 +176,13 @@ def main():
                         "LAIN_ALLOW_LAN_HTTP": "1",
                         "LAIN_TEST_PLAYER_NAME": name,
                     }
-                    command = [
-                        args.godot,
-                        "--path",
-                        str(ROOT / "client"),
-                        "--script",
-                        "res://tools/test_online01.gd",
-                    ]
+                    command = [args.godot]
+                    if args.exported:
+                        # Release templates run the real game, not --script.
+                        command.extend(["--quit-after", "900", "--max-fps", "60"])
+                    else:
+                        command.extend(["--path", str(ROOT / "client")])
+                        command.extend(["--script", "res://tools/test_online01.gd"])
                     if args.capture:
                         args.capture.parent.mkdir(parents=True, exist_ok=True)
                         client_env["LAIN_ONLINE_CAPTURE"] = str(args.capture.resolve())
@@ -191,19 +201,54 @@ def main():
                     )
                     clients.append((name, child, log_path, output))
                     processes.append(child)
+                if args.exported:
+                    deadline = time.monotonic() + 25
+                    expected = {people[name][0] for name in ("Alice", "Bob")}
+                    while time.monotonic() < deadline:
+                        request = Request(
+                            url + "/api/v1/online/presence",
+                            data=json.dumps(
+                                {
+                                    "location": "APARTMENT_DISTRICT",
+                                    "x": 0,
+                                    "y": 0.91,
+                                    "z": 0,
+                                }
+                            ).encode(),
+                            headers={
+                                "Content-Type": "application/json",
+                                "Authorization": "Bearer " + people["Observer"][1],
+                                "X-Lain-Client": "export-test-observer",
+                            },
+                        )
+                        with urlopen(request, timeout=3) as response:
+                            visible = {
+                                person["id"]
+                                for person in json.load(response)["players"]
+                            }
+                        if expected <= visible:
+                            break
+                        time.sleep(0.3)
+                    else:
+                        raise RuntimeError(
+                            "Exported games did not publish two distinct authenticated players"
+                        )
                 for name, child, log_path, output in clients:
                     code = child.wait(timeout=95)
                     output.flush()
                     contents = log_path.read_text(encoding="utf-8", errors="replace")
                     if (
                         code != 0
-                        or "ONLINE01_CLIENT_OK" not in contents
+                        or not args.exported
+                        and "ONLINE01_CLIENT_OK" not in contents
                         or "SCRIPT ERROR:" in contents
                         or "\nERROR:" in contents
                     ):
                         raise RuntimeError(f"Godot {name} failed; see {log_path}")
                 print(
-                    "ONLINE01_TCP_OK clients=2 identities=2 private_world=true avatars=true chat=true separate_travel=true"
+                    "ONLINE01_EXPORTED_OK clients=2 authenticated_presence=true"
+                    if args.exported
+                    else "ONLINE01_TCP_OK clients=2 identities=2 private_world=true avatars=true chat=true separate_travel=true"
                 )
             finally:
                 for process in reversed(processes):

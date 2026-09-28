@@ -127,6 +127,12 @@ jobs:
             throw "Windows game or accompanying PCK missing"
           }
 
+      - name: Verify two exported games connect to one online world
+        shell: pwsh
+        run: |
+          python tools/smoke_online01.py --godot (Resolve-Path "release/Game/LAIN-Game.exe").Path --exported
+          if ($LASTEXITCODE -ne 0) { throw "Exported online client test failed" }
+
       - name: Assemble portable ZIP without world.db or any developer secrets
         shell: pwsh
         run: |
