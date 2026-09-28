@@ -28,6 +28,7 @@ from .code_exchange import exchange_snapshot
 
 from .messages import (
     list_player_messages,
+    initial_message_id,
 )
 
 from .knowledge import (
@@ -45,12 +46,13 @@ PLAYER_ID = "PLAYER_1"
 def build_wired_projection(
     known_nodes: list[dict],
     messages: list,
+    player_id: str = PLAYER_ID,
 ):
 
     connected = any(
         message.acknowledged
         for message in messages
-        if message.id == "MSG_BOOTSTRAP_001"
+        if message.id == initial_message_id(player_id)
     )
 
     signals = []
@@ -398,9 +400,7 @@ def build_player_snapshot(
         "circles": circle_snapshot(player_id),
         "cafe_events": event_snapshot(player_id),
         "code_exchange": exchange_snapshot(player_id),
-        "situations": list_player_situations(
-            player_id
-        ),
+        "situations": list_player_situations(player_id),
         "interaction": interaction_payload,
         "outgoing_interaction": outgoing_payload,
         "messages": [
@@ -416,13 +416,10 @@ def build_player_snapshot(
             }
             for message in messages
         ],
-        "unread_messages": sum(
-            1
-            for message in messages
-            if not message.read
-        ),
+        "unread_messages": sum(1 for message in messages if not message.read),
         "wired": build_wired_projection(
             known_nodes=known_nodes,
             messages=messages,
+            player_id=player_id,
         ),
     }

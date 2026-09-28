@@ -9,6 +9,7 @@ import os
 import re
 
 from .database import get_connection
+from .messages import initial_message_id
 
 PLAYER = "PLAYER_1"
 HARUTO = "RESIDENT_001"
@@ -75,8 +76,11 @@ def activate_chapter(player=PLAYER) -> bool:
     with get_connection() as c:
         if not _exists(c):
             return False
-        connection = c.execute("""SELECT acknowledged_minute FROM world_messages
-            WHERE id='MSG_BOOTSTRAP_001' AND recipient_id=? AND acknowledged=1""", (player,)).fetchone()
+        connection = c.execute(
+            """SELECT acknowledged_minute FROM world_messages
+            WHERE id=? AND recipient_id=? AND acknowledged=1""",
+            (initial_message_id(player), player),
+        ).fetchone()
         if connection is None:
             return False
         minute = c.execute("SELECT minute FROM simulation_state WHERE id=1").fetchone()[0]
@@ -119,11 +123,19 @@ def _colocated(c, player, actor, location):
             raise ValueError("CHARACTER_NOT_PRESENT")
 
 
-def _share(c, player, actor, eid, minute, source=PLAYER):
+def _share(c, player, actor, eid, minute, source=None):
     row = c.execute("SELECT text,source_label FROM chapter_one_evidence WHERE player_id=? AND id=?", (player, eid)).fetchone()
     if row is None:
         raise ValueError("EVIDENCE_NOT_KNOWN")
-    _learn(c, player, actor, eid, f"Me han comunicado este contenido, atribuido a {row[1]}: {row[0]}", source, minute)
+    _learn(
+        c,
+        player,
+        actor,
+        eid,
+        f"Me han comunicado este contenido, atribuido a {row[1]}: {row[0]}",
+        source or player,
+        minute,
+    )
 
 
 def _talk(c, player, actor, choice, minute, location, run):
@@ -396,15 +408,21 @@ def chapter_snapshot(player=PLAYER) -> dict:
                 "characters":list(PEOPLE), "notification":"Has vuelto"}
 
 
-def chapter_actor_context(actor: str) -> dict | None:
+def chapter_actor_context(actor: str, player_id: str = PLAYER) -> dict | None:
     """Server-only, per-recipient memory. Never expose the player's archive here."""
     with get_connection() as c:
         if not _exists(c):
             return None
-        rows = c.execute("SELECT evidence_id,text,source_id,minute FROM chapter_one_knowledge WHERE actor_id=? AND player_id=? ORDER BY minute,rowid", (actor,PLAYER)).fetchall()
+        rows = c.execute(
+            "SELECT evidence_id,text,source_id,minute FROM chapter_one_knowledge WHERE actor_id=? AND player_id=? ORDER BY minute,rowid",
+            (actor, player_id),
+        ).fetchall()
         if not rows:
             return None
-        relation = c.execute("SELECT stance,reason,source_id,minute FROM chapter_one_relationships WHERE actor_id=? AND player_id=?", (actor,PLAYER)).fetchone()
+        relation = c.execute(
+            "SELECT stance,reason,source_id,minute FROM chapter_one_relationships WHERE actor_id=? AND player_id=?",
+            (actor, player_id),
+        ).fetchone()
     return {"memories":[{"id":r[0],"text":r[1],"source":r[2],"learned_minute":r[3]} for r in rows],
             "relationship":dict(zip(("stance","reason","source","learned_minute"),relation)) if relation else None,
             "limits":"These are my recollections and received reports, not verified world facts. I do not know the player's private notes or other characters' memories."}

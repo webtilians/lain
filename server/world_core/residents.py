@@ -71,6 +71,10 @@ def advance_residents(minute: int) -> None:
         busy = {row[0] for row in conn.execute("""SELECT recipient_id FROM interactions
             WHERE status IN ('OPEN','RESUMING') UNION SELECT initiator_id
             FROM interactions WHERE status IN ('OPEN','RESUMING')""")}
+        from .online import enabled, busy_npcs
+
+        if enabled():
+            busy = busy_npcs()
         for actor_id, raw, waypoint, last_minute in rows:
             if last_minute >= minute:
                 continue

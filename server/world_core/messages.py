@@ -9,6 +9,14 @@ from .database import (
 INITIAL_MESSAGE_ID = "MSG_BOOTSTRAP_001"
 
 
+def player_message_id(base: str, player_id: str) -> str:
+    return base if player_id == "PLAYER_1" else base + ":" + player_id
+
+
+def initial_message_id(player_id: str) -> str:
+    return player_message_id(INITIAL_MESSAGE_ID, player_id)
+
+
 @dataclass
 class WorldMessage:
     id: str
@@ -63,7 +71,7 @@ def initialize_messages():
         conn.commit()
 
 
-def ensure_initial_player_message():
+def ensure_initial_player_message(player_id: str = "PLAYER_1"):
 
     initialize_messages()
 
@@ -87,15 +95,12 @@ def ensure_initial_player_message():
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, 0)
             """,
             (
-                INITIAL_MESSAGE_ID,
-                "PLAYER_1",
+                initial_message_id(player_id),
+                player_id,
                 None,
                 "unknown@wired",
                 "NO SUBJECT",
-                (
-                    "NO ESTOY MUERTA.\n\n"
-                    "SOLO DEJÉ DE ESTAR AHÍ."
-                ),
+                ("NO ESTOY MUERTA.\n\n" "SOLO DEJÉ DE ESTAR AHÍ."),
                 0,
                 0,
             ),

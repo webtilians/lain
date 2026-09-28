@@ -28,7 +28,11 @@ def timeline_request(query):
     return (topic, 'current') if topic else None
 
 
-def knowledge_timeline(agent_id, query):
+def knowledge_timeline(
+    agent_id,
+    query,
+    player_id: str = "PLAYER_1",
+):
     request = timeline_request(query)
     if request is None:
         return None
@@ -43,27 +47,33 @@ def knowledge_timeline(agent_id, query):
             "SELECT 1 FROM sqlite_master WHERE name='player_conversation_turns'"
         ).fetchone()
         if exists:
-            rows = conn.execute('''
+            rows = conn.execute(
+                """
                 SELECT t.id, t.text, t.minute, t.interaction_id
                 FROM player_conversation_turns t
                 JOIN interactions i ON i.id=t.interaction_id
-                WHERE i.recipient_id=? AND i.initiator_id='PLAYER_1'
+                WHERE i.recipient_id=? AND i.initiator_id=?
                   AND i.topic='PLAYER_INITIATED_CONVERSATION'
-                  AND t.speaker_id='PLAYER_1'
+                  AND t.speaker_id=?
                   AND t.source IN ('PLAYER_FREE_TEXT', 'PLAYER_CHOICE')
                 ORDER BY t.id DESC
-            ''', (agent_id,))
+            """,
+                (agent_id, player_id, player_id),
+            )
             for turn_id, text, minute, interaction_id in rows:
                 claim = parse_personal_statement(text)
                 if claim and claim[0] == topic:
                     count += 1
                     item = {
-                        'owner_id': agent_id, 'topic_key': topic,
-                        'reported_text': text, 'reported_value': claim[2],
-                        'source_kind': 'PLAYER_TESTIMONY',
-                        'source_actor_id': 'PLAYER_1',
-                        'origin_turn_id': turn_id, 'received_minute': minute,
-                        'interaction_id': interaction_id,
+                        "owner_id": agent_id,
+                        "topic_key": topic,
+                        "reported_text": text,
+                        "reported_value": claim[2],
+                        "source_kind": "PLAYER_TESTIMONY",
+                        "source_actor_id": player_id,
+                        "origin_turn_id": turn_id,
+                        "received_minute": minute,
+                        "interaction_id": interaction_id,
                     }
                     first = item
                     if len(versions) < 12:

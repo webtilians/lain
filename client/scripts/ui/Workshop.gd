@@ -44,6 +44,7 @@ var snake_autoplay := true
 func _ready() -> void:
 	layer = 104
 	request = HTTPRequest.new()
+	request.max_redirects = 0
 	request.timeout = 20
 	add_child(request)
 	request.request_completed.connect(_completed)
@@ -290,7 +291,7 @@ func _mail() -> void:
 	var box := scrolling(content)
 	label(box, "UNA MÁQUINA QUE SUEÑA")
 	label(box, "En Kissa Café hay un terminal y un coprocesador por reparar. Habla con el técnico allí y pide las reglas al profesor en el aula de informática. Después completa el ejercicio en este PC.")
-	label(box, "BIT COURIER · PRÁCTICA LOCAL\nRecoge tres paquetes y alcanza la salida del minijuego del café. Consigue una interfaz de red y el módulo Exploración. No hay otros jugadores conectados en esta versión.")
+	label(box, "BIT COURIER · PRÁCTICA INDIVIDUAL\nRecoge tres paquetes y alcanza la salida del minijuego del café. Consigue una interfaz de red y el módulo Exploración. Las competiciones están en Eventos.")
 	if bool(event_data().get("active", false)):
 		label(box, "TORNEOS DE KISSA\nEl café organiza ediciones con tres intentos, clasificación y premios de código o equipo. Consulta Eventos; compite en el terminal del café. Los rivales de esta fase son PNJ.")
 		button(box, "Consultar eventos del café", _select.bind("Eventos"))
@@ -521,7 +522,7 @@ func _dispatch() -> void:
 	busy = true
 	footer.text = "Esperando respuesta…"
 	WorldApi.begin_external_mutation()
-	var error := request.request("http://127.0.0.1:8000/api/v1/"+pending_endpoint+"/action", PackedStringArray(["Content-Type: application/json"]), HTTPClient.METHOD_POST, JSON.stringify(pending))
+	var error := request.request(ServerConnection.base_url() + "/api/v1/"+pending_endpoint+"/action", ServerConnection.headers(), HTTPClient.METHOD_POST, JSON.stringify(pending))
 	if error != OK:
 		busy = false
 		WorldApi.end_external_mutation()

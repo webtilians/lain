@@ -8,7 +8,7 @@ signal action_resolved(
 	updated_snapshot: Dictionary
 )
 
-const BASE_URL := "http://127.0.0.1:8000"
+var BASE_URL := "http://127.0.0.1:8000"
 const STATE_POLL_SECONDS := 1.5
 
 var snapshot: Dictionary = {}
@@ -23,13 +23,18 @@ var _mutation_request: HTTPRequest
 var _mutation_kind := ""
 
 func _ready() -> void:
+	BASE_URL = ServerConnection.base_url()
 	_state_request = HTTPRequest.new()
+	_state_request.max_redirects = 0
+	_state_request.timeout = 10.0
 	add_child(_state_request)
 	_state_request.request_completed.connect(
 		_on_state_request_completed
 	)
 
 	_mutation_request = HTTPRequest.new()
+	_mutation_request.max_redirects = 0
+	_mutation_request.timeout = 15.0
 	add_child(_mutation_request)
 	_mutation_request.request_completed.connect(
 		_on_mutation_request_completed
@@ -56,6 +61,9 @@ func _process(delta: float) -> void:
 
 
 func request_state(silent: bool = false) -> void:
+	if not ServerConnection.configuration_error.is_empty():
+		api_error.emit(ServerConnection.configuration_error)
+		return
 	if _external_mutation:
 		return
 	if (
@@ -71,7 +79,7 @@ func request_state(silent: bool = false) -> void:
 
 	# The server pauses autonomous ticks only for a live, visible NPC
 	# conversation. No text, identity or memories are sent in this header.
-	var request_headers := PackedStringArray()
+	var request_headers := ServerConnection.headers()
 	if EventDialog.visible and not EventDialog.current_owner_id.is_empty() and EventDialog.current_owner_id!="NETWORK_CONFLICT":
 		request_headers.append("X-Lain-Dialog-Active: 1")
 
@@ -114,11 +122,11 @@ func step(
 		"action": action,
 		"target": target,
 	}
+	if ServerConnection.is_online():
+		payload["request_id"] = "%s_%s" % [Time.get_ticks_usec(), randi()]
 
 	var body := JSON.stringify(payload)
-	var headers := [
-		"Content-Type: application/json"
-	]
+	var headers := ServerConnection.headers()
 
 	var error := _mutation_request.request(
 		BASE_URL + "/api/v1/player/step",
@@ -160,7 +168,7 @@ func acknowledge_message(
 		+ "/api/v1/player/messages/"
 		+ message_id
 		+ "/ack",
-		[],
+		ServerConnection.headers(),
 		HTTPClient.METHOD_POST
 	)
 

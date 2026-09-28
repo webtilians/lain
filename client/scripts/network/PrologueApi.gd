@@ -11,6 +11,7 @@ var _actor_id := ""
 
 func _ready() -> void:
 	_request = HTTPRequest.new()
+	_request.max_redirects = 0
 	add_child(_request)
 	_request.request_completed.connect(_on_completed)
 
@@ -22,8 +23,8 @@ func _send(path: String, data: Dictionary, kind: String, actor_id: String = "") 
 	_kind = kind
 	_actor_id = actor_id
 	var err := _request.request(
-		"http://127.0.0.1:8000" + path,
-		PackedStringArray(["Content-Type: application/json"]),
+		ServerConnection.base_url() + path,
+		ServerConnection.headers(),
 		HTTPClient.METHOD_POST,
 		JSON.stringify(data)
 	)

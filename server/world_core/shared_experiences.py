@@ -41,8 +41,8 @@ def record_experience(conn, *, owner, key, kind, role, minute, location,
          json.dumps(people), event_id, turn_id))
 
 
-def record_encounter(conn, actor_id, minute, turn_id):
-    people = ('PLAYER_1', actor_id)
+def record_encounter(conn, actor_id, minute, turn_id, player_id="PLAYER_1"):
+    people = (player_id, actor_id)
     locations = dict(conn.execute('SELECT id,location FROM agents WHERE id IN (?,?)', people))
     if len(locations) != 2 or locations[people[0]] != locations[people[1]]:
         raise ValueError('ACTOR_NOT_PRESENT')
@@ -110,11 +110,17 @@ def experience_request(query):
     return None
 
 
-def experience_context(owner, query, interaction_id=None):
+def experience_context(owner, query, interaction_id=None, player_id="PLAYER_1"):
     request = experience_request(query)
     with get_connection() as conn:
         initialize_experiences(conn)
         clauses, params = ['owner_id=?'], [owner]
+        # Private encounters with other humans cannot answer "when did WE meet".
+        clauses.append(
+            """NOT EXISTS (SELECT 1 FROM json_each(participants) p
+            JOIN agents a ON a.id=p.value WHERE a.controller_type='HUMAN' AND a.id!=?)"""
+        )
+        params.append(player_id)
         if request and request.get('location'):
             clauses.append('location=?')
             params.append(request['location'])
@@ -133,7 +139,8 @@ def experience_context(owner, query, interaction_id=None):
                     params.append(greeting)
         if request and request['mode'] == 'shared':
             clauses.append("kind='SHARED_ATTENTION'")
-            clauses.append("instr(participants, '\"PLAYER_1\"') > 0")
+            clauses.append("instr(participants, ?) > 0")
+            params.append(json.dumps(player_id))
         rows = conn.execute('''SELECT id,kind,role,minute,location,target,
             participants,source_event_id,origin_turn_id FROM agent_experiences
             WHERE ''' + ' AND '.join(clauses) + ' ORDER BY minute DESC,id DESC LIMIT 12', params).fetchall()
@@ -143,7 +150,7 @@ def experience_context(owner, query, interaction_id=None):
         record['participants'] = json.loads(record['participants'])
         record['owner_id'] = owner
         record['source_kind'] = 'WORLD_CORE_EXPERIENCE'
-    return {'request': request, 'records': records}
+    return {"request": request, "records": records, "player_id": player_id}
 
 
 def experience_reply(context):
@@ -154,8 +161,9 @@ def experience_reply(context):
     if request.get('unsupported'):
         return 'No puedo identificar ese lugar en mis recuerdos.'
     records = bundle['records']
+    player_id = bundle.get("player_id", "PLAYER_1")
     if request['mode'] == 'encounter':
-        records = [r for r in records if 'PLAYER_1' in r['participants']]
+        records = [r for r in records if player_id in r["participants"]]
         if not records:
             return 'No tengo registrado un encuentro contigo en ese lugar.'
         place = {'STATION': 'la estación', 'APARTMENT': 'el apartamento'}.get(records[0]['location'])
@@ -171,7 +179,11 @@ def experience_reply(context):
         target = next(iter(targets))
     relevant = [r for r in records if r['target'] == target]
     if request['mode'] == 'shared':
-        shared = [r for r in relevant if r['kind'] == 'SHARED_ATTENTION' and 'PLAYER_1' in r['participants']]
+        shared = [
+            r
+            for r in relevant
+            if r["kind"] == "SHARED_ATTENTION" and player_id in r["participants"]
+        ]
         if not shared:
             return 'No tengo registrada una investigación compartida contigo sobre esa señal.'
         role = 'investigué' if shared[0]['role'] == 'INVESTIGATOR' else 'observé'

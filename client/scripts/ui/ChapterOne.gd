@@ -18,6 +18,7 @@ var toast_until := 0
 func _ready() -> void:
 	layer = 95
 	request = HTTPRequest.new()
+	request.max_redirects = 0
 	request.timeout = 20
 	add_child(request)
 	request.request_completed.connect(_completed)
@@ -104,8 +105,8 @@ func _dispatch() -> void:
 	if not journal_request:
 		EventDialog.show_choices(OWNER,"THE WIRED" if terminal_context else "...","Esperando respuesta...",[])
 	WorldApi.begin_external_mutation()
-	var err := request.request("http://127.0.0.1:8000/api/v1/chapter-one/action",
-		PackedStringArray(["Content-Type: application/json"]),HTTPClient.METHOD_POST,JSON.stringify(pending))
+	var err := request.request(ServerConnection.base_url() + "/api/v1/chapter-one/action",
+		ServerConnection.headers(),HTTPClient.METHOD_POST,JSON.stringify(pending))
 	if err!=OK:
 		busy=false
 		WorldApi.end_external_mutation()

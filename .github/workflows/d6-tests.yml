@@ -32,6 +32,7 @@ on:
       - experiment/wired-0.6-arcade-catalog
       - experiment/wired-0.7-code-exchange
       - experiment/distribution-0.2-shared-ai
+      - experiment/online-0.1-shared-world
   pull_request:
 
 jobs:

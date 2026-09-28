@@ -49,7 +49,11 @@ def initialize_conversation_turns() -> None:
         conn.commit()
 
 
-def require_conversation(actor_id: str, allow_resuming: bool = False):
+def require_conversation(
+    actor_id: str,
+    allow_resuming: bool = False,
+    player_id: str = "PLAYER_1",
+):
     with get_connection() as conn:
         player = conn.execute(
             """
@@ -57,7 +61,7 @@ def require_conversation(actor_id: str, allow_resuming: bool = False):
             FROM agents
             WHERE id = ?
             """,
-            (PLAYER_ID,),
+            (player_id,),
         ).fetchone()
         actor = conn.execute(
             """
@@ -72,7 +76,7 @@ def require_conversation(actor_id: str, allow_resuming: bool = False):
         raise ValueError("PLAYER_NOT_FOUND")
     if actor is None:
         raise ValueError("ACTOR_NOT_FOUND")
-    if actor_id == PLAYER_ID:
+    if actor_id == player_id:
         raise ValueError("CANNOT_TALK_TO_SELF")
     if actor[2] == "HUMAN":
         raise ValueError("INVALID_CONVERSATION_TARGET")
@@ -80,7 +84,7 @@ def require_conversation(actor_id: str, allow_resuming: bool = False):
         raise ValueError("ACTOR_NOT_PRESENT")
 
     interaction = find_open_interaction(
-        initiator_id=PLAYER_ID,
+        initiator_id=player_id,
         recipient_id=actor_id,
         topic=CONVERSATION_TOPIC,
     )
@@ -92,9 +96,11 @@ def require_conversation(actor_id: str, allow_resuming: bool = False):
     return interaction, actor[0]
 
 
-def player_observed_signal() -> bool:
+def player_observed_signal(
+    player_id: str = "PLAYER_1",
+) -> bool:
     belief = load_belief(
-        PLAYER_ID,
+        player_id,
         "NODE_07",
     )
     return (
@@ -106,7 +112,9 @@ def player_observed_signal() -> bool:
     )
 
 
-def available_choices() -> list[dict]:
+def available_choices(
+    player_id: str = "PLAYER_1",
+) -> list[dict]:
     result = [
         {
             "id": "ASK_IDENTITY",
@@ -118,7 +126,7 @@ def available_choices() -> list[dict]:
         },
     ]
 
-    if player_observed_signal():
+    if player_observed_signal(player_id=player_id):
         result.append(
             {
                 "id": "TELL_OBSERVED",
@@ -139,6 +147,7 @@ def conversation_payload(
     interaction_id: str,
     actor_id: str,
     actor_name: str,
+    player_id: str = "PLAYER_1",
 ) -> dict:
     initialize_conversation_turns()
 
@@ -166,17 +175,17 @@ def conversation_payload(
         "turn_id": row[0],
         "line": row[2],
         "response_source": row[3],
-        "choices": available_choices(),
+        "choices": available_choices(player_id=player_id),
     }
 
 
 def start_player_conversation(
     actor_id: str,
     minute: int,
+    player_id: str = "PLAYER_1",
 ) -> dict:
     interaction, actor_name = require_conversation(
-        actor_id,
-        allow_resuming=True,
+        actor_id, allow_resuming=True, player_id=player_id
     )
     initialize_conversation_turns()
 
@@ -233,7 +242,9 @@ def start_player_conversation(
                     minute,
                 ),
             )
-            record_encounter(conn, actor_id, minute, greeting_turn.lastrowid)
+            record_encounter(
+                conn, actor_id, minute, greeting_turn.lastrowid, player_id=player_id
+            )
         if current[0] == "RESUMING":
             conn.execute(
                 """
@@ -244,9 +255,7 @@ def start_player_conversation(
             )
 
     return conversation_payload(
-        interaction.id,
-        actor_id,
-        actor_name,
+        interaction.id, actor_id, actor_name, player_id=player_id
     )
 
 
@@ -274,11 +283,12 @@ def reply_to_player_conversation(
     choice_id: str,
     after_turn_id: int,
     minute: int,
+    player_id: str = "PLAYER_1",
 ) -> dict:
-    interaction, actor_name = require_conversation(actor_id)
+    interaction, actor_name = require_conversation(actor_id, player_id=player_id)
     if choice_id not in CHOICES:
         raise ValueError("UNKNOWN_DIALOGUE_CHOICE")
-    if choice_id == "TELL_OBSERVED" and not player_observed_signal():
+    if choice_id == "TELL_OBSERVED" and not player_observed_signal(player_id=player_id):
         raise ValueError("EVIDENCE_NOT_AVAILABLE")
     initialize_conversation_turns()
     initialize_memory_provenance()
@@ -296,7 +306,9 @@ def reply_to_player_conversation(
     if latest is None:
         raise ValueError("CONVERSATION_NOT_STARTED")
     if latest[0] != after_turn_id:
-        return conversation_payload(interaction.id, actor_id, actor_name)
+        return conversation_payload(
+            interaction.id, actor_id, actor_name, player_id=player_id
+        )
     if latest[1] != actor_id:
         raise ValueError("NOT_PLAYER_TURN")
 
@@ -316,13 +328,13 @@ def reply_to_player_conversation(
             raise ValueError("NO_OPEN_CONVERSATION")
         positions = conn.execute(
             "SELECT id, location FROM agents WHERE id IN (?, ?)",
-            (PLAYER_ID, actor_id),
+            (player_id, actor_id),
         ).fetchall()
         locations = {row[0]: row[1] for row in positions}
         if (
-            PLAYER_ID not in locations
+            player_id not in locations
             or actor_id not in locations
-            or locations[PLAYER_ID] != locations[actor_id]
+            or locations[player_id] != locations[actor_id]
         ):
             raise ValueError("ACTOR_NOT_PRESENT")
         latest = conn.execute(
@@ -345,8 +357,11 @@ def reply_to_player_conversation(
                 VALUES (?, ?, ?, ?, ?)
                 """,
                 (
-                    interaction.id, PLAYER_ID, player_line,
-                    "PLAYER_CHOICE", minute,
+                    interaction.id,
+                    player_id,
+                    player_line,
+                    "PLAYER_CHOICE",
+                    minute,
                 ),
             )
             conn.execute(
@@ -364,9 +379,9 @@ def reply_to_player_conversation(
                 conn,
                 actor_id,
                 f"During conversation {interaction.id}, "
-                f"{PLAYER_ID} said: {player_line}",
+                f"{player_id} said: {player_line}",
                 source_kind="PLAYER_TESTIMONY",
-                source_actor_id=PLAYER_ID,
+                source_actor_id=player_id,
                 origin_turn_id=player_turn.lastrowid,
                 minute=minute,
                 shareable=False,
@@ -378,8 +393,11 @@ def reply_to_player_conversation(
                 VALUES (?, ?, ?, ?, ?)
                 """,
                 (
-                    minute, PLAYER_ID, "DIALOGUE_CHOICE",
-                    interaction.id, choice_id,
+                    minute,
+                    player_id,
+                    "DIALOGUE_CHOICE",
+                    interaction.id,
+                    choice_id,
                 ),
             )
         # Otherwise a concurrent request already committed this turn.
@@ -387,7 +405,7 @@ def reply_to_player_conversation(
         # duplicating turns, memories or events.
 
     return conversation_payload(
-        interaction.id, actor_id, actor_name,
+        interaction.id, actor_id, actor_name, player_id=player_id
     )
 
 
@@ -395,6 +413,7 @@ def pause_player_conversation(
     actor_id: str,
     interaction_id: str,
     minute: int,
+    player_id: str = "PLAYER_1",
 ) -> dict:
     """Pause the player's own conversation without deleting its transcript."""
     initialize_conversation_turns()
@@ -409,7 +428,7 @@ def pause_player_conversation(
         ).fetchone()
         if (
             row is None
-            or row[0] != PLAYER_ID
+            or row[0] != player_id
             or row[1] != actor_id
             or row[2] != CONVERSATION_TOPIC
             or row[3] not in {"OPEN", "PAUSED", "RESUMING"}

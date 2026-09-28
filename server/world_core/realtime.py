@@ -59,11 +59,13 @@ class WorldClock:
     def tick_once(self) -> bool:
         """One independent world decision cycle; returns false when paused."""
         with self.lock:
+            from .online import enabled
+
             recently_visible = (
                 self._last_chat_heartbeat is not None
                 and monotonic() - self._last_chat_heartbeat < 4.5
             )
-            if recently_visible and player_is_in_conversation():
+            if not enabled() and recently_visible and player_is_in_conversation():
                 self._report("PAUSED_ACTIVE_CHAT")
                 return False
             if self._last_chat_heartbeat is not None and not recently_visible:

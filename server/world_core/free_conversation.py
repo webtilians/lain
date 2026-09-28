@@ -54,7 +54,11 @@ def _latest_turn(conn, interaction_id: str):
 
 
 def _is_identical_retry(
-    conn, interaction_id: str, after_turn_id: int, player_line: str,
+    conn,
+    interaction_id: str,
+    after_turn_id: int,
+    player_line: str,
+    player_id: str = "PLAYER_1",
 ) -> bool:
     # Only the immediate next player+agent pair may be replayed.
     # Never report success for a different text or an arbitrarily old turn.
@@ -69,21 +73,25 @@ def _is_identical_retry(
     ).fetchall()
     return (
         len(rows) == 2
-        and rows[0][1] == PLAYER_ID
+        and rows[0][1] == player_id
         and rows[0][2] == player_line
         and rows[0][3] == "PLAYER_FREE_TEXT"
-        and rows[1][1] != PLAYER_ID
+        and rows[1][1] != player_id
     )
 
 
 def say_to_player_conversation(
-    actor_id: str, text: str, after_turn_id: int, minute: int,
+    actor_id: str,
+    text: str,
+    after_turn_id: int,
+    minute: int,
+    player_id: str = "PLAYER_1",
 ) -> dict:
     player_line = validate_player_message(text)
     if not isinstance(after_turn_id, int) or after_turn_id <= 0:
         raise ValueError("INVALID_TURN_ID")
 
-    interaction, actor_name = require_conversation(actor_id)
+    interaction, actor_name = require_conversation(actor_id, player_id=player_id)
     initialize_conversation_turns()
     initialize_memory_provenance()
     initialize_player_claims()
@@ -96,10 +104,10 @@ def say_to_player_conversation(
             raise ValueError("CONVERSATION_NOT_STARTED")
         if latest[0] != after_turn_id:
             if _is_identical_retry(
-                conn, interaction.id, after_turn_id, player_line,
+                conn, interaction.id, after_turn_id, player_line, player_id=player_id
             ):
                 return conversation_payload(
-                    interaction.id, actor_id, actor_name,
+                    interaction.id, actor_id, actor_name, player_id=player_id
                 )
             raise ValueError("STALE_TURN")
         if latest[1] != actor_id:
@@ -148,13 +156,13 @@ def say_to_player_conversation(
         locations = dict(
             conn.execute(
                 "SELECT id, location FROM agents WHERE id IN (?, ?)",
-                (PLAYER_ID, actor_id),
+                (player_id, actor_id),
             ).fetchall()
         )
         if (
-            PLAYER_ID not in locations
+            player_id not in locations
             or actor_id not in locations
-            or locations[PLAYER_ID] != locations[actor_id]
+            or locations[player_id] != locations[actor_id]
         ):
             raise ValueError("ACTOR_NOT_PRESENT")
 
@@ -163,7 +171,7 @@ def say_to_player_conversation(
             raise ValueError("CONVERSATION_NOT_STARTED")
         if latest[0] != after_turn_id:
             if not _is_identical_retry(
-                conn, interaction.id, after_turn_id, player_line,
+                conn, interaction.id, after_turn_id, player_line, player_id=player_id
             ):
                 raise ValueError("STALE_TURN")
         else:
@@ -176,8 +184,11 @@ def say_to_player_conversation(
                 VALUES (?, ?, ?, ?, ?)
                 """,
                 (
-                    interaction.id, PLAYER_ID, player_line,
-                    "PLAYER_FREE_TEXT", minute,
+                    interaction.id,
+                    player_id,
+                    player_line,
+                    "PLAYER_FREE_TEXT",
+                    minute,
                 ),
             )
             npc_turn = conn.execute(
@@ -197,6 +208,7 @@ def say_to_player_conversation(
                 player_line,
                 player_turn.lastrowid,
                 minute,
+                player_id=player_id,
             )
             record_general_claim(
                 conn,
@@ -204,14 +216,15 @@ def say_to_player_conversation(
                 player_line,
                 player_turn.lastrowid,
                 minute,
+                player_id=player_id,
             )
             save_episodic_memory(
                 conn,
                 actor_id,
                 f"During conversation {interaction.id}, "
-                f"{PLAYER_ID} said: {player_line}",
+                f"{player_id} said: {player_line}",
                 source_kind="PLAYER_TESTIMONY",
-                source_actor_id=PLAYER_ID,
+                source_actor_id=player_id,
                 origin_turn_id=player_turn.lastrowid,
                 minute=minute,
                 shareable=False,
@@ -223,8 +236,11 @@ def say_to_player_conversation(
                 VALUES (?, ?, ?, ?, ?)
                 """,
                 (
-                    minute, PLAYER_ID, "DIALOGUE_SAY",
-                    interaction.id, "FREE_TEXT",
+                    minute,
+                    player_id,
+                    "DIALOGUE_SAY",
+                    interaction.id,
+                    "FREE_TEXT",
                 ),
             )
             if proposal is not None:
@@ -243,4 +259,6 @@ def say_to_player_conversation(
     if created_entity_id is not None:
         # This message is emitted only after SQLite commits successfully.
         trace_reality("ENTITY_CREATED_" + created_entity_id)
-    return conversation_payload(interaction.id, actor_id, actor_name)
+    return conversation_payload(
+        interaction.id, actor_id, actor_name, player_id=player_id
+    )

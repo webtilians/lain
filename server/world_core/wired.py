@@ -13,6 +13,7 @@ from .knowledge import (
 
 from .messages import (
     INITIAL_MESSAGE_ID,
+    initial_message_id,
     acknowledge_message,
 )
 from .prologue import stage_for
@@ -78,9 +79,9 @@ def process_wired_message_acknowledgement(
     # The legacy CONNECT button and direct API calls cannot bypass a new
     # game's authored discovery / terminal command. Existing saves have no
     # prologue row and continue to work exactly as before.
-    if (
-        message_id == INITIAL_MESSAGE_ID
-        and stage_for(player_id) not in (None, "CONNECTED")
+    if message_id == initial_message_id(player_id) and stage_for(player_id) not in (
+        None,
+        "CONNECTED",
     ):
         raise ValueError("PROLOGUE_TERMINAL_REQUIRED")
 
@@ -92,10 +93,7 @@ def process_wired_message_acknowledgement(
 
     lead_granted = False
 
-    if (
-        newly_acknowledged
-        and message_id == INITIAL_MESSAGE_ID
-    ):
+    if newly_acknowledged and message_id == initial_message_id(player_id):
         lead_granted = grant_initial_wired_lead(
             player_id=player_id,
             minute=minute,

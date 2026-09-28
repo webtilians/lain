@@ -24,8 +24,18 @@ class AgentContextBuilder:
         retrieval_query: str | None = None,
     ) -> dict:
         agent = self._load_agent(agent_id)
+        conversation = (
+            self._conversation(agent_id, interaction_id)
+            if interaction_id is not None
+            else None
+        )
+        player_id = conversation["initiator_id"] if conversation else "PLAYER_1"
         memory_records = retrieve_memories(
-            agent_id, retrieval_query, self.memory_limit, location=agent[3],
+            agent_id,
+            retrieval_query,
+            self.memory_limit,
+            location=agent[3],
+            player_id=player_id,
         )
 
         context = {
@@ -46,10 +56,14 @@ class AgentContextBuilder:
             },
             "memory": [item["text"] for item in memory_records],
             "memory_records": memory_records,
-            "experiences": experience_context(agent_id, retrieval_query, interaction_id),
-            "player_claims": get_player_claims(agent_id, retrieval_query),
-            "knowledge_timeline": knowledge_timeline(agent_id, retrieval_query),
-            "general_claims": get_general_claims(agent_id, retrieval_query),
+            "experiences": experience_context(
+                agent_id, retrieval_query, interaction_id, player_id
+            ),
+            "player_claims": get_player_claims(agent_id, retrieval_query, player_id),
+            "knowledge_timeline": knowledge_timeline(
+                agent_id, retrieval_query, player_id
+            ),
+            "general_claims": get_general_claims(agent_id, retrieval_query, player_id),
             "goals": {
                 "current": agent[4],
             },
@@ -57,10 +71,6 @@ class AgentContextBuilder:
         }
 
         if interaction_id is not None:
-            conversation = self._conversation(
-                agent_id,
-                interaction_id,
-            )
             context["conversation"] = conversation
             context["situation"]["conversation_with"] = {
                 "id": conversation["initiator_id"],
@@ -70,7 +80,7 @@ class AgentContextBuilder:
             from .residents import resident_context
             context["resident"] = resident_context(agent_id, agent[3])
         from .chapter_one import chapter_actor_context
-        chapter = chapter_actor_context(agent_id)
+        chapter = chapter_actor_context(agent_id, player_id)
         if chapter is not None:
             context["chapter_memory"] = chapter
         return context
@@ -205,10 +215,11 @@ class AgentContextBuilder:
         if interaction is None:
             raise ValueError("INTERACTION_NOT_FOUND")
 
-        if (
-            interaction[2] != agent_id
-            or interaction[1] != "PLAYER_1"
-        ):
+        with get_connection() as conn:
+            initiator = conn.execute(
+                "SELECT controller_type FROM agents WHERE id=?", (interaction[1],)
+            ).fetchone()
+        if interaction[2] != agent_id or initiator != ("HUMAN",):
             raise ValueError("INTERACTION_NOT_AVAILABLE")
 
         with get_connection() as conn:

@@ -332,7 +332,19 @@ class GeneratedActor:
         # The actor uses its own current direct perception, not global
         # knowledge of the player's hidden position.
         if self.seed_goal in {"SEEK_CREATOR", "EXPLORE"}:
-            player_belief = load_actor_location_belief(actor.id, "PLAYER_1")
+            # React only to a human personally perceived at this location.
+            with get_connection() as conn:
+                observed = conn.execute(
+                    """SELECT b.subject_actor_id FROM actor_location_beliefs b
+                    JOIN agents a ON a.id=b.subject_actor_id
+                    WHERE b.observer_id=? AND a.controller_type='HUMAN'
+                      AND b.source='DIRECT_ACTOR_PERCEPTION' AND b.believed_location=?
+                      AND b.updated_minute=? ORDER BY b.subject_actor_id LIMIT 1""",
+                    (actor.id, actor.location, load_simulation_minute()),
+                ).fetchone()
+            player_belief = (
+                load_actor_location_belief(actor.id, observed[0]) if observed else None
+            )
             if (
                 player_belief is not None
                 and player_belief.source == "DIRECT_ACTOR_PERCEPTION"

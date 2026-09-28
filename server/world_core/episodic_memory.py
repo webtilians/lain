@@ -138,8 +138,12 @@ def _terms(text: str) -> set[str]:
 
 
 def retrieve_memories(
-    agent_id: str, query: str | None = None, limit: int = 12,
-    *, location: str | None = None,
+    agent_id: str,
+    query: str | None = None,
+    limit: int = 12,
+    *,
+    location: str | None = None,
+    player_id: str | None = None,
 ) -> list[dict]:
     """Search ONLY this agent's memories; rank matches before recency.
 
@@ -162,9 +166,13 @@ def retrieve_memories(
             LEFT JOIN agent_memory_provenance p ON p.memory_id = a.id
             LEFT JOIN agent_memory_episodes e ON e.memory_id = a.id
             WHERE a.agent_id = ?
+              AND (? IS NULL OR NOT EXISTS (
+                  SELECT 1 FROM agents human WHERE human.id=p.source_actor_id
+                    AND human.controller_type='HUMAN' AND human.id!=?))
+              AND (? IS NULL OR ?='PLAYER_1' OR a.memory NOT LIKE '%PLAYER_1 said:%')
             ORDER BY a.id DESC LIMIT ?
             """,
-            (agent_id, CANDIDATE_LIMIT),
+            (agent_id, player_id, player_id, player_id, player_id, CANDIDATE_LIMIT),
         ).fetchall()
 
     def format_record(row):

@@ -33,6 +33,7 @@ func _ready() -> void:
 	)
 
 	chat_request = HTTPRequest.new()
+	chat_request.max_redirects = 0
 	add_child(chat_request)
 	chat_request.request_completed.connect(
 		_on_chat_request_completed
@@ -239,7 +240,7 @@ func _send_chat_request(
 		)
 
 	var url := (
-		"http://127.0.0.1:8000"
+		ServerConnection.base_url()
 		+ "/api/v1/player/conversations/"
 		+ actor_id
 		+ "/"
@@ -248,9 +249,7 @@ func _send_chat_request(
 
 	var error := chat_request.request(
 		url,
-		[
-			"Content-Type: application/json"
-		],
+		ServerConnection.headers(),
 		HTTPClient.METHOD_POST,
 		JSON.stringify(payload)
 	)

@@ -84,6 +84,9 @@ func _physics_process(
 		"move_forward",
 		"move_backward"
 	)
+	var focus := get_viewport().gui_get_focus_owner()
+	if ServerConnection.is_online() and (focus is LineEdit or focus is TextEdit):
+		input_vector = Vector2.ZERO
 
 	var right := (
 		camera.global_transform.basis.x

@@ -2,7 +2,7 @@ from .beliefs import load_belief
 
 from .database import get_connection
 
-from .messages import initialize_messages
+from .messages import initialize_messages, player_message_id
 
 
 FOLLOWUP_MESSAGE_ID = "MSG_STATION_001"
@@ -13,7 +13,11 @@ def ensure_station_followup(
     minute: int,
 ) -> bool:
 
-    if player_id != "PLAYER_1":
+    with get_connection() as conn:
+        human = conn.execute(
+            "SELECT controller_type FROM agents WHERE id=?", (player_id,)
+        ).fetchone()
+    if human != ("HUMAN",):
         return False
 
     # Comprobamos que el jugador haya ejecutado
@@ -74,7 +78,7 @@ def ensure_station_followup(
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, 0)
             """,
             (
-                FOLLOWUP_MESSAGE_ID,
+                player_message_id(FOLLOWUP_MESSAGE_ID, player_id),
                 player_id,
                 None,
                 "unknown@wired",

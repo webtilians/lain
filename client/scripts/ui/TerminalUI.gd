@@ -69,8 +69,7 @@ func _render_mail(next_snapshot: Dictionary) -> void:
 	var message: Dictionary = messages[0]
 	current_message_id = str(message.get("id", ""))
 	var is_bootstrap := (
-		current_message_id
-		== "MSG_BOOTSTRAP_001"
+		current_message_id.begins_with("MSG_BOOTSTRAP_001")
 	)
 	sender_label.text = "FROM: %s" % message.get("sender", "UNKNOWN")
 	subject_label.text = "SUBJECT: %s" % message.get("subject", "")

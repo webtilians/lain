@@ -16,6 +16,7 @@ config/features=PackedStringArray("4.7")
 
 [autoload]
 
+ServerConnection="*res://scripts/network/ServerConnection.gd"
 WorldApi="*res://scripts/network/WorldApi.gd"
 SceneRouter="*res://scripts/core/SceneRouter.gd"
 EventDialog="*res://scripts/ui/EventDialog.gd"
@@ -26,6 +27,7 @@ GraphicsDirector="*res://scripts/art/GraphicsDirector.gd"
 ChapterOne="*res://scripts/ui/ChapterOne.gd"
 NetworkConflict="*res://scripts/ui/NetworkConflict.gd"
 Workshop="*res://scripts/ui/Workshop.gd"
+OnlinePresence="*res://scripts/network/OnlinePresence.gd"
 
 [display]
 

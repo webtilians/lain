@@ -206,6 +206,8 @@ class Simulation:
                 self.player,
         }
 
+        self.refresh_human_players()
+
         # Rehydrate generated actors on restart; the seeded NPCs and the
         # player keep their existing identity and controller contracts.
         self.refresh_generated_actors()
@@ -238,10 +240,27 @@ class Simulation:
         from .code_exchange import initialize_exchange
         initialize_exchange()
 
-        ensure_station_followup(
-            player_id=self.player.id,
-            minute=self.minute,
-        )
+        for person in self.all_agents.values():
+            if person.controller_type == "HUMAN":
+                ensure_station_followup(player_id=person.id, minute=self.minute)
+
+    def refresh_human_players(self):
+        with get_connection() as conn:
+            people = conn.execute(
+                "SELECT id,name,faction,location,goal FROM agents WHERE controller_type='HUMAN'"
+            ).fetchall()
+        for actor_id, name, faction, location, goal in people:
+            if actor_id not in self.all_agents:
+                self.all_agents[actor_id] = load_or_create_agent(
+                    Agent(
+                        id=actor_id,
+                        name=name,
+                        faction=faction,
+                        location=location,
+                        goal=goal,
+                        controller_type="HUMAN",
+                    )
+                )
 
     def refresh_generated_actors(self):
         """Discover persistent NPC-created entities, including mid-session births."""
@@ -371,6 +390,14 @@ class Simulation:
         for agent in (
             self.all_agents.values()
         ):
+            from .online import enabled, is_active
+
+            if (
+                enabled()
+                and agent.controller_type == "HUMAN"
+                and not is_active(agent.id)
+            ):
+                continue
 
             for node in (
                 self.nodes.values()
@@ -442,6 +469,14 @@ class Simulation:
         for agent in (
             self.all_agents.values()
         ):
+            from .online import enabled, is_active
+
+            if (
+                enabled()
+                and agent.controller_type == "HUMAN"
+                and not is_active(agent.id)
+            ):
+                continue
 
             decay_situation_beliefs(
                 agent_id=agent.id,
@@ -596,8 +631,13 @@ class Simulation:
     ):
 
         intents = []
+        from .online import busy_npcs
+
+        busy = busy_npcs()
 
         for actor in self.ai_actors:
+            if actor.agent.id in busy:
+                continue
 
             agent = actor.agent
 
@@ -715,10 +755,7 @@ class Simulation:
         # para el jugador humano.
         # Los agentes autónomos conservan su coste.
 
-        if (
-            agent.id == "PLAYER_1"
-            and action == "MOVE"
-        ):
+        if agent.controller_type == "HUMAN" and action == "MOVE":
             required_energy = 0.0
 
         else:
@@ -740,7 +777,7 @@ class Simulation:
         if action == "MOVE":
             # Only a FRESH opted-in player save is held at the boundary.
             # Existing saved games and autonomous NPCs retain their routes.
-            if agent.id == self.player.id:
+            if agent.controller_type == "HUMAN":
                 allowed, reason = gate_move(agent.id, intent.target)
                 if not allowed:
                     return allowed, reason
@@ -800,7 +837,7 @@ class Simulation:
             return True, ""
 
         if action in {"BROADCAST_TRACE", "ARCHIVE_TRACE"}:
-            if agent.id != self.player.id:
+            if agent.controller_type != "HUMAN":
                 return False, "PLAYER_ONLY_CASE_CHOICE"
             return validate_case_choice(agent.id, action, agent.location, intent.target)
 
@@ -1056,7 +1093,7 @@ class Simulation:
                 # Solo los agentes autónomos consumen
                 # energía al desplazarse.
 
-                if agent.id != "PLAYER_1":
+                if agent.controller_type != "HUMAN":
 
                     agent.energy = max(
                         0.0,
@@ -1102,23 +1139,16 @@ class Simulation:
                     else "UNKNOWN"
                 )
 
-                interaction, created = (
-                    create_or_get_interaction(
-                        initiator_id=agent.id,
-                        recipient_id=target,
-
-                        topic=(
-                            "PLAYER_INITIATED_CONVERSATION"
-                            if agent.id == self.player.id
-                            else "UNAUTHORIZED_SIGNAL_MANIPULATION"
-                        ),
-
-                        source_goal=(
-                            source_goal
-                        ),
-
-                        minute=self.minute,
-                    )
+                interaction, created = create_or_get_interaction(
+                    initiator_id=agent.id,
+                    recipient_id=target,
+                    topic=(
+                        "PLAYER_INITIATED_CONVERSATION"
+                        if agent.controller_type == "HUMAN"
+                        else "UNAUTHORIZED_SIGNAL_MANIPULATION"
+                    ),
+                    source_goal=(source_goal),
+                    minute=self.minute,
                 )
 
                 details = (
@@ -1382,8 +1412,11 @@ class Simulation:
 
             # An accepted direct investigation (not an OBSERVE or rumor)
             # is the only way to unlock this player's persistent case.
-            if (action == "INVESTIGATE" and agent.id == self.player.id
-                    and target == "NODE_07"):
+            if (
+                action == "INVESTIGATE"
+                and agent.controller_type == "HUMAN"
+                and target == "NODE_07"
+            ):
                 if discover_station_echo(agent.id, self.minute):
                     record_event(
                         minute=self.minute, actor_id=agent.id,
@@ -1520,10 +1553,9 @@ class Simulation:
             intents
         )
 
-        ensure_station_followup(
-            player_id=self.player.id,
-            minute=self.minute,
-        )
+        for person in self.all_agents.values():
+            if person.controller_type == "HUMAN":
+                ensure_station_followup(player_id=person.id, minute=self.minute)
 
         evaluate_nodes(
             world=self.world.get_state(),

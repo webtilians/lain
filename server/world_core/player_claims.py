@@ -58,6 +58,7 @@ def record_player_claim(
     player_text: str,
     player_turn_id: int,
     minute: int,
+    player_id: str = "PLAYER_1",
 ) -> None:
     value = extract_password_claim(player_text)
     if value is None:
@@ -69,7 +70,7 @@ def record_player_claim(
             recipient_id, speaker_id, claim_key, claim_value,
             origin_turn_id, minute, source_kind
         )
-        VALUES (?, 'PLAYER_1', 'IN_GAME_PASSWORD', ?, ?, ?, 'PLAYER_TESTIMONY')
+        VALUES (?, ?, 'IN_GAME_PASSWORD', ?, ?, ?, 'PLAYER_TESTIMONY')
         ON CONFLICT(recipient_id, speaker_id, claim_key)
         DO UPDATE SET
             claim_value = excluded.claim_value,
@@ -78,11 +79,14 @@ def record_player_claim(
             source_kind = excluded.source_kind
         WHERE excluded.origin_turn_id > agent_player_claims.origin_turn_id
         """,
-        (recipient_id, value, player_turn_id, minute),
+        (recipient_id, player_id, value, player_turn_id, minute),
     )
 
 
-def _legacy_password_claim(agent_id: str):
+def _legacy_password_claim(
+    agent_id: str,
+    player_id: str = "PLAYER_1",
+):
     """Read D7/D8 save files without changing their old transcripts.
 
     Only first-person, explicit password assignment by the player counts.
@@ -96,12 +100,12 @@ def _legacy_password_claim(agent_id: str):
             FROM player_conversation_turns t
             JOIN interactions i ON i.id = t.interaction_id
             WHERE i.recipient_id = ?
-              AND i.initiator_id = 'PLAYER_1'
+              AND i.initiator_id = ?
               AND i.topic = 'PLAYER_INITIATED_CONVERSATION'
-              AND t.speaker_id = 'PLAYER_1'
+              AND t.speaker_id = ?
             ORDER BY t.id DESC LIMIT 1000
             """,
-            (agent_id,),
+            (agent_id, player_id, player_id),
         ).fetchall()
     for turn_id, text, minute in row:
         value = extract_password_claim(text)
@@ -111,7 +115,9 @@ def _legacy_password_claim(agent_id: str):
 
 
 def get_player_claims(
-    agent_id: str, query: str | None = None,
+    agent_id: str,
+    query: str | None = None,
+    player_id: str = "PLAYER_1",
 ) -> list[dict]:
     if not asks_about_password(query or ""):
         return []
@@ -122,21 +128,23 @@ def get_player_claims(
             SELECT claim_value, origin_turn_id, minute, source_kind
             FROM agent_player_claims
             WHERE recipient_id = ?
-              AND speaker_id = 'PLAYER_1'
+              AND speaker_id = ?
               AND claim_key = 'IN_GAME_PASSWORD'
             """,
-            (agent_id,),
+            (agent_id, player_id),
         ).fetchone()
-    legacy = _legacy_password_claim(agent_id)
+    legacy = _legacy_password_claim(agent_id, player_id=player_id)
     if legacy is not None and (row is None or legacy[0] > row[1]):
         row = (legacy[1], legacy[0], legacy[2], "LEGACY_PLAYER_TESTIMONY")
     if row is None:
         return []
-    return [{
-        "claim_key": "IN_GAME_PASSWORD",
-        "claim_value": row[0],
-        "origin_turn_id": row[1],
-        "minute": row[2],
-        "source_kind": row[3],
-        "source_actor_id": "PLAYER_1",
-    }]
+    return [
+        {
+            "claim_key": "IN_GAME_PASSWORD",
+            "claim_value": row[0],
+            "origin_turn_id": row[1],
+            "minute": row[2],
+            "source_kind": row[3],
+            "source_actor_id": player_id,
+        }
+    ]

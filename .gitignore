@@ -49,3 +49,10 @@ node_modules/
 .dev.vars*
 ai-session.json
 ai-session.tmp
+
+# Owner-only online world and individual access files
+online-world.db*
+/lain-online.json
+/online-data/
+*.host.lock
+/LAIN-Online-*.zip

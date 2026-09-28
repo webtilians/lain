@@ -103,8 +103,12 @@ def initialize_general_claims() -> None:
 
 
 def record_general_claim(
-    conn, recipient_id: str, player_text: str,
-    player_turn_id: int, minute: int,
+    conn,
+    recipient_id: str,
+    player_text: str,
+    player_turn_id: int,
+    minute: int,
+    player_id: str = "PLAYER_1",
 ) -> None:
     claim = parse_personal_statement(player_text)
     if claim is None:
@@ -115,7 +119,7 @@ def record_general_claim(
         INSERT INTO agent_player_general_claims
         (recipient_id, speaker_id, topic_key, topic_label, reported_value,
          reported_text, origin_turn_id, received_minute, source_kind)
-        VALUES (?, 'PLAYER_1', ?, ?, ?, ?, ?, ?, 'PLAYER_TESTIMONY')
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'PLAYER_TESTIMONY')
         ON CONFLICT(recipient_id, speaker_id, topic_key)
         DO UPDATE SET
             topic_label=excluded.topic_label,
@@ -126,11 +130,15 @@ def record_general_claim(
             source_kind=excluded.source_kind
         WHERE excluded.origin_turn_id > agent_player_general_claims.origin_turn_id
         """,
-        (recipient_id, key, topic, value, statement, player_turn_id, minute),
+        (recipient_id, player_id, key, topic, value, statement, player_turn_id, minute),
     )
 
 
-def get_general_claims(agent_id: str, query: str | None) -> list[dict]:
+def get_general_claims(
+    agent_id: str,
+    query: str | None,
+    player_id: str = "PLAYER_1",
+) -> list[dict]:
     topic = requested_topic(query)
     if topic is None:
         return []
@@ -141,10 +149,10 @@ def get_general_claims(agent_id: str, query: str | None) -> list[dict]:
             SELECT topic_label, reported_value, reported_text,
                    origin_turn_id, received_minute, source_kind
             FROM agent_player_general_claims
-            WHERE recipient_id = ? AND speaker_id = 'PLAYER_1'
+            WHERE recipient_id = ? AND speaker_id = ?
               AND topic_key = ?
             """,
-            (agent_id, topic),
+            (agent_id, player_id, topic),
         ).fetchone()
 
         # D7 and D8 saves may contain pre-index player statements. This
@@ -154,12 +162,12 @@ def get_general_claims(agent_id: str, query: str | None) -> list[dict]:
             SELECT t.id, t.text, t.minute
             FROM player_conversation_turns t
             JOIN interactions i ON i.id = t.interaction_id
-            WHERE i.recipient_id = ? AND i.initiator_id = 'PLAYER_1'
+            WHERE i.recipient_id = ? AND i.initiator_id = ?
               AND i.topic = 'PLAYER_INITIATED_CONVERSATION'
-              AND t.speaker_id = 'PLAYER_1'
+              AND t.speaker_id = ?
             ORDER BY t.id DESC LIMIT 1000
             """,
-            (agent_id,),
+            (agent_id, player_id, player_id),
         ).fetchall()
 
     for turn_id, text, minute in legacy:
@@ -173,13 +181,15 @@ def get_general_claims(agent_id: str, query: str | None) -> list[dict]:
             break
     if current is None:
         return []
-    return [{
-        "topic_key": topic,
-        "topic_label": current[0],
-        "reported_value": current[1],
-        "reported_text": current[2],
-        "origin_turn_id": current[3],
-        "received_minute": current[4],
-        "source_kind": current[5],
-        "source_actor_id": "PLAYER_1",
-    }]
+    return [
+        {
+            "topic_key": topic,
+            "topic_label": current[0],
+            "reported_value": current[1],
+            "reported_text": current[2],
+            "origin_turn_id": current[3],
+            "received_minute": current[4],
+            "source_kind": current[5],
+            "source_actor_id": player_id,
+        }
+    ]

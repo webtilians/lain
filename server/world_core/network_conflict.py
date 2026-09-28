@@ -79,8 +79,12 @@ def enroll_connected_players():
     with connection() as c:
         if not exists(c):
             return
-        rows=c.execute("""SELECT DISTINCT a.id FROM agents a JOIN world_messages m ON m.recipient_id=a.id
-            WHERE a.controller_type='HUMAN' AND m.id='MSG_BOOTSTRAP_001' AND m.acknowledged=1""").fetchall()
+        rows = c.execute(
+            """SELECT DISTINCT a.id FROM agents a JOIN world_messages m ON m.recipient_id=a.id
+            WHERE a.controller_type='HUMAN' AND m.id=CASE WHEN a.id='PLAYER_1'
+                THEN 'MSG_BOOTSTRAP_001' ELSE 'MSG_BOOTSTRAP_001:' || a.id END
+                AND m.acknowledged=1"""
+        ).fetchall()
     for (actor,) in rows:
         enroll_player(actor)
 

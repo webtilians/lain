@@ -14,6 +14,7 @@ var notice_until := 0
 func _ready() -> void:
 	layer=94
 	request=HTTPRequest.new()
+	request.max_redirects=0
 	request.timeout=15
 	add_child(request)
 	request.request_completed.connect(_completed)
@@ -73,8 +74,8 @@ func _dispatch() -> void:
 	busy=true
 	WorldApi.begin_external_mutation()
 	EventDialog.show_choices(OWNER,"WIRED","Estableciendo enlace...",[])
-	var error:=request.request("http://127.0.0.1:8000/api/v1/network/action",
-		PackedStringArray(["Content-Type: application/json"]),HTTPClient.METHOD_POST,JSON.stringify(pending))
+	var error:=request.request(ServerConnection.base_url() + "/api/v1/network/action",
+		ServerConnection.headers(),HTTPClient.METHOD_POST,JSON.stringify(pending))
 	if error!=OK:
 		busy=false
 		WorldApi.end_external_mutation()

@@ -5,7 +5,7 @@ extends Control
 func _ready() -> void:
 	WorldApi.api_error.connect(_on_api_error)
 	WorldApi.snapshot_updated.connect(_on_snapshot_updated)
-	status.text = "INICIANDO SISTEMA LOCAL..."
+	status.text = "CONECTANDO AL MUNDO COMPARTIDO..." if ServerConnection.is_online() else "INICIANDO SISTEMA LOCAL..."
 	WorldApi.request_state()
 
 func _on_snapshot_updated(snapshot: Dictionary) -> void:
