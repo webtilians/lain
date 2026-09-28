@@ -1,10 +1,12 @@
 """Owner console for a small invited online world. Never edits offline saves."""
 
 import argparse
+from contextlib import closing
 import json
 import os
 from pathlib import Path
 import re
+import sqlite3
 
 
 FEATURES = (
@@ -28,6 +30,31 @@ def configure(directory: Path):
     for flag in FEATURES:
         os.environ[flag] = "1"
     os.environ.setdefault("LAIN_LLM_ENABLED", "0")
+
+
+def list_players(directory: Path):
+    database = directory / "online-world.db"
+    rows = []
+    if database.exists():
+        # Listing must not create a partial world or change a running server.
+        with closing(
+            sqlite3.connect(database.resolve().as_uri() + "?mode=ro", uri=True)
+        ) as conn:
+            tables = {
+                row[0]
+                for row in conn.execute(
+                    "SELECT name FROM sqlite_master WHERE type='table'"
+                )
+            }
+            if {"agents", "online_credentials"} <= tables:
+                rows = conn.execute(
+                    """SELECT a.id,a.name,o.revoked FROM online_credentials o
+                    JOIN agents a ON a.id=o.actor_id ORDER BY o.created_at,a.id"""
+                ).fetchall()
+    if not rows:
+        print("Todavía no hay jugadores. Crea el primero con add-player.")
+    for actor_id, name, revoked in rows:
+        print(actor_id, name, "REVOCADO" if revoked else "ACTIVO")
 
 
 def main():
@@ -63,10 +90,12 @@ def main():
     revoke = commands.add_parser("revoke-player")
     revoke.add_argument("--id", required=True)
     args = parser.parse_args()
+    if args.command == "list-players":
+        list_players(args.data_dir)
+        return
     configure(args.data_dir)
     from server.world_core import online
     from server.world_core.simulation import Simulation
-    from server.world_core.database import get_connection
 
     if args.command == "serve":
         if args.ai_gateway:
@@ -145,16 +174,8 @@ def main():
         )
     else:
         online.initialize()
-        if args.command == "revoke-player":
-            online.revoke_player(args.id)
-            print("Acceso revocado. Se conserva el progreso del jugador.")
-        else:
-            with get_connection() as conn:
-                for row in conn.execute(
-                    """SELECT a.id,a.name,o.revoked FROM online_credentials o
-                    JOIN agents a ON a.id=o.actor_id ORDER BY o.created_at,a.id"""
-                ):
-                    print(row[0], row[1], "REVOCADO" if row[2] else "ACTIVO")
+        online.revoke_player(args.id)
+        print("Acceso revocado. Se conserva el progreso del jugador.")
 
 
 if __name__ == "__main__":

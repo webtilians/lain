@@ -12,6 +12,7 @@ var _actor_id := ""
 func _ready() -> void:
 	_request = HTTPRequest.new()
 	_request.max_redirects = 0
+	_request.timeout = 15.0
 	add_child(_request)
 	_request.request_completed.connect(_on_completed)
 

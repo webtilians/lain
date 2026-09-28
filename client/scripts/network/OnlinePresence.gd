@@ -155,6 +155,9 @@ func _received(result: int, code: int, _headers: PackedStringArray, body: Packed
 		if _seen_messages.has(id):
 			continue
 		_seen_messages[id] = true
+		# The server returns at most 20 recent messages; bound the session cache.
+		while _seen_messages.size() > 100:
+			_seen_messages.erase(_seen_messages.keys()[0])
 		_history.append("%s: %s" % [message.get("name", ""), message.get("text", "")])
 		while _history.size() > 3:
 			_history.pop_front()

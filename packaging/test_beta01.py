@@ -30,6 +30,21 @@ check_zip = load_script("check_zip.py")
 
 
 class Beta01PackagingTests(unittest.TestCase):
+
+    @unittest.skipUnless(os.name == "nt", "Windows launcher locking")
+    def test_second_launcher_reports_existing_instance_without_crashing(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            data = Path(temporary)
+            first = launcher.acquire_lock(data)
+            self.assertIsNotNone(first)
+            try:
+                self.assertIsNone(launcher.acquire_lock(data))
+            finally:
+                launcher.release_lock(first)
+            reopened = launcher.acquire_lock(data)
+            self.assertIsNotNone(reopened)
+            launcher.release_lock(reopened)
+
     def test_local_save_is_forced_outside_developer_repository(self):
         with tempfile.TemporaryDirectory() as temporary:
             with patch.dict(

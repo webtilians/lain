@@ -97,7 +97,9 @@ class WorldClock:
         self._stop.set()
         thread = self._thread
         if thread is not None:
-            thread.join(timeout=3.0)
+            # The lifespan releases the world's OS lock after stop returns.
+            # Never let a replacement host start while this tick can still write.
+            thread.join()
             self._thread = None
             print("WORLD CLOCK // STOPPED", flush=True)
 

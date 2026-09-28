@@ -34,6 +34,8 @@ func _ready() -> void:
 
 	chat_request = HTTPRequest.new()
 	chat_request.max_redirects = 0
+	# Allow the bounded local LLM retries and entity extraction, but never wait forever.
+	chat_request.timeout = 180.0
 	add_child(chat_request)
 	chat_request.request_completed.connect(
 		_on_chat_request_completed

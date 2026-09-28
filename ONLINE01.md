@@ -1,6 +1,6 @@
 # LAIN Online 0.1 — beta privada
 
-Rama `experiment/online-0.1-shared-world`, basada en la beta de IA compartida `8011e95`. No se mezcla con ninguna rama anterior.
+Rama actual revisada: `experiment/online-0.1-review-fixes`, basada en `fee68e8` de `experiment/online-0.1-shared-world`. No se mezcla con ninguna rama anterior. Correcciones y resultados en [REVIEW_ONLINE01.md](REVIEW_ONLINE01.md).
 
 Esta versión permite que dos o tres personas entren en un mismo mundo, se vean en el barrio y hablen con Enter. Cada acceso conserva su prólogo, inventario, diario y conversaciones. El anfitrión guarda el mundo; cerrar un cliente no cierra el servidor. La IA compartida se puede conectar después.
 

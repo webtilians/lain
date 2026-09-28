@@ -12,8 +12,9 @@ class DeterministicDialogueEngine:
             ),
             None,
         )
+        player_id = (context.get("conversation") or {}).get("initiator_id", "PLAYER_1")
         player_claimed_observation = any(
-            "PLAYER_1 said: He observado la señal." in memory
+            f"{player_id} said: He observado la señal." in memory
             for memory in context["memory"]
         )
 

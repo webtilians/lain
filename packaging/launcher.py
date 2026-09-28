@@ -49,12 +49,12 @@ def acquire_lock(data: Path):
 
     path = data / "running.lock"
     handle = path.open("a+b")
-    handle.seek(0)
-    if not handle.read(1):
-        handle.write(b"0")
-        handle.flush()
-    handle.seek(0)
     try:
+        # Windows locks also forbid reading the byte held by another instance.
+        if os.fstat(handle.fileno()).st_size == 0:
+            handle.write(b"0")
+            handle.flush()
+        handle.seek(0)
         msvcrt.locking(handle.fileno(), msvcrt.LK_NBLCK, 1)
     except OSError:
         handle.close()

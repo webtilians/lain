@@ -6,6 +6,7 @@ on:
       - experiment/distribution-0.1-windows-beta
       - experiment/distribution-0.2-shared-ai
       - experiment/online-0.1-shared-world
+      - experiment/online-0.1-review-fixes
   pull_request:
     branches:
       - experiment/wired-0.7-code-exchange

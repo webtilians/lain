@@ -2,6 +2,7 @@
 
 from concurrent.futures import ThreadPoolExecutor
 import json
+import importlib
 import threading
 import uuid
 
@@ -15,6 +16,64 @@ from server.world_core.llm_dialogue import DialogueReply
 from server.world_core.messages import initial_message_id
 from server.world_core.realtime import WorldClock
 from server.world_core.simulation import Simulation
+
+
+def test_online_npc_recognizes_the_current_players_signal_testimony(world):
+    from server.world_core.beliefs import save_belief
+    from server.world_core.models import NodeBelief
+
+    client, runtime, alice, bob, headers = world
+    for actor in (alice, bob, "AGENT_K"):
+        place(runtime, actor, "APARTMENT_DISTRICT")
+    save_belief(
+        NodeBelief(
+            alice, "NODE_07", "STATION", 0.6, 0.85, "DIRECT_PERCEPTION", runtime.minute
+        )
+    )
+    turn = conversation(client, headers[alice])
+    for expected in ("testimonio", "Recuerdo"):
+        response = client.post(
+            "/api/v1/player/conversations/AGENT_K/reply",
+            headers=headers[alice],
+            json={"choice_id": "TELL_OBSERVED", "after_turn_id": turn["turn_id"]},
+        )
+        assert response.status_code == 200, response.text
+        turn = response.json()
+        assert expected in turn["line"]
+    other = conversation(client, headers[bob])
+    response = client.post(
+        "/api/v1/player/conversations/AGENT_K/reply",
+        headers=headers[bob],
+        json={"choice_id": "ASK_SIGNAL", "after_turn_id": other["turn_id"]},
+    )
+    assert "Recuerdo" not in response.json()["line"]
+
+
+def test_chat_ids_remain_unique_when_server_memory_is_restarted(world):
+    client, runtime, alice, bob, headers = world
+    for actor in (alice, bob):
+        place(runtime, actor, "APARTMENT_DISTRICT")
+        presence(client, headers[actor])
+    assert (
+        client.post(
+            "/api/v1/online/chat", headers=headers[alice], json={"text": "Antes"}
+        ).status_code
+        == 200
+    )
+    old_id = presence(client, headers[bob]).json()["chat"][-1]["id"]
+    importlib.reload(online)
+    for actor in (alice, bob):
+        presence(client, headers[actor])
+    assert (
+        client.post(
+            "/api/v1/online/chat", headers=headers[alice], json={"text": "Después"}
+        ).status_code
+        == 200
+    )
+    new_id = presence(client, headers[bob]).json()["chat"][-1]["id"]
+    assert (
+        old_id != new_id
+    ), "Clients deduplicate by id; reused ids hide new chat after reconnecting"
 
 
 @pytest.fixture

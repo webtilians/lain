@@ -1,4 +1,4 @@
-LAIN — ONLINE 0.1 PARA WINDOWS (64 BITS)
+LAIN — ONLINE 0.1 REVISIÓN 1 PARA WINDOWS (64 BITS)
 =======================================
 
 Extrae TODO el ZIP en una carpeta. Abre LAIN.exe desde esa carpeta.
@@ -50,5 +50,6 @@ vacias. Esta version no esta firmada digitalmente: descargala solo del
 enlace que te facilite el autor.
 
 Instrucciones del anfitrion: ONLINE01.md, en la rama
-experiment/online-0.1-shared-world del repositorio webtilians/lain.
+experiment/online-0.1-review-fixes del repositorio webtilians/lain.
+Correcciones y pruebas de esta revisión: REVIEW_ONLINE01.md.
 Origen de materiales y recursos: documentado en ese repositorio.

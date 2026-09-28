@@ -22,7 +22,6 @@ _presence = {}
 _connections = {}
 _chat = deque(maxlen=100)
 _limits = defaultdict(deque)
-_chat_sequence = 0
 PRESENCE_TTL = 12
 PRIVATE_ROOMS = {"APARTMENT"}
 
@@ -279,7 +278,6 @@ def busy_npcs():
 
 
 def send_chat(actor_id, text):
-    global _chat_sequence
     text = text.strip()
     if not 1 <= len(text) <= 240 or any(ord(ch) < 32 for ch in text):
         raise ValueError("INVALID_CHAT_MESSAGE")
@@ -290,7 +288,6 @@ def send_chat(actor_id, text):
             raise ValueError("PLAYER_NOT_PRESENT")
         if sender["location"] in PRIVATE_ROOMS:
             raise ValueError("PRIVATE_ROOM")
-        _chat_sequence += 1
         recipients = {
             actor
             for actor, item in _presence.items()
@@ -299,7 +296,9 @@ def send_chat(actor_id, text):
         }
         _chat.append(
             dict(
-                id=_chat_sequence,
+                # Clients retain seen IDs while reconnecting. A restarted host
+                # must not reuse IDs for different messages.
+                id=uuid.uuid4().hex,
                 actor_id=actor_id,
                 name=sender["name"],
                 text=text,
