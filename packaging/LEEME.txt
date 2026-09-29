@@ -1,5 +1,5 @@
-LAIN — ONLINE 0.1 REVISIÓN 1 PARA WINDOWS (64 BITS)
-=======================================
+LAIN — ONLINE 0.1 + VISUAL 0.11 PARA WINDOWS (64 BITS)
+======================================================
 
 Extrae TODO el ZIP en una carpeta. Abre LAIN.exe desde esa carpeta.
 No necesitas instalar Python ni Godot.
@@ -24,6 +24,12 @@ Deja vacios server_url y player_token en lain-online.json.
 LAIN.exe abrira su servidor local. Conserva tu partida anterior en:
 %LOCALAPPDATA%\LAIN\Beta01\save.db
 Cerrar el juego cierra tambien ese servidor local.
+
+GRAFICOS
+El barrio usa iluminacion y materiales realistas. Hace falta una tarjeta
+grafica compatible con Vulkan (GeForce GTX 900 / Radeon RX 400 o mejor).
+F6 alterna Ligera, Equilibrada y Alta. Si va lento, usa Ligera.
+Si la pantalla sale negra, actualiza el controlador de la grafica.
 
 CONTROLES
 WASD: moverse. E: interactuar. J: diario. F6: calidad grafica.
