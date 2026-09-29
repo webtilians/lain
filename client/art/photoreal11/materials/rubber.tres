@@ -1,0 +1,6 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[resource]
+resource_name = "PR11_rubber"
+albedo_color = Color(0.078431375, 0.078431375, 0.078431375, 1)
+roughness = 0.85

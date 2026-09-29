@@ -5,7 +5,7 @@
 [ext_resource type="Script" path="res://scripts/world/ActorSpawner.gd" id="actors"]
 [ext_resource type="Script" path="res://scripts/world/PrologueDistrictEntrances.gd" id="doors"]
 [ext_resource type="Script" path="res://scripts/art/CityPresentation.gd" id="presentation"]
-[ext_resource type="PackedScene" path="res://art/reference09/Neighborhood.tscn" id="city"]
+[ext_resource type="PackedScene" path="res://art/photoreal11/Neighborhood.tscn" id="city"]
 [ext_resource type="PackedScene" path="res://art/characters/LainSlender.tscn" id="avatar"]
 [ext_resource type="PackedScene" path="res://scenes/ui/RetroOverlay.tscn" id="overlay"]
 
@@ -40,6 +40,7 @@ environment = SubResource("DistrictEnvironment")
 
 [node name="PrologueEntrances" type="Node3D" parent="."]
 script = ExtResource("doors")
+visible_doors = false
 
 [node name="Player" type="CharacterBody3D" parent="."]
 position = Vector3(-12, 0.91, 5.7)

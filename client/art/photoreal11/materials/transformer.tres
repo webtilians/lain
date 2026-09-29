@@ -1,0 +1,7 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[resource]
+resource_name = "PR11_transformer"
+albedo_color = Color(0.6039216, 0.61960787, 0.61960787, 1)
+metallic = 0.45
+roughness = 0.5

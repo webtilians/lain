@@ -1,0 +1,23 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[ext_resource type="Texture2D" path="res://art/photoreal11/textures/concrete_pavement/concrete_pavement_diff_2k.jpg" id="1_vm6tu"]
+[ext_resource type="Texture2D" path="res://art/photoreal11/textures/concrete_pavement/concrete_pavement_arm_2k.jpg" id="2_x7cc4"]
+[ext_resource type="Texture2D" path="res://art/photoreal11/textures/concrete_pavement/concrete_pavement_nor_gl_2k.jpg" id="3_ty3bp"]
+
+[resource]
+resource_name = "PR11_sidewalk"
+albedo_color = Color(0.8156863, 0.8, 0.76862746, 1)
+albedo_texture = ExtResource("1_vm6tu")
+roughness_texture = ExtResource("2_x7cc4")
+roughness_texture_channel = 1
+normal_enabled = true
+normal_scale = 0.6
+normal_texture = ExtResource("3_ty3bp")
+ao_enabled = true
+ao_light_affect = 0.1
+ao_texture = ExtResource("2_x7cc4")
+uv1_scale = Vector3(0.5555556, 0.5555556, 0.5555556)
+uv1_triplanar = true
+uv1_triplanar_sharpness = 8.0
+uv1_world_triplanar = true
+texture_filter = 5

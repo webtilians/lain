@@ -1,0 +1,133 @@
+[remap]
+
+importer="scene"
+importer_version=1
+type="PackedScene"
+uid="uid://d1jjguvnbnwmj"
+path="res://.godot/imported/blk_skyline3.glb-30885c34e1ca0ccacbcf43fc06033120.scn"
+
+[deps]
+
+source_file="res://art/photoreal11/buildings/blk_skyline3.glb"
+dest_files=["res://.godot/imported/blk_skyline3.glb-30885c34e1ca0ccacbcf43fc06033120.scn"]
+
+[params]
+
+nodes/root_type=""
+nodes/root_name=""
+nodes/root_script=null
+mesh_library/use_node_names_as_mesh_names=false
+array_mesh/deduplicate_surfaces=true
+nodes/apply_root_scale=true
+nodes/root_scale=1.0
+nodes/import_as_skeleton_bones=false
+nodes/use_name_suffixes=true
+nodes/use_node_type_suffixes=true
+meshes/ensure_tangents=true
+meshes/generate_lods=true
+meshes/create_shadow_meshes=true
+meshes/light_baking=1
+meshes/lightmap_texel_size=0.2
+meshes/force_disable_compression=false
+skins/use_named_skins=true
+animation/import=true
+animation/fps=30
+animation/trimming=false
+animation/remove_immutable_tracks=true
+animation/import_rest_as_RESET=false
+import_script/path=""
+materials/extract=0
+materials/extract_format=0
+materials/extract_path=""
+_subresources={
+"materials": {
+"alu": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://art/photoreal11/materials/alu.tres",
+"use_external/path": "res://art/photoreal11/materials/alu.tres"
+},
+"alu_dark": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://art/photoreal11/materials/alu_dark.tres",
+"use_external/path": "res://art/photoreal11/materials/alu_dark.tres"
+},
+"awning_blue": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://art/photoreal11/materials/awning_blue.tres",
+"use_external/path": "res://art/photoreal11/materials/awning_blue.tres"
+},
+"awning_red": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://art/photoreal11/materials/awning_red.tres",
+"use_external/path": "res://art/photoreal11/materials/awning_red.tres"
+},
+"concrete": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://art/photoreal11/materials/concrete.tres",
+"use_external/path": "res://art/photoreal11/materials/concrete.tres"
+},
+"dark": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://art/photoreal11/materials/dark.tres",
+"use_external/path": "res://art/photoreal11/materials/dark.tres"
+},
+"door_steel": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://art/photoreal11/materials/door_steel.tres",
+"use_external/path": "res://art/photoreal11/materials/door_steel.tres"
+},
+"foundation": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://art/photoreal11/materials/foundation.tres",
+"use_external/path": "res://art/photoreal11/materials/foundation.tres"
+},
+"galvanized": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://art/photoreal11/materials/galvanized.tres",
+"use_external/path": "res://art/photoreal11/materials/galvanized.tres"
+},
+"glass": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://art/photoreal11/materials/glass.tres",
+"use_external/path": "res://art/photoreal11/materials/glass.tres"
+},
+"glass_frosted": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://art/photoreal11/materials/glass_frosted.tres",
+"use_external/path": "res://art/photoreal11/materials/glass_frosted.tres"
+},
+"metal_paint": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://art/photoreal11/materials/metal_paint.tres",
+"use_external/path": "res://art/photoreal11/materials/metal_paint.tres"
+},
+"plastic_ivory": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://art/photoreal11/materials/plastic_ivory.tres",
+"use_external/path": "res://art/photoreal11/materials/plastic_ivory.tres"
+},
+"roof_membrane": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://art/photoreal11/materials/roof_membrane.tres",
+"use_external/path": "res://art/photoreal11/materials/roof_membrane.tres"
+},
+"rubber": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://art/photoreal11/materials/rubber.tres",
+"use_external/path": "res://art/photoreal11/materials/rubber.tres"
+},
+"trim": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://art/photoreal11/materials/trim.tres",
+"use_external/path": "res://art/photoreal11/materials/trim.tres"
+},
+"wall_siding": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://art/photoreal11/materials/wall_siding.tres",
+"use_external/path": "res://art/photoreal11/materials/wall_siding.tres"
+}
+}
+}
+gltf/naming_version=2
+gltf/embedded_image_handling=1
+gltf/texture_map_mode=1

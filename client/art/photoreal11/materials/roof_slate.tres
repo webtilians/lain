@@ -1,0 +1,20 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[ext_resource type="Texture2D" path="res://art/photoreal11/textures/grey_roof_tiles_02/grey_roof_tiles_02_diff_2k.jpg" id="1_ulvw0"]
+[ext_resource type="Texture2D" path="res://art/photoreal11/textures/grey_roof_tiles_02/grey_roof_tiles_02_arm_2k.jpg" id="2_yyau3"]
+[ext_resource type="Texture2D" path="res://art/photoreal11/textures/grey_roof_tiles_02/grey_roof_tiles_02_nor_gl_2k.jpg" id="3_qamjs"]
+
+[resource]
+resource_name = "PR11_roof_slate"
+albedo_color = Color(0.68235296, 0.7019608, 0.7294118, 1)
+albedo_texture = ExtResource("1_ulvw0")
+roughness = 0.9
+roughness_texture = ExtResource("2_yyau3")
+roughness_texture_channel = 1
+normal_enabled = true
+normal_texture = ExtResource("3_qamjs")
+ao_enabled = true
+ao_light_affect = 0.1
+ao_texture = ExtResource("2_yyau3")
+uv1_scale = Vector3(0.6666667, 0.6666667, 1)
+texture_filter = 5

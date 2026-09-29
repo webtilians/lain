@@ -2,6 +2,8 @@ extends Node3D
 ## Functional entrances only; scenery is shipped as an offline-authored PackedScene.
 const LAYOUT = preload("res://scripts/world/CityLayout.gd")
 const EXIT_SCRIPT = preload("res://scripts/world/ExitDoor.gd")
+## Visual 0.11 buildings model their own doors; keep only the functional bodies.
+@export var visible_doors := true
 
 func _ready() -> void:
 	for target in LAYOUT.DOORS:
@@ -21,6 +23,7 @@ func _ready() -> void:
 		var shape := BoxMesh.new()
 		shape.size = Vector3(1.38, 2.3, 0.12)
 		mesh.mesh = shape
+		mesh.visible = visible_doors
 		var material := StandardMaterial3D.new()
 		material.albedo_color = Color("303b43")
 		material.roughness = 0.74
@@ -55,4 +58,5 @@ func _detail(door: Node3D, at: Vector3, size: Vector3, material: Material) -> vo
 	mesh.mesh = shape
 	mesh.material_override = material
 	mesh.position = at
+	mesh.visible = visible_doors
 	door.add_child(mesh)

@@ -4,6 +4,15 @@ extends Node
 const MATERIALS = preload("res://scripts/art/RealismMaterials.gd")
 const QUALITY_NAMES := ["Ligera", "Equilibrada", "Alta"]
 const CONFIG_PATH := "user://graphics10.cfg"
+# Photographed late-afternoon sky (Poly Haven, CC0) with the solar disc clamped
+# out: the DirectionalLight is the only sun. Godot samples panoramas
+# from -Z (u = atan2(x, -z) / TAU); the photo's sun at u = 0.600 therefore lies
+# at this bearing, expressed like SUN_AZIMUTH as atan2(x, z) toward the sun.
+const SKY_HDRI := "res://art/photoreal11/sky/qwantani_late_afternoon_puresky_2k_nosun.hdr"
+const SKY_SUN_AZIMUTH := -36.1
+# Exterior sun: same compass direction as the authored district, lower and warmer.
+const SUN_AZIMUTH := -32.0
+const SUN_ELEVATION := 24.0
 var materials = MATERIALS.new()
 var soft_edges = preload("res://scripts/art/SoftEdges.gd").new()
 var quality := 2
@@ -109,11 +118,14 @@ func visit(node: Node, dynamic: bool) -> void:
 		node.directional_shadow_max_distance = 85 if exterior else 35
 		node.shadow_normal_bias = .7
 		node.shadow_bias = .04
-		node.light_angular_distance = .85 if exterior else 1.2
+		node.light_angular_distance = .55 if exterior else 1.2
 		node.light_indirect_energy = .85
 		if exterior:
-			node.light_color = Color("ffefd5")
-			node.light_energy = 1.25
+			# Direction toward the sun is the light's +Z axis.
+			node.rotation_degrees = Vector3(-SUN_ELEVATION, SUN_AZIMUTH, 0)
+			node.light_color = Color("ffd9ae")
+			node.light_energy = 3.0
+			node.light_volumetric_fog_energy = 1.4
 	elif node is OmniLight3D:
 		node.light_indirect_energy = .65
 		if not exterior:
@@ -128,7 +140,8 @@ func visit(node: Node, dynamic: bool) -> void:
 func add_shadow_shells(node: Node) -> void:
 	# Cutaway upper shells can disappear for readability. Permanent, invisible
 	# shadow casters keep the building's sunlight occlusion and GI stable.
-	if node.get_script() == load("res://scripts/art/CityCutaway.gd") and not node.has_node("ShadowShell10"):
+	# Visual 0.11 buildings carry a shadow-only twin of their real geometry instead.
+	if node.get_script() == load("res://scripts/art/CityCutaway.gd") and not node.has_node("ShadowShell10") and not node.has_node("ShadowCaster11"):
 		var box: AABB = node.bounds
 		var proxy := MeshInstance3D.new()
 		proxy.name = "ShadowShell10"
@@ -146,7 +159,15 @@ func apply_quality(level: int, persist: bool = false) -> void:
 	quality = clampi(level,0,2)
 	var viewport := get_viewport()
 	viewport.msaa_3d = Viewport.MSAA_4X if quality > 0 else Viewport.MSAA_2X
-	viewport.use_taa = false
+	# Temporal AA keeps thin overhead cables and roof tiles from crawling.
+	viewport.use_taa = forward_plus and quality == 2
+	var soft_shadows := RenderingServer.SHADOW_QUALITY_SOFT_HIGH
+	if quality == 0:
+		soft_shadows = RenderingServer.SHADOW_QUALITY_SOFT_LOW
+	elif quality == 1:
+		soft_shadows = RenderingServer.SHADOW_QUALITY_SOFT_MEDIUM
+	RenderingServer.directional_soft_shadow_filter_set_quality(soft_shadows)
+	RenderingServer.positional_soft_shadow_filter_set_quality(soft_shadows)
 	for environment in environments:
 		lighting(environment)
 	if is_instance_valid(quality_label):
@@ -182,31 +203,48 @@ func lighting(e: Environment) -> void:
 	e.sdfgi_read_sky_light = exterior
 	e.sdfgi_y_scale = Environment.SDFGI_Y_SCALE_75_PERCENT
 	e.sdfgi_normal_bias = 1.3
-	e.glow_enabled = forward_plus and quality > 0 and not exterior
+	e.glow_enabled = forward_plus and quality > 0
 	e.glow_intensity = .07
 	e.glow_bloom = .0
 	e.glow_hdr_threshold = 3.0
 	if exterior:
 		if exterior_sky == null:
-			var sky_mat := ProceduralSkyMaterial.new()
-			sky_mat.sky_top_color = Color("688aa5")
-			sky_mat.sky_horizon_color = Color("b4b8b7")
-			sky_mat.ground_bottom_color = Color("4a4945")
-			sky_mat.ground_horizon_color = Color("b4b8b7")
-			sky_mat.sky_energy_multiplier = 1.2
-			sky_mat.sun_angle_max = 0.1
 			exterior_sky = Sky.new()
-			exterior_sky.sky_material = sky_mat
+			if ResourceLoader.exists(SKY_HDRI):
+				var panorama := PanoramaSkyMaterial.new()
+				panorama.panorama = load(SKY_HDRI)
+				exterior_sky.sky_material = panorama
+			else:
+				exterior_sky.sky_material = ProceduralSkyMaterial.new()
+			exterior_sky.radiance_size = Sky.RADIANCE_SIZE_256
+			exterior_sky.process_mode = Sky.PROCESS_MODE_QUALITY
 		e.sky = exterior_sky
+		e.background_mode = Environment.BG_SKY
+		# Turn the photographed sun onto the same bearing as the scene's sun.
+		e.sky_rotation = Vector3(0, deg_to_rad(SUN_AZIMUTH - SKY_SUN_AZIMUTH), 0)
 		e.ambient_light_source = Environment.AMBIENT_SOURCE_SKY
-		e.ambient_light_energy = 1.0
+		e.ambient_light_energy = .7
 		e.ambient_light_sky_contribution = 1.0
 		e.reflected_light_source = Environment.REFLECTION_SOURCE_SKY
+		e.tonemap_exposure = 1.0
+		e.glow_intensity = .12
+		e.glow_bloom = .0
+		e.glow_hdr_threshold = 1.6
+		e.glow_hdr_luminance_cap = 6.0
+		e.glow_blend_mode = Environment.GLOW_BLEND_MODE_SCREEN
 		e.fog_enabled = quality > 0
-		e.fog_light_color = Color("8c98a5")
-		e.fog_density = .0015
-		e.fog_aerial_perspective = .18
+		e.fog_light_color = Color("a9a6a0")
+		e.fog_density = .0006
+		e.fog_aerial_perspective = .12
 		e.fog_sky_affect = .0
+		# Thin sunlit haze: depth between streets and visible late-sun scattering.
+		e.volumetric_fog_enabled = forward_plus and quality == 2
+		e.volumetric_fog_density = .0012
+		e.volumetric_fog_albedo = Color("e6ddd0")
+		e.volumetric_fog_anisotropy = .55
+		e.volumetric_fog_length = 90.0
+		e.volumetric_fog_ambient_inject = .15
+		e.volumetric_fog_sky_affect = .0
 	else:
 		e.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
 		e.ambient_light_color = Color("99a8c1")

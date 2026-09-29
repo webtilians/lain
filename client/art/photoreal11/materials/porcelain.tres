@@ -1,0 +1,7 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[resource]
+resource_name = "PR11_porcelain"
+albedo_color = Color(0.8627451, 0.8627451, 0.8392157, 1)
+metallic_specular = 0.6
+roughness = 0.18

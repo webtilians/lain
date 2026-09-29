@@ -1,0 +1,20 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[ext_resource type="Texture2D" path="res://art/photoreal11/textures/beige_wall_001/beige_wall_001_diff_2k.jpg" id="1_brd1j"]
+[ext_resource type="Texture2D" path="res://art/photoreal11/textures/beige_wall_001/beige_wall_001_arm_2k.jpg" id="2_v02xa"]
+[ext_resource type="Texture2D" path="res://art/photoreal11/textures/beige_wall_001/beige_wall_001_nor_gl_2k.jpg" id="3_wa7pp"]
+
+[resource]
+resource_name = "PR11_wall_mortar"
+albedo_color = Color(0.9490196, 0.92941177, 0.89411765, 1)
+albedo_texture = ExtResource("1_brd1j")
+roughness_texture = ExtResource("2_v02xa")
+roughness_texture_channel = 1
+normal_enabled = true
+normal_scale = 0.5
+normal_texture = ExtResource("3_wa7pp")
+ao_enabled = true
+ao_light_affect = 0.1
+ao_texture = ExtResource("2_v02xa")
+uv1_scale = Vector3(0.33333334, 0.33333334, 1)
+texture_filter = 5
