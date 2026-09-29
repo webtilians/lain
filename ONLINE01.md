@@ -15,7 +15,7 @@ Desde la carpeta del proyecto, con Python 3.12 y `requirements.txt` instalados:
 ```
 
 - **Internet**: arranca el World Core en `127.0.0.1` y un *quick tunnel* de
-  Cloudflare (`cloudflared.exe` en `%USERPROFILE%	ools` o en el PATH). No
+  Cloudflare (`cloudflared.exe` en `%USERPROFILE%\tools` o en el PATH). No
   hay que tocar el router ni crear cuentas. La dirección
   `https://….trycloudflare.com` cambia cada vez que se abre el mundo.
 - Al abrir, el script escribe la dirección en todos los accesos y deja un kit
