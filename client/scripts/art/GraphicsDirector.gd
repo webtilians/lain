@@ -125,7 +125,6 @@ func visit(node: Node, dynamic: bool) -> void:
 			node.rotation_degrees = Vector3(-SUN_ELEVATION, SUN_AZIMUTH, 0)
 			node.light_color = Color("ffd9ae")
 			node.light_energy = 3.0
-			node.light_volumetric_fog_energy = 1.4
 	elif node is OmniLight3D:
 		node.light_indirect_energy = .65
 		if not exterior:
@@ -194,15 +193,10 @@ func lighting(e: Environment) -> void:
 	e.ssr_enabled = forward_plus and quality == 2 and not exterior
 	e.ssr_max_steps = 48
 	e.ssr_depth_tolerance = .3
-	e.sdfgi_enabled = forward_plus and quality == 2 and exterior
-	e.sdfgi_cascades = 4
-	e.sdfgi_min_cell_size = .3
-	e.sdfgi_use_occlusion = true
-	e.sdfgi_bounce_feedback = .4
-	e.sdfgi_energy = 1.1
-	e.sdfgi_read_sky_light = exterior
-	e.sdfgi_y_scale = Environment.SDFGI_Y_SCALE_75_PERCENT
-	e.sdfgi_normal_bias = 1.3
+	# SDFGI is off: under the isometric orthographic camera it draws a seam of
+	# brighter indirect light that stays fixed on screen and follows the player.
+	# Exterior bounce comes from SSIL and the photographed sky's ambient instead.
+	e.sdfgi_enabled = false
 	e.glow_enabled = forward_plus and quality > 0
 	e.glow_intensity = .07
 	e.glow_bloom = .0
@@ -223,7 +217,8 @@ func lighting(e: Environment) -> void:
 		# Turn the photographed sun onto the same bearing as the scene's sun.
 		e.sky_rotation = Vector3(0, deg_to_rad(SUN_AZIMUTH - SKY_SUN_AZIMUTH), 0)
 		e.ambient_light_source = Environment.AMBIENT_SOURCE_SKY
-		e.ambient_light_energy = .7
+		e.ambient_light_energy = .8
+		e.ssil_intensity = .7
 		e.ambient_light_sky_contribution = 1.0
 		e.reflected_light_source = Environment.REFLECTION_SOURCE_SKY
 		e.tonemap_exposure = 1.0
@@ -237,14 +232,10 @@ func lighting(e: Environment) -> void:
 		e.fog_density = .0006
 		e.fog_aerial_perspective = .12
 		e.fog_sky_affect = .0
-		# Thin sunlit haze: depth between streets and visible late-sun scattering.
-		e.volumetric_fog_enabled = forward_plus and quality == 2
-		e.volumetric_fog_density = .0012
-		e.volumetric_fog_albedo = Color("e6ddd0")
-		e.volumetric_fog_anisotropy = .55
-		e.volumetric_fog_length = 90.0
-		e.volumetric_fog_ambient_inject = .15
-		e.volumetric_fog_sky_affect = .0
+		# Volumetric fog froxels assume a perspective frustum: under the isometric
+		# orthographic camera they render as a polygonal wedge that follows the
+		# player. Depth fog above provides the haze instead.
+		e.volumetric_fog_enabled = false
 	else:
 		e.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
 		e.ambient_light_color = Color("99a8c1")

@@ -51,8 +51,11 @@ func run() -> void:
 			check(player.camera.transform==camera,location+": quality moved camera")
 			check(api.snapshot==snapshot_before,location+": presentation changed snapshot")
 			for environment in director.environments:
-				check(environment.sdfgi_enabled==(director.forward_plus and level==2 and director.exterior),"SDFGI fallback incorrect")
-				check(not environment.sdfgi_enabled or environment.sky!=null,"Exterior GI has no sky")
+				# Visual 0.11: SDFGI and volumetric fog stay off; both draw camera-fixed
+				# seams under the isometric orthographic camera.
+				check(not environment.sdfgi_enabled,"SDFGI must stay off under the orthographic camera")
+				check(not environment.volumetric_fog_enabled,"Volumetric fog must stay off under the orthographic camera")
+				check(not director.exterior or environment.sky!=null,"Exterior has no photographed sky")
 		if location=="APARTMENT_DISTRICT":
 			var populated := 0
 			var pbr_count := 0

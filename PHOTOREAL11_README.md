@@ -17,8 +17,10 @@ Godot 4.7.2 sin retoque, con `tools/capture_realism10.gd`.
 
 - **Luz de tarde real.** El cielo es un HDRI fotografiado (Poly Haven) sin el
   disco solar; el sol del juego está alineado con el de la foto, más bajo
-  (24°) y cálido. Sombras suaves de alta calidad, niebla volumétrica ligera,
-  bloom sutil y antialiasing temporal en calidad Alta.
+  (24°) y cálido. Sombras suaves de alta calidad, luz rebotada en pantalla
+  (SSIL), niebla de profundidad, bloom sutil y antialiasing temporal en
+  calidad Alta. SDFGI y la niebla volumétrica quedan apagados: con la cámara
+  isométrica ortográfica dibujan costuras de luz pegadas a la cámara.
 - **Los 42 edificios del barrio son modelos 3D reales**, no cajas: casas
   japonesas de dos plantas, *apāto* con pasillo exterior y escalera de acero,
   bloques de hormigón con azotea y depósito de agua, tiendas con escaparate,
