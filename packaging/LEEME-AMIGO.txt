@@ -1,0 +1,25 @@
+LAIN - JUGAR ONLINE CON TUS AMIGOS
+==================================
+
+En esta carpeta tienes TU acceso personal al mundo compartido:
+
+  lain-online.json       tu llave. No la pases a nadie.
+  Cambiar servidor.bat   para poner la direccion nueva del servidor.
+
+PRIMERA VEZ
+1. Descarga el juego (LAIN-Online-0.1-Windows.zip) del enlace que te
+   pasaron y extraelo entero en una carpeta.
+2. Copia estos dos archivos en esa carpeta, junto a LAIN.exe.
+   Si Windows pregunta, sustituye el lain-online.json que ya habia.
+3. Cuando el anfitrion diga que el mundo esta abierto, abre LAIN.exe.
+
+SI EL ANFITRION TE PASA UNA DIRECCION NUEVA
+La direccion cambia cada vez que el anfitrion abre el mundo.
+Haz doble clic en "Cambiar servidor.bat", pega la direccion
+(empieza por https://) y pulsa Enter. Luego abre LAIN.exe.
+
+DENTRO DEL JUEGO
+WASD moverse, E interactuar, J diario, F6 calidad grafica.
+Enter abre el chat; escribe y vuelve a pulsar Enter para enviar.
+Solo te leen los jugadores que estan en tu misma zona.
+Si cierras el juego, espera unos 12 segundos antes de volver a entrar.

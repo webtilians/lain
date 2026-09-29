@@ -4,6 +4,32 @@ Rama actual revisada: `experiment/online-0.1-review-fixes`, basada en `fee68e8` 
 
 Esta versión permite que dos o tres personas entren en un mismo mundo, se vean en el barrio y hablen con Enter. Cada acceso conserva su prólogo, inventario, diario y conversaciones. El anfitrión guarda el mundo; cerrar un cliente no cierra el servidor. La IA compartida se puede conectar después.
 
+## Anfitrión con un solo comando (`online-host.ps1`)
+
+Desde la carpeta del proyecto, con Python 3.12 y `requirements.txt` instalados:
+
+```powershell
+.\online-host.ps1                      # abre el mundo por internet (túnel HTTPS de Cloudflare)
+.\online-host.ps1 -Mode lan            # solo para la misma red Wi-Fi
+.\online-host.ps1 -AddPlayer "Carlos"  # crea un acceso y su kit (con el mundo cerrado)
+```
+
+- **Internet**: arranca el World Core en `127.0.0.1` y un *quick tunnel* de
+  Cloudflare (`cloudflared.exe` en `%USERPROFILE%	ools` o en el PATH). No
+  hay que tocar el router ni crear cuentas. La dirección
+  `https://….trycloudflare.com` cambia cada vez que se abre el mundo.
+- Al abrir, el script escribe la dirección en todos los accesos y deja un kit
+  por jugador en `%USERPROFILE%\LAIN-Online-Amigos\<nombre>` (y el mismo kit
+  en `.zip`): `lain-online.json`, `Cambiar servidor.bat` y `LEEME-AMIGO.txt`.
+  Cada amigo copia el kit junto a su `LAIN.exe`; en las siguientes sesiones
+  solo necesita la dirección nueva, que pega con `Cambiar servidor.bat`.
+- Si Ollama tiene `lain-qwen7b`, los personajes usan esa IA del anfitrión
+  (`-NoAI` la desactiva). Sin ella, diálogos predefinidos.
+- Registros en `%LOCALAPPDATA%\LAIN\OnlineHost\logs`. Ctrl+C cierra el mundo
+  y el túnel; el progreso queda guardado.
+- El anfitrión puede jugar en el mismo PC con su acceso apuntando a
+  `http://127.0.0.1:8000`, sin pasar por el túnel.
+
 ## Probar primero en tu ordenador
 
 Usa la carpeta **`C:\Users\ENRIQUE\lain-online01`**. El ZIP de esta versión contiene un juego nuevo: el ejecutable antiguo no sabe conectarse al mundo compartido.
