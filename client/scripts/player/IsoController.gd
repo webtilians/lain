@@ -7,10 +7,13 @@ extends CharacterBody3D
 @export var acceleration: float = 20.0
 @export var interaction_distance: float = 2.3
 
+# Same isometric direction as before, 2.5x further back: the view is
+# orthographic so framing is unchanged, but tall roofs, aerials and water
+# tanks near the bottom of the screen no longer cross the near clip plane.
 const CAMERA_OFFSET := Vector3(
-	10.0,
-	12.0,
-	10.0
+	25.0,
+	30.0,
+	25.0
 )
 
 @onready var camera: Camera3D = (

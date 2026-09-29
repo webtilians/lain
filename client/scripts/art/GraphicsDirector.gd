@@ -116,6 +116,12 @@ func visit(node: Node, dynamic: bool) -> void:
 		node.shadow_enabled = true
 		node.directional_shadow_mode = DirectionalLight3D.SHADOW_PARALLEL_4_SPLITS
 		node.directional_shadow_max_distance = 85 if exterior else 35
+		if exterior:
+			# The isometric camera sits ~46 m back and sees a ~25 m deep slab of
+			# street. Depth splits would leave that slab in the coarse far
+			# cascades and cut seams across the screen; one map fits it evenly.
+			node.directional_shadow_mode = DirectionalLight3D.SHADOW_ORTHOGONAL
+			node.directional_shadow_max_distance = 80
 		node.shadow_normal_bias = .7
 		node.shadow_bias = .04
 		node.light_angular_distance = .55 if exterior else 1.2

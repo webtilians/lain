@@ -88,11 +88,13 @@ func run() -> void:
 	player.position = Vector3(4.6,0.91,3)
 	player._update_camera()
 	await create_timer(0.2).timeout
-	check(not art.get_node("CornerBooks/Upper").visible,"Camera obstruction not cut away")
+	# Legacy shells hide; Visual 0.11 models fade to see-through instead.
+	var cutaway: Node = art.get_node("CornerBooks")
+	check(not cutaway.upper.visible or cutaway.target > 0.0,"Camera obstruction not cut away")
 	player.position = Vector3(4.6,0.91,10)
 	player._update_camera()
 	await create_timer(0.2).timeout
-	check(art.get_node("CornerBooks/Upper").visible,"Cutaway never restores")
+	check(cutaway.upper.visible and cutaway.target == 0.0,"Cutaway never restores")
 	# Return points are a presentation-only projection and remain clear of solids.
 	for origin in LAYOUT.ENTRIES:
 		root.get_node("SceneRouter").entry_from_location = origin
