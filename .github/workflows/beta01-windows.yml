@@ -8,6 +8,7 @@ on:
       - experiment/online-0.1-shared-world
       - experiment/online-0.1-review-fixes
       - experiment/visual-0.11-photoreal
+      - experiment/visual-0.12-gothic
   pull_request:
     branches:
       - experiment/wired-0.7-code-exchange

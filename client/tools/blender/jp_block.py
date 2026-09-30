@@ -20,7 +20,7 @@ from mathutils import Matrix, Vector
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 import jp_houses as kit  # noqa: E402
-from jp_houses import Face, ac_unit, carve, gable_roof, pipe_run, window  # noqa: E402
+from jp_houses import Face, ac_unit, carve, drip_mould, finial, gable_roof, pipe_run, window  # noqa: E402
 
 kit.PALETTE.update({
     "roof_membrane": ((0.42, 0.43, 0.42), 0.9, 0.0),
@@ -35,11 +35,73 @@ kit.PALETTE.update({
     "sign_cream": ((0.86, 0.83, 0.74), 0.5, 0.0),
     "sign_dark": ((0.10, 0.11, 0.13), 0.5, 0.0),
     "neon": ((0.3, 0.7, 0.9), 0.3, 0.0),
+    "neon_magenta": ((0.9, 0.2, 0.6), 0.3, 0.0),
+    "neon_red": ((0.9, 0.1, 0.15), 0.3, 0.0),
+    "neon_amber": ((0.9, 0.6, 0.2), 0.3, 0.0),
+    "screen": ((0.05, 0.05, 0.06), 0.2, 0.0),
     "galvanized": ((0.62, 0.64, 0.64), 0.45, 0.8),
 })
 kit.TEXTURED.update({"concrete", "corridor_floor", "shutter"})
 
 STAIR_W = 1.4
+NEONS = ["neon", "neon_magenta", "neon_red", "neon_amber"]
+NEON_LIGHT = {"neon": "LIGHT_cyan", "neon_magenta": "LIGHT_magenta", "neon_red": "LIGHT_red", "neon_amber": "LIGHT_amber"}
+
+
+def axis_name(v):
+    """Blender axis a vector points along, for sign markers read by Godot."""
+    if abs(v.x) > 0.5:
+        return "px" if v.x > 0 else "nx"
+    return "py" if v.y > 0 else "ny"
+
+
+def vertical_sign(b, f, a, z0, rnd, height=2.6, out=0.6):
+    """Projecting vertical neon sign (sode kanban): dark box, neon frame, kanji by Godot."""
+    neon = rnd.choice(NEONS)
+    centre_out = out + 0.08
+    for dz in (0.25, height - 0.25):
+        f.box(b, a, z0 + dz, 0.06, 0.06, out + 0.1, (out + 0.1) / 2, "iron")
+    f.box(b, a, z0 + height / 2, 0.14, height, 0.66, centre_out, "sign_dark")
+    for side in (-1, 1):
+        face = a + side * 0.075
+        for dz in (0.06, height - 0.06):
+            f.box(b, face, z0 + dz, 0.016, 0.03, 0.6, centre_out, neon)
+        for dn in (-0.29, 0.29):
+            f.box(b, face, z0 + height / 2, 0.016, height - 0.1, 0.03, centre_out + dn, neon)
+        b.marker("SIGNV_" + axis_name(f.u * side) + "_" + neon, f.p(face + side * 0.012, z0 + height / 2, centre_out))
+    b.marker(NEON_LIGHT[neon], f.p(a, z0 + height / 2, centre_out + 0.5))
+
+
+def screen_billboard(b, top, W, D, rnd, y0=0.0):
+    """Rooftop advertising screen facing the street, on an iron frame."""
+    sw = min(4.5, W * 0.55)
+    sh = sw * 0.5
+    cx = rnd.uniform(-W / 2 + sw / 2 + 0.3, W / 2 - sw / 2 - 0.3)
+    cy = y0 - D / 2 + 1.2
+    for dx in (-sw / 2 + 0.2, sw / 2 - 0.2):
+        b.box((cx + dx, cy + 0.25, top + 0.9 + sh / 2), (0.1, 0.1, 1.8 + sh), "iron")
+        b.cylinder((cx + dx, cy + 0.25, top + 1.0), (cx + dx, cy + 1.3, top + 0.1), 0.04, "iron", segments=6)
+    b.box((cx, cy, top + 1.8 + sh / 2), (sw + 0.16, 0.14, sh + 0.16), "iron")
+    b.box((cx, cy - 0.075, top + 1.8 + sh / 2), (sw, 0.02, sh), "screen")
+    b.marker(rnd.choice(["LIGHT_magenta", "LIGHT_cyan"]), (cx, cy - 1.2, top + 1.8 + sh / 2))
+
+
+def battlements(b, W, D, top, height, cy=0.0, mat="stone"):
+    """Crenellated parapet and corner pinnacles: the gothic roofline."""
+    t = 0.22
+    for s in (-1, 1):
+        for length, fixed, along_x in ((W, cy + s * (D / 2 - t / 2), True), (D, s * (W / 2 - t / 2), False)):
+            n = max(2, int(length / 0.95))
+            for i in range(n):
+                c = -length / 2 + (i + 0.5) * length / n
+                pos = (c, fixed, top + height + 0.2) if along_x else (fixed, cy + c, top + height + 0.2)
+                b.box(pos, (0.45, t + 0.04, 0.4) if along_x else (t + 0.04, 0.45, 0.4), mat)
+    for sx in (-1, 1):
+        for sy in (-1, 1):
+            base = Vector((sx * (W / 2 - 0.25), cy + sy * (D / 2 - 0.25), top + height))
+            b.box(base + Vector((0, 0, 0.3)), (0.5, 0.5, 0.6), mat)
+            b.cylinder(base + Vector((0, 0, 0.6)), base + Vector((0, 0, 2.1)), 0.34, mat, segments=4, radius_end=0.0)
+            finial(b, base + Vector((0, 0, 2.05)), 0.5)
 
 
 def faces(W, D):
@@ -61,9 +123,12 @@ def rotated_gable(b, W, D, eave, pitch, wall_mat, y0=0.0, **kw):
         obj.data.transform(shift @ turn)
 
 
-def parapet_roof(b, W, D, top, wall_mat, y0=0.0, height=0.75, tank=False, penthouse=False, seed=0):
+def parapet_roof(b, W, D, top, wall_mat, y0=0.0, height=0.75, tank=False, penthouse=False, seed=0, screen=None):
     rnd = random.Random(seed)
     cy = y0
+    battlements(b, W, D, top, height, cy)
+    if screen if screen is not None else rnd.random() < 0.35:
+        screen_billboard(b, top, W, D, rnd, cy)
     b.box((0, cy, top + 0.08), (W - 0.1, D - 0.1, 0.16), "roof_membrane")
     t = 0.18
     for s in (-1, 1):
@@ -213,6 +278,14 @@ def build_apato(b, s, rnd):
     for k in range(units + 1):
         x = -W / 2 + 0.08 + k * (W - 0.16) / units
         b.box((x, -D / 2 + 0.1, (base + (floors - 1) * fh) / 2), (0.12, 0.12, base + (floors - 1) * fh), "metal_paint")
+    # Bare fluorescent tubes under each corridor ceiling.
+    for i in range(floors):
+        ceiling = base + (i + 1) * fh - 0.28
+        for u in range(units):
+            x = -W / 2 + (u + 0.5) * uw
+            b.box((x, -D / 2 + cd * 0.6, ceiling), (0.7, 0.1, 0.05), "lamp")
+            if u % 2 == 0:
+                b.marker("LIGHT_fluo", (x, -D / 2 + cd * 0.6, ceiling - 0.3))
     for i in range(floors):
         z = base + i * fh
         for u in range(units):
@@ -239,7 +312,7 @@ def build_apato(b, s, rnd):
     carve(wall, b.cutters, bevel=0.015)
     b.cutters = []
     stair_tower(b, W / 2, -D / 2, base, fh, floors, side=1)
-    rotated_gable(b, W + 0.2, D, top, math.radians(14), wall_mat, ov_e=0.45, ov_g=0.35)
+    rotated_gable(b, W + 0.2, D, top, math.radians(28), wall_mat, ov_e=0.45, ov_g=0.35)
     return top
 
 
@@ -266,6 +339,7 @@ def build_mansion(b, s, rnd):
                 for m in (-0.85, 0.0, 0.85):
                     front.box(b, a + m, base + 1.2, 0.05, 2.3, 0.06, -0.44, "alu")
                 front.box(b, a, base + 2.75, 2.8, 0.12, 1.5, 0.5, "concrete")
+                b.marker("LIGHT_warm", front.p(a, base + 2.4, 0.9))
                 continue
             if i == 0:
                 window(b, front, a, z + 1.0, 1.4, 1.1, grille=True)
@@ -296,11 +370,13 @@ def build_mansion(b, s, rnd):
             window(b, side_face, -0.6, base + i * fh + 1.0, 1.2, 1.1, shutter=True)
     carve(wall, b.cutters, bevel=0.015)
     b.cutters = []
+    if rnd.random() < 0.5:
+        vertical_sign(b, front, W / 2 - 0.5, base + fh * 1.1, rnd, height=min(3.4, fh * (floors - 1.3)), out=1.0)
     parapet_roof(b, W, D, top, wall_mat, tank=True, penthouse=floors >= 4, seed=s["seed"])
     return top
 
 
-def build_shop(b, s, rnd, club=False):
+def build_shop(b, s, rnd, club=False, force_gable=False):
     W, D = s["width"], s["depth"]
     base, gh, fh = 0.15, 3.4, 2.8
     upper = max(0, min(2, round((s["height"] - gh - 0.9) / fh)))
@@ -317,20 +393,24 @@ def build_shop(b, s, rnd, club=False):
         front.box(b, 0, base + gh / 2, W - 0.1, gh, 0.08, 0.05, "trim")
         front.cut(b, da, base + 1.15, 1.3, 2.3, depth=0.6)
         front.box(b, da, base + 1.1, 1.2, 2.2, 0.05, -0.26, "door_steel")
-        for z in (base + 2.7, base + 0.35):
-            front.box(b, 0, z, W - 0.4, 0.05, 0.05, 0.12, "neon")
+        for z, tube in ((base + 2.7, "neon_red"), (base + 0.35, "neon_magenta")):
+            front.box(b, 0, z, W - 0.4, 0.05, 0.05, 0.12, tube)
         front.box(b, da, base + 2.55, 2.2, 0.1, 1.1, 0.55, "trim")
+        drip_mould(b, front, da, base + 2.3, 1.3)
+        b.marker("LIGHT_red", front.p(da, base + 2.2, 0.8))
+        b.marker("LIGHT_magenta", front.p(-W / 4, 1.2, 0.6))
     else:
         front.cut(b, 0, base + 1.4, shop_w, 2.8, depth=1.0)
         rec = -0.45
         # Glazed shopfront with a door where the game's entrance is.
         front.box(b, 0, base + 0.2, shop_w, 0.4, 0.1, rec, "alu_dark")
-        front.box(b, 0, base + 1.5, shop_w - 0.1, 2.2, 0.02, rec, "glass")
+        front.box(b, 0, base + 1.5, shop_w - 0.1, 2.2, 0.02, rec, "glass_lit")
+        b.marker("LIGHT_window", front.p(0, base + 1.8, -1.4))
         front.box(b, 0, base + 2.72, shop_w, 0.16, 0.08, rec, "alu_dark")
         n = max(2, int(shop_w / 1.2))
         for k in range(n + 1):
             front.box(b, -shop_w / 2 + k * shop_w / n, base + 1.4, 0.06, 2.8, 0.1, rec, "alu_dark")
-        front.box(b, da, base + 1.1, 0.95, 2.1, 0.03, rec + 0.03, "glass")
+        front.box(b, da, base + 1.1, 0.95, 2.1, 0.03, rec + 0.03, "glass_lit")
         front.box(b, da, base + 1.1, 1.0, 0.04, 0.06, rec + 0.05, "alu")
         # Half-raised roller shutter box above the glazing.
         front.box(b, 0, base + 2.62, shop_w, 0.34, 0.3, -0.1, "shutter")
@@ -347,6 +427,12 @@ def build_shop(b, s, rnd, club=False):
     # Raised clear of the awning so the name reads from the isometric camera.
     front.box(b, 0, base + gh + 0.2, W - 0.2, 0.62, 0.18, 0.1, sign)
     front.box(b, 0, base + gh + 0.55, W - 0.1, 0.05, 0.24, 0.12, "alu")
+    band_neon = rnd.choice(NEONS)
+    for dz in (-0.33, 0.33):
+        front.box(b, 0, base + gh + 0.2 + dz, W - 0.26, 0.025, 0.025, 0.2, band_neon)
+    b.marker(NEON_LIGHT[band_neon], front.p(0, base + gh + 0.2, 1.1))
+    if not club:
+        vertical_sign(b, front, -W / 2 + 0.45, base + 1.2, rnd, height=2.4 + (1.8 if upper else 0.0))
     for i in range(upper):
         z = base + gh + 0.35 + i * fh
         n = max(2, int(W / 2.8))
@@ -360,8 +446,8 @@ def build_shop(b, s, rnd, club=False):
     ac_unit(b, f["right"].p(D / 2 - 1.2, 0.35, 0.45), (1, 0, 0))
     carve(wall, b.cutters, bevel=0.015)
     b.cutters = []
-    if upper >= 1 and not club and rnd.random() < 0.5:
-        rotated_gable(b, W, D, top, math.radians(20), wall_mat, ov_e=0.4, ov_g=0.3)
+    if force_gable or (upper >= 1 and not club and rnd.random() < 0.5):
+        rotated_gable(b, W, D, top, math.radians(34), wall_mat, ov_e=0.4, ov_g=0.3)
     else:
         parapet_roof(b, W, D, top, wall_mat, seed=s["seed"])
     return top
@@ -379,6 +465,8 @@ def build_house1(b, s, rnd):
     front.cut(b, da, base + 1.1, 1.2, 2.2, depth=1.2)
     front.box(b, da, base + 1.02, 0.86, 2.02, 0.05, -0.55, "door_wood")
     front.box(b, da, base + 2.35, 1.6, 0.08, 0.9, 0.45, "trim")
+    front.box(b, da + 0.85, base + 1.9, 0.1, 0.2, 0.12, 0.08, "lamp")
+    b.marker("LIGHT_warm", front.p(da + 0.85, base + 1.8, 0.4))
     b.box(front.p(da, base / 2, 0.2), (1.4, 1.4, base), "porch_tile")
     for a in (x for x in (-W / 2 + 1.3, W * 0.1, W / 2 - 1.3) if abs(x - da) > 1.4):
         window(b, front, a, base + 0.8, 1.65, 1.1, grille=True)
@@ -388,7 +476,7 @@ def build_house1(b, s, rnd):
     ac_unit(b, f["right"].p(-D * 0.2, 0.35, 0.45), (1, 0, 0))
     carve(wall, b.cutters, bevel=0.015)
     b.cutters = []
-    rotated_gable(b, W, D, eave, math.radians(22), wall_mat)
+    rotated_gable(b, W, D, eave, math.radians(36), wall_mat)
     return eave
 
 
@@ -426,13 +514,38 @@ def build_school(b, s, rnd):
     front.box(b, da, base + 2.9, 4.0, 0.14, 2.0, 1.0, "concrete")
     for sx in (-1.8, 1.8):
         b.cylinder(front.p(da + sx, 0, 1.8), front.p(da + sx, base + 2.85, 1.8), 0.1, "concrete", segments=12)
-    # Clock on the parapet above the entrance.
-    clock = front.p(da, top + 0.35, 0.12)
-    b.cylinder(clock, clock + Vector((0, -0.06, 0)), 0.45, "plastic_ivory", segments=24)
-    b.cylinder(clock + Vector((0, -0.06, 0)), clock + Vector((0, -0.075, 0)), 0.04, "dark", segments=8)
+    # Bell tower with a slate spire; the clock moves onto its face.
+    tw = 3.0
+    ty = -D / 2 + tw / 2 + 0.2
+    t_top = top + 5.0
+    b.box((da, ty, (top + t_top) / 2), (tw, tw, t_top - top), "stone")
+    for fx, fy in ((0, -1), (1, 0), (-1, 0)):
+        b.box((da + fx * (tw / 2 + 0.01), ty + fy * (tw / 2 + 0.01), t_top - 1.3), (0.5 if fy else 0.04, 0.04 if fy else 0.5, 1.6), "dark")
+    b.marker("LIGHT_candle", (da, ty, t_top - 1.3))
+    b.cylinder((da, ty, t_top), (da, ty, t_top + 4.2), tw * 0.78, "roof_slate", segments=4, radius_end=0.0)
+    finial(b, (da, ty, t_top + 4.1), 1.4)
+    clock = Vector((da, -D / 2 + 0.18, top + 2.6))
+    b.cylinder(clock, clock + Vector((0, -0.06, 0)), 0.6, "plastic_ivory", segments=24)
+    b.cylinder(clock + Vector((0, -0.06, 0)), clock + Vector((0, -0.075, 0)), 0.05, "dark", segments=8)
+    b.marker("LIGHT_warm", front.p(da, base + 2.6, 1.6))
     carve(wall, b.cutters, bevel=0.015)
     b.cutters = []
     parapet_roof(b, W, D, top, wall_mat, height=1.0, seed=s["seed"])
+    return top
+
+
+def build_station(b, s, rnd):
+    top = build_shop(b, s, rnd, force_gable=True)
+    W, D = s["width"], s["depth"]
+    front = faces(W, D)["front"]
+    ridge = top + (D / 2) * math.tan(math.radians(34))
+    finial(b, (0, 0, ridge + 0.2), 3.2)  # spire on the ridge centre
+    for x in (-W / 2 + 0.3, W / 2 - 0.3):
+        b.cylinder((x, -D / 2 - 0.3, 0), (x, -D / 2 - 0.3, top + 1.4), 0.2, "stone", segments=6)
+        finial(b, (x, -D / 2 - 0.3, top + 1.35), 1.2)
+    clock = front.p(0, top - 0.55, 0.14)
+    b.cylinder(clock, clock + Vector((0, -0.06, 0)), 0.5, "plastic_ivory", segments=24)
+    b.marker("LIGHT_amber", front.p(0, top - 0.4, 1.0))
     return top
 
 
@@ -443,6 +556,7 @@ BUILDERS = {
     "club": lambda b, s, rnd: build_shop(b, s, rnd, club=True),
     "house1": build_house1,
     "school": build_school,
+    "station": build_station,
 }
 
 
@@ -456,6 +570,7 @@ def main():
             continue
         bpy.ops.wm.read_factory_settings(use_empty=True)
         b = kit.Builder(s["name"])
+        random.seed(s["seed"])
         top = BUILDERS[s["kind"]](b, s, random.Random(s["seed"]))
         print(f"BUILT {s['name']} kind={s['kind']} top={top:.2f}")
         kit.join_and_export(b, os.path.join(out, s["name"] + ".glb"))

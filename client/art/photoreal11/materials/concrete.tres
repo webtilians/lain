@@ -1,17 +1,18 @@
 [gd_resource type="StandardMaterial3D" format=3]
 
-[ext_resource type="Texture2D" path="res://art/photoreal11/textures/grey_plaster_02/grey_plaster_02_diff_2k.jpg" id="1_jbos3"]
-[ext_resource type="Texture2D" path="res://art/photoreal11/textures/grey_plaster_02/grey_plaster_02_arm_2k.jpg" id="2_4rrnf"]
-[ext_resource type="Texture2D" path="res://art/photoreal11/textures/grey_plaster_02/grey_plaster_02_nor_gl_2k.jpg" id="3_trnos"]
+[ext_resource type="Texture2D" path="res://art/gothic12/textures/concrete_wall_006/concrete_wall_006_diff_2k.jpg" id="1_jbos3"]
+[ext_resource type="Texture2D" path="res://art/gothic12/textures/concrete_wall_006/concrete_wall_006_arm_2k.jpg" id="2_4rrnf"]
+[ext_resource type="Texture2D" path="res://art/gothic12/textures/concrete_wall_006/concrete_wall_006_nor_gl_2k.jpg" id="3_trnos"]
 
 [resource]
 resource_name = "PR11_concrete"
-albedo_color = Color(0.7019608, 0.69803923, 0.6784314, 1)
+albedo_color = Color(0.48235294, 0.47058824, 0.45490196, 1)
 albedo_texture = ExtResource("1_jbos3")
+roughness = 0.8
 roughness_texture = ExtResource("2_4rrnf")
 roughness_texture_channel = 1
 normal_enabled = true
-normal_scale = 0.6
+normal_scale = 0.7
 normal_texture = ExtResource("3_trnos")
 ao_enabled = true
 ao_light_affect = 0.1

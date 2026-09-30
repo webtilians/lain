@@ -46,6 +46,11 @@ _subresources={
 "use_external/fallback_path": "res://art/photoreal11/materials/cable_black.tres",
 "use_external/path": "res://art/photoreal11/materials/cable_black.tres"
 },
+"dark": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://art/photoreal11/materials/dark.tres",
+"use_external/path": "res://art/photoreal11/materials/dark.tres"
+},
 "galvanized": {
 "use_external/enabled": true,
 "use_external/fallback_path": "res://art/photoreal11/materials/galvanized.tres",
@@ -60,6 +65,11 @@ _subresources={
 "use_external/enabled": true,
 "use_external/fallback_path": "res://art/photoreal11/materials/metal_paint.tres",
 "use_external/path": "res://art/photoreal11/materials/metal_paint.tres"
+},
+"neon_red": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://art/photoreal11/materials/neon_red.tres",
+"use_external/path": "res://art/photoreal11/materials/neon_red.tres"
 },
 "plastic_ivory": {
 "use_external/enabled": true,

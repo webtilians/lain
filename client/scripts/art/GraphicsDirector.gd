@@ -4,15 +4,17 @@ extends Node
 const MATERIALS = preload("res://scripts/art/RealismMaterials.gd")
 const QUALITY_NAMES := ["Ligera", "Equilibrada", "Alta"]
 const CONFIG_PATH := "user://graphics10.cfg"
-# Photographed late-afternoon sky (Poly Haven, CC0) with the solar disc clamped
-# out: the DirectionalLight is the only sun. Godot samples panoramas
-# from -Z (u = atan2(x, -z) / TAU); the photo's sun at u = 0.600 therefore lies
-# at this bearing, expressed like SUN_AZIMUTH as atan2(x, z) toward the sun.
-const SKY_HDRI := "res://art/photoreal11/sky/qwantani_late_afternoon_puresky_2k_nosun.hdr"
+# Visual 0.12 eternal night. The photographed twilight sky (Poly Haven, CC0)
+# has its bright disc clamped out and is dimmed to a faint blue-violet
+# gradient for reflections. Godot samples panoramas from -Z; the clamped disc
+# at u = 0.600 lies at this bearing, expressed as atan2(x, z) toward it.
+const SKY_HDRI := "res://art/gothic12/sky/qwantani_moonrise_puresky_2k_night.hdr"
 const SKY_SUN_AZIMUTH := -36.1
-# Exterior sun: same compass direction as the authored district, lower and warmer.
+const SKY_ENERGY := .045
+# A low, rose-violet moon on the authored district bearing.
 const SUN_AZIMUTH := -32.0
-const SUN_ELEVATION := 24.0
+const SUN_ELEVATION := 34.0
+const RAIN_DROPS := [1200, 2800, 5200]
 var materials = MATERIALS.new()
 var soft_edges = preload("res://scripts/art/SoftEdges.gd").new()
 var quality := 2
@@ -71,10 +73,11 @@ func apply_scene(scene: Node3D) -> void:
 			var foliage: Node3D = load("res://art/realism10/Foliage.tscn").instantiate()
 			foliage.name = "RealisticFoliage"
 			scene.add_child(foliage)
+		add_rain(scene)
 	var overlay := scene.get_node_or_null("RetroOverlay/CRT") as ColorRect
 	if overlay != null:
 		var grade := ShaderMaterial.new()
-		grade.shader = load("res://shaders/realism_grade.gdshader")
+		grade.shader = load("res://shaders/gothic_grade.gdshader")
 		overlay.material = grade
 	var hud := CanvasLayer.new()
 	hud.name = "GraphicsHUD"
@@ -127,18 +130,27 @@ func visit(node: Node, dynamic: bool) -> void:
 		node.light_angular_distance = .55 if exterior else 1.2
 		node.light_indirect_energy = .85
 		if exterior:
-			# Direction toward the sun is the light's +Z axis.
+			# Direction toward the moon is the light's +Z axis.
 			node.rotation_degrees = Vector3(-SUN_ELEVATION, SUN_AZIMUTH, 0)
-			node.light_color = Color("ffd9ae")
-			node.light_energy = 3.0
+			node.light_color = Color("c9a3b4")
+			node.light_energy = .6
+		else:
+			node.light_energy *= .35
 	elif node is OmniLight3D:
 		node.light_indirect_energy = .65
 		if not exterior:
+			# Interior lamps become warm, flickering candle and bulb light.
+			node.light_color = node.light_color.lerp(Color("ffa65a"), .6)
 			node.light_energy *= 2.4
 			node.light_size = .45
 			node.shadow_enabled = true
 			node.shadow_bias = .06
 			node.shadow_normal_bias = .7
+			if not node.has_node("CandleFlicker"):
+				var flicker := Node.new()
+				flicker.name = "CandleFlicker"
+				flicker.set_script(load("res://scripts/art/CandleFlicker.gd"))
+				node.add_child(flicker)
 	for child in node.get_children():
 		visit(child,dynamic)
 
@@ -160,6 +172,40 @@ func add_shadow_shells(node: Node) -> void:
 	for child in node.get_children():
 		add_shadow_shells(child)
 
+## Rain that follows the player: streaks falling through a box above the view.
+func add_rain(scene: Node3D) -> void:
+	var player := scene.get_node_or_null("Player") as Node3D
+	if player == null or player.has_node("Rain12"):
+		return
+	var process := ParticleProcessMaterial.new()
+	process.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_BOX
+	process.emission_box_extents = Vector3(26, .5, 26)
+	process.direction = Vector3(.12, -1, .05)
+	process.spread = 2.0
+	process.initial_velocity_min = 21.0
+	process.initial_velocity_max = 25.0
+	process.gravity = Vector3(0, -9.8, 0)
+	var streak := QuadMesh.new()
+	streak.size = Vector2(.016, .62)
+	var look := StandardMaterial3D.new()
+	look.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	look.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	look.albedo_color = Color(.72, .74, .86, .32)
+	look.billboard_mode = BaseMaterial3D.BILLBOARD_FIXED_Y
+	look.billboard_keep_scale = true
+	streak.material = look
+	var rain := GPUParticles3D.new()
+	rain.name = "Rain12"
+	rain.process_material = process
+	rain.draw_pass_1 = streak
+	rain.lifetime = 1.15
+	rain.preprocess = 1.2
+	rain.amount = RAIN_DROPS[quality]
+	rain.position = Vector3(0, 17, 0)
+	rain.visibility_aabb = AABB(Vector3(-30, -25, -30), Vector3(60, 30, 60))
+	rain.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	player.add_child(rain)
+
 func apply_quality(level: int, persist: bool = false) -> void:
 	quality = clampi(level,0,2)
 	var viewport := get_viewport()
@@ -175,6 +221,13 @@ func apply_quality(level: int, persist: bool = false) -> void:
 	RenderingServer.positional_soft_shadow_filter_set_quality(soft_shadows)
 	for environment in environments:
 		lighting(environment)
+	if is_instance_valid(scene_ref) and scene_ref.has_node("Player/Rain12"):
+		scene_ref.get_node("Player/Rain12").amount = RAIN_DROPS[quality]
+	# Ligera keeps street, neon and door lights but drops window and corridor fill.
+	if is_instance_valid(scene_ref):
+		for light in scene_ref.find_children("*", "Light3D", true, false):
+			if light.has_meta("detail_light"):
+				light.visible = quality > 0
 	if is_instance_valid(quality_label):
 		quality_label.text = "F6  ·  GRÁFICOS: " + QUALITY_NAMES[quality] + ("  ·  Compatibilidad" if not forward_plus else "")
 	if persist:
@@ -196,7 +249,8 @@ func lighting(e: Environment) -> void:
 	e.ssil_enabled = forward_plus and quality > 0
 	e.ssil_radius = 2.0
 	e.ssil_intensity = .45
-	e.ssr_enabled = forward_plus and quality == 2 and not exterior
+	# Wet streets need screen-space reflections of neon and lamps outdoors too.
+	e.ssr_enabled = forward_plus and quality == 2
 	e.ssr_max_steps = 48
 	e.ssr_depth_tolerance = .3
 	# SDFGI is off: under the isometric orthographic camera it draws a seam of
@@ -204,15 +258,17 @@ func lighting(e: Environment) -> void:
 	# Exterior bounce comes from SSIL and the photographed sky's ambient instead.
 	e.sdfgi_enabled = false
 	e.glow_enabled = forward_plus and quality > 0
-	e.glow_intensity = .07
-	e.glow_bloom = .0
-	e.glow_hdr_threshold = 3.0
+	e.glow_intensity = .35
+	e.glow_bloom = .02
+	e.glow_hdr_threshold = 1.2
+	e.glow_blend_mode = Environment.GLOW_BLEND_MODE_SCREEN
 	if exterior:
 		if exterior_sky == null:
 			exterior_sky = Sky.new()
 			if ResourceLoader.exists(SKY_HDRI):
 				var panorama := PanoramaSkyMaterial.new()
 				panorama.panorama = load(SKY_HDRI)
+				panorama.energy_multiplier = SKY_ENERGY
 				exterior_sky.sky_material = panorama
 			else:
 				exterior_sky.sky_material = ProceduralSkyMaterial.new()
@@ -222,29 +278,38 @@ func lighting(e: Environment) -> void:
 		e.background_mode = Environment.BG_SKY
 		# Turn the photographed sun onto the same bearing as the scene's sun.
 		e.sky_rotation = Vector3(0, deg_to_rad(SUN_AZIMUTH - SKY_SUN_AZIMUTH), 0)
-		e.ambient_light_source = Environment.AMBIENT_SOURCE_SKY
-		e.ambient_light_energy = .8
-		e.ssil_intensity = .7
-		e.ambient_light_sky_contribution = 1.0
+		# Night: faint violet ambient; neon, lamps and lit windows do the work.
+		e.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
+		e.ambient_light_color = Color("3a3150")
+		e.ambient_light_energy = 1.0
+		e.ambient_light_sky_contribution = 0.0
 		e.reflected_light_source = Environment.REFLECTION_SOURCE_SKY
-		e.tonemap_exposure = 1.0
-		e.glow_intensity = .12
-		e.glow_bloom = .0
-		e.glow_hdr_threshold = 1.6
-		e.glow_hdr_luminance_cap = 6.0
+		e.ssil_intensity = 1.0
+		e.tonemap_exposure = 1.55
+		e.glow_intensity = .75
+		e.glow_bloom = .06
+		e.glow_hdr_threshold = .9
+		e.glow_hdr_luminance_cap = 12.0
 		e.glow_blend_mode = Environment.GLOW_BLEND_MODE_SCREEN
+		# Dark haze with mist pooled at street level.
 		e.fog_enabled = quality > 0
-		e.fog_light_color = Color("a9a6a0")
-		e.fog_density = .0006
-		e.fog_aerial_perspective = .12
+		e.fog_light_color = Color("1c1629")
+		e.fog_light_energy = 1.0
+		e.fog_density = .0022
+		e.fog_sun_scatter = .15
+		e.fog_height = 1.4
+		e.fog_height_density = .35
+		e.fog_aerial_perspective = .0
 		e.fog_sky_affect = .0
 		# Volumetric fog froxels assume a perspective frustum: under the isometric
 		# orthographic camera they render as a polygonal wedge that follows the
 		# player. Depth fog above provides the haze instead.
 		e.volumetric_fog_enabled = false
 	else:
+		# Interiors: dim violet ambient under warm candle and bulb light.
 		e.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
-		e.ambient_light_color = Color("99a8c1")
-		e.ambient_light_energy = .65
+		e.ambient_light_color = Color("4a3d5a")
+		e.ambient_light_energy = .7
 		e.ambient_light_sky_contribution = 0
+		e.tonemap_exposure = 1.4
 		e.fog_enabled = false

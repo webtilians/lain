@@ -635,7 +635,7 @@
  {
   "name": "blk_stationhall",
   "node": "StationHall",
-  "kind": "shop",
+  "kind": "station",
   "width": 18.0,
   "depth": 6.5,
   "height": 4.2,

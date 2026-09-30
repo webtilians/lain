@@ -2,5 +2,5 @@
 
 [resource]
 resource_name = "PR11_corridor_floor"
-albedo_color = Color(0.35686275, 0.3764706, 0.36078432, 1)
-roughness = 0.7
+albedo_color = Color(0.16470589, 0.17254902, 0.16862746, 1)
+roughness = 0.3

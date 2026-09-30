@@ -2,8 +2,8 @@
 
 [resource]
 resource_name = "PR11_lamp"
-albedo_color = Color(0.9254902, 0.8980392, 0.83137256, 1)
+albedo_color = Color(0.8784314, 0.8156863, 0.7137255, 1)
 roughness = 0.3
 emission_enabled = true
-emission = Color(1, 0.8509804, 0.627451, 1)
-emission_energy_multiplier = 0.4
+emission = Color(1, 0.76862746, 0.47843137, 1)
+emission_energy_multiplier = 2.4

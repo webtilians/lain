@@ -6,7 +6,7 @@
 
 [resource]
 resource_name = "PR11_pole_concrete"
-albedo_color = Color(0.7882353, 0.78431374, 0.7607843, 1)
+albedo_color = Color(0.45882353, 0.44705883, 0.42745098, 1)
 albedo_texture = ExtResource("1_y85b3")
 roughness_texture = ExtResource("2_ill1h")
 roughness_texture_channel = 1

@@ -25,6 +25,9 @@ kit.PALETTE.update({
     "porcelain": ((0.86, 0.86, 0.84), 0.2, 0.0),
     "transformer": ((0.58, 0.60, 0.60), 0.5, 0.4),
     "cable_black": ((0.03, 0.03, 0.03), 0.6, 0.0),
+    "neon_red": ((0.9, 0.1, 0.15), 0.3, 0.0),
+    "glass_lit": ((0.16, 0.10, 0.05), 0.3, 0.0),
+    "iron": ((0.07, 0.07, 0.08), 0.35, 0.8),
 })
 kit.TEXTURED.add("pole_concrete")
 
@@ -88,6 +91,12 @@ def build():
     b.cylinder((0.1, 0, 5.1), (1.05, 0, 5.35), 0.03, "galvanized", segments=8)
     b.box((1.12, 0, 5.3), (0.42, 0.16, 0.1), "plastic_ivory")
     b.box((1.12, 0, 5.24), (0.36, 0.12, 0.02), "lamp")
+    b.marker("LIGHT_sodium", (1.12, 0, 5.05))
+    # Surveillance camera watching the street, with a red status LED.
+    b.cylinder((0.12, 0, 4.3), (0.42, 0, 4.3), 0.025, "galvanized", segments=6)
+    b.oriented((0.55, 0, 4.22), (1, 0, -0.35), (0, 1, 0), (0.3, 0.12, 0.12), "plastic_ivory")
+    b.cylinder((0.7, 0, 4.17), (0.74, 0, 4.155), 0.04, "dark", segments=10)
+    b.box((0.5, 0.065, 4.27), (0.02, 0.01, 0.02), "neon_red")
     # Pole number plate facing the street and a band clamp.
     b.box((0.155, 0, 2.0), (0.012, 0.13, 0.36), "plastic_ivory")
     b.box((0.162, 0, 2.08), (0.004, 0.1, 0.04), "cable_black")
@@ -95,10 +104,34 @@ def build():
     return b
 
 
+def build_lantern():
+    """Visual 0.12 gothic street lantern: fluted iron post and an amber glass cage."""
+    b = kit.Builder("gothic_lantern")
+    b.cylinder((0, 0, 0), (0, 0, 0.12), 0.2, "iron", segments=8)
+    b.cylinder((0, 0, 0.12), (0, 0, 0.5), 0.13, "iron", segments=8, radius_end=0.08)
+    b.cylinder((0, 0, 0.5), (0, 0, 3.1), 0.055, "iron", segments=8, radius_end=0.04)
+    for z in (0.9, 2.2):
+        b.cylinder((0, 0, z), (0, 0, z + 0.06), 0.075, "iron", segments=8)
+    for sx, sy in ((1, 0), (-1, 0)):
+        b.cylinder((0, 0, 2.95), (sx * 0.28, sy * 0.28, 3.25), 0.018, "iron", segments=5)
+    head = Vector((0, 0, 3.35))
+    b.box(head - Vector((0, 0, 0.2)), (0.3, 0.3, 0.04), "iron")
+    for dx in (-0.14, 0.14):
+        for dy in (-0.14, 0.14):
+            b.box(head + Vector((dx, dy, 0)), (0.025, 0.025, 0.4), "iron")
+    b.box(head, (0.24, 0.24, 0.34), "glass_lit")
+    b.cylinder(head + Vector((0, 0, 0.2)), head + Vector((0, 0, 0.5)), 0.24, "iron", segments=4, radius_end=0.0)
+    kit.finial(b, head + Vector((0, 0, 0.48)), 0.35)
+    b.marker("LIGHT_lantern", head)
+    return b
+
+
 def main():
     os.makedirs(OUT, exist_ok=True)
     bpy.ops.wm.read_factory_settings(use_empty=True)
     kit.join_and_export(build(), os.path.join(OUT, "jp_pole.glb"))
+    bpy.ops.wm.read_factory_settings(use_empty=True)
+    kit.join_and_export(build_lantern(), os.path.join(OUT, "gothic_lantern.glb"))
 
 
 main()

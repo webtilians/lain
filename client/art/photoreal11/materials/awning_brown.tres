@@ -2,5 +2,5 @@
 
 [resource]
 resource_name = "PR11_awning_brown"
-albedo_color = Color(0.36862746, 0.2509804, 0.15686275, 1)
-roughness = 0.88
+albedo_color = Color(0.14901961, 0.09411765, 0.06666667, 1)
+roughness = 0.6

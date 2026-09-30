@@ -2,6 +2,6 @@
 
 [resource]
 resource_name = "PR11_transformer"
-albedo_color = Color(0.6039216, 0.61960787, 0.61960787, 1)
-metallic = 0.45
+albedo_color = Color(0.27450982, 0.28627452, 0.29803923, 1)
+metallic = 0.5
 roughness = 0.5

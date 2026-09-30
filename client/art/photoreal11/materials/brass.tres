@@ -2,6 +2,6 @@
 
 [resource]
 resource_name = "PR11_brass"
-albedo_color = Color(0.72156864, 0.54901963, 0.3019608, 1)
+albedo_color = Color(0.47843137, 0.37254903, 0.1882353, 1)
 metallic = 1.0
-roughness = 0.35
+roughness = 0.38

@@ -54,6 +54,9 @@ func replacement(original: Material, label: String, indoor: bool) -> Material:
 		return load(PHOTOREAL + "road_asphalt.tres")
 	if name_value == "pavement" and not indoor:
 		return load(PHOTOREAL + "sidewalk.tres")
+	var restyled := gothic(base, name_value, label, indoor)
+	if restyled != null:
+		return restyled
 	if name_value.begins_with("wall_") or (indoor and ("Wall" in label or "plaster" in texture_path)):
 		return pbr("plastered_wall_02",base.albedo_color.lightened(.20),.45,.45)
 	if name_value in ["stone","pavement","trim","mortar"]:
@@ -69,17 +72,6 @@ func replacement(original: Material, label: String, indoor: bool) -> Material:
 			m.metallic = .72
 			m.roughness = .44
 			m.resource_name = "PBR10_metal"
-			cache[key] = m
-		return cache[key]
-	if not indoor and name_value in ["cool","warm"]:
-		# Lit-window cards read as lamps in daylight; keep only a faint interior glow.
-		var key := "daylight"+name_value+str(base.albedo_color)
-		if not cache.has(key):
-			var m: StandardMaterial3D = base.duplicate()
-			m.emission_energy_multiplier *= .06
-			m.albedo_color = base.albedo_color.darkened(.45)
-			m.roughness = .25
-			m.resource_name = "PBR11_daylight_"+name_value
 			cache[key] = m
 		return cache[key]
 	if name_value in ["glass","shopglass"]:
@@ -110,3 +102,38 @@ func replacement(original: Material, label: String, indoor: bool) -> Material:
 		m.resource_name = "PBR10_ceramic"
 		return m
 	return original
+
+## Visual 0.12 gothic night restyle. Exterior leftovers from the older district
+## become wet paving, stained concrete, black iron and black wood; interiors get
+## damask, dark brick, black wood and crimson leather by what each part is.
+func gothic(base: StandardMaterial3D, name_value: String, label: String, indoor: bool) -> Material:
+	if not indoor:
+		if name_value in ["stone","pavement","trim","mortar"]:
+			return load(PHOTOREAL + "sidewalk.tres")
+		if name_value.begins_with("wall_"):
+			return load(PHOTOREAL + "concrete_world.tres")
+		if name_value in ["metal","steel","ink"]:
+			return load(PHOTOREAL + "iron.tres")
+		if name_value in ["wood","cedar"]:
+			return load(PHOTOREAL + "black_wood.tres")
+		return null
+	if base.emission_enabled:
+		return null  # screens, lamps and neon keep their own glow
+	for word in ["Futon","Duvet","Pillow","Fabric","Rug","Curtain","Cushion","Blanket","Mattress"]:
+		if word in label:
+			return load(PHOTOREAL + "damask.tres")
+	for word in ["Sofa","Seat","Booth","Couch","Stool","Chair"]:
+		if word in label and not "Leg" in label:
+			return load(PHOTOREAL + "leather_red.tres")
+	if "Wall" in label and not "Crown" in label:
+		return load(PHOTOREAL + ("damask.tres" if "Apartment" in label else "brick_world.tres"))
+	if "Label" in label:
+		return null
+	if ("Floor" in label and not "Station" in label) or name_value in ["wood","cedar"]:
+		return load(PHOTOREAL + "black_wood.tres")
+	for word in ["Desk","Shelf","Table","Cabinet","Counter","Door"]:
+		if word in label:
+			return load(PHOTOREAL + "black_wood.tres")
+	if name_value in ["metal","steel"]:
+		return load(PHOTOREAL + "iron.tres")
+	return null

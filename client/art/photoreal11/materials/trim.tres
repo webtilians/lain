@@ -2,5 +2,6 @@
 
 [resource]
 resource_name = "PR11_trim"
-albedo_color = Color(0.23921569, 0.22745098, 0.21568628, 1)
-roughness = 0.55
+albedo_color = Color(0.08235294, 0.078431375, 0.09019608, 1)
+metallic = 0.6
+roughness = 0.38

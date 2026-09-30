@@ -2,6 +2,6 @@
 
 [resource]
 resource_name = "PR11_glass"
-albedo_color = Color(0.023529412, 0.03137255, 0.039215688, 1)
-metallic_specular = 0.65
-roughness = 0.04
+albedo_color = Color(0.015686275, 0.019607844, 0.023529412, 1)
+metallic_specular = 0.7
+roughness = 0.03

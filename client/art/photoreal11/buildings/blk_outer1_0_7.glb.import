@@ -101,6 +101,26 @@ _subresources={
 "use_external/fallback_path": "res://art/photoreal11/materials/glass_frosted.tres",
 "use_external/path": "res://art/photoreal11/materials/glass_frosted.tres"
 },
+"glass_lit": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://art/photoreal11/materials/glass_lit.tres",
+"use_external/path": "res://art/photoreal11/materials/glass_lit.tres"
+},
+"glass_lit_red": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://art/photoreal11/materials/glass_lit_red.tres",
+"use_external/path": "res://art/photoreal11/materials/glass_lit_red.tres"
+},
+"iron": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://art/photoreal11/materials/iron.tres",
+"use_external/path": "res://art/photoreal11/materials/iron.tres"
+},
+"lamp": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://art/photoreal11/materials/lamp.tres",
+"use_external/path": "res://art/photoreal11/materials/lamp.tres"
+},
 "metal_paint": {
 "use_external/enabled": true,
 "use_external/fallback_path": "res://art/photoreal11/materials/metal_paint.tres",
@@ -130,6 +150,11 @@ _subresources={
 "use_external/enabled": true,
 "use_external/fallback_path": "res://art/photoreal11/materials/soffit.tres",
 "use_external/path": "res://art/photoreal11/materials/soffit.tres"
+},
+"stone": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://art/photoreal11/materials/stone.tres",
+"use_external/path": "res://art/photoreal11/materials/stone.tres"
 },
 "trim": {
 "use_external/enabled": true,

@@ -1,0 +1,22 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[ext_resource type="Texture2D" path="res://art/gothic12/textures/rust_coarse_01/rust_coarse_01_diff_2k.jpg" id="1_xvwoq"]
+[ext_resource type="Texture2D" path="res://art/gothic12/textures/rust_coarse_01/rust_coarse_01_arm_2k.jpg" id="2_8f712"]
+[ext_resource type="Texture2D" path="res://art/gothic12/textures/rust_coarse_01/rust_coarse_01_nor_gl_2k.jpg" id="3_tq5dc"]
+
+[resource]
+resource_name = "PR11_rust"
+albedo_color = Color(0.64705884, 0.5411765, 0.4862745, 1)
+albedo_texture = ExtResource("1_xvwoq")
+roughness_texture = ExtResource("2_8f712")
+roughness_texture_channel = 1
+normal_enabled = true
+normal_texture = ExtResource("3_tq5dc")
+ao_enabled = true
+ao_light_affect = 0.1
+ao_texture = ExtResource("2_8f712")
+uv1_scale = Vector3(0.8333333, 0.8333333, 0.8333333)
+uv1_triplanar = true
+uv1_triplanar_sharpness = 8.0
+uv1_world_triplanar = true
+texture_filter = 5

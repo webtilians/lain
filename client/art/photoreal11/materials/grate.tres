@@ -1,0 +1,22 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[ext_resource type="Texture2D" path="res://art/gothic12/textures/metal_grate_rusty/metal_grate_rusty_diff_2k.jpg" id="1_32npe"]
+[ext_resource type="Texture2D" path="res://art/gothic12/textures/metal_grate_rusty/metal_grate_rusty_arm_2k.jpg" id="2_ctpdh"]
+[ext_resource type="Texture2D" path="res://art/gothic12/textures/metal_grate_rusty/metal_grate_rusty_nor_gl_2k.jpg" id="3_kfio7"]
+
+[resource]
+resource_name = "PR11_grate"
+albedo_color = Color(0.627451, 0.5411765, 0.49411765, 1)
+albedo_texture = ExtResource("1_32npe")
+roughness_texture = ExtResource("2_ctpdh")
+roughness_texture_channel = 1
+normal_enabled = true
+normal_texture = ExtResource("3_kfio7")
+ao_enabled = true
+ao_light_affect = 0.1
+ao_texture = ExtResource("2_ctpdh")
+uv1_scale = Vector3(2, 2, 2)
+uv1_triplanar = true
+uv1_triplanar_sharpness = 8.0
+uv1_world_triplanar = true
+texture_filter = 5

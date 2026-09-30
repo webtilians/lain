@@ -14,6 +14,7 @@ const HOUSE_HEIGHT := 8.8
 const SPECS := "res://tools/blender/photoreal11_buildings.json"
 const BUILDINGS := "res://art/photoreal11/buildings/"
 const POLE := "res://art/photoreal11/props/jp_pole.glb"
+const LIGHT_MARKERS := preload("res://scripts/art/LightMarkers.gd")
 const CABLE := "res://art/photoreal11/materials/cable_black.tres"
 # Same pole positions as City08 street_life(); their collisions are kept.
 const POLE_LINES := {-4.65: [8.5, -10.0, -33.5, -57.0, -69.5, -94.0], 33.2: [8.5, -10.0, -33.5, -57.0, -69.5, -94.0]}
@@ -41,6 +42,8 @@ func run() -> void:
 		replace_house(city, city.get_node(path), HOUSES[path])
 	var blocks := replace_blocks(city)
 	add_surroundings(city)
+	add_street_culture(city)
+	add_lanterns(city)
 	var hidden := hide_old_utilities(city)
 	print("PHOTOREAL11_BLOCKS ", blocks)
 	add_power_lines(city)
@@ -233,6 +236,7 @@ func add_power_lines(city: Node3D) -> void:
 			pole.rotation.y = facing
 			holder.add_child(pole)
 			pole.owner = city
+			pole.set_script(LIGHT_MARKERS)
 			if previous != Vector3.INF:
 				# Radii are ~1.5x real so the wires survive TAA at the isometric zoom.
 				var span := base.distance_to(previous)
@@ -277,3 +281,180 @@ func wire(tool: SurfaceTool, a: Vector3, b: Vector3, sag: float, radius: float) 
 			# Clockwise seen from outside: Godot's front-face winding.
 			for v in [rings[i][s], rings[i + 1][n], rings[i + 1][s], rings[i][s], rings[i][n], rings[i + 1][n]]:
 				tool.add_vertex(v)
+
+## Visual 0.12 street layer: graffiti and layered posters on side walls, and
+## steam rising from manholes. Tags hang off each building's cutaway shell.
+const TAGS := ["NO FUTURE", "WIRED", "LAYER:07", "PRESENT DAY", "CLOSE THE WORLD", "KNIGHTS", "PROTOCOL 7",
+	"NADA ES REAL", "SIN DIOS", "DEUS", "NAVI", "あなたは誰", "夜は終わらない", "TXEN EHT NEPO"]
+const SPRAY := ["ff2fa0", "46d3ff", "f2e14a", "ececec", "ff3030", "9dff4a", "b27cff"]
+const POSTER_WORDS := ["LIVE", "CYBERIA", "NO SLEEP", "RAVE 23:00", "SE BUSCA", "WIRED 5.0", "ÚLTIMA NOCHE", "CLUB AZUL"]
+const STEAM_VENTS := [Vector3(0.7, 0.08, -2.7), Vector3(1.4, 0.05, -41.0), Vector3(-1.2, 0.05, -76.0),
+	Vector3(29.5, 0.05, -20.0), Vector3(-29.0, 0.05, -60.0), Vector3(0.5, 0.05, -100.0)]
+
+func add_street_culture(city: Node3D) -> void:
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 1212
+	var font := SystemFont.new()
+	font.font_names = PackedStringArray(["Impact", "Arial Black", "Segoe UI Black", "Yu Gothic", "Meiryo"])
+	font.font_weight = 900
+	var specs: Array = JSON.parse_string(FileAccess.get_file_as_string(SPECS))
+	for spec in specs:
+		if str(spec.node).begins_with("Skyline"):
+			continue
+		var upper := city.get_node(str(spec.node) + "/Upper")
+		var turn := Basis(Vector3.UP, deg_to_rad(float(spec.rotation_deg)))
+		var centre := Vector3(float(spec.centre[0]), 0, float(spec.centre[1]))
+		var w := float(spec.width)
+		var d := float(spec.depth)
+		for n in range(rng.randi_range(1, 2)):
+			var side := -1.0 if rng.randf() < 0.5 else 1.0
+			var z := rng.randf_range(-d / 2 + 1.0, d / 2 - 1.0)
+			var local := Vector3(side * (w / 2 + 0.04), rng.randf_range(1.0, 2.3), z)
+			var facing := Basis(Vector3.UP, side * PI / 2) * Basis(Vector3.BACK, deg_to_rad(rng.randf_range(-9, 9)))
+			var tag := Label3D.new()
+			tag.name = "Graffiti12_" + str(n)
+			tag.text = TAGS[rng.randi() % TAGS.size()]
+			tag.font = font
+			tag.font_size = 110
+			tag.pixel_size = 0.006
+			tag.outline_size = 18
+			tag.outline_modulate = Color("0b0a0c")
+			tag.modulate = Color(SPRAY[rng.randi() % SPRAY.size()])
+			tag.shaded = true
+			tag.double_sided = false
+			tag.transform = Transform3D(turn * facing, centre + turn * local)
+			upper.add_child(tag)
+			tag.owner = city
+		if str(spec.kind) in ["shop", "club", "apato"]:
+			add_posters(city, upper, rng, font, centre + turn * Vector3(-w / 2 - 0.03, 0, d / 2 - 1.2), turn * Basis(Vector3.UP, -PI / 2))
+	for at in STEAM_VENTS:
+		var steam := steam_vent()
+		steam.position = at
+		city.add_child(steam)
+		steam.owner = city
+
+func add_posters(city: Node3D, parent: Node, rng: RandomNumberGenerator, font: Font, at: Vector3, facing: Basis) -> void:
+	for i in range(rng.randi_range(3, 5)):
+		var poster := MeshInstance3D.new()
+		poster.name = "Poster12_" + str(i)
+		var quad := QuadMesh.new()
+		quad.size = Vector2(rng.randf_range(0.45, 0.7), rng.randf_range(0.6, 0.95))
+		poster.mesh = quad
+		var paper := StandardMaterial3D.new()
+		paper.albedo_color = Color.from_hsv(rng.randf(), rng.randf_range(0.2, 0.7), rng.randf_range(0.35, 0.85))
+		paper.roughness = 0.9
+		poster.material_override = paper
+		var offset := Vector3(rng.randf_range(-0.6, 0.6), rng.randf_range(1.2, 2.1), 0.004 * i)
+		poster.transform = Transform3D(facing * Basis(Vector3.BACK, deg_to_rad(rng.randf_range(-6, 6))), at + facing * offset)
+		parent.add_child(poster)
+		poster.owner = city
+		var words := Label3D.new()
+		words.text = POSTER_WORDS[rng.randi() % POSTER_WORDS.size()]
+		words.font = font
+		words.font_size = 48
+		words.pixel_size = 0.004
+		words.modulate = Color("141214") if paper.albedo_color.v > 0.55 else Color("ece6dc")
+		words.shaded = true
+		words.position = Vector3(0, 0.12, 0.002)
+		poster.add_child(words)
+		words.owner = city
+
+func steam_vent() -> GPUParticles3D:
+	var process := ParticleProcessMaterial.new()
+	process.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_SPHERE
+	process.emission_sphere_radius = 0.25
+	process.direction = Vector3(0, 1, 0)
+	process.spread = 18.0
+	process.initial_velocity_min = 0.8
+	process.initial_velocity_max = 1.4
+	process.gravity = Vector3(0.15, 0.25, 0)
+	process.scale_min = 0.8
+	process.scale_max = 1.3
+	var grow := CurveTexture.new()
+	var curve := Curve.new()
+	curve.add_point(Vector2(0, 0.3))
+	curve.add_point(Vector2(1, 1.6))
+	grow.curve = curve
+	process.scale_curve = grow
+	var fade := GradientTexture1D.new()
+	var gradient := Gradient.new()
+	gradient.set_color(0, Color(1, 1, 1, 0.0))
+	gradient.set_color(1, Color(1, 1, 1, 0.0))
+	gradient.add_point(0.2, Color(1, 1, 1, 0.55))
+	fade.gradient = gradient
+	process.color_ramp = fade
+	var puff := QuadMesh.new()
+	puff.size = Vector2(1.2, 1.2)
+	var soft := GradientTexture2D.new()
+	soft.fill = GradientTexture2D.FILL_RADIAL
+	soft.fill_from = Vector2(0.5, 0.5)
+	soft.fill_to = Vector2(0.5, 0.0)
+	var edge := Gradient.new()
+	edge.set_color(0, Color(1, 1, 1, 1))
+	edge.set_color(1, Color(1, 1, 1, 0))
+	soft.gradient = edge
+	var look := StandardMaterial3D.new()
+	look.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	look.albedo_texture = soft
+	look.albedo_color = Color(0.78, 0.76, 0.84, 0.35)
+	look.vertex_color_use_as_albedo = true
+	look.billboard_mode = BaseMaterial3D.BILLBOARD_PARTICLES
+	look.roughness = 1.0
+	puff.material = look
+	var steam := GPUParticles3D.new()
+	steam.name = "Steam12"
+	steam.process_material = process
+	steam.draw_pass_1 = puff
+	steam.amount = 36
+	steam.lifetime = 3.5
+	steam.preprocess = 3.5
+	steam.visibility_aabb = AABB(Vector3(-4, -1, -4), Vector3(8, 8, 8))
+	steam.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	return steam
+
+## Gothic iron lanterns where the concrete poles do not light the street:
+## the far sidewalks of the long streets, the cross streets and the plaza.
+const LANTERN := "res://art/photoreal11/props/gothic_lantern.glb"
+
+func add_lanterns(city: Node3D) -> void:
+	var holder := Node3D.new()
+	holder.name = "StreetLanterns12"
+	city.add_child(holder)
+	holder.owner = city
+	var spots: Array[Vector3] = []
+	for x in [3.4, -25.6, 25.6]:
+		for z in range(10, -106, -16):
+			spots.append(Vector3(x, 0, z))
+	for z in [-12.6, -37.6, -72.6, -98.6]:
+		for x in [-15.0, 15.0, -38.0, 38.0]:
+			spots.append(Vector3(x, 0, z))
+	for at in [Vector3(9, 0, -20.5), Vector3(22, 0, -20.5), Vector3(9, 0, -34.5), Vector3(22, 0, -34.5)]:
+		spots.append(at)
+	var blocked: Array[AABB] = []
+	for node in city.find_children("*", "Node3D", true, false):
+		if node.get_script() == load("res://scripts/art/CityCutaway.gd"):
+			blocked.append((node.bounds as AABB).grow(0.4))
+	var layout := load("res://scripts/world/CityLayout.gd")
+	var placed := 0
+	for at in spots:
+		var clear := true
+		for box in blocked:
+			if box.has_point(at + Vector3(0, 0.5, 0)):
+				clear = false
+		for door in layout.DOORS.values() + layout.ENTRIES.values():
+			if Vector2(at.x - door.x, at.z - door.z).length() < 2.0:
+				clear = false
+		for x in POLE_LINES:
+			for z in POLE_LINES[x]:
+				if Vector2(at.x - x, at.z - z).length() < 3.0:
+					clear = false
+		if not clear:
+			continue
+		var lantern: Node3D = load(LANTERN).instantiate()
+		lantern.name = "Lantern12_" + str(placed)
+		lantern.position = at
+		holder.add_child(lantern)
+		lantern.owner = city
+		lantern.set_script(LIGHT_MARKERS)
+		placed += 1
+	print("PHOTOREAL11_LANTERNS ", placed)

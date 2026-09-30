@@ -41,7 +41,7 @@ PLAN = {
     "RepairShop": ("shop", "+Z", "IZAKAYA", "wall_mortar", {"awning": "awning_red", "sign": "sign_dark"}),
     "PrintShop": ("shop", "+Z", "ARCADE", "wall_siding", {"awning": "awning_blue"}),
     "SouthHomes": ("apato", "+X", None, "wall_mortar", {"solid_balcony": True}),
-    "StationHall": ("shop", "+Z", "STATION", "wall_siding", {"awning": "awning_blue", "sign": "sign_dark"}),
+    "StationHall": ("station", "+Z", "STATION", "wall_siding", {"awning": "awning_blue", "sign": "sign_dark"}),
 }
 WALLS = ["wall_mortar", "wall_siding"]
 

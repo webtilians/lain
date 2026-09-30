@@ -2,6 +2,6 @@
 
 [resource]
 resource_name = "PR11_porcelain"
-albedo_color = Color(0.8627451, 0.8627451, 0.8392157, 1)
+albedo_color = Color(0.70980394, 0.69411767, 0.6627451, 1)
 metallic_specular = 0.6
 roughness = 0.18

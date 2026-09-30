@@ -2,5 +2,5 @@
 
 [resource]
 resource_name = "PR11_glass_frosted"
-albedo_color = Color(0.6627451, 0.69411767, 0.7058824, 1)
-roughness = 0.32
+albedo_color = Color(0.1882353, 0.2, 0.22745098, 1)
+roughness = 0.3

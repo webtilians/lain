@@ -6,8 +6,9 @@
 
 [resource]
 resource_name = "PR11_block_wall"
-albedo_color = Color(0.8392157, 0.827451, 0.8, 1)
+albedo_color = Color(0.49019608, 0.47843137, 0.45490196, 1)
 albedo_texture = ExtResource("1_3v4cf")
+roughness = 0.85
 roughness_texture = ExtResource("2_ipe4a")
 roughness_texture_channel = 1
 normal_enabled = true

@@ -7,6 +7,9 @@ extends Node3D
 
 func _ready() -> void:
 	apply(self)
+	# Visual 0.12: only the visible twin carries lights and neon signs.
+	if not shadow_only:
+		preload("res://scripts/art/LightMarkers.gd").light_up(self)
 
 func apply(node: Node) -> void:
 	if node is GeometryInstance3D:

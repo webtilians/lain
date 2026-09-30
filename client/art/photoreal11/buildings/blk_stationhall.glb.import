@@ -66,25 +66,40 @@ _subresources={
 "use_external/fallback_path": "res://art/photoreal11/materials/foundation.tres",
 "use_external/path": "res://art/photoreal11/materials/foundation.tres"
 },
-"glass": {
+"glass_lit": {
 "use_external/enabled": true,
-"use_external/fallback_path": "res://art/photoreal11/materials/glass.tres",
-"use_external/path": "res://art/photoreal11/materials/glass.tres"
+"use_external/fallback_path": "res://art/photoreal11/materials/glass_lit.tres",
+"use_external/path": "res://art/photoreal11/materials/glass_lit.tres"
+},
+"iron": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://art/photoreal11/materials/iron.tres",
+"use_external/path": "res://art/photoreal11/materials/iron.tres"
 },
 "metal_paint": {
 "use_external/enabled": true,
 "use_external/fallback_path": "res://art/photoreal11/materials/metal_paint.tres",
 "use_external/path": "res://art/photoreal11/materials/metal_paint.tres"
 },
+"neon": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://art/photoreal11/materials/neon.tres",
+"use_external/path": "res://art/photoreal11/materials/neon.tres"
+},
+"neon_amber": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://art/photoreal11/materials/neon_amber.tres",
+"use_external/path": "res://art/photoreal11/materials/neon_amber.tres"
+},
 "plastic_ivory": {
 "use_external/enabled": true,
 "use_external/fallback_path": "res://art/photoreal11/materials/plastic_ivory.tres",
 "use_external/path": "res://art/photoreal11/materials/plastic_ivory.tres"
 },
-"roof_membrane": {
+"roof_slate": {
 "use_external/enabled": true,
-"use_external/fallback_path": "res://art/photoreal11/materials/roof_membrane.tres",
-"use_external/path": "res://art/photoreal11/materials/roof_membrane.tres"
+"use_external/fallback_path": "res://art/photoreal11/materials/roof_slate.tres",
+"use_external/path": "res://art/photoreal11/materials/roof_slate.tres"
 },
 "rubber": {
 "use_external/enabled": true,
@@ -100,6 +115,21 @@ _subresources={
 "use_external/enabled": true,
 "use_external/fallback_path": "res://art/photoreal11/materials/sign_dark.tres",
 "use_external/path": "res://art/photoreal11/materials/sign_dark.tres"
+},
+"soffit": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://art/photoreal11/materials/soffit.tres",
+"use_external/path": "res://art/photoreal11/materials/soffit.tres"
+},
+"stone": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://art/photoreal11/materials/stone.tres",
+"use_external/path": "res://art/photoreal11/materials/stone.tres"
+},
+"trim": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://art/photoreal11/materials/trim.tres",
+"use_external/path": "res://art/photoreal11/materials/trim.tres"
 },
 "wall_siding": {
 "use_external/enabled": true,

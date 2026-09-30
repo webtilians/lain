@@ -46,6 +46,8 @@ func configure(kind: String, variant: int) -> void:
 		material.roughness = 1
 		apron.material_override = material
 		add_child(apron)
+	# Visual 0.12: gothic palette, coats, mohawks and collars.
+	preload("res://scripts/art/GothicWardrobe.gd").dress_citizen(self, kind, variant)
 
 func tint(mesh: MeshInstance3D, color: Color) -> void:
 	var material := mesh.material_override.duplicate() as StandardMaterial3D

@@ -2,5 +2,5 @@
 
 [resource]
 resource_name = "PR11_soffit"
-albedo_color = Color(0.7764706, 0.7647059, 0.7294118, 1)
-roughness = 0.8
+albedo_color = Color(0.15294118, 0.13725491, 0.16470589, 1)
+roughness = 0.75

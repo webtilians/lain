@@ -1,0 +1,7 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[resource]
+resource_name = "PR11_iron"
+albedo_color = Color(0.07058824, 0.06666667, 0.078431375, 1)
+metallic = 0.75
+roughness = 0.32

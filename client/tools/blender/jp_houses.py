@@ -43,6 +43,9 @@ PALETTE = {
     "rubber": ((0.08, 0.08, 0.08), 0.8, 0.0),
     "brass": ((0.55, 0.43, 0.22), 0.35, 1.0),
     "stone": ((0.45, 0.44, 0.42), 0.7, 0.0),
+    "glass_lit": ((0.16, 0.10, 0.05), 0.3, 0.0),
+    "glass_lit_red": ((0.14, 0.02, 0.03), 0.3, 0.0),
+    "iron": ((0.07, 0.07, 0.08), 0.35, 0.8),
 }
 # Parts in these materials get box UVs; others are untextured in Godot.
 TEXTURED = {"wall_mortar", "wall_siding", "foundation", "porch_tile", "door_wood", "stone"}
@@ -96,7 +99,17 @@ class Builder:
         self.label = label
         self.parts = []
         self.cutters = []
+        self.markers = []
         self.count = 0
+
+    def marker(self, name, pos):
+        """Empty exported with the GLB; Godot turns LIGHT_*/SIGNV_* into lights and signs."""
+        obj = bpy.data.objects.new(name, None)
+        obj.location = Vector(pos)
+        obj.empty_display_size = 0.1
+        bpy.context.scene.collection.objects.link(obj)
+        self.markers.append(obj)
+        return obj
 
     def _object(self, bm, mat_name, smooth=False, uv=None):
         self.count += 1
@@ -230,12 +243,39 @@ class Face:
         b.cutter(self.p(a, z, 0.0), (width, depth, height), rot=rot)
 
 
-def window(b, f, a, sill, w, h, grille=False, shutter=False, frosted=False, dark=False):
+def window_glass(frosted):
+    """Most windows are dark; some are lit amber, a few crimson behind curtains."""
+    roll = random.random()
+    if roll < 0.24:
+        return "glass_lit"
+    if roll < 0.36:
+        return "glass_lit_red"
+    return "glass_frosted" if frosted else "glass"
+
+
+def drip_mould(b, f, a, top, w):
+    """Pointed-arch hood moulding above a window, with a keystone."""
+    rise = math.tan(math.radians(34))
+    half = w / 2 + 0.1
+    apex = f.p(a, top + 0.06 + half * rise, 0.05)
+    for s in (-1, 1):
+        start = f.p(a + s * half, top + 0.06, 0.05)
+        along = apex - start
+        b.oriented((start + apex) / 2, along, f.n, (along.length + 0.05, 0.08, 0.09), "stone")
+    b.oriented(apex + Z * 0.02, f.u, f.n, (0.12, 0.1, 0.16), "stone")
+
+
+def window(b, f, a, sill, w, h, grille=False, shutter=False, frosted=False, dark=False, gothic=True):
     """Aluminium sliding window recessed into a carved opening."""
     top = sill + h
     zc = sill + h / 2
     alu = "alu_dark" if dark else "alu"
+    glass = window_glass(frosted)
     f.cut(b, a, zc, w, h)
+    if glass != "glass" and glass != "glass_frosted" and random.random() < 0.35:
+        b.marker("LIGHT_window" if glass == "glass_lit" else "LIGHT_red", f.p(a, zc, -0.6))
+    if gothic and w >= 0.8 and not shutter:
+        drip_mould(b, f, a, top, w)
     rec = -0.11
     t = 0.045
     # Outer frame.
@@ -248,7 +288,7 @@ def window(b, f, a, sill, w, h, grille=False, shutter=False, frosted=False, dark
     for i, s in enumerate((-1, 1)):
         ca = a + s * (w / 4 - 0.01)
         depth = rec - 0.015 + i * 0.03
-        f.box(b, ca, zc, sw - 0.02, h - 2 * t, 0.012, depth, "glass_frosted" if frosted else "glass")
+        f.box(b, ca, zc, sw - 0.02, h - 2 * t, 0.012, depth, glass)
         f.box(b, ca, top - t - 0.02, sw, 0.035, 0.03, depth, alu)
         f.box(b, ca, sill + t + 0.02, sw, 0.035, 0.03, depth, alu)
         f.box(b, ca + s * (sw / 2 - 0.018), zc, 0.036, h - 2 * t, 0.03, depth, alu)
@@ -295,7 +335,39 @@ def pipe_run(b, points, radius, mat_name, brackets=True):
                 b.box(q, (radius * 3.2, radius * 3.2, 0.03), mat_name)
 
 
-def gable_roof(b, W, D, eave, pitch, wall_mat, ov_e=0.6, ov_g=0.45, aerial=True):
+def gargoyle(b, pos, outward):
+    """Crouched stone gargoyle on a roof corner, leaning out over the street."""
+    pos = Vector(pos)
+    out = Vector(outward).normalized()
+    side = Z.cross(out).normalized()
+    b.oriented(pos, out, side, (0.3, 0.18, 0.2), "stone")
+    b.oriented(pos + out * 0.22 + Z * 0.06, out, side, (0.16, 0.12, 0.13), "stone")
+    b.oriented(pos + out * 0.31 + Z * 0.08, out, side, (0.06, 0.05, 0.04), "stone")
+    for s in (-1, 1):
+        wing = pos + side * s * 0.14 + Z * 0.12 - out * 0.04
+        b.oriented(wing, out * 0.6 + Z * 0.8, side, (0.22, 0.03, 0.16), "stone")
+
+
+def iron_crest(b, p0, p1, height=0.26, spacing=0.28):
+    """Spiked iron cresting along a ridge or parapet edge."""
+    p0, p1 = Vector(p0), Vector(p1)
+    length = (p1 - p0).length
+    b.cylinder(p0, p1, 0.012, "iron", segments=6)
+    n = max(2, int(length / spacing))
+    for i in range(n + 1):
+        q = p0.lerp(p1, i / n)
+        b.cylinder(q, q + Z * height, 0.022, "iron", segments=5, radius_end=0.0)
+
+
+def finial(b, base, height=1.1):
+    base = Vector(base)
+    b.box(base + Z * 0.07, (0.16, 0.16, 0.14), "iron")
+    b.cylinder(base + Z * 0.14, base + Z * (height * 0.7), 0.06, "iron", segments=6, radius_end=0.02)
+    b.cylinder(base + Z * (height * 0.7), base + Z * (height * 0.78), 0.05, "iron", segments=8)
+    b.cylinder(base + Z * (height * 0.78), base + Z * height, 0.03, "iron", segments=5, radius_end=0.0)
+
+
+def gable_roof(b, W, D, eave, pitch, wall_mat, ov_e=0.6, ov_g=0.45, aerial=True, gothic=True):
     """Gable roof with the ridge along Blender Y: slabs, stepped slate courses,
     fascia, soffit, gutters with downpipes, barge boards, ridge cap, aerial."""
     hx, hy = W / 2, D / 2
@@ -351,6 +423,15 @@ def gable_roof(b, W, D, eave, pitch, wall_mat, ov_e=0.6, ov_g=0.45, aerial=True)
             b.oriented(mid, down, (0, 1, 0), (slope_len, 0.035, 0.24), "trim")
     b.box((0, 0, ridge_z + t + 0.06), (0.26, length_y + 0.06, 0.1), "roof_slate", uv=(Vector((0, -length_y / 2, 0)), Vector((1, 0, 0)), Vector((0, 1, 0))))
     b.box((0, 0, ridge_z + t + 0.12), (0.12, length_y + 0.06, 0.05), "roof_slate", uv=(Vector((0, -length_y / 2, 0)), Vector((1, 0, 0)), Vector((0, 1, 0))))
+    if gothic:
+        crest_z = ridge_z + t + 0.15
+        iron_crest(b, (0, -length_y / 2 + 0.35, crest_z), (0, length_y / 2 - 0.35, crest_z))
+        for gy in (-length_y / 2, length_y / 2):
+            finial(b, (0, gy, crest_z - 0.03), 1.2)
+        corner_z = eave - ov_e * math.tan(pitch) - 0.05
+        for sx in (-1, 1):
+            for sy in (-1, 1):
+                gargoyle(b, (sx * (hx + ov_e * 0.55), sy * (length_y / 2 - 0.15), corner_z), (sx, 0, 0))
     if not aerial:
         return
     # TV aerial on the ridge, a very common 80s-90s silhouette.
@@ -417,6 +498,7 @@ def build_house(spec):
     lamp = front.p(da + door_w / 2 + 0.18, base + 1.95, 0.08)
     b.box(lamp, (0.1, 0.12, 0.2), "alu_dark")
     b.box(lamp + Vector((0.04, 0, -0.02)), (0.04, 0.09, 0.14), "lamp")
+    b.marker("LIGHT_warm", lamp + Vector((0.3, 0, -0.1)))
     front.box(b, da + door_w / 2 + 0.18, base + 1.45, 0.24, 0.1, 0.02, 0.01, "stone")
     front.box(b, da + door_w / 2 + 0.18, base + 1.2, 0.08, 0.13, 0.03, 0.015, "dark")
     front.box(b, da + door_w / 2 + 0.22, base + 0.85, 0.3, 0.36, 0.12, 0.06, "alu_dark")
@@ -498,6 +580,9 @@ def join_and_export(b, path):
     with bpy.context.temp_override(active_object=house, object=house, selected_objects=[house]):
         bpy.ops.object.select_all(action="DESELECT")
     house.select_set(True)
+    for m in b.markers:
+        m.parent = house
+        m.select_set(True)
     bpy.context.view_layer.objects.active = house
     kwargs = dict(filepath=path, export_format="GLB", use_selection=True, export_apply=True,
                   export_yup=True, export_materials="EXPORT", export_tangents=True,
@@ -508,14 +593,14 @@ def join_and_export(b, path):
         kwargs.pop("export_image_format")
         bpy.ops.export_scene.gltf(**kwargs)
     tris = sum(len(p.vertices) - 2 for p in house.data.polygons)
-    print(f"EXPORTED {path} tris={tris} materials={[m.name for m in house.data.materials]}")
+    print(f"EXPORTED {path} tris={tris} markers={len(b.markers)} materials={len(house.data.materials)}")
 
 
 HOUSES = [
-    dict(name="jp_house_a", seed=11, width=6.8, depth=6.3, eave=5.6, pitch=24, wall="wall_mortar",
+    dict(name="jp_house_a", seed=11, width=6.8, depth=6.3, eave=5.6, pitch=38, wall="wall_mortar",
          grilles=True, balcony=None, door_a=0.0, front_low=(-2.05, 2.05),
          front_high=(-1.9, 1.9), front_small=0.0),
-    dict(name="jp_house_b", seed=23, width=6.8, depth=6.3, eave=5.4, pitch=22, wall="wall_siding",
+    dict(name="jp_house_b", seed=23, width=6.8, depth=6.3, eave=5.4, pitch=35, wall="wall_siding",
          grilles=False, balcony=(-3.0, 0.9), door_a=2.2, front_low=(-2.2, 0.1),
          front_high=(-1.9, 2.0), front_small=None),
 ]

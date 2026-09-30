@@ -2,6 +2,16 @@ extends Node3D
 ## Visual pose only; the player's existing collision and movement stay authoritative.
 var stride := 0.0
 
+func _ready() -> void:
+	# Visual 0.12: the local player is gothic Lain; online visitors get their own look.
+	var body := get_parent()
+	var wardrobe := preload("res://scripts/art/GothicWardrobe.gd")
+	# The district adds the group in its own _ready, after this child is ready.
+	if body != null and (body.is_in_group("player") or str(body.name) == "Player"):
+		wardrobe.dress_player(self)
+	else:
+		wardrobe.dress_citizen(self, "student", absi(hash(str(body.name) if body != null else "")) % 12)
+
 func _process(delta: float) -> void:
 	var player := get_parent() as CharacterBody3D
 	if player == null:

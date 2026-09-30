@@ -1,20 +1,19 @@
 [gd_resource type="StandardMaterial3D" format=3]
 
-[ext_resource type="Texture2D" path="res://art/photoreal11/textures/grey_plaster_02/grey_plaster_02_diff_2k.jpg" id="1_rvp6l"]
-[ext_resource type="Texture2D" path="res://art/photoreal11/textures/grey_plaster_02/grey_plaster_02_arm_2k.jpg" id="2_0elt5"]
-[ext_resource type="Texture2D" path="res://art/photoreal11/textures/grey_plaster_02/grey_plaster_02_nor_gl_2k.jpg" id="3_7xvyl"]
+[ext_resource type="Texture2D" path="res://art/gothic12/textures/castle_wall_slates/castle_wall_slates_diff_2k.jpg" id="1_rvp6l"]
+[ext_resource type="Texture2D" path="res://art/gothic12/textures/castle_wall_slates/castle_wall_slates_arm_2k.jpg" id="2_0elt5"]
+[ext_resource type="Texture2D" path="res://art/gothic12/textures/castle_wall_slates/castle_wall_slates_nor_gl_2k.jpg" id="3_7xvyl"]
 
 [resource]
 resource_name = "PR11_stone"
-albedo_color = Color(0.4862745, 0.47843137, 0.45882353, 1)
+albedo_color = Color(0.42352942, 0.40784314, 0.3882353, 1)
 albedo_texture = ExtResource("1_rvp6l")
 roughness_texture = ExtResource("2_0elt5")
 roughness_texture_channel = 1
 normal_enabled = true
-normal_scale = 0.5
 normal_texture = ExtResource("3_7xvyl")
 ao_enabled = true
 ao_light_affect = 0.1
 ao_texture = ExtResource("2_0elt5")
-uv1_scale = Vector3(2, 2, 1)
+uv1_scale = Vector3(0.8, 0.8, 1)
 texture_filter = 5

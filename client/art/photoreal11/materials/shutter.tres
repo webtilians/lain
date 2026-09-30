@@ -1,20 +1,23 @@
 [gd_resource type="StandardMaterial3D" format=3]
 
-[ext_resource type="Texture2D" path="res://art/photoreal11/textures/painted_metal_shutter/painted_metal_shutter_diff_2k.jpg" id="1_ax67u"]
-[ext_resource type="Texture2D" path="res://art/photoreal11/textures/painted_metal_shutter/painted_metal_shutter_arm_2k.jpg" id="2_qdvnm"]
-[ext_resource type="Texture2D" path="res://art/photoreal11/textures/painted_metal_shutter/painted_metal_shutter_nor_gl_2k.jpg" id="3_yk7bv"]
+[ext_resource type="Texture2D" path="res://art/gothic12/textures/rust_coarse_01/rust_coarse_01_diff_2k.jpg" id="1_ax67u"]
+[ext_resource type="Texture2D" path="res://art/gothic12/textures/rust_coarse_01/rust_coarse_01_arm_2k.jpg" id="2_qdvnm"]
+[ext_resource type="Texture2D" path="res://art/gothic12/textures/rust_coarse_01/rust_coarse_01_nor_gl_2k.jpg" id="3_yk7bv"]
 
 [resource]
 resource_name = "PR11_shutter"
-albedo_color = Color(0.84705883, 0.84705883, 0.83137256, 1)
+albedo_color = Color(0.5529412, 0.47843137, 0.4392157, 1)
 albedo_texture = ExtResource("1_ax67u")
 roughness_texture = ExtResource("2_qdvnm")
 roughness_texture_channel = 1
 normal_enabled = true
-normal_scale = 0.8
+normal_scale = 0.9
 normal_texture = ExtResource("3_yk7bv")
 ao_enabled = true
 ao_light_affect = 0.1
 ao_texture = ExtResource("2_qdvnm")
-uv1_scale = Vector3(0.5, 0.5, 1)
+uv1_scale = Vector3(0.625, 0.625, 0.625)
+uv1_triplanar = true
+uv1_triplanar_sharpness = 8.0
+uv1_world_triplanar = true
 texture_filter = 5

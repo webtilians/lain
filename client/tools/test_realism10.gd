@@ -61,7 +61,8 @@ func run() -> void:
 			var pbr_count := 0
 			for node in scene.find_children("*","GeometryInstance3D",true,false):
 				var material: Material = node.material_override
-				if material!=null and material.resource_name.begins_with("PBR10_"):
+				# Visual 0.12 maps legacy surfaces onto the shared PR11_ gothic library.
+				if material!=null and (material.resource_name.begins_with("PBR10_") or material.resource_name.begins_with("PR11_")):
 					pbr_count+=1
 			check(pbr_count>100,"Saved MultiMesh surfaces did not receive PBR materials")
 			for batch in scene.get_node("RealisticFoliage").get_children():
