@@ -5,6 +5,7 @@ import re
 from threading import Lock
 import os
 from threading import RLock
+import time
 
 from fastapi import (
     FastAPI,
@@ -142,11 +143,16 @@ def player_presence(
     player_id: Annotated[str, Depends(authenticated_player)],
     x_lain_client: Annotated[str, Header()],
 ):
+    received_at = time.monotonic()
     if not online.enabled():
         raise HTTPException(status_code=404, detail="ONLINE_DISABLED")
     try:
-        with _world_lock:
-            return online.heartbeat(player_id, x_lain_client, **request.model_dump())
+        # Presence is cosmetic and never mutates the world, so it does not wait
+        # behind a clock tick (which may call the LLM). A heartbeat delayed there
+        # looked like a sprint and snapped the player back every tick.
+        return online.heartbeat(
+            player_id, x_lain_client, received_at=received_at, **request.model_dump()
+        )
     except ValueError as error:
         raise HTTPException(status_code=409, detail=str(error))
 

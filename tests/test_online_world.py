@@ -427,6 +427,27 @@ def test_presence_cannot_move_world_or_teleport_visual_replica(world):
     assert presence(client, headers[alice], x=1000).status_code == 409
 
 
+def test_presence_is_not_delayed_by_a_clock_tick_or_snapped_back(world):
+    client, runtime, alice, bob, headers = world
+    place(runtime, alice, "APARTMENT_DISTRICT")
+    assert presence(client, headers[alice]).json()["accepted"]
+    # A clock tick (possibly waiting on the LLM) holds the world lock.
+    with ThreadPoolExecutor(max_workers=1) as pool:
+        with api._world_lock:
+            walking = pool.submit(presence, client, headers[alice], x=0.5)
+            assert walking.result(timeout=2).json()["accepted"]
+    # A heartbeat that arrived on time but was processed late keeps its timing:
+    # 7 m walked over 2.2 s of arrivals is a normal walk, not a teleport.
+    instance = headers[alice]["X-Lain-Client"]
+    start = online.time.monotonic()
+    online.heartbeat(alice, instance, "APARTMENT_DISTRICT", 2.0, 0.91, 0.0, 0.0, received_at=start)
+    late = online.heartbeat(alice, instance, "APARTMENT_DISTRICT", 9.0, 0.91, 0.0, 0.0, received_at=start + 2.2)
+    assert late["accepted"] and late["position"]["x"] == 9.0
+    # An instant jump is still rejected.
+    jump = online.heartbeat(alice, instance, "APARTMENT_DISTRICT", 60.0, 0.91, 0.0, 0.0, received_at=start + 2.3)
+    assert not jump["accepted"] and jump["position"]["x"] == 9.0
+
+
 def test_npc_generation_does_not_hold_other_players_or_clock(world, monkeypatch):
     client, runtime, alice, bob, headers = world
     for actor in (alice, bob, "AGENT_K"):

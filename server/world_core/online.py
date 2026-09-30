@@ -177,7 +177,7 @@ def limit(actor_id, lane, count, seconds):
         queue.append(now)
 
 
-def heartbeat(actor_id, instance, location, x, y, z, yaw, dialogue=False):
+def heartbeat(actor_id, instance, location, x, y, z, yaw, dialogue=False, received_at=None):
     """Coordinates are cosmetic, bounded and speed-checked. No world MOVE here."""
     if not 8 <= len(instance) <= 80 or any(
         not math.isfinite(v) for v in (x, y, z, yaw)
@@ -193,16 +193,19 @@ def heartbeat(actor_id, instance, location, x, y, z, yaw, dialogue=False):
     if row is None or row[1] != location:
         raise ValueError("LOCATION_CHANGED")
     with _lock:
-        now = time.monotonic()
+        # Time the request by its arrival, not by when it was processed.
+        now = time.monotonic() if received_at is None else received_at
         previous = _presence.get(actor_id)
         fresh = previous and now - previous["at"] < PRESENCE_TTL
         if fresh and previous["instance"] != instance:
             raise ValueError("PLAYER_ALREADY_CONNECTED")
         accepted = True
         if fresh and previous["location"] == location:
-            # The Godot controller walks at 3.5 m/s. Permit a small jitter margin.
+            # The Godot controller walks at 3.5 m/s. Permit a small jitter margin,
+            # and gaps up to the presence TTL (slow tunnel, long clock tick).
+            elapsed = max(0.0, now - previous["at"])
             distance = math.hypot(x - previous["x"], z - previous["z"])
-            if distance > 5 * min(2, now - previous["at"]) + 0.75:
+            if distance > 5 * min(PRESENCE_TTL, elapsed) + 0.75:
                 x, y, z = previous["x"], previous["y"], previous["z"]
                 accepted = False
         _presence[actor_id] = dict(
