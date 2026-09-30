@@ -85,6 +85,56 @@ if (-not $NoAI) {
     }
 }
 
+function Start-Tunnel {
+    # Each quick tunnel gets a new trycloudflare hostname. Returns $null on failure.
+    $tunnelLog = Join-Path $logs 'tunnel.log'
+    Remove-Item -LiteralPath $tunnelLog -ErrorAction SilentlyContinue
+    $process = Start-Process -FilePath $Cloudflared -PassThru -NoNewWindow `
+        -ArgumentList @('tunnel', '--no-autoupdate', '--url', "http://127.0.0.1:$Port") `
+        -RedirectStandardError $tunnelLog -RedirectStandardOutput (Join-Path $logs 'tunnel-out.log')
+    $address = ''
+    for ($i = 0; $i -lt 120 -and -not $address; $i++) {
+        Start-Sleep -Milliseconds 500
+        if ($process.HasExited) { return $null }
+        if (Test-Path -LiteralPath $tunnelLog) {
+            $found = Select-String -LiteralPath $tunnelLog -Pattern 'https://[a-z0-9-]+\.trycloudflare\.com' | Select-Object -First 1
+            if ($found) { $address = $found.Matches[0].Value }
+        }
+    }
+    if (-not $address) {
+        Stop-Process -Id $process.Id -Force -ErrorAction SilentlyContinue
+        return $null
+    }
+    # The new hostname can take a few seconds to resolve worldwide.
+    $public = $false
+    for ($i = 0; $i -lt 40 -and -not $public; $i++) {
+        try { Invoke-WebRequest -UseBasicParsing -Uri "$address/api/v1/player/state" -TimeoutSec 5 | Out-Null; $public = $true }
+        catch {
+            if ($_.Exception.Response -and [int]$_.Exception.Response.StatusCode -eq 401) { $public = $true }
+            else { Start-Sleep -Seconds 1 }
+        }
+    }
+    if (-not $public) { Write-Warning 'La dirección aún no responde desde internet; espera un minuto antes de que entren tus amigos.' }
+    return @{ Process = $process; Url = $address }
+}
+
+function Show-Address([string]$url, [bool]$changed) {
+    Write-Host ''
+    Write-Host '=============================================================='
+    if ($changed) { Write-Host " DIRECCIÓN NUEVA  $url" } else { Write-Host " MUNDO LAIN ABIERTO  $url" }
+    Write-Host '=============================================================='
+    Write-Host " Kits de jugadores (actualizados con esta dirección): $kitsDir"
+    Write-Host ' Pasa la dirección a tus amigos: la pegan con "Cambiar servidor.bat"'
+    Write-Host ' y abren LAIN.exe. Si ya estaban jugando, que cierren y vuelvan a entrar.'
+    Write-Host ' Deja esta ventana abierta mientras jugáis. Ctrl+C cierra el mundo.'
+    Write-Host ''
+}
+
+# Keep this PC awake while the world is open (released automatically on exit;
+# the Windows power plan is not changed).
+Add-Type -Namespace LainHost -Name Power -MemberDefinition '[DllImport("kernel32.dll")] public static extern uint SetThreadExecutionState(uint flags);'
+[LainHost.Power]::SetThreadExecutionState([uint32]2147483649) | Out-Null  # ES_CONTINUOUS | ES_SYSTEM_REQUIRED
+
 $bind = '127.0.0.1'
 if ($Mode -eq 'lan') { $bind = '0.0.0.0' }
 $server = Start-Process -FilePath $python -WorkingDirectory $PSScriptRoot -PassThru -NoNewWindow `
@@ -106,31 +156,10 @@ try {
             $Cloudflared = Join-Path $env:USERPROFILE 'tools\cloudflared.exe'
             if (-not (Test-Path -LiteralPath $Cloudflared)) { $Cloudflared = (Get-Command cloudflared -ErrorAction Stop).Source }
         }
-        $tunnelLog = Join-Path $logs 'tunnel.log'
-        Remove-Item -LiteralPath $tunnelLog -ErrorAction SilentlyContinue
-        $tunnel = Start-Process -FilePath $Cloudflared -PassThru -NoNewWindow `
-            -ArgumentList @('tunnel', '--no-autoupdate', '--url', "http://127.0.0.1:$Port") `
-            -RedirectStandardError $tunnelLog -RedirectStandardOutput (Join-Path $logs 'tunnel-out.log')
-        $url = ''
-        for ($i = 0; $i -lt 120 -and -not $url; $i++) {
-            Start-Sleep -Milliseconds 500
-            if ($tunnel.HasExited) { throw "El túnel se cerró. Revisa $tunnelLog" }
-            if (Test-Path -LiteralPath $tunnelLog) {
-                $found = Select-String -LiteralPath $tunnelLog -Pattern 'https://[a-z0-9-]+\.trycloudflare\.com' | Select-Object -First 1
-                if ($found) { $url = $found.Matches[0].Value }
-            }
-        }
-        if (-not $url) { throw "Cloudflare no dio una dirección. Revisa $tunnelLog" }
-        # The new hostname can take a few seconds to resolve worldwide.
-        $public = $false
-        for ($i = 0; $i -lt 40 -and -not $public; $i++) {
-            try { Invoke-WebRequest -UseBasicParsing -Uri "$url/api/v1/player/state" -TimeoutSec 5 | Out-Null; $public = $true }
-            catch {
-                if ($_.Exception.Response -and [int]$_.Exception.Response.StatusCode -eq 401) { $public = $true }
-                else { Start-Sleep -Seconds 1 }
-            }
-        }
-        if (-not $public) { Write-Warning 'La dirección aún no responde desde internet; espera un minuto antes de que entren tus amigos.' }
+        $opened = Start-Tunnel
+        if (-not $opened) { throw "Cloudflare no dio una dirección. Revisa $logs\tunnel.log" }
+        $tunnel = $opened.Process
+        $url = $opened.Url
     } else {
         $ip = Get-NetIPAddress -AddressFamily IPv4 -ErrorAction SilentlyContinue |
             Where-Object { $_.IPAddress -match '^(192\.168\.|10\.|172\.(1[6-9]|2[0-9]|3[01])\.)' } |
@@ -141,23 +170,29 @@ try {
     }
 
     Set-ServerUrl $url
-    Write-Host ''
-    Write-Host '=============================================================='
-    Write-Host " MUNDO LAIN ABIERTO  $url"
-    Write-Host '=============================================================='
-    Write-Host " Kits de jugadores (actualizados con esta dirección): $kitsDir"
-    Write-Host ' Si tus amigos ya tienen su kit, pásales solo la dirección:'
-    Write-Host ' la pegan con "Cambiar servidor.bat" y abren LAIN.exe.'
-    Write-Host ' Deja esta ventana abierta mientras jugáis. Ctrl+C cierra el mundo.'
-    Write-Host ''
+    Show-Address $url $false
     while (-not $server.HasExited) {
         Start-Sleep -Seconds 2
-        if ($tunnel -and $tunnel.HasExited) { throw "El túnel se cerró. Vuelve a abrir el mundo; la dirección cambiará." }
+        if ($tunnel -and $tunnel.HasExited) {
+            # Wi-Fi drops end quick tunnels; open a new one instead of closing the world.
+            Write-Warning 'Se cortó la conexión del túnel. Abriendo uno nuevo...'
+            $opened = $null
+            for ($attempt = 1; $attempt -le 30 -and -not $opened; $attempt++) {
+                $opened = Start-Tunnel
+                if (-not $opened) { Start-Sleep -Seconds 10 }
+            }
+            if (-not $opened) { throw 'No se pudo recuperar el túnel. Comprueba internet y vuelve a abrir el mundo.' }
+            $tunnel = $opened.Process
+            $url = $opened.Url
+            Set-ServerUrl $url
+            Show-Address $url $true
+        }
     }
     throw "El mundo se cerró. Revisa $logs\server-errors.log"
 } finally {
     foreach ($process in @($tunnel, $server)) {
         if ($process -and -not $process.HasExited) { Stop-Process -Id $process.Id -Force -ErrorAction SilentlyContinue }
     }
+    [LainHost.Power]::SetThreadExecutionState([uint32]2147483648) | Out-Null  # ES_CONTINUOUS: allow sleep again
     Write-Host 'Mundo cerrado. El progreso de todos queda guardado.'
 }

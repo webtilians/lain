@@ -25,6 +25,9 @@ Desde la carpeta del proyecto, con Python 3.12 y `requirements.txt` instalados:
   solo necesita la dirección nueva, que pega con `Cambiar servidor.bat`.
 - Si Ollama tiene `lain-qwen7b`, los personajes usan esa IA del anfitrión
   (`-NoAI` la desactiva). Sin ella, diálogos predefinidos.
+- Si se corta la conexión, el script abre un túnel nuevo solo y muestra la
+  **dirección nueva** (hay que pasarla otra vez). Mientras el mundo está
+  abierto, el PC no entra en suspensión; al cerrarlo vuelve a su plan normal.
 - Registros en `%LOCALAPPDATA%\LAIN\OnlineHost\logs`. Ctrl+C cierra el mundo
   y el túnel; el progreso queda guardado.
 - El anfitrión puede jugar en el mismo PC con su acceso apuntando a
