@@ -4,8 +4,9 @@ El motor del mundo online vive en un VPS pequeño. Tu PC ya no tiene que
 estar encendido, la dirección no cambia y cada amigo recibe un único ZIP:
 lo extrae, abre `LAIN.exe` y entra.
 
-- **Servidor**: Hetzner Cloud CX22 (2 vCPU, 4 GB), Ubuntu 24.04. Si ya no
-  aparece, vale el plan compartido x86 más barato con 2 vCPU y 4 GB.
+- **Servidor**: Hetzner Cloud CPX12 (1 vCPU AMD, 2 GB, 40 GB) en Falkenstein,
+  Ubuntu 24.04, llamado `lain`. El CX23, más barato, estaba agotado en
+  Europa en octubre de 2026; para el motor basta con 2 GB.
 - **Dirección**: `https://<ip-con-guiones>.sslip.io`, gratis. Caddy obtiene
   y renueva el certificado HTTPS él solo.
 - **IA de los personajes**: Groq, llamado desde el servidor. La clave se
@@ -29,7 +30,8 @@ Todo se maneja desde el PC con `vps.ps1`.
    2. Pulsa *Add server* (o *Create server*).
    3. Ubicación: Alemania (Falkenstein o Nuremberg).
    4. Imagen: **Ubuntu 24.04**.
-   5. Tipo: **Shared vCPU · x86 · CX22**.
+   5. Tipo: *Cost-Optimized* CX23 si está disponible; si no, *Regular
+      Performance* CPX12.
    6. Red: deja activada la **IPv4 pública**; tus amigos la necesitan.
    7. SSH keys: *Add SSH key*, pega la llave pública y guárdala.
    8. Nombre: `lain`. Pulsa *Create & Buy now*.
@@ -115,6 +117,6 @@ están cerradas. Los jugadores necesitan su token para todo lo demás.
 
 ## Coste aproximado
 
-El CX22 con IPv4 ronda los 4–6 € al mes con IVA, según la tarifa vigente de
-Hetzner; se paga por horas y se puede borrar cuando quieras. Groq tiene plan
-gratuito.
+El CPX12 con IPv4 cuesta 14,51 € al mes con IVA (13,90 € + 0,61 €; tarifa de
+octubre de 2026). Se paga por horas y se puede borrar cuando quieras. Groq
+tiene plan gratuito.

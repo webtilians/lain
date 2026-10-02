@@ -190,11 +190,15 @@ if ($AddPlayer) {
 
 if ($Packages) {
     if ($GameZip) { Import-GameZip $GameZip }
-    foreach ($access in (Get-ChildItem -LiteralPath $accessDir -Directory)) {
-        if (Test-Path -LiteralPath (Join-Path $access.FullName 'lain-online.json')) { Build-Package $access }
+    if (Test-Path -LiteralPath $savedGame) {
+        foreach ($access in (Get-ChildItem -LiteralPath $accessDir -Directory)) {
+            if (Test-Path -LiteralPath (Join-Path $access.FullName 'lain-online.json')) { Build-Package $access }
+        }
+        Write-Host ''
+        Write-Host "Manda a cada amigo SOLO su ZIP de $friendsDir, por privado."
+    } else {
+        Build-Package $null
     }
-    Write-Host ''
-    Write-Host "Manda a cada amigo SOLO su ZIP de $friendsDir, por privado."
 }
 
 if ($Update) { Invoke-Server 'lain-update' }
