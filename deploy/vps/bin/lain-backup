@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+# Daily copy of the world (kept 14 days) in /var/backups/lain.
+# Restore: systemctl stop lain; zcat online-world-DAY.sql.gz | sqlite3 NEW.db;
+#          replace /var/lib/lain/online-world.db with NEW.db (owner lain); start.
+set -euo pipefail
+umask 077
+database=/var/lib/lain/online-world.db
+destination=/var/backups/lain
+[ -f "$database" ] || exit 0
+day=$(date +%F)
+# Read as the service user so SQLite never leaves root-owned -wal/-shm files.
+runuser -u lain -- sqlite3 "$database" .dump | gzip > "$destination/online-world-$day.sql.gz.tmp"
+mv "$destination/online-world-$day.sql.gz.tmp" "$destination/online-world-$day.sql.gz"
+# Access files hold the only copy of each player's token.
+[ -d /var/lib/lain/access ] && tar -C /var/lib/lain -czf "$destination/access-$day.tar.gz" access
+find "$destination" -type f -mtime +13 -delete

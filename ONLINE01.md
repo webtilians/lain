@@ -4,6 +4,8 @@ Rama actual revisada: `experiment/online-0.1-review-fixes`, basada en `fee68e8` 
 
 Esta versión permite que dos o tres personas entren en un mismo mundo, se vean en el barrio y hablen con Enter. Cada acceso conserva su prólogo, inventario, diario y conversaciones. El anfitrión guarda el mundo; cerrar un cliente no cierra el servidor. La IA compartida se puede conectar después.
 
+> **Servidor siempre encendido:** para no depender de tu PC, instala el motor en un VPS con dirección HTTPS fija y un ZIP listo por amigo: [SERVIDOR.md](SERVIDOR.md).
+
 ## Anfitrión con un solo comando (`online-host.ps1`)
 
 Desde la carpeta del proyecto, con Python 3.12 y `requirements.txt` instalados:

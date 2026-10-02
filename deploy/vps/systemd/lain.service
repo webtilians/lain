@@ -1,0 +1,41 @@
+[Unit]
+Description=LAIN online World Core
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=lain
+Group=lain
+WorkingDirectory=/opt/lain
+EnvironmentFile=/etc/lain/lain.env
+Environment=PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
+# One process and one clock per world; Caddy terminates HTTPS in front.
+ExecStart=/opt/lain/.venv/bin/python -m tools.online_server --data-dir /var/lib/lain serve --host 127.0.0.1 --port 8000
+Restart=always
+RestartSec=3
+TimeoutStopSec=20
+UMask=0077
+
+NoNewPrivileges=yes
+ProtectSystem=strict
+ReadWritePaths=/var/lib/lain
+ProtectHome=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectKernelLogs=yes
+ProtectControlGroups=yes
+ProtectClock=yes
+ProtectHostname=yes
+RestrictSUIDSGID=yes
+RestrictRealtime=yes
+RestrictNamespaces=yes
+LockPersonality=yes
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+SystemCallArchitectures=native
+CapabilityBoundingSet=
+MemoryMax=2G
+
+[Install]
+WantedBy=multi-user.target

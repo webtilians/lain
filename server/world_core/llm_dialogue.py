@@ -3,6 +3,8 @@
 Set LAIN_LLM_ENABLED=1 and LAIN_LLM_MODEL to use an OpenAI-compatible
 chat-completions endpoint. Local endpoint is default. Remote endpoints
 require HTTPS, an API key and explicit LAIN_LLM_ALLOW_REMOTE=1.
+LAIN_LLM_EXTRA_BODY may hold a JSON object of provider options (for example
+Groq's reasoning switches) merged into every direct request.
 """
 from dataclasses import dataclass
 import json
@@ -80,6 +82,35 @@ def _endpoint() -> str:
     if not parsed.hostname or not parsed.path.endswith("/chat/completions"):
         raise ValueError("INVALID_LLM_ENDPOINT")
     return url
+
+
+def provider_headers() -> dict:
+    # Hosted providers behind Cloudflare (Groq) reject urllib's default agent.
+    headers = {"Content-Type": "application/json", "User-Agent": "LAIN-WorldCore/0.1"}
+    key = os.getenv("LAIN_LLM_API_KEY", "")
+    if key:
+        headers["Authorization"] = "Bearer " + key
+    return headers
+
+
+# Request fields the provider options may never replace.
+_PROTECTED_FIELDS = {"model", "messages", "stream", "tools", "tool_choice", "functions"}
+
+
+def with_provider_options(body: dict) -> dict:
+    """Return body plus the operator's LAIN_LLM_EXTRA_BODY provider options."""
+    raw = os.getenv("LAIN_LLM_EXTRA_BODY", "").strip()
+    if not raw:
+        return body
+    try:
+        extra = json.loads(raw)
+    except ValueError:
+        raise ValueError("INVALID_LLM_EXTRA_BODY") from None
+    if not isinstance(extra, dict) or set(extra) & _PROTECTED_FIELDS or any(
+        not isinstance(value, (str, int, float, bool)) for value in extra.values()
+    ):
+        raise ValueError("INVALID_LLM_EXTRA_BODY")
+    return {**body, **extra}
 
 
 def _provider_reply(context: dict, choice_text: str) -> str:
@@ -224,10 +255,7 @@ def _provider_reply(context: dict, choice_text: str) -> str:
         "temperature": 0.65,
         "max_tokens": 170,
     }
-    key = os.getenv("LAIN_LLM_API_KEY", "")
-    headers = {"Content-Type": "application/json"}
-    if key:
-        headers["Authorization"] = "Bearer " + key
+    headers = provider_headers()
     # A cold local 7B model may need longer than 15 seconds to load.
     timeout = max(
         1.0,
@@ -236,7 +264,7 @@ def _provider_reply(context: dict, choice_text: str) -> str:
     def perform(body: dict) -> bytes:
         if shared_ai.enabled():
             return shared_ai.completion(body, "dialogue", timeout)
-        payload = json.dumps(body, ensure_ascii=False).encode("utf-8")
+        payload = json.dumps(with_provider_options(body), ensure_ascii=False).encode("utf-8")
         request = Request(
             _endpoint(),
             data=payload,

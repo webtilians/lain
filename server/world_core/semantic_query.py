@@ -11,7 +11,7 @@ import re
 from functools import lru_cache
 from urllib.request import Request, urlopen
 
-from .llm_dialogue import _endpoint
+from .llm_dialogue import _endpoint, provider_headers, with_provider_options
 from . import shared_ai
 
 MODEL_TIMEOUT = 4.0
@@ -40,17 +40,14 @@ def _ask_local_model(query: str, model: str, endpoint: str) -> str:
         "temperature": 0,
         "max_tokens": 64,
     }
-    headers = {"Content-Type": "application/json"}
-    key = os.getenv("LAIN_LLM_API_KEY", "")
-    if key:
-        headers["Authorization"] = "Bearer " + key
-    request = Request(
-        endpoint, data=json.dumps(data, ensure_ascii=False).encode("utf-8"),
-        headers=headers, method="POST",
-    )
+    headers = provider_headers()
     if shared_ai.enabled():
         body = shared_ai.completion(data, "search", MODEL_TIMEOUT)
     else:
+        request = Request(
+            endpoint, data=json.dumps(with_provider_options(data), ensure_ascii=False).encode("utf-8"),
+            headers=headers, method="POST",
+        )
         with urlopen(request, timeout=MODEL_TIMEOUT) as response:
             body = response.read(8193)
     if len(body) > 8192:
