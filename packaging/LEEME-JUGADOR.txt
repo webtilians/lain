@@ -25,3 +25,21 @@ WASD moverse, E interactuar, J diario, F6 calidad grafica.
 Enter abre el chat con quienes estan en tu misma zona.
 El PC de tu casa tiene un terminal: help y man <tema> te ayudan.
 Si cierras el juego, espera unos 12 segundos antes de volver a entrar.
+F8 cambia el idioma (espanol / ingles).
+
+
+LAIN - PRESENCE PROTOCOL (ENGLISH)
+==================================
+
+1. Extract this whole ZIP into a folder and open LAIN.exe.
+   If Windows says "Windows protected your PC": "More info" > "Run anyway"
+   (the game is not signed).
+2. In the start menu choose English, then "Create a new account" with a
+   name, a password and the invite code your friend gave you.
+3. Next time just press "Continue". On another PC, log in with your name
+   and password. LAIN.exe updates itself every time you open it.
+
+WASD move, E interact, J journal, F6 graphics, F8 language.
+Enter opens the chat with people in your area.
+Your home PC has a terminal: help and man <topic> will guide you.
+After closing the game, wait about 12 seconds before entering again.

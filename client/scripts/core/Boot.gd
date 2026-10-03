@@ -60,6 +60,13 @@ func _build() -> void:
 	title.add_theme_constant_override("shadow_offset_y", 0)
 	title.add_theme_constant_override("shadow_outline_size", 18)
 	_label(menu, "PROTOCOLO DE PRESENCIA", 15, RED)
+	var languages := OptionButton.new()
+	languages.name = "LanguageSelector"
+	languages.add_item("Español")
+	languages.add_item("English")
+	languages.select(1 if Language.code == "en" else 0)
+	languages.item_selected.connect(func(index: int): Language.select("en" if index == 1 else "es"))
+	menu.add_child(languages)
 	menu.add_child(_gap(18))
 	form = VBoxContainer.new()
 	form.add_theme_constant_override("separation", 8)

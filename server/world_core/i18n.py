@@ -41,13 +41,23 @@ def _catalog(lang: str):
     if lang == "es" or not path.exists():
         return {}, []
     data = json.loads(path.read_text(encoding="utf-8"))
-    exact, templates = {}, []
+    exact, templates = dict(data), []
     for source, target in data.items():
         if re.search(r"\{\w+\}", source):
-            pattern = re.sub(r"\\\{(\w+)\\\}", lambda m: f"(?P<{m.group(1)}>.+?)", re.escape(source))
-            templates.append((re.compile("^" + pattern + "$", re.S), target))
+            seen = set()
+            def group(match):
+                name = match.group(1)
+                if name in seen:
+                    return f"(?P={name})"
+                seen.add(name)
+                return f"(?P<{name}>.*?)"
+            pattern = re.sub(r"\\\{(\w+)\\\}", group, re.escape(source))
+            # No DOTALL: a slot never swallows the following lines of a multi-line text.
+            templates.append((re.compile("^" + pattern + "$"), target))
         else:
             exact[source] = target
+    # Specific sentences precede broad templates such as '{v0}: {v1}'.
+    templates.sort(key=lambda item: len(item[0].pattern), reverse=True)
     return exact, templates
 
 
@@ -66,7 +76,38 @@ def t(text, lang: str | None = None, **values) -> str:
                 if match:
                     result = target.format(**match.groupdict())
                     break
+    if result == source and code != "es" and "\n" in source:
+        result = "\n".join(t(line, code) for line in source.split("\n"))
     return result.format(**values) if values else result
+
+
+# Only presentation fields. Identifiers, terminal bytes/hashes, player names,
+# hypotheses, programs, account data and online chat remain byte-for-byte intact.
+DISPLAY_FIELDS = frozenset({
+    "text", "line", "title", "description", "summary", "body", "subject",
+    "label", "role_label", "focus", "activity", "public_objective", "goal",
+    "hint", "condition", "motive", "reason", "notification", "rules",
+    "game_name", "speaker", "detail",
+})
+PRIVATE_FIELDS = frozenset({
+    "chat", "chat_messages", "hypothesis", "draft", "program", "source_code",
+    "compiled", "life_draft", "output", "memories", "claims", "player",
+})
+
+
+def payload(data, field=""):
+    """Copy a public response in the request language; never localize storage."""
+    if language() == "es" or field in PRIVATE_FIELDS:
+        return data
+    if isinstance(data, dict):
+        if field == "skills":
+            return {t(key): value for key, value in data.items()}
+        return {key: payload(value, key) for key, value in data.items()}
+    if isinstance(data, list):
+        return [payload(value, field) for value in data]
+    if isinstance(data, str) and field in DISPLAY_FIELDS:
+        return t(data)
+    return data
 
 
 def page(data: dict) -> dict:

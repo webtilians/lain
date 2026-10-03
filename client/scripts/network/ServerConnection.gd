@@ -47,7 +47,7 @@ func is_online() -> bool:
 	return not _token.is_empty() and not awaiting_login
 
 func headers() -> PackedStringArray:
-	var result := PackedStringArray(["Content-Type: application/json"])
+	var result := PackedStringArray(["Content-Type: application/json", "X-Lain-Language: " + Language.code])
 	if is_online():
 		result.append("Authorization: Bearer " + _token)
 		result.append("X-Lain-Client: " + instance_id)
@@ -55,7 +55,7 @@ func headers() -> PackedStringArray:
 
 func account_headers() -> PackedStringArray:
 	## For the start menu: sends the remembered token before entering the world.
-	var result := PackedStringArray(["Content-Type: application/json"])
+	var result := PackedStringArray(["Content-Type: application/json", "X-Lain-Language: " + Language.code])
 	if has_session():
 		result.append("Authorization: Bearer " + _token)
 		result.append("X-Lain-Client: " + instance_id)

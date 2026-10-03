@@ -7,6 +7,7 @@ from their id, so friends cannot trade answers, and they are solved with real
 networking knowledge (TTL arithmetic, sequence numbers, hash chains).
 """
 import hashlib
+import json
 import os
 import random
 import shlex
@@ -16,6 +17,7 @@ from datetime import datetime, timezone
 
 from .database import get_connection
 from .messages import initial_message_id
+from . import i18n
 
 TITLE = "Capa 03 · TTL"
 STARTED_AT = time.time()
@@ -71,6 +73,11 @@ def initialize_layer() -> None:
                 player_id TEXT NOT NULL, actor_id TEXT NOT NULL, text TEXT NOT NULL,
                 minute INTEGER NOT NULL, PRIMARY KEY(player_id, actor_id));
         """)
+        columns = {row[1] for row in c.execute("PRAGMA table_info(layer_three)")}
+        if "language" not in columns:
+            c.execute("ALTER TABLE layer_three ADD COLUMN language TEXT NOT NULL DEFAULT 'es'")
+        if "evidence_json" not in columns:
+            c.execute("ALTER TABLE layer_three ADD COLUMN evidence_json TEXT")
         humans = [row[0] for row in c.execute("SELECT id FROM agents WHERE controller_type='HUMAN'")]
     for player in humans:
         activate_layer(player)
@@ -92,10 +99,14 @@ def activate_layer(player: str) -> bool:
         minute = c.execute("SELECT minute FROM simulation_state WHERE id=1").fetchone()[0]
         first = connection[0] if connection[0] is not None else minute
         created = c.execute(
-            "INSERT OR IGNORE INTO layer_three(player_id, started_minute, connection_minute) VALUES(?,?,?)",
-            (player, minute, first),
+            "INSERT OR IGNORE INTO layer_three(player_id, started_minute, connection_minute, language) VALUES(?,?,?,?)",
+            (player, minute, first, i18n.language()),
         ).rowcount
         if created:
+            story = _story(c, player, _run(c, player))
+            evidence = {key: getattr(story, key) for key in Story.EVIDENCE_FIELDS}
+            c.execute("UPDATE layer_three SET evidence_json=? WHERE player_id=?",
+                      (json.dumps(evidence, ensure_ascii=False), player))
             c.execute("INSERT INTO events(minute,actor_id,action,target,details) VALUES(?,?,'LAYER_THREE_STARTED','WIRED','TTL=1')",
                       (minute, player))
         return bool(created)
@@ -106,10 +117,10 @@ def _run(c, player):
         return None
     row = c.execute(
         """SELECT started_minute, connection_minute, assembled, exposed, failed_reports,
-        locked_until, decision FROM layer_three WHERE player_id=?""", (player,)).fetchone()
+        locked_until, decision, language, evidence_json FROM layer_three WHERE player_id=?""", (player,)).fetchone()
     if row is None:
         return None
-    keys = ("started", "connection", "assembled", "exposed", "failed", "locked_until", "decision")
+    keys = ("started", "connection", "assembled", "exposed", "failed", "locked_until", "decision", "language", "evidence_json")
     return dict(zip(keys, row))
 
 
@@ -118,7 +129,12 @@ def _run(c, player):
 class Story:
     """Everything the player can read, derived deterministically from their id."""
 
+    EVIDENCE_FIELDS = ("message", "segments", "segment_files", "forged_segment",
+                       "original_lines", "forged_lines", "forged_number")
+
     def __init__(self, player: str, name: str, run: dict):
+        self.language = run.get("language", "es")
+        self.message = i18n.t(MESSAGE, self.language)
         rng = random.Random(hashlib.sha256(("layer3:" + player).encode()).digest())
         self.name = name
         self.user = _slug(name)
@@ -154,9 +170,13 @@ class Story:
         self.started = run["started"]
         self._segments()
         self._diary()
+        if run.get("evidence_json"):
+            evidence = json.loads(run["evidence_json"])
+            for key in self.EVIDENCE_FIELDS:
+                setattr(self, key, evidence[key])
 
     def _segments(self):
-        data = MESSAGE.encode("utf-8")
+        data = self.message.encode("utf-8")
         while True:
             # Keep UTF-8 characters whole so every segment is readable text.
             cuts = sorted(self._char_boundary(data, cut) for cut in self.rng.sample(range(60, len(data) - 60), 4))
@@ -213,13 +233,18 @@ class Story:
         self.original_lines, self.forged_lines = [], []
         prev = "00000000"
         for number, (minute, text) in enumerate(entries, start=1):
-            line = f"{number:04d} | minuto {minute:6d} | prev {prev} | {text}"
+            # Translate before hashing, in the language chosen on first entry.
+            # Existing saves default to Spanish and retain their exact bytes.
+            content = i18n.t(text, self.language)
+            unit = "minute" if self.language == "en" else "minuto"
+            line = f"{number:04d} | {unit} {minute:6d} | prev {prev} | {content}"
             self.original_lines.append(line)
             prev = h8(line)
         self.forged_number = next(n for n, (_m, text) in enumerate(entries, start=1) if text == ORIGINAL)
         self.forged_lines = list(self.original_lines)
         index = self.forged_number - 1
-        self.forged_lines[index] = self.original_lines[index].replace(ORIGINAL, FORGED)
+        self.forged_lines[index] = self.original_lines[index].replace(
+            i18n.t(ORIGINAL, self.language), i18n.t(FORGED, self.language))
 
 
 def _slug(name: str) -> str:
@@ -293,7 +318,7 @@ def _navi_files(story: Story, run: dict) -> dict:
         "/etc/motd": "NAVI · terminal doméstico conectado a la Wired.\nEscribe help para ver las órdenes y man <tema> para aprender.",
     }
     if run["assembled"]:
-        files[f"{story.home}/sesion0.txt"] = MESSAGE
+        files[f"{story.home}/sesion0.txt"] = story.message
     if run["exposed"]:
         files["/mnt/kagami/diario.espejo"] = "\n".join(story.original_lines)
         files["/mnt/kagami/LEEME"] = ("KAGAMI · ESPEJO DE REGISTROS\nReflejamos todo lo que pasa por nuestros armarios. "
@@ -499,6 +524,12 @@ def run_shell(player: str, host: str, cwd: str, command: str, minute: int) -> di
         relay = _host(c, player, host)
         story = _story(c, player, run)
         files = _relay_files(story, relay) if relay else _navi_files(story, run)
+        # Hashed evidence and packet segments are immutable. Auxiliary files
+        # (manuals, mail and route headings) may follow the current UI language.
+        for path, content in files.items():
+            if path.endswith((".seg", "/diario", "/diario.espejo", "/sesion0.txt")):
+                continue
+            files[path] = i18n.t(content)
         hostname = RELAYS[relay][0] if relay else story.navi
         home = "/" if relay else story.home
         cwd = _norm("/", cwd or home, home)
@@ -508,13 +539,15 @@ def run_shell(player: str, host: str, cwd: str, command: str, minute: int) -> di
         try:
             words = shlex.split(command)
         except ValueError:
-            result["output"] = "Comillas sin cerrar."
+            result["output"] = i18n.t("Comillas sin cerrar.")
             return result
         if not words:
             return result
         name, args = words[0], words[1:]
+        name = {"assemble": "ensamblar", "report": "denunciar", "forward": "reenviar", "drop": "soltar"}.get(name, name)
         out = _dispatch(c, player, story, run, relay, files, home, result, name, args, minute)
-        result["output"] = out
+        # cat/grep/sha256 must show precisely the bytes they inspected.
+        result["output"] = out if name in {"cat", "grep", "sha256", "ensamblar"} else i18n.t(out)
         return result
 
 
@@ -531,10 +564,13 @@ def _dispatch(c, player, story, run, relay, files, home, result, name, args, min
     cwd = result["cwd"]
     try:
         if name == "help":
-            return HELP
+            return i18n.t(HELP)
         if name == "man":
             topic = (args[0] if args else "").lower()
-            return MAN.get(topic, "Temas: " + ", ".join(sorted(MAN)))
+            topic = {"routes": "rutas", "segments": "segmentos", "chain": "cadena",
+                     "console": "consola", "heartbeat": "latido", "assemble": "ensamblar",
+                     "report": "denunciar", "forward": "reenviar", "drop": "soltar"}.get(topic, topic)
+            return i18n.t(MAN.get(topic, "Temas: " + ", ".join(sorted(MAN))))
         if name == "pwd":
             return cwd
         if name == "ls":
@@ -552,15 +588,15 @@ def _dispatch(c, player, story, run, relay, files, home, result, name, args, min
             return ""
         if name == "cat":
             if not args:
-                return "cat: falta el archivo"
+                return i18n.t("cat: falta el archivo")
             return "\n".join(_read(files, cwd, home, path)[1] for path in args)
         if name == "grep":
             if len(args) < 2:
-                return "Uso: grep <texto> <archivo o carpeta>"
+                return i18n.t("Uso: grep <texto> <archivo o carpeta>")
             needle, target = args[0].lower(), _norm(cwd, args[1], home)
             paths = [target] if target in files else [p for p in files if p.rsplit("/", 1)[0] == target]
             if not paths:
-                return f"grep: {target}: no existe"
+                return i18n.t(f"grep: {target}: no existe")
             hits = []
             for path in sorted(paths):
                 for number, line in enumerate(files[path].split("\n"), start=1):
@@ -569,18 +605,19 @@ def _dispatch(c, player, story, run, relay, files, home, result, name, args, min
             return "\n".join(hits) or "(sin coincidencias)"
         if name == "sha256":
             if not args:
-                return "Uso: sha256 <archivo> [línea]"
+                return i18n.t("Uso: sha256 <archivo> [línea]")
             full, text = _read(files, cwd, home, args[0])
             if len(args) > 1:
                 lines = text.split("\n")
                 if not args[1].isdigit() or not 1 <= int(args[1]) <= len(lines):
-                    return f"sha256: {full} tiene {len(lines)} líneas"
+                    return i18n.t(f"sha256: {full} tiene {len(lines)} líneas")
                 return f"{h8(lines[int(args[1]) - 1])}  {full}:{args[1]}"
             return f"{h8(text)}  {full}"
         if name == "traceroute":
             return _traceroute(story, relay, args)
         if name == "ping":
-            return _ping(c, player, story, args[0] if args else "yo")
+            target = args[0] if args else "yo"
+            return _ping(c, player, story, "yo" if target == "me" else target)
         if name == "whoami":
             return (f"{story.name} · sesión 1 · {player}\n"
                     "El servidor no guarda tu llave, solo su huella. Si alguien la copiara, sería tú.")
@@ -607,9 +644,9 @@ def _dispatch(c, player, story, run, relay, files, home, result, name, args, min
             return ""
         return f"{name}: orden desconocida. Escribe help."
     except FileNotFoundError as missing:
-        return f"{name}: {missing.args[0]}: no existe"
+        return i18n.t(f"{name}: {missing.args[0]}: no existe")
     except IsADirectoryError as folder:
-        return f"{name}: {folder.args[0]}: es una carpeta"
+        return i18n.t(f"{name}: {folder.args[0]}: es una carpeta")
 
 
 def _traceroute(story, relay, args):
@@ -627,35 +664,35 @@ def _traceroute(story, relay, args):
 
 def _assemble(c, player, story, run, relay, files, home, cwd, result, args):
     if relay != story.drop:
-        return "ensamblar: aquí no hay segmentos de ese paquete."
+        return i18n.t("ensamblar: aquí no hay segmentos de ese paquete.")
     if len(args) < 2 or args[0] != story.packet:
-        return f"Uso: ensamblar {story.packet} <archivo> <archivo> ..."
+        return i18n.t(f"Uso: ensamblar {story.packet} <archivo> <archivo> ...")
     if run["assembled"]:
-        return "Ya lo reconstruiste. Está en ~/sesion0.txt, en el terminal de casa."
+        return i18n.t("Ya lo reconstruiste. Está en ~/sesion0.txt, en el terminal de casa.")
     expected = story.segments
     chosen = []
     for path in args[1:]:
         try:
             full, text = _read(files, cwd, home, path)
         except (FileNotFoundError, IsADirectoryError):
-            return f"ensamblar: {path}: no existe"
+            return i18n.t(f"ensamblar: {path}: no existe")
         if not full.startswith("/var/spool/descartes/" + story.packet):
-            return f"ensamblar: {path} no pertenece a {story.packet}"
+            return i18n.t(f"ensamblar: {path} no pertenece a {story.packet}")
         chosen.append((full, text))
     if len(chosen) != len(expected):
-        return f"ensamblar: el índice declara {len(expected)} segmentos y has dado {len(chosen)}."
+        return i18n.t(f"ensamblar: el índice declara {len(expected)} segmentos y has dado {len(chosen)}.")
     position = 1000
     for number, ((full, text), segment) in enumerate(zip(chosen, expected), start=1):
         digest = h8(text)
         match = next((s for s in expected if s["sha"] == digest), None)
         if match is None:
-            return f"ensamblar: el segmento {number} ({full.rsplit('/', 1)[1]}) no coincide con ninguna huella del índice."
+            return i18n.t(f"ensamblar: el segmento {number} ({full.rsplit('/', 1)[1]}) no coincide con ninguna huella del índice.")
         if match["seq"] != position:
-            return f"ensamblar: el segmento {number} empieza en seq {match['seq']}, pero esperaba seq {position}."
+            return i18n.t(f"ensamblar: el segmento {number} empieza en seq {match['seq']}, pero esperaba seq {position}.")
         position += match["len"]
     c.execute("UPDATE layer_three SET assembled=1 WHERE player_id=?", (player,))
     result["changed"] = True
-    return ("Mensaje reconstruido. Copia guardada en ~/sesion0.txt (terminal de casa).\n\n" + MESSAGE)
+    return i18n.t("Mensaje reconstruido. Copia guardada en ~/sesion0.txt (terminal de casa).") + "\n\n" + story.message
 
 
 def _report(c, player, story, run, result, args, minute):

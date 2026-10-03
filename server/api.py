@@ -14,6 +14,13 @@ from fastapi import (
     Depends,
     Request,
 )
+from fastapi.responses import JSONResponse
+from server.world_core import i18n
+
+
+class PlayerJSONResponse(JSONResponse):
+    def render(self, content) -> bytes:
+        return super().render(i18n.payload(content))
 
 from pydantic import (
     BaseModel,
@@ -98,6 +105,7 @@ app = FastAPI(
     title="LAIN World API",
     version="0.1.0",
     lifespan=world_lifespan,
+    default_response_class=PlayerJSONResponse,
 )
 
 

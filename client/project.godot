@@ -16,6 +16,8 @@ config/features=PackedStringArray("4.7")
 
 [autoload]
 
+Language="*res://scripts/core/Language.gd"
+
 ServerConnection="*res://scripts/network/ServerConnection.gd"
 WorldApi="*res://scripts/network/WorldApi.gd"
 SceneRouter="*res://scripts/core/SceneRouter.gd"
