@@ -129,6 +129,11 @@ func _choose(owner: String, selected: String) -> void:
 		_dispatch()
 	elif options.has(selected):
 		var option: Dictionary=options[selected]
+		if str(option.action)=="CONSOLE":
+			# The cabinet's maintenance port: the same shell, on that router.
+			EventDialog.close_event()
+			ShellTerminal.open_shell(str(option.relay))
+			return
 		_send(str(option.action),str(option.relay),str(option.get("rival","")),str(option.get("faction","KAGAMI")))
 
 func open_archive() -> void:

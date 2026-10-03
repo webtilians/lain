@@ -1,0 +1,119 @@
+extends SceneTree
+## Capa 03 client: PC tab, shell, cabinet console and the fading signal.
+var failed := false
+var capture := ""
+
+func _initialize() -> void:
+	call_deferred("run")
+
+func check(ok: bool, reason: String) -> void:
+	if not ok:
+		failed = true
+		push_error("LAYER03 // " + reason)
+
+func snap(name: String) -> void:
+	await process_frame
+	await process_frame
+	if not capture.is_empty():
+		await create_timer(1.0).timeout
+		await RenderingServer.frame_post_draw
+		check(root.get_texture().get_image().save_png(capture.path_join(name + ".png")) == OK, "Capture failed")
+
+func reply(shell: Node, output: String, cwd: String) -> void:
+	shell.request.cancel_request()
+	var body := {"result": {"output": output, "cwd": cwd, "hostname": "navi-enrique", "changed": false}, "state": null}
+	shell._completed(HTTPRequest.RESULT_SUCCESS, 200, PackedStringArray(), JSON.stringify(body).to_utf8_buffer())
+
+func run() -> void:
+	for arg in OS.get_cmdline_user_args():
+		if arg.begins_with("--capture="): capture = arg.trim_prefix("--capture=")
+	var api := root.get_node("WorldApi")
+	api.set_script(load("res://tools/offline_world_api.gd"))
+	root.get_node("PrologueApi").set_script(load("res://tools/offline_prologue_api.gd"))
+	var fixtures: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://tools/fixtures/workshop01.json"))
+	var state: Dictionary = fixtures.home
+	state["layer_three"] = {"active": true, "title": "Capa 03 · TTL", "packet": "p-f6a2", "hostname": "navi-enrique",
+		"assembled": false, "exposed": false, "decision": null, "fragments": 0,
+		"goal": "Encuentra en qué armario de enlace murió p-f6a2 y reconstrúyelo.",
+		"mail": {"subject": "TTL=1", "from": "desconocido@wired", "body": "Si lees esto, me queda un salto."}}
+	api.snapshot = state
+	var paths: Dictionary = load("res://scripts/core/SceneRouter.gd").LOCATION_SCENES
+	var scene: Node3D = load(paths[state.player.location]).instantiate()
+	root.add_child(scene)
+	current_scene = scene
+	var player: CharacterBody3D = scene.get_node("Player")
+	await process_frame
+	await physics_frame
+	var ws := root.get_node("Workshop")
+	var shell := root.get_node("ShellTerminal")
+	var presence := root.get_node("PresenceSignal")
+
+	ws.open_pc()
+	var labels := ""
+	for node in ws.content.find_children("*", "Label", true, false):
+		labels += node.text + "\n"
+	check("TTL=1" in labels, "Layer mail missing from Correo")
+	var tab_titles: Array = ws.tabs.get_children().map(func(b): return b.text)
+	check("Terminal" in tab_titles, "Terminal tab missing")
+	ws._select("Terminal")
+	await snap("layer03-pc-terminal-tab")
+	for b in ws.content.find_children("*", "Button", true, false):
+		if b.text == "Abrir el terminal": b.pressed.emit()
+	check(shell.is_open() and shell.host == "navi", "PC button does not open the home shell")
+	reply(shell, "NAVI · terminal doméstico conectado a la Wired.", "/home/enrique")
+	check("NAVI" in shell.output.text, "Banner not printed")
+	check(shell.prompt.text.ends_with("navi-enrique:/home/enrique$"), "Prompt does not follow cwd: " + shell.prompt.text)
+	shell._submit("cat ~/correo/ttl1.eml")
+	check(shell.busy, "Command was not sent")
+	reply(shell, "Asunto: TTL=1\nSi lees esto, me queda un salto.", "/home/enrique")
+	check("me queda un salto" in shell.output.text and not shell.busy, "Reply not shown")
+	await snap("layer03-shell")
+	var up := InputEventKey.new()
+	up.keycode = KEY_UP
+	up.pressed = true
+	shell.input.grab_focus()
+	shell._input(up)
+	check(shell.input.text == "cat ~/correo/ttl1.eml", "History does not recall the last command")
+	var esc := InputEventAction.new()
+	esc.action = "ui_cancel"
+	esc.pressed = true
+	shell._input(esc)
+	check(not shell.is_open() and ws.is_open(), "Esc must close only the shell")
+	check(not player.is_physics_processing(), "Closing the shell over the PC freed the player")
+	ws.close_pc()
+	check(player.is_physics_processing(), "Player not released after the PC")
+
+	var conflict := root.get_node("NetworkConflict")
+	conflict._present({"speaker": "WIRED", "text": "Armario", "choices": [
+		{"text": "Conectarse al puerto de consola del armario.", "action": "CONSOLE", "relay": "RELAY_STATION"}]})
+	conflict._choose(conflict.OWNER, "0")
+	check(shell.is_open() and shell.host == "RELAY_STATION", "Cabinet console does not open the relay shell")
+	check(not conflict.busy, "Console choice must not send a network action")
+	check(shell.output.text.is_empty() or not "NAVI" in shell.output.text, "Relay shell kept the home output")
+	shell.request.cancel_request()
+	shell._done("")
+	shell.close_shell()
+	check(player.is_physics_processing(), "Relay shell did not release the player")
+
+	presence.silence = presence.FADE_AFTER + presence.FADE_SPAN + 5.0
+	await process_frame
+	await process_frame
+	var faded := 0.0
+	for mesh in player.find_children("*", "GeometryInstance3D", true, false):
+		faded = maxf(faded, mesh.transparency)
+	check(faded >= 0.55, "Avatar does not fade without anyone receiving it: " + str(faded))
+	check("CASI NO ESTÁS" in presence.hud.text, "Weak signal not announced")
+	await snap("layer03-fading")
+	ws.open_pc()
+	await process_frame
+	await process_frame
+	var solid := 1.0
+	for mesh in player.find_children("*", "GeometryInstance3D", true, false):
+		solid = minf(solid, 1.0 - mesh.transparency)
+	check(solid >= 0.99 and presence.silence == 0.0, "Being received does not restore the avatar")
+	ws.close_pc()
+	current_scene = null
+	scene.queue_free()
+	await process_frame
+	print("LAYER03_CLIENT_", "FAILED" if failed else "OK")
+	quit(1 if failed else 0)

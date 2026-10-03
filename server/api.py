@@ -392,6 +392,32 @@ def chapter_one_action(
             raise HTTPException(status_code=409, detail=str(error))
 
 
+class ShellRequest(BaseModel):
+    host: str = Field(max_length=32)
+    cwd: str = Field(default="/", max_length=200)
+    command: str = Field(max_length=400)
+
+
+@app.post("/api/v1/layer-three/shell")
+def layer_three_shell(
+    request: ShellRequest,
+    player_id: Annotated[str, Depends(authenticated_player)] = PLAYER_ID,
+):
+    from server.world_core.layer_three import run_shell
+
+    with _world_lock:
+        runtime = get_runtime()
+        try:
+            result = run_shell(
+                player_id, request.host, request.cwd, request.command, runtime.minute
+            )
+        except ValueError as error:
+            raise HTTPException(status_code=409, detail=str(error))
+        # Most commands only read; send the heavy snapshot only after a change.
+        state = build_player_snapshot(player_id) if result["changed"] else None
+        return {"result": result, "state": state}
+
+
 def perform_player_step(
     action: str,
     target: str,

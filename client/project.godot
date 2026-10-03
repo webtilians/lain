@@ -28,6 +28,8 @@ ChapterOne="*res://scripts/ui/ChapterOne.gd"
 NetworkConflict="*res://scripts/ui/NetworkConflict.gd"
 Workshop="*res://scripts/ui/Workshop.gd"
 OnlinePresence="*res://scripts/network/OnlinePresence.gd"
+ShellTerminal="*res://scripts/ui/ShellTerminal.gd"
+PresenceSignal="*res://scripts/ui/PresenceSignal.gd"
 
 [display]
 

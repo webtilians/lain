@@ -116,6 +116,20 @@ func exchange_data() -> Dictionary:
 func exchange_active() -> bool:
 	return bool(exchange_data().get("active",false))
 
+func layer_data() -> Dictionary:
+	return WorldApi.snapshot.get("layer_three", {})
+
+func layer_active() -> bool:
+	return bool(layer_data().get("active", false))
+
+func _terminal_page() -> void:
+	var box := scrolling(content)
+	var info := layer_data()
+	label(box, str(info.get("title", "")) + "   ·   fragmentos de la Sesión Cero: " + str(int(info.get("fragments", 0))) + "/7")
+	label(box, str(info.get("goal", "")))
+	label(box, "El terminal habla con la Wired. Escribe help para ver las órdenes y man <tema> para aprender lo que necesites. Nadie te dará la respuesta: solo las herramientas.")
+	button(box, "Abrir el terminal", func(): ShellTerminal.open_shell("navi"))
+
 func open_exchange_contact(peer: String) -> void:
 	_open("EXCHANGE_CONTACT")
 	_send_exchange("CONTACT",{"peer":peer})
@@ -262,6 +276,7 @@ func _render() -> void:
 	if circles_active(): pages.append("Círculo")
 	if bool(event_data().get("active", false)): pages.append("Eventos")
 	if exchange_active(): pages.append("Intercambios")
+	if layer_active(): pages.append("Terminal")
 	for title in pages:
 		var tab := button(tabs, title, _select.bind(title))
 		tab.disabled = title == page
@@ -274,6 +289,7 @@ func _render() -> void:
 		"Círculo": circle_panel.render(self)
 		"Eventos": event_panel.render(self, false)
 		"Intercambios": exchange_panel.render(self)
+		"Terminal": _terminal_page()
 
 func scrolling(parent: Node) -> VBoxContainer:
 	var scroll := ScrollContainer.new()
@@ -289,6 +305,12 @@ func scrolling(parent: Node) -> VBoxContainer:
 
 func _mail() -> void:
 	var box := scrolling(content)
+	if layer_active():
+		var mail: Dictionary = layer_data().get("mail", {})
+		label(box, str(mail.get("subject", "")) + "   ·   " + str(mail.get("from", "")))
+		label(box, str(mail.get("body", "")))
+		button(box, "Abrir el terminal", func(): ShellTerminal.open_shell("navi"))
+		box.add_child(HSeparator.new())
 	label(box, "UNA MÁQUINA QUE SUEÑA")
 	label(box, "En Kissa Café hay un terminal y un coprocesador por reparar. Habla con el técnico allí y pide las reglas al profesor en el aula de informática. Después completa el ejercicio en este PC.")
 	label(box, "BIT COURIER · PRÁCTICA INDIVIDUAL\nRecoge tres paquetes y alcanza la salida del minijuego del café. Consigue una interfaz de red y el módulo Exploración. Las competiciones están en Eventos.")

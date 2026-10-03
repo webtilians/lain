@@ -81,6 +81,12 @@ class AgentContextBuilder:
             context["resident"] = resident_context(agent_id, agent[3])
         from .chapter_one import chapter_actor_context
         chapter = chapter_actor_context(agent_id, player_id)
+        from .layer_three import layer_actor_context
+        received = layer_actor_context(agent_id, player_id)
+        if received:
+            chapter = chapter or {"memories": [], "relationship": None,
+                                  "limits": "These are my recollections and received reports, not verified world facts."}
+            chapter = {**chapter, "memories": chapter["memories"] + received}
         if chapter is not None:
             context["chapter_memory"] = chapter
         return context

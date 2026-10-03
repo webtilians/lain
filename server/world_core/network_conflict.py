@@ -137,6 +137,9 @@ def _menu(c, actor, relay, text):
         return _page(text)
     amount,defense=_own(c,relay,actor)
     choices=[_option("Examinar contratos y tráfico del enlace.","INSPECT",relay)]
+    from .layer_three import console_available
+    if console_available(c,actor):
+        choices.append(_option("Conectarse al puerto de consola del armario.","CONSOLE",relay))
     if c.execute("SELECT 1 FROM network_discoveries WHERE actor_id=? AND relay=?",(actor,relay)).fetchone():
         for faction in [factions.KAGAMI,factions.NOEMA] if factions.active(c) else [factions.KAGAMI]:
             if factions.discovery(c,actor,relay,faction) and factions.balance(c,relay,faction)>0:

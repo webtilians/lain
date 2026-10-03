@@ -35,6 +35,7 @@ $defaults = @{
     LAIN_CAFE_EVENTS = '1'
     LAIN_ARCADE_CATALOG = '1'
     LAIN_CODE_EXCHANGE = '1'
+    LAIN_LAYER_THREE = '1'
 }
 foreach ($key in $defaults.Keys) {
     if ([string]::IsNullOrWhiteSpace([Environment]::GetEnvironmentVariable($key))) {

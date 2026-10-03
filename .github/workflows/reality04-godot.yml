@@ -192,6 +192,16 @@ jobs:
             exit 1
           fi
 
+      - name: Capa 03 shell, cabinet console and fading signal
+        shell: bash
+        run: |
+          set -euo pipefail
+          /tmp/lain-godot --headless --path client --script res://tools/test_layer03.gd 2>&1 | tee /tmp/lain-layer03.log
+          grep -q 'LAYER03_CLIENT_OK' /tmp/lain-layer03.log
+          if grep -E '^(SCRIPT ERROR:|ERROR:)' /tmp/lain-layer03.log; then
+            exit 1
+          fi
+
       - name: Physical code contacts, copy review, receipts and stable retries
         shell: bash
         run: |

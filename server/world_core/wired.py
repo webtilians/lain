@@ -79,6 +79,8 @@ def process_wired_message_acknowledgement(
 
     from .chapter_one import activate_chapter
     activate_chapter(player_id)
+    from .layer_three import activate_layer
+    activate_layer(player_id)
     from .network_conflict import enroll_connected_players
     enroll_connected_players()
     from .workshop import enroll_workshop

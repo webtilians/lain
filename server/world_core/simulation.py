@@ -239,6 +239,8 @@ class Simulation:
         initialize_circles()
         from .code_exchange import initialize_exchange
         initialize_exchange()
+        from .layer_three import initialize_layer
+        initialize_layer()
 
         for person in self.all_agents.values():
             if person.controller_type == "HUMAN":
