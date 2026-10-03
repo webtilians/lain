@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LAIN · Protocolo de presencia</title>
+<meta name="description" content="Descarga LAIN, un juego en red sobre existir en la Wired.">
+<style>
+  :root { --bg: #07060a; --panel: #110e15; --ink: #e9e2ea; --dim: #9a8f9e; --red: #c2253f; --neon: #ff3fb0; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: radial-gradient(1200px 600px at 70% -10%, #2a0d1a 0%, var(--bg) 60%); color: var(--ink);
+         font: 17px/1.6 system-ui, "Segoe UI", sans-serif; min-height: 100vh; }
+  main { max-width: 760px; margin: 0 auto; padding: 56px 20px 72px; }
+  h1 { font: 700 clamp(56px, 12vw, 96px)/1 "Segoe UI", system-ui, sans-serif; letter-spacing: .18em; margin: 0;
+       text-shadow: 0 0 24px rgba(194, 37, 63, .55); }
+  .sub { color: var(--neon); letter-spacing: .32em; text-transform: uppercase; font-size: 13px; margin: 10px 0 34px; }
+  .lead { font-size: 20px; color: var(--ink); max-width: 36em; }
+  .download { display: inline-block; margin: 28px 0 8px; padding: 16px 30px; border-radius: 6px; background: var(--red);
+              color: #fff; font-weight: 700; font-size: 19px; text-decoration: none; letter-spacing: .04em;
+              box-shadow: 0 0 0 1px #ff5a74 inset, 0 8px 30px rgba(194, 37, 63, .35); }
+  .download:hover { background: #d9304c; }
+  .small { color: var(--dim); font-size: 14px; }
+  section { margin-top: 44px; background: var(--panel); border: 1px solid #2a2230; border-radius: 10px; padding: 22px 26px; }
+  h2 { font-size: 15px; letter-spacing: .2em; text-transform: uppercase; color: var(--dim); margin: 0 0 12px; }
+  ol { margin: 0; padding-left: 22px; } li { margin: 8px 0; }
+  code { background: #1d1722; padding: 1px 6px; border-radius: 4px; }
+  footer { margin-top: 40px; color: var(--dim); font-size: 13px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>LAIN</h1>
+  <p class="sub">Protocolo de presencia</p>
+  <p class="lead">Eres una sesión reiniciada en una red que recuerda más que tú. Para saber quién fuiste tendrás que
+    entender cómo funciona la red que te contiene. Hace falta algo de informática; el juego te da las herramientas,
+    nunca la respuesta.</p>
+  <a class="download" href="https://github.com/webtilians/lain/releases/latest/download/LAIN-Windows.zip">Descargar LAIN para Windows</a>
+  <p class="small">Windows 10 u 11 de 64 bits · unos 300 MB · el juego se actualiza solo al abrirlo.</p>
+
+  <section>
+    <h2>Cómo empezar</h2>
+    <ol>
+      <li>Descarga el ZIP y extráelo entero en una carpeta (clic derecho → <em>Extraer todo…</em>).</li>
+      <li>Abre <code>LAIN.exe</code>. Si Windows avisa con «Windows protegió su PC», pulsa <em>Más información</em> y
+        <em>Ejecutar de todas formas</em>: el juego no está firmado.</li>
+      <li>En el menú, pulsa <em>Crear cuenta</em>: elige un nombre y una contraseña, y escribe el
+        <strong>código de invitación</strong> que te pasó quien te invitó.</li>
+      <li>La próxima vez solo tendrás que pulsar <em>Continuar</em>. Desde otro PC, entra con tu nombre y tu contraseña.</li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>Dentro del juego</h2>
+    <p>WASD para moverte, E para interactuar, J para el diario, Enter para hablar con quien esté en tu zona y F6 para la
+      calidad gráfica. El PC de tu casa tiene un terminal: <code>help</code> y <code>man &lt;tema&gt;</code> son tus amigos.</p>
+  </section>
+
+  <footer>Un mundo compartido y siempre encendido. Lo que haces lo recuerdan los demás.</footer>
+</main>
+</body>
+</html>

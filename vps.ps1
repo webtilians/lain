@@ -19,6 +19,12 @@
     [switch]$Status,
     [switch]$Update,
     [switch]$Shell,
+    # Publish a version (e.g. 0.13.1): GitHub builds it, players update on launch.
+    [string]$Publish = '',
+    # Invite code for new accounts: ver · nuevo · abierto · cerrado · <código>
+    [string]$Invite = '',
+    # A new password for a player who forgot theirs.
+    [string]$ResetPassword = '',
     # With -Migrate: replace a server world that already has players.
     [switch]$Force
 )
@@ -124,7 +130,7 @@ if ($Key) {
     Write-Host ''
 }
 
-if ($Ip -or $Install -or $Gemini -or $Groq -or $Migrate -or $AddPlayer -or $Status -or $Update -or $Shell) { $server = Get-Server }
+if ($Ip -or $Install -or $Gemini -or $Groq -or $Migrate -or $AddPlayer -or $Status -or $Update -or $Shell -or $Publish -or $ResetPassword -or $Invite) { $server = Get-Server }
 
 if ($Install) {
     Copy-ToServer (Join-Path $PSScriptRoot 'deploy\vps\setup.sh') '/root/lain-setup.sh'
@@ -213,6 +219,50 @@ if ($Packages) {
     } else {
         Build-Package $null
     }
+}
+
+if ($Publish) {
+    if ($Publish -notmatch '^\d+\.\d+\.\d+$') { throw 'Usa una versión como 0.13.1' }
+    $repo = 'webtilians/lain'
+    $branch = (git rev-parse --abbrev-ref HEAD).Trim()
+    if (git status --porcelain --untracked-files=no) { throw 'Hay cambios sin guardar en git. Haz commit antes de publicar.' }
+    git push origin $branch
+    git tag "v$Publish"
+    git push origin "v$Publish"
+    if ($LASTEXITCODE -ne 0) { throw 'No se pudo subir la etiqueta de la versión.' }
+    Write-Host "GitHub está compilando la versión $Publish (unos 20 minutos)..."
+    $api = @{ 'User-Agent' = 'LAIN-vps'; 'Accept' = 'application/vnd.github+json' }
+    $deadline = (Get-Date).AddMinutes(50)
+    while ($true) {
+        Start-Sleep -Seconds 45
+        try {
+            $release = Invoke-RestMethod "https://api.github.com/repos/$repo/releases/tags/v$Publish" -Headers $api
+            if ($release.assets.name -contains 'manifest.json') { break }
+        } catch { }
+        try {
+            $runs = Invoke-RestMethod "https://api.github.com/repos/$repo/actions/runs?branch=v$Publish&per_page=1" -Headers $api
+            $run = $runs.workflow_runs | Select-Object -First 1
+            if ($run -and $run.status -eq 'completed' -and $run.conclusion -ne 'success') {
+                throw "La compilación de GitHub falló: $($run.html_url)"
+            }
+        } catch [System.Net.WebException] { }
+        if ((Get-Date) -gt $deadline) { throw 'GitHub tarda demasiado. Revisa la pestaña Actions del repositorio.' }
+    }
+    Write-Host "Versión $Publish publicada. Actualizando el servidor..."
+    Invoke-Server "bash /opt/lain/deploy/vps/setup.sh --branch $branch"
+    Write-Host ''
+    Write-Host "Listo. Los jugadores recibirán la $Publish al abrir LAIN.exe."
+    Write-Host "Descarga para gente nueva: https://$($server.host)"
+}
+
+if ($Invite) {
+    if ($Invite -notmatch '^[\p{L}\p{N}_-]{3,40}$') { throw 'Usa: ver, nuevo, abierto, cerrado o un código de letras, números y guiones.' }
+    Invoke-Server ('lain-signup ' + $(if ($Invite -eq 'ver') { '' } else { $Invite }))
+}
+
+if ($ResetPassword) {
+    if ($ResetPassword -notmatch '^[\p{L}\p{N} _-]{3,16}$') { throw 'Ese nombre no es válido.' }
+    Invoke-Server ("lain-reset-password '" + $ResetPassword + "'")
 }
 
 if ($Update) { Invoke-Server 'lain-update' }

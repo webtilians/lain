@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+# Who can create an account from the game's start menu.
+#   lain-signup               show the current rule
+#   lain-signup nuevo         new random invite code (the old one stops working)
+#   lain-signup <código>      use this invite code
+#   lain-signup abierto       anyone with the game can sign up (no code)
+#   lain-signup cerrado       nobody new can sign up
+set -euo pipefail
+umask 077
+[ "$(id -u)" -eq 0 ] || { echo "Ejecuta como root." >&2; exit 1; }
+file=/etc/lain/signup.env
+
+new_code() {
+  local words=(cable nodo señal eco latido puerto enlace espejo noche lluvia neón torre canal trama ruta faro humo cinta vapor reloj)
+  printf '%s-%s-%d' "${words[RANDOM % ${#words[@]}]}" "${words[RANDOM % ${#words[@]}]}" $((RANDOM % 900 + 100))
+}
+
+show() {
+  if grep -q '^LAIN_SIGNUP_OPEN=1' "$file" 2>/dev/null; then
+    echo "Registro: ABIERTO (cualquiera con el juego puede crear cuenta)."
+  elif grep -q '^LAIN_SIGNUP_CODE=.' "$file" 2>/dev/null; then
+    echo "Registro: con código de invitación: $(sed -n 's/^LAIN_SIGNUP_CODE=//p' "$file")"
+  else
+    echo "Registro: CERRADO."
+  fi
+}
+
+case "${1:-}" in
+  "") show; exit 0 ;;
+  nuevo) echo "LAIN_SIGNUP_CODE=$(new_code)" > "$file.new" ;;
+  abierto) echo "LAIN_SIGNUP_OPEN=1" > "$file.new" ;;
+  cerrado) : > "$file.new" ;;
+  *)
+    code=$(printf '%s' "$1" | tr -d '[:space:]')
+    [[ $code =~ ^[[:alnum:]ñÑáéíóúÁÉÍÓÚ_-]{4,40}$ ]] || { echo "Usa entre 4 y 40 letras, números o guiones." >&2; exit 1; }
+    echo "LAIN_SIGNUP_CODE=$code" > "$file.new" ;;
+esac
+mv "$file.new" "$file"
+systemctl restart lain
+show

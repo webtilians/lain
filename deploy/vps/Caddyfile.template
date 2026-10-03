@@ -1,8 +1,18 @@
 # Written by deploy/vps/setup.sh. Caddy gets and renews the HTTPS certificate.
 __HOST__ {
 	encode gzip
-	# FastAPI's interactive docs are for development only.
+	# Mutually exclusive, first match wins: docs closed, download page, World Core.
 	@docs path /docs /docs/* /redoc /openapi.json
-	respond @docs 404
-	reverse_proxy 127.0.0.1:8000
+	handle @docs {
+		respond 404
+	}
+	@site path / /index.html
+	handle @site {
+		root * /opt/lain/deploy/vps/web
+		rewrite * /index.html
+		file_server
+	}
+	handle {
+		reverse_proxy 127.0.0.1:8000
+	}
 }

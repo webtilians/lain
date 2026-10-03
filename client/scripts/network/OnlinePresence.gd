@@ -13,9 +13,10 @@ var _history: Array[String] = []
 var _status: Label
 var _log: Label
 var _chat_input: LineEdit
+var _layer: CanvasLayer
 
 func _ready() -> void:
-	if not ServerConnection.is_online():
+	if not ServerConnection.is_online_mode():
 		set_process(false)
 		return
 	_request = HTTPRequest.new()
@@ -31,6 +32,7 @@ func _ready() -> void:
 	var layer := CanvasLayer.new()
 	layer.layer = 6
 	add_child(layer)
+	_layer = layer
 	var panel := PanelContainer.new()
 	panel.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_LEFT)
 	panel.position = Vector2(12, -170)
@@ -54,6 +56,10 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	if not ServerConnection.configuration_error.is_empty():
 		_status.text = ServerConnection.configuration_error
+		return
+	# Hidden behind the start menu until the player has signed in.
+	_layer.visible = ServerConnection.is_online()
+	if not ServerConnection.is_online():
 		return
 	var scene := get_tree().current_scene
 	if scene == null:

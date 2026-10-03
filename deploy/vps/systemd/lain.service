@@ -8,6 +8,8 @@ User=lain
 Group=lain
 WorkingDirectory=/opt/lain
 EnvironmentFile=/etc/lain/lain.env
+# Who may sign up from the start menu (lain-signup); optional.
+EnvironmentFile=-/etc/lain/signup.env
 Environment=PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
 # One process and one clock per world; Caddy terminates HTTPS in front.
 ExecStart=/opt/lain-venv/bin/python -m tools.online_server --data-dir /var/lib/lain serve --host 127.0.0.1 --port 8000

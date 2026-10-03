@@ -61,6 +61,8 @@ func _process(delta: float) -> void:
 
 
 func request_state(silent: bool = false) -> void:
+	if ServerConnection.awaiting_login:
+		return
 	if not ServerConnection.configuration_error.is_empty():
 		api_error.emit(ServerConnection.configuration_error)
 		return

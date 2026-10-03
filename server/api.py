@@ -12,6 +12,7 @@ from fastapi import (
     HTTPException,
     Header,
     Depends,
+    Request,
 )
 
 from pydantic import (
@@ -135,6 +136,74 @@ def authenticated_player(
             else 409 if str(error) == "PLAYER_ALREADY_CONNECTED" else 401
         )
         raise HTTPException(status_code=code, detail=str(error))
+
+
+class LoginRequest(BaseModel):
+    model_config = {"extra": "forbid"}
+    name: str = Field(max_length=40)
+    password: str = Field(max_length=128)
+
+
+class RegisterRequest(LoginRequest):
+    invite: str = Field(default="", max_length=64)
+
+
+class PasswordRequest(BaseModel):
+    model_config = {"extra": "forbid"}
+    current: str = Field(default="", max_length=128)
+    new: str = Field(max_length=128)
+
+
+def _client_address(request: Request) -> str:
+    # Behind Caddy or a tunnel uvicorn trusts X-Forwarded-For from 127.0.0.1 only.
+    return request.client.host if request.client else "unknown"
+
+
+def _account_call(function, *args):
+    if not online.enabled():
+        raise HTTPException(status_code=404, detail="ONLINE_DISABLED")
+    try:
+        return function(*args)
+    except ValueError as error:
+        code = {"PLEASE_WAIT": 429, "REGISTRATION_CLOSED": 403, "INVALID_LOGIN": 401}.get(str(error), 409)
+        raise HTTPException(status_code=code, detail=str(error))
+
+
+@app.post("/api/v1/auth/register")
+def auth_register(body: RegisterRequest, request: Request):
+    from server.world_core import online_accounts
+
+    with _world_lock:
+        get_runtime()
+        return _account_call(online_accounts.register, body.name, body.password, body.invite,
+                             _client_address(request))
+
+
+@app.post("/api/v1/auth/login")
+def auth_login(body: LoginRequest, request: Request):
+    from server.world_core import online_accounts
+
+    with _world_lock:
+        return _account_call(online_accounts.login, body.name, body.password, _client_address(request))
+
+
+@app.get("/api/v1/auth/me")
+def auth_me(player_id: Annotated[str, Depends(authenticated_player)]):
+    from server.world_core import online_accounts
+
+    with _world_lock:
+        return {**_account_call(online_accounts.me, player_id),
+                "signup": online_accounts.signup_policy()}
+
+
+@app.post("/api/v1/auth/password")
+def auth_password(body: PasswordRequest, request: Request,
+                  player_id: Annotated[str, Depends(authenticated_player)]):
+    from server.world_core import online_accounts
+
+    with _world_lock:
+        return _account_call(online_accounts.set_password, player_id, body.current, body.new,
+                             _client_address(request))
 
 
 @app.post("/api/v1/online/presence")

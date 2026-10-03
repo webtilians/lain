@@ -14,6 +14,42 @@ lo extrae, abre `LAIN.exe` y entra.
 
 Todo se maneja desde el PC con `vps.ps1`.
 
+## Que juegue gente nueva (sin que tú hagas nada)
+
+1. Pásales la web del servidor: **https://178-105-103-4.sslip.io**. Tiene el
+   botón de descarga. El enlace directo, que siempre baja la última versión,
+   es `https://github.com/webtilians/lain/releases/latest/download/LAIN-Windows.zip`.
+2. Pásales también el **código de invitación**. Para verlo o cambiarlo:
+
+   ```powershell
+   .\vps.ps1 -Invite ver      # muestra el código actual
+   .\vps.ps1 -Invite nuevo    # código nuevo (el anterior deja de valer)
+   .\vps.ps1 -Invite abierto  # cualquiera con el juego puede registrarse
+   .\vps.ps1 -Invite cerrado  # nadie nuevo puede registrarse
+   ```
+
+3. Cada persona extrae el ZIP, abre `LAIN.exe` y se crea su cuenta con nombre,
+   contraseña y el código. El PC recuerda la sesión. Desde otro PC entra con
+   su nombre y contraseña.
+4. Si alguien olvida su contraseña: `.\vps.ps1 -ResetPassword "Nombre"` te da
+   una nueva para pasársela.
+
+Los jugadores de antes (con su `lain-online.json`) copian ese archivo junto
+al nuevo `LAIN.exe` una vez: el menú les pide que pongan una contraseña.
+
+## Publicar una fase nueva
+
+```powershell
+.\vps.ps1 -Publish 0.13.1
+```
+
+Sube una etiqueta `v0.13.1` a GitHub. El flujo *LAIN — publicar versión
+online* compila el juego (unos 20 minutos), comprueba que dos clientes
+comparten mundo y publica la versión en GitHub Releases. Después el script
+actualiza el servidor. Cada jugador recibe la versión nueva al abrir
+`LAIN.exe`: el lanzador descarga solo los archivos que cambiaron y comprueba
+su huella SHA-256 antes de instalarlos.
+
 ## Primera vez
 
 1. **Llave SSH** (ya creada en este PC):

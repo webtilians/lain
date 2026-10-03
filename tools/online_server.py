@@ -90,6 +90,10 @@ def main():
     )
     revoke = commands.add_parser("revoke-player")
     revoke.add_argument("--id", required=True)
+    reset = commands.add_parser(
+        "reset-password", help="Dar una contraseña nueva a quien olvidó la suya"
+    )
+    reset.add_argument("--name", required=True)
     args = parser.parse_args()
     if args.command == "list-players":
         list_players(args.data_dir)
@@ -140,7 +144,10 @@ def main():
             workers=1,
             reload=False,
             access_log=False,
-            proxy_headers=False,
+            # Only a local reverse proxy (Caddy, cloudflared) may set the client
+            # address; registration and login limits are per address.
+            proxy_headers=True,
+            forwarded_allow_ips="127.0.0.1",
             log_level="warning",
         )
         return
@@ -173,6 +180,15 @@ def main():
         print(
             "Cópialo junto al LAIN.exe online de ESA persona. No publiques el archivo."
         )
+    elif args.command == "reset-password":
+        from server.world_core import online_accounts
+
+        try:
+            password = online_accounts.reset_password(args.name)
+        except ValueError:
+            parser.error("No hay ningún jugador con ese nombre.")
+        print("Contraseña nueva de", args.name + ":", password)
+        print("Pásasela solo a esa persona. Puede cambiarla desde el menú de inicio.")
     else:
         online.initialize()
         online.revoke_player(args.id)

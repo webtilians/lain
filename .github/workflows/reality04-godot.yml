@@ -55,6 +55,8 @@ jobs:
           fi
       - name: Two real online Godot clients in an isolated world
         run: python tools/smoke_online01.py --godot /tmp/lain-godot
+      - name: Start menu signs up and logs in against a real online World Core
+        run: python tools/smoke_startmenu.py --godot /tmp/lain-godot
       - name: Stalled connections release dialogue and prologue requests
         shell: bash
         run: |
@@ -189,6 +191,16 @@ jobs:
           /tmp/lain-godot --headless --path client --script res://tools/test_arcade01.gd 2>&1 | tee /tmp/lain-arcade01.log
           grep -q 'ARCADE01_GAMEPLAY_OK views=6 rule_steps=182' /tmp/lain-arcade01.log
           if grep -E '^(SCRIPT ERROR:|ERROR:)' /tmp/lain-arcade01.log; then
+            exit 1
+          fi
+
+      - name: Online start menu, sign-up, login and legacy password claim
+        shell: bash
+        run: |
+          set -euo pipefail
+          /tmp/lain-godot --headless --path client --script res://tools/test_startmenu.gd 2>&1 | tee /tmp/lain-startmenu.log
+          grep -q 'STARTMENU_OK' /tmp/lain-startmenu.log
+          if grep -E '^(SCRIPT ERROR:|ERROR:)' /tmp/lain-startmenu.log; then
             exit 1
           fi
 

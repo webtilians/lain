@@ -173,6 +173,7 @@ def main():
                         **environment,
                         "LAIN_SERVER_URL": url,
                         "LAIN_PLAYER_TOKEN": token,
+                        "LAIN_SKIP_MENU": "1",
                         "LAIN_ALLOW_LAN_HTTP": "1",
                         "LAIN_TEST_PLAYER_NAME": name,
                     }

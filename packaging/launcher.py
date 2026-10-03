@@ -270,10 +270,131 @@ def wait_until_ready(server: subprocess.Popen, seconds: float = 80.0) -> None:
     raise TimeoutError("El servidor no ha terminado de iniciar en 80 segundos.")
 
 
+def universal_configuration(root: Path) -> dict | None:
+    """lain-server.json: the one download every player shares (no personal file)."""
+    path = root / "lain-server.json"
+    if not path.exists():
+        return None
+    try:
+        if path.stat().st_size > 2048:
+            raise ValueError()
+        config = json.loads(path.read_text(encoding="utf-8-sig"))
+        if not isinstance(config, dict) or set(config) != {"server_url", "releases"}:
+            raise ValueError()
+        if not all(isinstance(value, str) for value in config.values()):
+            raise ValueError()
+        releases = config["releases"].strip().rstrip("/")
+        parsed = urlsplit(releases)
+        parts = parsed.path.strip("/").split("/")
+        if (parsed.scheme != "https" or parsed.hostname != "github.com" or parsed.query
+                or parsed.fragment or len(parts) != 3 or parts[2] != "releases"):
+            raise ValueError()
+        return {"server_url": validate_world_url(config["server_url"]), "releases": releases}
+    except (OSError, ValueError, TypeError):
+        raise ValueError(
+            "El archivo lain-server.json está dañado. Vuelve a descargar el juego."
+        ) from None
+
+
+def legacy_token(root: Path) -> str:
+    """An owner-made lain-online.json still signs its holder in (to set a password)."""
+    try:
+        config = online_configuration(root)
+    except ValueError:
+        return ""
+    return config["player_token"] if config else ""
+
+
+def apply_updates(root: Path, releases: str) -> bool:
+    """Returns True when a new LAIN.exe was installed and must be started instead."""
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    import updater
+    import update_window
+
+    updater.cleanup(root)
+    if not getattr(sys, "frozen", False):
+        return False  # a developer checkout never rewrites its own files
+    try:
+        manifest = updater.fetch_manifest(releases, timeout=6.0)
+    except Exception:  # noqa: BLE001 - offline or GitHub down: play what is installed
+        return False
+    if manifest["version"] == updater.installed_version(root):
+        return False
+    try:
+        return bool(update_window.run(
+            lambda report: updater.update(root, releases, manifest, report)
+        ))
+    except Exception as error:  # noqa: BLE001
+        message(
+            "LAIN · Actualización",
+            "No se pudo instalar la versión %s. Se abre la que ya tienes.\n\n%s"
+            % (manifest["version"], error),
+        )
+        return False
+
+
+def universal_environment(config: dict, root: Path) -> dict[str, str]:
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    import updater
+
+    env = os.environ.copy()
+    for key in ("LAIN_LLM_API_KEY", "GROQ_API_KEY", "OPENAI_API_KEY", "LAIN_SKIP_MENU"):
+        env.pop(key, None)
+    env.update(
+        {
+            "LAIN_SERVER_URL": config["server_url"],
+            "LAIN_PLAYER_TOKEN": legacy_token(root),
+            "LAIN_ALLOW_LAN_HTTP": "1" if config["server_url"].startswith("http://") else "0",
+            "LAIN_CLIENT_VERSION": updater.installed_version(root),
+        }
+    )
+    return env
+
+
+def universal_main(root: Path, config: dict) -> int:
+    base = os.environ.get("LOCALAPPDATA") or str(Path.home() / "AppData" / "Local")
+    data = Path(base) / "LAIN" / "Online" / "client"
+    data.mkdir(parents=True, exist_ok=True)
+    lock = acquire_lock(data)
+    if lock is None:
+        message("LAIN", "LAIN ya está abierto.")
+        return 1
+    relaunch = False
+    try:
+        relaunch = apply_updates(root, config["releases"])
+        if relaunch:
+            return 0
+        game_exe = root / "Game" / "LAIN-Game.exe"
+        if not game_exe.is_file():
+            message("LAIN", "Faltan archivos del juego. Descomprime TODO el ZIP antes de abrir LAIN.exe.")
+            return 1
+        game = subprocess.Popen(
+            [str(game_exe)], cwd=str(game_exe.parent), env=universal_environment(config, root)
+        )
+        return game.wait()
+    except Exception as error:  # noqa: BLE001
+        with (data / "launcher.log").open("a", encoding="utf-8") as handle:
+            handle.write(time.strftime("%Y-%m-%d %H:%M:%S") + "\n" + traceback.format_exc() + "\n")
+        message("LAIN · Error", "%s\n\nDiagnóstico: %s" % (error, data / "launcher.log"))
+        return 1
+    finally:
+        release_lock(lock)
+        if relaunch:
+            # The new launcher takes over (and finishes cleaning up the old one).
+            subprocess.Popen([str(root / "LAIN.exe")], cwd=str(root))
+
+
 def main() -> int:
     if sys.platform != "win32":
         raise SystemExit("Esta distribución solo funciona en Windows.")
     root = Path(sys.executable).resolve().parent
+    try:
+        universal = universal_configuration(root)
+    except ValueError as error:
+        message("LAIN", str(error))
+        return 1
+    if universal:
+        return universal_main(root, universal)
     server_exe = root / "Server" / "LainServer.exe"
     game_exe = root / "Game" / "LAIN-Game.exe"
     try:

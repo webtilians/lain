@@ -13,6 +13,7 @@ else
   echo "IA:         desactivada (diálogos predefinidos)"
 fi
 echo "Versión:    $(git -C /opt/lain log -1 --format='%h %s')"
+echo "$(lain-signup)"
 echo "Disco:      $(df -h /var/lib/lain | awk 'NR == 2 {print $4 " libres"}')"
 echo "Copias:     $(ls /var/backups/lain/*.sql.gz 2>/dev/null | wc -l) (última: $(ls -t /var/backups/lain/*.sql.gz 2>/dev/null | head -1 | xargs -r basename))"
 echo

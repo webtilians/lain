@@ -1,0 +1,27 @@
+LAIN - PROTOCOLO DE PRESENCIA
+=============================
+
+EMPEZAR
+1. Extrae este ZIP entero en una carpeta (clic derecho > Extraer todo...).
+2. Abre LAIN.exe.
+   Si Windows dice "Windows protegio su PC": pulsa "Mas informacion" y
+   despues "Ejecutar de todas formas" (el juego no esta firmado).
+3. En el menu, pulsa "Crear una cuenta nueva": elige nombre y contrasena
+   y escribe el codigo de invitacion que te paso quien te invito.
+4. La proxima vez solo tendras que pulsar "Continuar". Desde otro PC,
+   entra con tu nombre y tu contrasena.
+
+ACTUALIZACIONES
+Cada vez que abres LAIN.exe comprueba si hay una version nueva y la
+descarga sola. No hace falta volver a bajar el juego.
+
+SI YA TENIAS UNA CUENTA DE ANTES
+Copia tu archivo lain-online.json de la carpeta antigua a esta, junto a
+LAIN.exe, y abre el juego: te pedira que le pongas una contrasena. Despues
+ya puedes borrar la carpeta antigua (y el lain-online.json).
+
+DENTRO DEL JUEGO
+WASD moverse, E interactuar, J diario, F6 calidad grafica.
+Enter abre el chat con quienes estan en tu misma zona.
+El PC de tu casa tiene un terminal: help y man <tema> te ayudan.
+Si cierras el juego, espera unos 12 segundos antes de volver a entrar.

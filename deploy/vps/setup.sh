@@ -65,6 +65,13 @@ EOF
     install -m 600 /dev/null /etc/lain/lain.env
     echo "LAIN_LLM_ENABLED=0" > /etc/lain/lain.env
   fi
+  if [ ! -f /etc/lain/signup.env ]; then
+    # New players sign up from the start menu with this invite code.
+    local words=(cable nodo señal eco latido puerto enlace espejo noche lluvia neón torre canal trama ruta faro humo cinta vapor reloj)
+    install -m 600 /dev/null /etc/lain/signup.env
+    printf 'LAIN_SIGNUP_CODE=%s-%s-%d
+' "${words[RANDOM % 20]}" "${words[RANDOM % 20]}" $((RANDOM % 900 + 100)) > /etc/lain/signup.env
+  fi
   echo "$branch" > /etc/lain/branch
   echo "$host" > /etc/lain/host
 
@@ -115,6 +122,7 @@ EOF
     echo "Revisa: systemctl status lain caddy  (el certificado puede tardar un minuto)"
   fi
   git -C /opt/lain log -1 --format='Versión: %h %s'
+  lain-signup
 }
 
 step() { printf '\n== %s ==\n' "$1"; }
