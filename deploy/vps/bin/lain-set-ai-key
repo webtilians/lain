@@ -32,6 +32,8 @@ else
   read -r key || true
 fi
 # Terminals may wrap a paste in ESC[200~...ESC[201~ or send ^V; drop them.
+# Windows PowerShell may prefix piped text with a UTF-8 byte order mark.
+key=${key#$'\xef\xbb\xbf'}
 key=${key//$'\e[200~'/}
 key=${key//$'\e[201~'/}
 key=$(printf '%s' "$key" | tr -d '[:space:][:cntrl:]')

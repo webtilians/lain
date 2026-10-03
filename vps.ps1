@@ -138,6 +138,8 @@ function Send-AiKey([string]$provider, [string]$label) {
     try { $plain = [Runtime.InteropServices.Marshal]::PtrToStringBSTR($pointer) }
     finally { [Runtime.InteropServices.Marshal]::ZeroFreeBSTR($pointer) }
     $options = Get-SshOptions
+    # Plain ASCII: a UTF-8 output encoding would prefix a byte order mark.
+    $OutputEncoding = New-Object Text.ASCIIEncoding
     $plain | & ssh.exe @options "root@$($server.ip)" "lain-set-ai-key $provider"
     $plain = $null
     if ($LASTEXITCODE -ne 0) { throw 'No se activó la IA (mira el mensaje de arriba).' }
