@@ -102,3 +102,12 @@ def test_server_python_lives_outside_the_checkout():
     # sparse checkout on update, which broke a venv kept at /opt/lain/.venv.
     for path in [VPS / "setup.sh", *(VPS / "bin").iterdir(), *(VPS / "systemd").iterdir()]:
         assert "/opt/lain/.venv/" not in path.read_text(encoding="utf-8"), path
+
+
+def test_ai_key_helper_accepts_googles_dotted_keys():
+    # Google AI Studio keys now look like "AQ.<letters, digits, - and _>".
+    helper = (VPS / "bin" / "lain-set-ai-key").read_text(encoding="utf-8")
+    pattern = re.search(r"\[\[ \$key =~ (\S+) \]\]", helper).group(1)
+    assert re.fullmatch(pattern, "AQ." + "Ab8xY_z-" * 6)
+    assert re.fullmatch(pattern, "AIza" + "x" * 35)
+    assert not re.fullmatch(pattern, "gsk_" + "x" * 30 + "'; rm -rf /")

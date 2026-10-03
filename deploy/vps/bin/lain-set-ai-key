@@ -27,7 +27,7 @@ esac
 read -rsp "Pega tu clave de $label y pulsa Enter (no se verá en pantalla): " key
 echo
 key=$(printf '%s' "$key" | tr -d '[:space:]')
-if ! [[ $key =~ ^[A-Za-z0-9_-]{20,200}$ ]]; then
+if ! [[ $key =~ ^[A-Za-z0-9._-]{20,200}$ ]]; then
   echo "Eso no parece una clave de $label. No he cambiado nada." >&2
   exit 1
 fi
