@@ -101,6 +101,18 @@ app = FastAPI(
 )
 
 
+@app.middleware("http")
+async def player_language(request: Request, call_next):
+    # Player-facing text follows the language chosen in the client's start menu.
+    from server.world_core import i18n
+
+    token = i18n.set_language(request.headers.get("x-lain-language", "es"))
+    try:
+        return await call_next(request)
+    finally:
+        i18n.reset(token)
+
+
 class PresenceRequest(BaseModel):
     model_config = {"extra": "forbid", "allow_inf_nan": False}
     location: str = Field(max_length=64)

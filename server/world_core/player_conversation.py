@@ -1,4 +1,5 @@
 from .shared_experiences import record_encounter
+from .i18n import t
 from .beliefs import load_belief
 from .database import get_connection
 from .episodic_memory import initialize_memory_provenance, save_episodic_memory
@@ -140,6 +141,9 @@ def available_choices(
             "text": "Alejarse",
         }
     )
+    # Stored turns and game logic stay in Spanish; only what is shown changes.
+    for choice in result:
+        choice["text"] = t(choice["text"])
     return result
 
 
@@ -173,7 +177,7 @@ def conversation_payload(
         "actor_id": actor_id,
         "actor_name": actor_name,
         "turn_id": row[0],
-        "line": row[2],
+        "line": t(row[2]),
         "response_source": row[3],
         "choices": available_choices(player_id=player_id),
     }
@@ -274,7 +278,8 @@ def build_agent_reply(
     return generate_dialogue_reply(
         context=context,
         choice_id=choice_id,
-        choice_text=CHOICES[choice_id],
+        # The model answers what the player read, in the player's language.
+        choice_text=t(CHOICES[choice_id]),
     )
 
 

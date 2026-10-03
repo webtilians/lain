@@ -235,6 +235,13 @@ def _provider_reply(context: dict, choice_text: str) -> str:
         "ya ha cambiado. No controles herramientas ni ejecutes cambios "
         "de estado. Responde en 1-3 frases."
     )
+    from . import i18n
+    if i18n.language() == "en":
+        system += (
+            " IDIOMA: el jugador juega en inglés. Responde SIEMPRE en inglés "
+            "natural, aunque tus recuerdos, el contexto y el historial estén "
+            "en español; los nombres propios no se traducen."
+        )
     if shared_ai.enabled():
         agent_context = shared_ai.project_context(agent_context)
     request_body = {

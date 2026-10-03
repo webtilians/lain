@@ -6,6 +6,7 @@ terminal text nor NPC conversation grants free-form state mutation.
 """
 import os
 
+from .i18n import t
 from .database import get_connection
 from .messages import INITIAL_MESSAGE_ID
 
@@ -191,8 +192,8 @@ def talk_to_prologue_npc(
                 (minute, player_id, npc_id, next_stage),
             )
     return {
-        "speaker": "Profesor" if npc_id == "PROFESSOR" else "Ryoko",
-        "text": line, "stage": next_stage,
+        "speaker": t("Profesor") if npc_id == "PROFESSOR" else "Ryoko",
+        "text": t(line), "stage": next_stage,
         "closed": choice == "GOODBYE",
     }
 
@@ -254,4 +255,4 @@ def prologue_projection(player_id: str = PLAYER) -> dict:
         ),
         "CONNECTED": "La conexión cambió algo. Quizá ahora puedas descubrir qué.",
     }
-    return {"enabled": True, "stage": stage, "hint": hints.get(stage, "")}
+    return {"enabled": True, "stage": stage, "hint": t(hints.get(stage, ""))}
