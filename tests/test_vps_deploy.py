@@ -95,3 +95,10 @@ def test_groq_probe_keeps_the_qwen_reasoning_switches():
     probe = _probe_module()
     google = FakeGoogle([], {("qwen/qwen3.8-27b", "none"): "Hola."})
     assert probe.probe("groq", "test-only-value", google) ==         'OK qwen/qwen3.8-27b {"reasoning_effort":"none","reasoning_format":"hidden"}'
+
+
+def test_server_python_lives_outside_the_checkout():
+    # The repository tracks a Windows .venv/pyvenv.cfg; git removes it from a
+    # sparse checkout on update, which broke a venv kept at /opt/lain/.venv.
+    for path in [VPS / "setup.sh", *(VPS / "bin").iterdir(), *(VPS / "systemd").iterdir()]:
+        assert "/opt/lain/.venv/" not in path.read_text(encoding="utf-8"), path

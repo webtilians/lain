@@ -77,10 +77,13 @@ EOF
     git -C /opt/lain fetch -q --depth 1 origin "$branch"
     git -C /opt/lain reset -q --hard FETCH_HEAD
   fi
-  [ -x /opt/lain/.venv/bin/python ] || python3 -m venv /opt/lain/.venv
-  /opt/lain/.venv/bin/pip install -q --disable-pip-version-check -r /opt/lain/requirements.txt
+  # The repository tracks a Windows .venv (pyvenv.cfg included) that git
+  # deletes on update, so the server's Python lives outside the checkout.
+  [ -x /opt/lain-venv/bin/python ] || python3 -m venv /opt/lain-venv
+  rm -rf /opt/lain/.venv
+  /opt/lain-venv/bin/pip install -q --disable-pip-version-check -r /opt/lain/requirements.txt
   # The service cannot write to /opt/lain, so compile once here.
-  /opt/lain/.venv/bin/python -m compileall -q /opt/lain/server /opt/lain/tools /opt/lain/packaging >/dev/null
+  /opt/lain-venv/bin/python -m compileall -q /opt/lain/server /opt/lain/tools /opt/lain/packaging >/dev/null
   install -m 755 /opt/lain/deploy/vps/bin/* /usr/local/sbin/
 
   step "Servicio, copias diarias y HTTPS ($host)"

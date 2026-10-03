@@ -33,7 +33,7 @@ if ! [[ $key =~ ^[A-Za-z0-9_-]{20,200}$ ]]; then
 fi
 
 echo "Probando la clave y buscando un modelo que funcione..."
-result=$(LAIN_TEST_KEY="$key" /opt/lain/.venv/bin/python /opt/lain/deploy/vps/ai_probe.py "$provider")
+result=$(LAIN_TEST_KEY="$key" /opt/lain-venv/bin/python /opt/lain/deploy/vps/ai_probe.py "$provider")
 read -r status model extra <<< "$result"
 case "$status $model" in
   "OK "*) ;;
@@ -42,7 +42,7 @@ case "$status $model" in
   "ERROR NETWORK") echo "No pude conectar con $label. No he cambiado nada." >&2; exit 1 ;;
   *) echo "Ningún modelo de $label respondió con esta clave. No he cambiado nada." >&2; exit 1 ;;
 esac
-endpoint=$(/opt/lain/.venv/bin/python -c 'import sys; sys.path.insert(0, "/opt/lain/deploy/vps"); import ai_probe; print(ai_probe.endpoint(sys.argv[1]))' "$provider")
+endpoint=$(/opt/lain-venv/bin/python -c 'import sys; sys.path.insert(0, "/opt/lain/deploy/vps"); import ai_probe; print(ai_probe.endpoint(sys.argv[1]))' "$provider")
 
 {
   echo "LAIN_LLM_ENABLED=1"

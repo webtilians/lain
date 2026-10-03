@@ -9,5 +9,5 @@ host=$(cat /etc/lain/host)
 systemctl stop lain
 trap 'systemctl start lain' EXIT
 cd /opt/lain
-runuser -u lain -- env PYTHONDONTWRITEBYTECODE=1 /opt/lain/.venv/bin/python -m tools.online_server \
+runuser -u lain -- env PYTHONDONTWRITEBYTECODE=1 /opt/lain-venv/bin/python -m tools.online_server \
   --data-dir /var/lib/lain add-player --name "$name" --url "https://$host"

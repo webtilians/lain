@@ -10,7 +10,7 @@ WorkingDirectory=/opt/lain
 EnvironmentFile=/etc/lain/lain.env
 Environment=PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
 # One process and one clock per world; Caddy terminates HTTPS in front.
-ExecStart=/opt/lain/.venv/bin/python -m tools.online_server --data-dir /var/lib/lain serve --host 127.0.0.1 --port 8000
+ExecStart=/opt/lain-venv/bin/python -m tools.online_server --data-dir /var/lib/lain serve --host 127.0.0.1 --port 8000
 Restart=always
 RestartSec=3
 TimeoutStopSec=20

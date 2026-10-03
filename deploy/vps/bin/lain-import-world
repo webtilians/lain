@@ -20,7 +20,7 @@ install -o lain -g lain -m 600 /root/lain-import.db /var/lib/lain/online-world.d
 if [ -d /root/lain-import-access ]; then
   install -d -o lain -g lain -m 700 /var/lib/lain/access
   cp -r /root/lain-import-access/. /var/lib/lain/access/
-  /opt/lain/.venv/bin/python - "https://$host" <<'EOF'
+  /opt/lain-venv/bin/python - "https://$host" <<'EOF'
 import json, pathlib, sys
 for path in pathlib.Path("/var/lib/lain/access").glob("*/lain-online.json"):
     data = json.loads(path.read_text(encoding="utf-8-sig"))
@@ -32,4 +32,4 @@ EOF
 fi
 rm -rf /root/lain-import.db /root/lain-import-access
 echo "Mundo importado. Jugadores:"
-cd /opt/lain && runuser -u lain -- env PYTHONDONTWRITEBYTECODE=1 /opt/lain/.venv/bin/python -m tools.online_server --data-dir /var/lib/lain list-players
+cd /opt/lain && runuser -u lain -- env PYTHONDONTWRITEBYTECODE=1 /opt/lain-venv/bin/python -m tools.online_server --data-dir /var/lib/lain list-players
