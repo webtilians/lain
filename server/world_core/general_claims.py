@@ -37,8 +37,25 @@ _QUESTION_ABOUT = re.compile(
     rf"mi\s+{TOPIC}\s*[?]?\s*$",
     re.IGNORECASE,
 )
+# English: "my dog is called Rex", "my dog's name is Rex", "my name is Ana".
+_ASSIGNMENT_EN = re.compile(
+    rf"^\s*my\s+{TOPIC}(?:['’]s\s+name)?\s+"
+    rf"(?P<verb>is\s+now\s+called|is\s+called|is\s+named|is\s+now|is)\s+"
+    rf"{VALUE}\s*[.!]?\s*$",
+    re.IGNORECASE,
+)
+_DIRECT_QUESTION_EN = re.compile(
+    rf"^\s*(?:what\s+is|what['’]s|whats)\s+my\s+{TOPIC}"
+    rf"(?:['’]s\s+name|\s+called|\s+named)?\s*[?]?\s*$",
+    re.IGNORECASE,
+)
+_QUESTION_ABOUT_EN = re.compile(
+    rf"^\s*(?:do\s+you\s+remember|what\s+do\s+you\s+know)\s+"
+    rf"(?:what\s+i\s+told\s+you\s+)?(?:about\s+)?my\s+{TOPIC}\s*[?]?\s*$",
+    re.IGNORECASE,
+)
 BANNED_TOPICS = frozenset({
-    "contrasena", "clave", "codigo", "password", "pin",
+    "contrasena", "clave", "codigo", "password", "pin", "key", "code", "passcode",
 })
 
 
@@ -49,14 +66,17 @@ def _clean(value: str) -> str:
 
 def _topic_key(topic: str) -> str:
     words = [word for word in _clean(topic).split()
-             if word not in {"actual", "ahora", "nueva", "nuevo"}]
+             if word not in {"actual", "ahora", "nueva", "nuevo", "current", "new", "now"}]
+    # "my dog name", "my dog's name" and "my dog called" are about the dog.
+    while len(words) > 1 and words[-1] in {"name", "called", "named"}:
+        words = words[:-1]
     return " ".join(words).strip()
 
 
 def parse_personal_statement(text: str):
     if not isinstance(text, str):
         return None
-    match = _ASSIGNMENT.fullmatch(text)
+    match = _ASSIGNMENT.fullmatch(text) or _ASSIGNMENT_EN.fullmatch(text)
     if match is None:
         return None
     topic = match.group("topic").strip()
@@ -65,7 +85,8 @@ def parse_personal_statement(text: str):
     if not key or key in BANNED_TOPICS or not value:
         return None
     if len(value) > 80 or any(token in value.casefold().split()
-        for token in ("porque", "aunque", "pero", "cuando", "entonces")):
+        for token in ("porque", "aunque", "pero", "cuando", "entonces",
+                      "because", "although", "but", "when", "then")):
         return None
     return key, topic, value, text.strip()
 
@@ -73,9 +94,11 @@ def parse_personal_statement(text: str):
 def requested_topic(query: str | None) -> str | None:
     if not query:
         return None
-    match = _DIRECT_QUESTION.fullmatch(query)
-    if match is None:
-        match = _QUESTION_ABOUT.fullmatch(query)
+    match = None
+    for pattern in (_DIRECT_QUESTION, _QUESTION_ABOUT, _DIRECT_QUESTION_EN, _QUESTION_ABOUT_EN):
+        match = pattern.fullmatch(query)
+        if match:
+            break
     if match is None:
         return None
     key = _topic_key(match.group("topic"))

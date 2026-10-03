@@ -17,6 +17,12 @@ def timeline_request(query):
         (r'que te dije antes sobre mi (.+)', 'previous'),
         (r'(?:que te he dicho|que recuerdas|que ha cambiado) sobre mi (.+)', 'history'),
         (r'(?:como se llama|cual es|que nombre tiene) mi (.+?) ahora', 'current'),
+        # English
+        (r"what was my (.+?)(?:'s name| called| named)? (?:before|previously)", 'previous'),
+        (r'what did i (?:first|initially) tell you about my (.+)', 'first'),
+        (r'what did i tell you (?:before|earlier) about my (.+)', 'previous'),
+        (r'(?:what have i told you|what do you remember|what has changed) about my (.+)', 'history'),
+        (r"(?:what is|what's|whats) my (.+?)(?:'s name| called| named)? now", 'current'),
     )
     for pattern, mode in patterns:
         match = re.fullmatch(pattern, text)

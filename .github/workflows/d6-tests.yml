@@ -50,7 +50,10 @@ jobs:
         env:
           LAIN_LLM_ENABLED: "0"
           LAIN_MEMORY_SEMANTIC: "0"
-        run: python -m pytest -q
+          # The audit fails the run if a player-facing text has no English translation.
+          LAIN_I18N_AUDIT: outputs/i18n-audit.json
+          LAIN_I18N_AUDIT_STRICT: "1"
+        run: python -m pytest -q -p tools.i18n_audit_plugin
       - name: Chapter one real HTTP boundary in a disposable world
         run: python tools/smoke_chapter01_http.py
       - name: Corporate conflict HTTP and server-bound identity

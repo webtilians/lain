@@ -18,14 +18,16 @@ def _plain(text: str) -> str:
 
 NODE_07 = re.compile(r"\b(?:node[_\s-]*0?7|nodo[_\s-]*0?7)\b")
 # Recognize a credential word even when attached to a value (e.g. clave123).
-KEY = re.compile(r"\b(?:clave|contrasena|codigo|password|pin)(?:[a-z0-9_-]+)?\b")
+KEY = re.compile(r"\b(?:clave|contrasena|codigo|password|passcode|pin|access\s+code|key)(?:[a-z0-9_-]+)?\b")
 ACCESS = re.compile(
     r"\b(?:acceder|acceso|entrar|entrada|abrir|abre|activar|"
-    r"desbloquear|desbloquea|habilita|permite)\b"
+    r"desbloquear|desbloquea|habilita|permite|"
+    r"access|enter|open|unlock|unlocks|activate|get\s+in)\b"
 )
 REQUIREMENT = re.compile(
     r"\b(?:debes|debe|tienes\s+que|hay\s+que|necesito|necesitas|necesaria|"
-    r"necesario|requiere|requerida|obligatoria|usar|introducir)\b"
+    r"necesario|requiere|requerida|obligatoria|usar|introducir|"
+    r"must|need|needs|have\s+to|has\s+to|required|requires|use|type)\b"
 )
 
 
@@ -60,7 +62,7 @@ def misattributes_player_password(text: str) -> bool:
     return bool(
         KEY.search(plain)
         and re.search(
-            r"\b(?:que\s+te\s+dije|yo\s+te\s+dije|que\s+te\s+conte)\b",
+            r"\b(?:que\s+te\s+dije|yo\s+te\s+dije|que\s+te\s+conte|i\s+told\s+you)\b",
             plain,
         )
     )

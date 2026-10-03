@@ -61,6 +61,22 @@ def _catalog(lang: str):
     return exact, templates
 
 
+# Game vocabulary that may appear inside a composed sentence ("Montaje compartido
+# compilado: Enrutamiento, Exploración"). Player names are never in this set,
+# so a captured value is translated only when it is entirely made of these.
+GAME_TERMS = frozenset({
+    "Enrutamiento", "Exploración", "Protección", "Amortiguación", "Coprocesador M",
+    "Interfaz R", "Técnico de Kissa", "Profesor",
+})
+
+
+def _term(value: str, exact: dict) -> str:
+    items = [item.strip() for item in value.split(",")]
+    if items and all(item in GAME_TERMS and item in exact for item in items):
+        return ", ".join(exact[item] for item in items)
+    return value
+
+
 def t(text, lang: str | None = None, **values) -> str:
     """Translate one player-facing Spanish text; unknown text is returned as is."""
     code = normalize(lang) if lang else language()
@@ -74,7 +90,8 @@ def t(text, lang: str | None = None, **values) -> str:
             for pattern, target in templates:
                 match = pattern.match(source)
                 if match:
-                    result = target.format(**match.groupdict())
+                    values = {key: _term(value, exact) for key, value in match.groupdict().items()}
+                    result = target.format(**values)
                     break
     if result == source and code != "es" and "\n" in source:
         result = "\n".join(t(line, code) for line in source.split("\n"))

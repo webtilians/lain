@@ -504,7 +504,16 @@ def generate_dialogue_reply(
         question = _clean(choice_text)
         if resident and any(term in question for term in (
             "que haces", "a que te dedicas", "objetivo", "trabajas", "habilidades",
+            "what do you do", "your job", "your goal", "work", "skills",
         )):
+            from . import i18n
+            if i18n.language() == "en":
+                return DialogueReply(
+                    text=(f"I'm {i18n.t(resident['role']).lower()}. "
+                          f"Right now: {i18n.t(resident['activity']).lower()}. "
+                          f"My goal: {i18n.t(resident['public_objective'])}"),
+                    source="DETERMINISTIC_RESIDENT_PROFILE",
+                )
             return DialogueReply(
                 text=(f"Soy {resident['role'].lower()}. "
                       f"Ahora: {resident['activity'].lower()}. "

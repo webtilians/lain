@@ -101,6 +101,19 @@ def experience_request(query):
         place = {'estacion': 'STATION', 'apartamento': 'APARTMENT',
                  'station': 'STATION', 'apartment': 'APARTMENT'}.get(match[1])
         return {'mode': 'encounter', 'location': place, 'unsupported': place is None}
+    # English players
+    if re.fullmatch(r'what happened (?:the )?last time (?:we met|we saw each other|we talked|we spoke)', text):
+        return {'mode': 'encounter'}
+    match = re.fullmatch(r'what happened (?:the )?last time (?:we were|we met|we saw each other|we talked) (?:at|in) (?:the )?(.+)', text)
+    if match:
+        place = {'station': 'STATION', 'apartment': 'APARTMENT'}.get(match[1])
+        return {'mode': 'encounter', 'location': place, 'unsupported': place is None}
+    if re.fullmatch(r'were you with me when we investigated (?:that signal|the signal|node_\d+)', text):
+        node = re.search(r'node_\d+', text)
+        return {'mode': 'shared', 'target': node[0].upper() if node else None}
+    if re.fullmatch(r'did you see (?:that|it|the signal|node_\d+) (?:yourself )?or did i tell you(?: about it)?', text):
+        node = re.search(r'node_\d+', text)
+        return {'mode': 'source', 'target': node[0].upper() if node else None}
     if re.fullmatch(r'estabas conmigo cuando investigamos (?:esa senal|la senal|node_\d+)', text):
         node = re.search(r'node_\d+', text)
         return {'mode': 'shared', 'target': node[0].upper() if node else None}

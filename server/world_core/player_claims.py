@@ -17,6 +17,12 @@ PASSWORD_ASSIGNMENT = re.compile(
     r"[\"'«]?([A-Za-z0-9][A-Za-z0-9_-]{2,63})(?![A-Za-z0-9_-])",
     re.IGNORECASE,
 )
+# English players: "my password is X", "my new password: X".
+PASSWORD_ASSIGNMENT_EN = re.compile(
+    r"\b(?:my\s+)?(?:new\s+|current\s+)?password\s*(?:is\s+now|is|:|=)\s*"
+    r"[\"'“]?([A-Za-z0-9][A-Za-z0-9_-]{2,63})(?![A-Za-z0-9_-])",
+    re.IGNORECASE,
+)
 PASSWORD_QUESTION = re.compile(
     r"\b(?:contrase(?:ñ|n)a|password)\b",
     re.IGNORECASE,
@@ -30,7 +36,7 @@ def asks_about_password(text: str) -> bool:
 def extract_password_claim(text: str) -> str | None:
     if not isinstance(text, str):
         return None
-    match = PASSWORD_ASSIGNMENT.search(text)
+    match = PASSWORD_ASSIGNMENT.search(text) or PASSWORD_ASSIGNMENT_EN.search(text)
     return match.group(1) if match else None
 
 
