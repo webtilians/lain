@@ -24,11 +24,21 @@ case "$provider" in
   *) echo "Uso: lain-set-ai-key gemini|groq|--off" >&2; exit 2 ;;
 esac
 
-read -rsp "Pega tu clave de $label y pulsa Enter (no se verá en pantalla): " key
-echo
-key=$(printf '%s' "$key" | tr -d '[:space:]')
+if [ -t 0 ]; then
+  read -rsp "Pega tu clave de $label y pulsa Enter (no se verá en pantalla): " key
+  echo
+else
+  # vps.ps1 asks on the PC (masked) and sends the key through SSH's stdin.
+  read -r key || true
+fi
+# Terminals may wrap a paste in ESC[200~...ESC[201~ or send ^V; drop them.
+key=${key//$'\e[200~'/}
+key=${key//$'\e[201~'/}
+key=$(printf '%s' "$key" | tr -d '[:space:][:cntrl:]')
 if ! [[ $key =~ ^[A-Za-z0-9._-]{20,200}$ ]]; then
-  echo "Eso no parece una clave de $label. No he cambiado nada." >&2
+  # Enough to diagnose a bad paste without revealing the key.
+  odd=$(printf '%s' "$key" | tr -d 'A-Za-z0-9._-' | wc -c)
+  echo "Eso no parece una clave de $label (${#key} caracteres, $odd no válidos). No he cambiado nada." >&2
   exit 1
 fi
 

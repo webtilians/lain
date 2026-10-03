@@ -131,13 +131,20 @@ if ($Install) {
     Invoke-Server "bash /root/lain-setup.sh --host $($server.host)"
 }
 
-if ($Gemini) {
-    Invoke-Server 'lain-set-ai-key gemini' -Interactive
+function Send-AiKey([string]$provider, [string]$label) {
+    # Asked here, masked; it travels only inside the SSH connection's input.
+    $secure = Read-Host "Pega tu clave de $label (clic derecho o Ctrl+V) y pulsa Enter" -AsSecureString
+    $pointer = [Runtime.InteropServices.Marshal]::SecureStringToBSTR($secure)
+    try { $plain = [Runtime.InteropServices.Marshal]::PtrToStringBSTR($pointer) }
+    finally { [Runtime.InteropServices.Marshal]::ZeroFreeBSTR($pointer) }
+    $options = Get-SshOptions
+    $plain | & ssh.exe @options "root@$($server.ip)" "lain-set-ai-key $provider"
+    $plain = $null
+    if ($LASTEXITCODE -ne 0) { throw 'No se activó la IA (mira el mensaje de arriba).' }
 }
 
-if ($Groq) {
-    Invoke-Server 'lain-set-ai-key groq' -Interactive
-}
+if ($Gemini) { Send-AiKey 'gemini' 'Google (Gemini)' }
+if ($Groq) { Send-AiKey 'groq' 'Groq' }
 
 if ($Migrate) {
     $hostDir = Join-Path $env:LOCALAPPDATA 'LAIN\OnlineHost'

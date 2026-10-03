@@ -70,7 +70,8 @@ def probe(provider: str, key: str, opener=urlopen) -> str:
         try:
             listed = [item["id"] for item in _request(settings["base"] + "/models", key, None, opener)["data"]]
         except HTTPError as error:
-            if error.code in (401, 403):
+            # Listing does not depend on a model: Google answers 400 to a bad key.
+            if error.code in (400, 401, 403):
                 return "ERROR KEY"
         except (URLError, OSError, ValueError, KeyError, TypeError):
             pass
