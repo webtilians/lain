@@ -21,6 +21,7 @@ from .station_echo import station_case_snapshot
 from .prologue import prologue_projection
 from .chapter_one import chapter_snapshot
 from .layer_three import layer_snapshot
+from .layer_four import layer_snapshot as layer_four_snapshot
 from .network_conflict import network_snapshot
 from .workshop import workshop_snapshot
 from .circles import circle_snapshot
@@ -397,6 +398,7 @@ def build_player_snapshot(
         "prologue": prologue,
         "chapter_one": chapter_snapshot(player_id),
         "layer_three": layer_snapshot(player_id),
+        "layer_four": layer_four_snapshot(player_id),
         "network_conflict": conflict,
         "workshop": workshop_snapshot(player_id),
         "circles": circle_snapshot(player_id),

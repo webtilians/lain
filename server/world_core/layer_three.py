@@ -524,10 +524,12 @@ def run_shell(player: str, host: str, cwd: str, command: str, minute: int) -> di
         relay = _host(c, player, host)
         story = _story(c, player, run)
         files = _relay_files(story, relay) if relay else _navi_files(story, run)
+        from . import layer_four
+        files.update(layer_four.files(c, player, relay, story))
         # Hashed evidence and packet segments are immutable. Auxiliary files
         # (manuals, mail and route headings) may follow the current UI language.
         for path, content in files.items():
-            if path.endswith((".seg", "/diario", "/diario.espejo", "/sesion0.txt")):
+            if path.endswith((".seg", "/diario", "/diario.espejo", "/sesion0.txt", "/flujo-4004.txt")):
                 continue
             files[path] = i18n.t(content)
         hostname = RELAYS[relay][0] if relay else story.navi
@@ -545,7 +547,10 @@ def run_shell(player: str, host: str, cwd: str, command: str, minute: int) -> di
             return result
         name, args = words[0], words[1:]
         name = {"assemble": "ensamblar", "report": "denunciar", "forward": "reenviar", "drop": "soltar"}.get(name, name)
-        out = _dispatch(c, player, story, run, relay, files, home, result, name, args, minute)
+        if name in layer_four.COMMANDS and layer_four.run_for(c, player) is not None:
+            out = layer_four.dispatch(c, player, story, relay, result, name, args, minute)
+        else:
+            out = _dispatch(c, player, story, run, relay, files, home, result, name, args, minute)
         # cat/grep/sha256 must show precisely the bytes they inspected.
         result["output"] = out if name in {"cat", "grep", "sha256", "ensamblar"} else i18n.t(out)
         return result
@@ -564,13 +569,23 @@ def _dispatch(c, player, story, run, relay, files, home, result, name, args, min
     cwd = result["cwd"]
     try:
         if name == "help":
-            return i18n.t(HELP)
+            from . import layer_four
+            extra = "\n" + i18n.t(layer_four.HELP) if layer_four.run_for(c, player) is not None else ""
+            return i18n.t(HELP) + extra
         if name == "man":
             topic = (args[0] if args else "").lower()
             topic = {"routes": "rutas", "segments": "segmentos", "chain": "cadena",
                      "console": "consola", "heartbeat": "latido", "assemble": "ensamblar",
                      "report": "denunciar", "forward": "reenviar", "drop": "soltar"}.get(topic, topic)
-            return i18n.t(MAN.get(topic, "Temas: " + ", ".join(sorted(MAN))))
+            from . import layer_four
+            if layer_four.run_for(c, player) is not None:
+                topic = layer_four.MAN_ALIASES.get(topic, topic)
+                if topic in layer_four.MAN:
+                    return i18n.t(layer_four.MAN[topic])
+                topics = sorted(MAN) + sorted(layer_four.MAN)
+            else:
+                topics = sorted(MAN)
+            return i18n.t(MAN.get(topic, "Temas: " + ", ".join(topics)))
         if name == "pwd":
             return cwd
         if name == "ls":
@@ -737,6 +752,8 @@ def _decide(c, player, story, run, result, name, args, minute):
             c.execute("INSERT OR REPLACE INTO layer_three_knowledge VALUES(?,?,?,?)", (player, actor, heard, minute))
     c.execute("INSERT INTO events(minute,actor_id,action,target,details) VALUES(?,?,'LAYER_THREE_DECISION',?,?)",
               (minute, player, story.packet, decision))
+    from . import layer_four
+    layer_four.activate(c, player, minute)
     result["changed"] = True
     if decision == "FORWARD":
         ending = (f"{story.packet} sale otra vez con TTL {INITIAL_TTL}. K y Nora lo recibirán.\n"

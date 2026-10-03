@@ -30,6 +30,10 @@ func _ready() -> void:
 	hud.hide()
 
 func _layer() -> Dictionary:
+	# The most recent layer the player has reached.
+	var four: Dictionary = WorldApi.snapshot.get("layer_four", {})
+	if bool(four.get("active", false)):
+		return four
 	return WorldApi.snapshot.get("layer_three", {})
 
 func perceived() -> bool:

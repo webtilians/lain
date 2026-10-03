@@ -117,6 +117,10 @@ func exchange_active() -> bool:
 	return bool(exchange_data().get("active",false))
 
 func layer_data() -> Dictionary:
+	# The most recent layer the player has reached.
+	var four: Dictionary = WorldApi.snapshot.get("layer_four", {})
+	if bool(four.get("active", false)):
+		return four
 	return WorldApi.snapshot.get("layer_three", {})
 
 func layer_active() -> bool:
@@ -305,8 +309,11 @@ func scrolling(parent: Node) -> VBoxContainer:
 
 func _mail() -> void:
 	var box := scrolling(content)
-	if layer_active():
-		var mail: Dictionary = layer_data().get("mail", {})
+	for key in ["layer_four", "layer_three"]:
+		var entry: Dictionary = WorldApi.snapshot.get(key, {})
+		if not bool(entry.get("active", false)):
+			continue
+		var mail: Dictionary = entry.get("mail", {})
 		label(box, str(mail.get("subject", "")) + "   ·   " + str(mail.get("from", "")))
 		label(box, str(mail.get("body", "")))
 		button(box, "Abrir el terminal", func(): ShellTerminal.open_shell("navi"))

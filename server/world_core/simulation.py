@@ -241,6 +241,8 @@ class Simulation:
         initialize_exchange()
         from .layer_three import initialize_layer
         initialize_layer()
+        from .layer_four import initialize_layer_four
+        initialize_layer_four()
 
         for person in self.all_agents.values():
             if person.controller_type == "HUMAN":

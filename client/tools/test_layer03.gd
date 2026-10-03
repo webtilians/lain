@@ -112,6 +112,27 @@ func run() -> void:
 		solid = minf(solid, 1.0 - mesh.transparency)
 	check(solid >= 0.99 and presence.silence == 0.0, "Being received does not restore the avatar")
 	ws.close_pc()
+
+	# Capa 04 takes over the corner HUD and adds its mail to the PC.
+	state["layer_four"] = {"active": true, "title": "Capa 04 · Transporte", "decision": null, "fragments": 1,
+		"goal": "Alguien llama a tu puerto 4004 desde NODO_07. Contesta a su SYN a mano.",
+		"mail": {"subject": "SYN", "from": "syn@wired", "body": "Alguien llama a tu puerto 4004 desde NODO_07 y nadie contesta."}}
+	api.snapshot = state
+	await process_frame
+	await process_frame
+	check("Capa 04" in presence.hud.text and "4004" in presence.hud.text, "HUD does not follow the newest layer: " + presence.hud.text)
+	ws.open_pc()
+	var mails := ""
+	for node in ws.content.find_children("*", "Label", true, false):
+		mails += node.text + "\n"
+	check("SYN" in mails and "TTL=1" in mails, "PC mail must list both layers")
+	ws._select("Terminal")
+	var terminal_text := ""
+	for node in ws.content.find_children("*", "Label", true, false):
+		terminal_text += node.text + "\n"
+	check("Capa 04" in terminal_text and "1/7" in terminal_text, "Terminal page does not show Capa 04")
+	await snap("layer04-pc")
+	ws.close_pc()
 	current_scene = null
 	scene.queue_free()
 	await process_frame

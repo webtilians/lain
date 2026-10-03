@@ -163,3 +163,9 @@ Lo que incluye la primera versión, jugable después del capítulo 1:
 6. **Decisión:** reenviar el paquete con un TTL nuevo (K y Nora lo reciben y lo
    recordarán en sus conversaciones con IA) o dejarlo morir (solo tú lo sabrás).
 7. **Desvanecimiento** y órdenes de cuarta pared (`uptime`, `last`).
+
+## 11. Estado
+
+- Capa 03 · TTL: jugable (v0.13). Guía: [CAPA03_README.md](CAPA03_README.md).
+- Capa 04 · Transporte: jugable (v0.15). Guía: [CAPA04_README.md](CAPA04_README.md).
+- Todo el juego en español e inglés (v0.14): [TRADUCCION.md](TRADUCCION.md).
