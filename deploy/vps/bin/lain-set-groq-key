@@ -1,76 +1,7 @@
 #!/usr/bin/env bash
-# Give the characters their AI through Groq. The key is typed here, on the
-# server, never echoed, and stored only in /etc/lain/lain.env (root, 600).
-#
-#   lain-set-groq-key          ask for the key, test it and enable the AI
-#   lain-set-groq-key --off    back to scripted dialogue (the key is deleted)
+# Kept for older instructions: same as lain-set-ai-key groq (or --off).
 set -euo pipefail
-umask 077
-[ "$(id -u)" -eq 0 ] || { echo "Ejecuta como root." >&2; exit 1; }
-env_file=/etc/lain/lain.env
-model=${LAIN_GROQ_MODEL:-qwen/qwen3.8-27b}
-
 if [ "${1:-}" = "--off" ]; then
-  echo "LAIN_LLM_ENABLED=0" > "$env_file.new"
-  mv "$env_file.new" "$env_file"
-  systemctl restart lain
-  echo "IA desactivada: los personajes usan diálogos predefinidos."
-  exit 0
+  exec lain-set-ai-key --off
 fi
-
-read -rsp "Pega tu clave de Groq y pulsa Enter (no se verá en pantalla): " key
-echo
-key=$(printf '%s' "$key" | tr -d '[:space:]')
-if ! [[ $key =~ ^[A-Za-z0-9_-]{20,200}$ ]]; then
-  echo "Eso no parece una clave de Groq. No he cambiado nada." >&2
-  exit 1
-fi
-extra=""
-# Groq's qwen models think aloud unless told not to; dialogue needs short lines.
-[[ $model == qwen/* ]] && extra='{"reasoning_effort":"none","reasoning_format":"hidden"}'
-
-echo "Probando la clave con $model..."
-result=$(LAIN_TEST_KEY="$key" LAIN_TEST_MODEL="$model" LAIN_TEST_EXTRA="$extra" /opt/lain/.venv/bin/python - <<'EOF'
-import json, os, urllib.error, urllib.request
-body = {"model": os.environ["LAIN_TEST_MODEL"], "max_tokens": 12,
-        "messages": [{"role": "user", "content": "Responde solo: hola"}]}
-if os.environ["LAIN_TEST_EXTRA"]:
-    body.update(json.loads(os.environ["LAIN_TEST_EXTRA"]))
-request = urllib.request.Request(
-    "https://api.groq.com/openai/v1/chat/completions",
-    data=json.dumps(body).encode(),
-    headers={"Content-Type": "application/json", "User-Agent": "LAIN-WorldCore/0.1",
-             "Authorization": "Bearer " + os.environ["LAIN_TEST_KEY"]},
-)
-try:
-    with urllib.request.urlopen(request, timeout=30) as response:
-        json.loads(response.read())["choices"][0]["message"]["content"]
-        print("OK")
-except urllib.error.HTTPError as error:
-    print("HTTP", error.code)
-except Exception as error:
-    print("RED", type(error).__name__)
-EOF
-)
-case "$result" in
-  OK) ;;
-  "HTTP 401") echo "Groq dice que la clave no es válida. No he cambiado nada." >&2; exit 1 ;;
-  "HTTP 404"|"HTTP 400") echo "Groq no acepta el modelo $model ($result). Prueba: LAIN_GROQ_MODEL=otro lain-set-groq-key" >&2; exit 1 ;;
-  "HTTP 429") echo "Groq está limitando las peticiones ahora mismo (429). Guardo la clave igualmente." ;;
-  *) echo "No pude hablar con Groq ($result). No he cambiado nada." >&2; exit 1 ;;
-esac
-
-{
-  echo "LAIN_LLM_ENABLED=1"
-  echo "LAIN_LLM_MODEL=$model"
-  echo "LAIN_LLM_ENDPOINT=https://api.groq.com/openai/v1/chat/completions"
-  echo "LAIN_LLM_ALLOW_REMOTE=1"
-  echo "LAIN_LLM_API_KEY=$key"
-  [ -n "$extra" ] && echo "LAIN_LLM_EXTRA_BODY='$extra'"
-  echo "LAIN_LLM_TIMEOUT=15"
-  echo "LAIN_REALITY_TIMEOUT=20"
-} > "$env_file.new"
-mv "$env_file.new" "$env_file"
-unset key
-systemctl restart lain
-echo "IA activada con Groq ($model). Los jugadores conectados se reconectan solos."
+exec lain-set-ai-key groq

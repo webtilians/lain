@@ -5,7 +5,8 @@
     [switch]$Key,
     # Install, or reinstall, the engine on the server.
     [switch]$Install,
-    # Type the Groq key on the server (run it yourself; it is never shown).
+    # Type the AI key on the server (run it yourself; it is never shown).
+    [switch]$Gemini,
     [switch]$Groq,
     # Move the world and players from this PC's online-host.ps1 to the server.
     [switch]$Migrate,
@@ -123,15 +124,19 @@ if ($Key) {
     Write-Host ''
 }
 
-if ($Ip -or $Install -or $Groq -or $Migrate -or $AddPlayer -or $Status -or $Update -or $Shell) { $server = Get-Server }
+if ($Ip -or $Install -or $Gemini -or $Groq -or $Migrate -or $AddPlayer -or $Status -or $Update -or $Shell) { $server = Get-Server }
 
 if ($Install) {
     Copy-ToServer (Join-Path $PSScriptRoot 'deploy\vps\setup.sh') '/root/lain-setup.sh'
     Invoke-Server "bash /root/lain-setup.sh --host $($server.host)"
 }
 
+if ($Gemini) {
+    Invoke-Server 'lain-set-ai-key gemini' -Interactive
+}
+
 if ($Groq) {
-    Invoke-Server 'lain-set-groq-key' -Interactive
+    Invoke-Server 'lain-set-ai-key groq' -Interactive
 }
 
 if ($Migrate) {

@@ -53,20 +53,25 @@ Todo se maneja desde el PC con `vps.ps1`.
 
    Termina con `LISTO: el mundo está encendido en https://...`.
 
-4. **IA con Groq** (opcional, lo haces tú):
-   1. En https://console.groq.com crea una cuenta.
-   2. En *API Keys*, crea una clave.
-   3. En tu terminal ejecuta lo siguiente y pega la clave cuando la pida.
-      No se ve al escribirla. El servidor la prueba antes de guardarla.
+4. **IA de los personajes** (opcional, lo haces tú). Con Google (Gemini):
+   1. En Chrome, con tu cuenta de Google, abre https://aistudio.google.com/apikey.
+   2. Pulsa *Create API key* y cópiala.
+   3. En el panel Terminal ejecuta lo siguiente y pega la clave cuando la
+      pida. No se ve al escribirla.
 
    ```powershell
-   .\vps.ps1 -Groq
+   .ps.ps1 -Gemini
    ```
 
-   Sin clave, los personajes usan los diálogos predefinidos. El plan
-   gratuito de Groq tiene límites por minuto: si se superan, ese diálogo
-   sale predefinido y el juego sigue. Para quitar la IA: `.\vps.ps1 -Shell`
-   y después `lain-set-groq-key --off`.
+   El servidor prueba la clave y elige solo un modelo gratuito que responda.
+   Con Groq es igual: la clave sale de https://console.groq.com/keys y el
+   comando es `.ps.ps1 -Groq`.
+
+   Sin clave, los personajes usan los diálogos predefinidos. Los planes
+   gratuitos tienen límites por minuto y por día: si se superan, ese diálogo
+   sale predefinido y el juego sigue. En el plan gratuito de Google, Google
+   puede usar los textos para mejorar sus modelos. Para quitar la IA:
+   `.ps.ps1 -Shell` y después `lain-set-ai-key --off`.
 
 5. **Trasladar el mundo de tu PC**, para que nadie pierda su personaje.
    Antes cierra `online-host.ps1`.

@@ -6,7 +6,9 @@ echo "Dirección:  https://$host"
 echo "Motor:      $(systemctl is-active lain) (desde $(systemctl show lain -p ActiveEnterTimestamp --value))"
 echo "HTTPS:      $(curl -fsS --max-time 5 "https://$host/health" 2>/dev/null || echo 'sin respuesta')"
 if grep -q '^LAIN_LLM_ENABLED=1' /etc/lain/lain.env; then
-  echo "IA:         Groq ($(sed -n 's/^LAIN_LLM_MODEL=//p' /etc/lain/lain.env))"
+  model=$(sed -n 's/^LAIN_LLM_MODEL=//p' /etc/lain/lain.env)
+  provider=$(sed -n 's/^LAIN_LLM_ENDPOINT=//p' /etc/lain/lain.env | cut -d/ -f3)
+  echo "IA:         $model en $provider"
 else
   echo "IA:         desactivada (diálogos predefinidos)"
 fi
