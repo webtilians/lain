@@ -9,10 +9,12 @@ import subprocess
 import time
 from pathlib import Path
 
-from .database import DB_PATH, get_connection
-from . import online
+from .database import get_connection
+from . import database as world_database, online
 
 STARTED = time.time()
+# Written by lain-backup --downloaded when the owner's PC has a verified copy.
+OFFSITE_MARK = "offsite-backup"
 LAYERS = (("layer_one", "01"), ("layer_two", "02"), ("layer_three", "03"), ("layer_four", "04"),
           ("layer_five", "05"), ("layer_six", "06"), ("layer_seven", "07"))
 ACTIONS = {
@@ -49,6 +51,14 @@ def version() -> str:
         except (OSError, subprocess.SubprocessError):
             _version = ""
     return _version
+
+
+def offsite_backup() -> float | None:
+    """When the owner's PC last downloaded and verified a copy of the world."""
+    try:
+        return float((Path(world_database.DB_PATH).parent / OFFSITE_MARK).read_text(encoding="ascii").strip())
+    except (OSError, ValueError):
+        return None
 
 
 def _progress(c, player: str) -> dict:
@@ -109,7 +119,7 @@ def overview() -> dict:
     for item in sorted(present, key=lambda item: item["name"]):
         connected.append({"name": item["name"], "location": item["location"], "x": round(item["x"], 1),
                           "z": round(item["z"], 1), "since": started.get(item["name"])})
-    database = Path(DB_PATH)
+    database = Path(world_database.DB_PATH)
     return {
         "now": now,
         "connected": connected,
@@ -124,6 +134,7 @@ def overview() -> dict:
             "ai": os.getenv("LAIN_LLM_MODEL", "") if os.getenv("LAIN_LLM_ENABLED") == "1" else "",
             "database_mb": round(database.stat().st_size / 1e6, 2) if database.exists() else None,
             "chat_messages": len(online._chat),
+            "offsite_backup": offsite_backup(),
         },
     }
 
@@ -141,7 +152,7 @@ section{background:var(--panel);border:1px solid var(--line);border-radius:10px;
 table{width:100%;border-collapse:collapse}td,th{padding:5px 6px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
 th{color:var(--muted);font-weight:500;font-size:12px}.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--accent);margin-right:6px}
 .empty{color:var(--muted)}.big{font-size:28px;font-weight:600;color:var(--accent)}.chips span{display:inline-block;border:1px solid var(--line);border-radius:6px;padding:0 5px;margin:1px;font-size:12px}
-.open{color:var(--accent)}.stat{display:flex;gap:22px;flex-wrap:wrap}.stat div{min-width:90px}
+.open{color:var(--accent)}.warn{color:var(--warn)}.stat{display:flex;gap:22px;flex-wrap:wrap}.stat div{min-width:90px}
 </style></head><body>
 <header><h1>LAIN · panel del servidor</h1><span class="meta" id="status">cargando…</span></header>
 <div class="grid">
@@ -165,7 +176,8 @@ async function refresh(){
  try{const r=await fetch("/admin/data",{cache:"no-store"});const d=await r.json();const now=d.now;
   document.getElementById("count").textContent=d.connected.length;
   rows("connected",["Jugador","Dónde","Posición","Desde"],d.connected,c=>[`<span class="dot"></span>${esc(c.name)}`,esc(place(c.location)),`${c.x}, ${c.z}`,c.since?ago(c.since,now):""],"Nadie conectado ahora mismo.");
-  const s=d.server;document.getElementById("server").innerHTML=[["Minuto del mundo",s.world_minute],["Encendido",`${s.uptime_minutes} min`],["IA",s.ai||"desactivada"],["Base de datos",`${s.database_mb} MB`],["Mensajes de chat",s.chat_messages],["Versión",esc(s.version)]].map(([k,v])=>`<div><div class="meta">${k}</div><div>${esc(v)}</div></div>`).join("");
+  const s=d.server,stale=!s.offsite_backup||now-s.offsite_backup>2*86400;
+  document.getElementById("server").innerHTML=[["Minuto del mundo",s.world_minute],["Encendido",`${s.uptime_minutes} min`],["IA",s.ai||"desactivada"],["Base de datos",`${s.database_mb} MB`],["Mensajes de chat",s.chat_messages],["Versión",s.version],["Copia en tu PC",ago(s.offsite_backup,now),stale]].map(([k,v,w])=>`<div><div class="meta">${k}</div><div${w?' class="warn"':""}>${esc(v)}</div></div>`).join("");
   rows("players",["Jugador","Dónde","Capa actual","Capas hechas","Fragmentos","Última vez","Sesiones","Minutos"],d.players,p=>[esc(p.name),esc(place(p.location)),p.active?`Capa ${p.active}`:(p.fragments?"—":"prólogo"),`<span class="chips">${p.decided.map(x=>`<span>${x}</span>`).join("")}</span>`,`${p.fragments}/7`,ago(p.last_seen,now),p.sessions,p.minutes],"Todavía no hay jugadores.");
   rows("sessions",["Jugador","Entró","Duración",""],d.sessions,x=>[esc(x.name),clock(x.started),`${x.minutes} min`,x.open?'<span class="open">conectado</span>':""],"Sin conexiones registradas todavía.");
   rows("events",["Cuándo","Jugador","Qué",""],d.events,e=>[esc(e.at),esc(e.name),esc(e.what),esc(e.detail)],"Nada todavía.");

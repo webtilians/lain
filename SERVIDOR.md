@@ -50,6 +50,62 @@ actualiza el servidor. Cada jugador recibe la versión nueva al abrir
 `LAIN.exe`: el lanzador descarga solo los archivos que cambiaron y comprueba
 su huella SHA-256 antes de instalarlos.
 
+## Copias de seguridad
+
+El servidor guarda una copia del mundo cada día, y otra antes de cada
+actualización. Esas copias viven en el mismo servidor: si el servidor se
+pierde, se pierden con él. Por eso tu PC descarga también una copia cada día:
+
+```powershell
+.\vps.ps1 -Backup
+```
+
+- Pide al servidor una copia nueva y descarga las que tu PC aún no tiene: el
+  mundo (`online-world-….sql.gz`) y los accesos (`access-….tar.gz`).
+- **Comprueba cada copia**: la reconstruye en una base nueva con
+  `tools/check_backup.py` y lee los jugadores, las cuentas y el minuto del
+  mundo. Una copia que no se puede leer no cuenta como copia.
+- La primera vez programa la tarea **LAIN copia del servidor**, que se
+  ejecuta cada día a las 13:00. Si el PC estaba apagado a esa hora, la tarea
+  espera a que lo enciendas. Para quitarla: `.\vps.ps1 -Backup -NoDaily`.
+- En el PC quedan todas las copias de los últimos 30 días y, de antes, la
+  última de cada mes. Están en `%LOCALAPPDATA%\LAIN\VPS\copias`, con un
+  registro en `copias.log`.
+- Para guardarlas en otra carpeta (otro disco, o la carpeta de OneDrive si
+  quieres otra copia en la nube): `.\vps.ps1 -Backup -BackupFolder "D:\LAIN-copias"`.
+  La carpeta se recuerda.
+
+El panel (`-Panel`) y `-Status` muestran cuándo tu PC verificó la última
+copia. En el panel, la fecha se pone **en amarillo** si tiene más de dos días.
+
+Las copias llevan las cuentas y los accesos de los jugadores: no las
+compartas ni las subas a GitHub. La clave de la IA no viaja en las copias;
+tras una reinstalación se vuelve a poner con `-Gemini`.
+
+### Restaurar una copia
+
+```powershell
+.\vps.ps1 -Restore ultima        # la más reciente
+.\vps.ps1 -Restore 2026-10-04    # la última copia de ese día
+```
+
+Comprueba la copia en el PC, enseña cuántos jugadores tiene y pide que
+escribas `RESTAURAR`. Después la sube, guarda antes el mundo actual en el
+servidor, cambia uno por otro y reinicia el motor.
+
+### Si el servidor desaparece
+
+1. Crea otro servidor como en «Primera vez» e instálalo con
+   `.\vps.ps1 -Ip <ip nueva> -Install`.
+2. `.\vps.ps1 -Restore ultima` vuelve a poner el mundo, las cuentas y los
+   accesos.
+3. `.\vps.ps1 -Gemini` vuelve a activar la IA.
+
+La dirección del servidor sale de su IP. Con otra IP, los juegos de tus
+amigos seguirán buscando la antigua. En Hetzner puedes conservar la IP
+aunque borres el servidor: en **Primary IPs**, desactiva el borrado
+automático y asígnala al servidor nuevo. Así nadie tiene que cambiar nada.
+
 ## Primera vez
 
 1. **Llave SSH** (ya creada en este PC):
@@ -134,6 +190,8 @@ su huella SHA-256 antes de instalarlos.
 | Ver si todo va bien | `.\vps.ps1 -Status` |
 | Actualizar el motor desde GitHub | `.\vps.ps1 -Update` |
 | Abrir una consola en el servidor | `.\vps.ps1 -Shell` |
+| Copia del mundo en el PC (y diaria) | `.\vps.ps1 -Backup` |
+| Volver a una copia | `.\vps.ps1 -Restore ultima` |
 
 Notas:
 - Añadir un jugador cierra el mundo unos segundos; los conectados se
@@ -149,7 +207,7 @@ Notas:
 | `/opt/lain` | Solo la parte del servidor del repositorio, rama `main`. |
 | `/var/lib/lain` | El mundo (`online-world.db`) y los accesos; usuario `lain`, sin login. |
 | `/etc/lain/lain.env` | Ajustes de la IA y la clave de Groq; solo root. |
-| `/var/backups/lain` | Copias diarias; se restauran como explica `lain-backup`. |
+| `/var/backups/lain` | Copias de 14 días (diarias, antes de cada actualización y al bajarlas al PC). |
 | Servicios | `lain` (motor), `caddy` (HTTPS), `lain-backup.timer`. |
 
 El motor solo escucha en `127.0.0.1:8000`; desde fuera solo se llega por

@@ -27,6 +27,14 @@
     [string]$ResetPassword = '',
     # Opens the live server panel in your browser (through SSH; nothing public).
     [switch]$Panel,
+    # Download a verified copy of the world to this PC; from then on, every day.
+    [switch]$Backup,
+    # With -Backup: the folder for the copies (remembered). Default: %LOCALAPPDATA%\LAIN\VPS\copias
+    [string]$BackupFolder = '',
+    # With -Backup: stop the daily copy.
+    [switch]$NoDaily,
+    # Put a copy from this PC back on the server: a date (2026-10-04) or "ultima".
+    [string]$Restore = '',
     # With -Migrate: replace a server world that already has players.
     [switch]$Force
 )
@@ -39,6 +47,8 @@ $accessDir = Join-Path $vpsDir 'access'
 $configFile = Join-Path $vpsDir 'server.json'
 $savedGame = Join-Path $vpsDir 'LAIN-Online-Windows.zip'
 $friendsDir = Join-Path $env:USERPROFILE 'LAIN-Amigos'
+$backupSetting = Join-Path $vpsDir 'backup-folder.txt'
+$backupTask = 'LAIN copia del servidor'
 $utf8 = New-Object Text.UTF8Encoding $false
 New-Item -ItemType Directory -Force -Path $vpsDir, $accessDir | Out-Null
 
@@ -80,6 +90,50 @@ function Set-ServerUrl([string]$file) {
     $config = Get-Content -LiteralPath $file -Raw | ConvertFrom-Json
     $config.server_url = "https://$($server.host)"
     [IO.File]::WriteAllText($file, ($config | ConvertTo-Json), $utf8)
+}
+
+function Get-Python {
+    $python = Join-Path $PSScriptRoot '.venv\Scripts\python.exe'
+    if (-not (Test-Path -LiteralPath $python)) { $python = (Get-Command python).Source }
+    return $python
+}
+
+function Get-BackupFolder {
+    if ($BackupFolder) {
+        [IO.File]::WriteAllText($backupSetting, [IO.Path]::GetFullPath($BackupFolder), $utf8)
+    }
+    $folder = Join-Path $vpsDir 'copias'
+    if (Test-Path -LiteralPath $backupSetting) { $folder = (Get-Content -LiteralPath $backupSetting -Raw).Trim() }
+    New-Item -ItemType Directory -Force -Path $folder | Out-Null
+    return $folder
+}
+
+function Get-BackupSets([string]$folder) {
+    # One set per server copy: the world dump and, beside it, the access files.
+    $sets = foreach ($dump in (Get-ChildItem -LiteralPath $folder -Filter 'online-world-*.sql.gz')) {
+        $stamp = $dump.Name -replace '^online-world-(.+)\.sql\.gz$', '$1'
+        if ($stamp -notmatch '^\d{4}-\d{2}-\d{2}(-\d{6})?$') { continue }
+        $digits = ($stamp -replace '-', '').PadRight(14, '0')
+        $access = Join-Path $folder "access-$stamp.tar.gz"
+        [pscustomobject]@{
+            Stamp = $stamp
+            # The server names its copies in UTC; shown here in this PC's time.
+            Time = [datetime]::SpecifyKind([datetime]::ParseExact($digits, 'yyyyMMddHHmmss', $null), 'Utc').ToLocalTime()
+            Dump = $dump.FullName
+            Access = $(if (Test-Path -LiteralPath $access) { $access } else { '' })
+        }
+    }
+    return @($sets | Sort-Object Time)
+}
+
+function Test-Backup($set, [string]$target = '') {
+    # Rebuilds the world from the copy in a fresh database; a copy that cannot be read is not a copy.
+    $arguments = @((Join-Path $PSScriptRoot 'tools\check_backup.py'), $set.Dump)
+    if ($set.Access) { $arguments += @('--access', $set.Access) }
+    if ($target) { $arguments += @('--to', $target) }
+    $result = (& (Get-Python) @arguments | Select-Object -Last 1) | ConvertFrom-Json
+    if (-not $result.ok) { throw "La copia $($set.Stamp) está dañada: $($result.error)" }
+    return $result
 }
 
 function Import-GameZip([string]$path) {
@@ -132,7 +186,7 @@ if ($Key) {
     Write-Host ''
 }
 
-if ($Ip -or $Install -or $Gemini -or $Groq -or $Migrate -or $AddPlayer -or $Status -or $Update -or $Shell -or $Publish -or $ResetPassword -or $Invite -or $Panel) { $server = Get-Server }
+if ($Ip -or $Install -or $Gemini -or $Groq -or $Migrate -or $AddPlayer -or $Status -or $Update -or $Shell -or $Publish -or $ResetPassword -or $Invite -or $Panel -or $Backup -or $Restore) { $server = Get-Server }
 
 if ($Install) {
     Copy-ToServer (Join-Path $PSScriptRoot 'deploy\vps\setup.sh') '/root/lain-setup.sh'
@@ -271,6 +325,96 @@ if ($Panel) {
     Write-Host 'Panel abierto en http://localhost:8765/admin (se actualiza cada 5 segundos).'
     Read-Host 'Pulsa Enter aquí para cerrar el panel'
     Stop-Process -Id $tunnel.Id -ErrorAction SilentlyContinue
+}
+
+if ($Backup) {
+    $folder = Get-BackupFolder
+    $log = Join-Path $folder 'copias.log'
+    try {
+        # A fresh copy now, then every server copy this PC does not have yet.
+        Invoke-Server 'lain-backup' | ForEach-Object { Write-Host "Servidor: $_" }
+        $wanted = @()
+        foreach ($line in (Invoke-Server "find /var/backups/lain -maxdepth 1 -type f -name '*.gz' -printf '%f %s\n'")) {
+            $name, $size = "$line".Split(' ')
+            if ($name -notmatch '^(online-world-[\d-]+\.sql|access-[\d-]+\.tar)\.gz$') { continue }
+            $local = Join-Path $folder $name
+            if ((Test-Path -LiteralPath $local) -and (Get-Item -LiteralPath $local).Length -eq [long]$size) { continue }
+            $wanted += $name
+        }
+        if ($wanted) {
+            $options = Get-SshOptions
+            $sources = $wanted | ForEach-Object { "root@$($server.ip):/var/backups/lain/$_" }
+            & scp.exe @options -q -p @sources $folder
+            if ($LASTEXITCODE -ne 0) { throw 'No se pudieron descargar las copias del servidor.' }
+        }
+        $sets = Get-BackupSets $folder
+        if (-not $sets) { throw 'El servidor no tiene ninguna copia del mundo todavía.' }
+        $latest = $sets[-1]
+        # Every new copy is rebuilt and read back; the newest one always.
+        foreach ($set in $sets) {
+            if ($set -ne $latest -and $wanted -contains (Split-Path $set.Dump -Leaf)) { Test-Backup $set | Out-Null }
+        }
+        $result = Test-Backup $latest
+        Invoke-Server 'lain-backup --downloaded'
+        $summary = "Copia del $($latest.Time.ToString('yyyy-MM-dd HH:mm')) verificada: $($result.players) jugadores, $($result.accounts) cuentas, minuto $($result.minute) del mundo"
+        if ($latest.Access) { $summary += ", $($result.access) accesos" }
+        # Every copy from the last 30 days; before that, the newest of each month.
+        $limit = (Get-Date).AddDays(-30)
+        $months = @{}
+        foreach ($set in ($sets | Sort-Object Time -Descending)) {
+            if ($set.Time -ge $limit) { continue }
+            $month = $set.Time.ToString('yyyy-MM')
+            if ($months.ContainsKey($month)) {
+                Remove-Item -LiteralPath $set.Dump -Force
+                if ($set.Access) { Remove-Item -LiteralPath $set.Access -Force }
+            } else { $months[$month] = $true }
+        }
+        Write-Host "$summary."
+        Write-Host "Copias en $folder ($(@(Get-BackupSets $folder).Count) en total)."
+        Add-Content -LiteralPath $log -Encoding UTF8 -Value "$(Get-Date -Format 'yyyy-MM-dd HH:mm') OK $summary"
+    } catch {
+        Add-Content -LiteralPath $log -Encoding UTF8 -Value "$(Get-Date -Format 'yyyy-MM-dd HH:mm') ERROR $($_.Exception.Message)"
+        throw
+    }
+    if ($NoDaily) {
+        Unregister-ScheduledTask -TaskName $backupTask -Confirm:$false -ErrorAction SilentlyContinue
+        Write-Host 'Copia diaria desactivada.'
+    } elseif (-not (Get-ScheduledTask -TaskName $backupTask -ErrorAction SilentlyContinue)) {
+        # Only while you are signed in; if the PC was off at 13:00 it runs as soon as it is on.
+        $action = New-ScheduledTaskAction -Execute 'powershell.exe' -Argument "-NoProfile -NonInteractive -WindowStyle Hidden -File `"$PSCommandPath`" -Backup"
+        $trigger = New-ScheduledTaskTrigger -Daily -At '13:00'
+        $settings = New-ScheduledTaskSettingsSet -StartWhenAvailable -RunOnlyIfNetworkAvailable -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -ExecutionTimeLimit (New-TimeSpan -Minutes 30)
+        Register-ScheduledTask -TaskName $backupTask -Description 'Descarga y comprueba una copia del mundo de LAIN (vps.ps1 -Backup).' -Action $action -Trigger $trigger -Settings $settings | Out-Null
+        Write-Host 'Copia diaria programada: cada día a las 13:00, o al encender el PC si estaba apagado.'
+        Write-Host 'Para quitarla: .\vps.ps1 -Backup -NoDaily'
+    }
+}
+
+if ($Restore) {
+    $folder = Get-BackupFolder
+    $sets = Get-BackupSets $folder
+    if (-not $sets) { throw "No hay copias en $folder. Haz una con: .\vps.ps1 -Backup" }
+    if ($Restore -in 'ultima', 'última', 'latest') { $set = $sets[-1] }
+    else { $set = $sets | Where-Object { $_.Stamp.StartsWith($Restore) } | Select-Object -Last 1 }
+    if (-not $set) { throw "No hay ninguna copia de $Restore. Las últimas: $(($sets | Select-Object -Last 5 | ForEach-Object { $_.Stamp }) -join ', ')" }
+    $restored = Join-Path $env:TEMP 'lain-import.db'
+    $check = Test-Backup $set $restored
+    Write-Host "Copia del $($set.Time.ToString('yyyy-MM-dd HH:mm')): $($check.players) jugadores, minuto $($check.minute) del mundo."
+    Write-Host 'Sustituye el mundo del servidor por esta copia. El mundo actual se guarda antes en /var/backups/lain.'
+    if ((Read-Host 'Escribe RESTAURAR para seguir') -cne 'RESTAURAR') {
+        Remove-Item -LiteralPath $restored -Force
+        throw 'Cancelado: no he cambiado nada.'
+    }
+    Invoke-Server 'rm -rf /root/lain-import.db /root/lain-import-access /root/lain-import-access.tar.gz'
+    Copy-ToServer $restored '/root/lain-import.db'
+    Remove-Item -LiteralPath $restored -Force
+    if ($set.Access) {
+        Copy-ToServer $set.Access '/root/lain-import-access.tar.gz'
+        Invoke-Server 'install -d -m 700 /root/lain-import-access && tar -C /root/lain-import-access --strip-components=1 -xzf /root/lain-import-access.tar.gz && rm /root/lain-import-access.tar.gz'
+    }
+    # Checks the copy, saves the current world, swaps them and restarts the engine.
+    Invoke-Server 'lain-import-world'
+    Write-Host "Mundo restaurado desde la copia del $($set.Time.ToString('yyyy-MM-dd HH:mm'))."
 }
 
 if ($Invite) {
