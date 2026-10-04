@@ -1691,5 +1691,21 @@
   "pista [capa]\n\nNora te da una pista para el paso en el que estás. Si vuelves a pedirla, la\nsiguiente es más clara: primero la idea, luego el método y al final los valores\nde tu propia partida. Con un número (pista 3) pides ayuda con esa capa.": "hint [layer]\n\nNora gives you a hint for the step you are on. If you ask again, the next one\nis clearer: first the idea, then the method and finally the values of your own\ngame. With a number (hint 3) you ask for help with that layer.",
   "F7  ·  SONIDO: sí": "F7  ·  SOUND: on",
   "F7  ·  SONIDO: a la mitad": "F7  ·  SOUND: half",
-  "F7  ·  SONIDO: no": "F7  ·  SOUND: off"
+  "F7  ·  SONIDO: no": "F7  ·  SOUND: off",
+  "1/5 · CAMINAR": "1/5 · WALK",
+  "Camina con W A S D.": "Walk with W A S D.",
+  "2/5 · TU DIARIO": "2/5 · YOUR DIARY",
+  "Pulsa J para abrir tu diario. Ahí está siempre tu objetivo.": "Press J to open your diary. Your objective is always there.",
+  "3/5 · SALIR": "3/5 · GO OUT",
+  "Acércate a la puerta y pulsa E para salir al barrio.": "Walk up to the door and press E to go out into the neighborhood.",
+  "4/5 · EL COLEGIO": "4/5 · THE SCHOOL",
+  "Busca el colegio: es la C del mapa, arriba a la derecha. Entra con E junto a la puerta.": "Find the school: it is the C on the map, top right. Go in with E by the door.",
+  "5/5 · HABLAR": "5/5 · TALK",
+  "Acércate a alguien y pulsa E. Puedes escribirle lo que quieras.": "Walk up to someone and press E. You can write them anything you like.",
+  "Esta guía te acompaña los primeros minutos.": "This guide stays with you for the first few minutes.",
+  "Ya sabes lo básico. Tu objetivo queda aquí; si te pierdes, abre el diario con J.": "You know the basics. Your objective stays here; if you get lost, open the diary with J.",
+  "Consejo: escribe help para ver las órdenes, y pista si te atascas.": "Tip: type help to see the commands, and hint if you get stuck.",
+  "Consejo: escribe una orden y pulsa Enter. Lo que te contó Ryoko está en tu diario (J).": "Tip: type a command and press Enter. What Ryoko told you is in your diary (J).",
+  "F1 · ocultar o mostrar la guía": "F1 · hide or show the guide",
+  "GUÍA COMPLETADA": "GUIDE COMPLETE"
 }

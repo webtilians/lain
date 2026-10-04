@@ -33,6 +33,7 @@ Workshop="*res://scripts/ui/Workshop.gd"
 OnlinePresence="*res://scripts/network/OnlinePresence.gd"
 ShellTerminal="*res://scripts/ui/ShellTerminal.gd"
 PresenceSignal="*res://scripts/ui/PresenceSignal.gd"
+Guide="*res://scripts/ui/Guide.gd"
 
 [display]
 
