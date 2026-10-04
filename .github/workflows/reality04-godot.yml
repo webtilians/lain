@@ -209,6 +209,16 @@ jobs:
             exit 1
           fi
 
+      - name: Sound — ambience per place, interface effects and F7 volume
+        shell: bash
+        run: |
+          set -euo pipefail
+          /tmp/lain-godot --headless --path client --script res://tools/test_audio.gd 2>&1 | tee /tmp/lain-audio.log
+          grep -q 'AUDIO_OK' /tmp/lain-audio.log
+          if grep -E '^(SCRIPT ERROR:|ERROR:)' /tmp/lain-audio.log; then
+            exit 1
+          fi
+
       - name: Visual 0.22 interiors dressed without touching collisions
         shell: bash
         run: |

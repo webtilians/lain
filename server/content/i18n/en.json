@@ -1688,5 +1688,8 @@
   "(Escribe pista otra vez y te daré una más clara.)": "(Type hint again and I will give you a clearer one.)",
   "¿Atascado? Escribe pista en el Terminal.": "Stuck? Type hint in the Terminal.",
   "Ayuda:\n  pista [capa]            una pista para lo que estás haciendo (cada vez más clara)": "Help:\n  hint [layer]            a hint for what you are doing (clearer each time)",
-  "pista [capa]\n\nNora te da una pista para el paso en el que estás. Si vuelves a pedirla, la\nsiguiente es más clara: primero la idea, luego el método y al final los valores\nde tu propia partida. Con un número (pista 3) pides ayuda con esa capa.": "hint [layer]\n\nNora gives you a hint for the step you are on. If you ask again, the next one\nis clearer: first the idea, then the method and finally the values of your own\ngame. With a number (hint 3) you ask for help with that layer."
+  "pista [capa]\n\nNora te da una pista para el paso en el que estás. Si vuelves a pedirla, la\nsiguiente es más clara: primero la idea, luego el método y al final los valores\nde tu propia partida. Con un número (pista 3) pides ayuda con esa capa.": "hint [layer]\n\nNora gives you a hint for the step you are on. If you ask again, the next one\nis clearer: first the idea, then the method and finally the values of your own\ngame. With a number (hint 3) you ask for help with that layer.",
+  "F7  ·  SONIDO: sí": "F7  ·  SOUND: on",
+  "F7  ·  SONIDO: a la mitad": "F7  ·  SOUND: half",
+  "F7  ·  SONIDO: no": "F7  ·  SOUND: off"
 }
