@@ -93,20 +93,21 @@ jobs:
           python tools/smoke_online01.py --godot (Resolve-Path "release/Game/LAIN-Game.exe").Path --exported
           if ($LASTEXITCODE -ne 0) { throw "Exported online client test failed" }
 
+      # parts.json.gz lets installed launchers download only what changed.
       - name: Assemble the shared download and its update manifest
         shell: pwsh
         run: |
           Copy-Item "dist/LAIN.exe" "release/LAIN.exe"
           Copy-Item "packaging/LEEME-JUGADOR.txt" "release/LEEME.txt"
           Copy-Item "packaging/lain-server.json" "release/lain-server.json"
-          python tools/make_release_manifest.py --root release --version $env:LAIN_VERSION --out release/version.json manifest.json
+          python tools/make_release_manifest.py --root release --version $env:LAIN_VERSION --parts parts.json.gz --out release/version.json manifest.json
           if ($LASTEXITCODE -ne 0) { throw "Manifest failed" }
           $names = (Get-ChildItem release -Recurse -File | ForEach-Object { $_.FullName.Substring((Resolve-Path release).Path.Length + 1) }) -join "`n"
           Write-Host $names
           if ($names -match '\.db|lain-online\.json|lain-ai\.json|Server[\\/]') { throw "Unexpected file in the online client" }
           Compress-Archive -Path "release/*" -DestinationPath "LAIN-Windows.zip" -CompressionLevel Optimal
           Copy-Item "release/Game/LAIN-Game.exe", "release/Game/LAIN-Game.pck", "release/LAIN.exe", "release/LEEME.txt" -Destination .
-          Get-FileHash LAIN-Windows.zip, manifest.json -Algorithm SHA256
+          Get-FileHash LAIN-Windows.zip, manifest.json, parts.json.gz -Algorithm SHA256
 
       - name: Publish as the latest release
         shell: pwsh
@@ -115,5 +116,5 @@ jobs:
         run: |
           $tag = "v$env:LAIN_VERSION"
           $notes = "LAIN $env:LAIN_VERSION. Descarga LAIN-Windows.zip, extráelo y abre LAIN.exe. Si ya lo tienes, se actualiza solo al abrirlo."
-          gh release create $tag LAIN-Windows.zip manifest.json LAIN.exe LAIN-Game.exe LAIN-Game.pck LEEME.txt --title "LAIN $env:LAIN_VERSION" --notes $notes --target $env:GITHUB_SHA --latest
+          gh release create $tag LAIN-Windows.zip manifest.json parts.json.gz LAIN.exe LAIN-Game.exe LAIN-Game.pck LEEME.txt --title "LAIN $env:LAIN_VERSION" --notes $notes --target $env:GITHUB_SHA --latest
           if ($LASTEXITCODE -ne 0) { throw "Release publication failed" }

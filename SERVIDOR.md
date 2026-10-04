@@ -47,8 +47,12 @@ Sube una etiqueta `v0.13.1` a GitHub. El flujo *LAIN — publicar versión
 online* compila el juego (unos 20 minutos), comprueba que dos clientes
 comparten mundo y publica la versión en GitHub Releases. Después el script
 actualiza el servidor. Cada jugador recibe la versión nueva al abrir
-`LAIN.exe`: el lanzador descarga solo los archivos que cambiaron y comprueba
-su huella SHA-256 antes de instalarlos.
+`LAIN.exe`. El lanzador no vuelve a bajar el juego entero: corta su copia en
+trozos, compara con la lista `parts.json.gz` de la versión nueva y descarga
+solo los trozos que faltan. De la 0.22 a la 0.23 habrían sido unos 3 MB en
+lugar de 291. Antes de instalar comprueba la huella SHA-256 de cada archivo.
+Si algo falla, descarga el archivo entero como antes. La primera versión con
+parches aún se baja entera, porque la instala el lanzador antiguo.
 
 ## Copias de seguridad
 
