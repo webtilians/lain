@@ -14,6 +14,7 @@ const ERRORS := {
 	"INVALID_PLAYER_ACCESS": "Tu sesión ha caducado. Entra de nuevo.",
 }
 const RED := Color("c2253f")
+const INTRO := preload("res://scripts/ui/Intro.gd")
 const DIM := Color("9a8f9e")
 
 @onready var status: Label = $Center/Status
@@ -26,6 +27,11 @@ var pending := ""
 var me: Dictionary = {}
 
 func _ready() -> void:
+	if INTRO.should_play():
+		# The terminal prologue plays once per launch, before anything else.
+		var intro := INTRO.new()
+		add_child(intro)
+		await intro.finished
 	WorldApi.api_error.connect(_on_api_error)
 	WorldApi.snapshot_updated.connect(_on_snapshot_updated)
 	if not ServerConnection.is_online_mode():

@@ -34,6 +34,7 @@ OnlinePresence="*res://scripts/network/OnlinePresence.gd"
 ShellTerminal="*res://scripts/ui/ShellTerminal.gd"
 PresenceSignal="*res://scripts/ui/PresenceSignal.gd"
 Guide="*res://scripts/ui/Guide.gd"
+Cinematic="*res://scripts/ui/Cinematic.gd"
 
 [display]
 

@@ -63,7 +63,8 @@ func _process(delta: float) -> void:
 		text += "\n\nSEÑAL DÉBIL · nadie te ha recibido en " + str(int(silence / 60.0)) + " min."
 	hud.text = text
 	hud.modulate.a = 1.0 if fade > 0.0 else 0.72
-	hud.visible = not (Workshop.is_open() or ShellTerminal.is_open() or CharacterJournal.backdrop.visible)
+	hud.visible = not (Workshop.is_open() or ShellTerminal.is_open() or CharacterJournal.backdrop.visible
+		or Cinematic.is_playing())
 
 func _apply(fade: float) -> void:
 	if fade <= 0.0 and not applied:

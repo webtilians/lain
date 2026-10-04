@@ -229,6 +229,26 @@ jobs:
             exit 1
           fi
 
+      - name: Terminal intro before the start menu
+        shell: bash
+        run: |
+          set -euo pipefail
+          /tmp/lain-godot --headless --path client --script res://tools/test_intro.gd 2>&1 | tee /tmp/lain-intro.log
+          grep -q 'INTRO_OK' /tmp/lain-intro.log
+          if grep -E '^(SCRIPT ERROR:|ERROR:)' /tmp/lain-intro.log; then
+            exit 1
+          fi
+
+      - name: Cinematics at the story's turning points
+        shell: bash
+        run: |
+          set -euo pipefail
+          /tmp/lain-godot --headless --path client --script res://tools/test_cinematic.gd 2>&1 | tee /tmp/lain-cinematic.log
+          grep -q 'CINEMATIC_OK' /tmp/lain-cinematic.log
+          if grep -E '^(SCRIPT ERROR:|ERROR:)' /tmp/lain-cinematic.log; then
+            exit 1
+          fi
+
       - name: Visual 0.22 interiors dressed without touching collisions
         shell: bash
         run: |

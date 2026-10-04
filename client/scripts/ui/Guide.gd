@@ -168,7 +168,8 @@ func _process(delta: float) -> void:
 
 func _show(step: Dictionary) -> void:
 	var busy: bool = (SceneRouter.get("loading") == true or EventDialog.visible or Workshop.is_open()
-		or ShellTerminal.is_open() or PrologueTerminal.surface.visible or CharacterJournal.backdrop.visible)
+		or ShellTerminal.is_open() or PrologueTerminal.surface.visible or CharacterJournal.backdrop.visible
+		or Cinematic.is_playing())
 	if not step.is_empty():
 		title_label.text = step.title
 		text_label.text = (WELCOME + "\n" + step.text) if step.id == "move" else step.text
