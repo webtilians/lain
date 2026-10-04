@@ -1,16 +1,35 @@
 #!/usr/bin/env bash
-# Daily copy of the world (kept 14 days) in /var/backups/lain.
-# Restore: systemctl stop lain; zcat online-world-DAY.sql.gz | sqlite3 NEW.db;
+# A copy of the world and the access files in /var/backups/lain, kept 14 days.
+# Runs every day (lain-backup.timer), before every update or import, and each
+# time the owner's PC takes its off-server copy (vps.ps1 -Backup). Every copy
+# has its own name, so a later copy never overwrites an earlier one.
+#
+#   lain-backup               make a copy now and print its name
+#   lain-backup --downloaded  the PC has a verified copy (shown by the panel)
+#
+# Restore from the PC: .\vps.ps1 -Restore <fecha>  (SERVIDOR.md, "Copias").
+# By hand: systemctl stop lain; zcat online-world-STAMP.sql.gz | sqlite3 NEW.db;
 #          replace /var/lib/lain/online-world.db with NEW.db (owner lain); start.
 set -euo pipefail
 umask 077
 database=/var/lib/lain/online-world.db
 destination=/var/backups/lain
+if [ "${1:-}" = "--downloaded" ]; then
+  # Readable by the service, which shows it in the owner's panel.
+  date +%s > /var/lib/lain/offsite-backup.tmp
+  chown lain:lain /var/lib/lain/offsite-backup.tmp
+  mv /var/lib/lain/offsite-backup.tmp /var/lib/lain/offsite-backup
+  exit 0
+fi
 [ -f "$database" ] || exit 0
-day=$(date +%F)
+stamp=$(date +%Y-%m-%d-%H%M%S)
 # Read as the service user so SQLite never leaves root-owned -wal/-shm files.
-runuser -u lain -- sqlite3 "$database" .dump | gzip > "$destination/online-world-$day.sql.gz.tmp"
-mv "$destination/online-world-$day.sql.gz.tmp" "$destination/online-world-$day.sql.gz"
+runuser -u lain -- sqlite3 "$database" .dump | gzip > "$destination/online-world-$stamp.sql.gz.tmp"
+mv "$destination/online-world-$stamp.sql.gz.tmp" "$destination/online-world-$stamp.sql.gz"
 # Access files hold the only copy of each player's token.
-[ -d /var/lib/lain/access ] && tar -C /var/lib/lain -czf "$destination/access-$day.tar.gz" access
+if [ -d /var/lib/lain/access ]; then
+  tar -C /var/lib/lain -czf "$destination/access-$stamp.tar.gz.tmp" access
+  mv "$destination/access-$stamp.tar.gz.tmp" "$destination/access-$stamp.tar.gz"
+fi
 find "$destination" -type f -mtime +13 -delete
+echo "Copia: online-world-$stamp.sql.gz"

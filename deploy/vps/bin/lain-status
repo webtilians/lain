@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# One-screen health check: service, address, AI, players, disk and backups.
+# One-screen health check: service, address, AI, players, disk and backups
+# (here and on the owner's PC).
 set -uo pipefail
 host=$(cat /etc/lain/host)
 echo "Dirección:  https://$host"
@@ -16,6 +17,11 @@ echo "Versión:    $(git -C /opt/lain log -1 --format='%h %s')"
 echo "$(lain-signup)"
 echo "Disco:      $(df -h /var/lib/lain | awk 'NR == 2 {print $4 " libres"}')"
 echo "Copias:     $(ls /var/backups/lain/*.sql.gz 2>/dev/null | wc -l) (última: $(ls -t /var/backups/lain/*.sql.gz 2>/dev/null | head -1 | xargs -r basename))"
+if [ -f /var/lib/lain/offsite-backup ]; then
+  echo "En tu PC:   última copia verificada $(TZ=Europe/Madrid date -d "@$(cat /var/lib/lain/offsite-backup)" '+%F %H:%M')"
+else
+  echo "En tu PC:   ninguna copia todavía (.\vps.ps1 -Backup)"
+fi
 echo
 echo "Jugadores:"
 cd /opt/lain && runuser -u lain -- env PYTHONDONTWRITEBYTECODE=1 /opt/lain-venv/bin/python -m tools.online_server --data-dir /var/lib/lain list-players
