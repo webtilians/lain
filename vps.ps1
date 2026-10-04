@@ -25,6 +25,8 @@
     [string]$Invite = '',
     # A new password for a player who forgot theirs.
     [string]$ResetPassword = '',
+    # Opens the live server panel in your browser (through SSH; nothing public).
+    [switch]$Panel,
     # With -Migrate: replace a server world that already has players.
     [switch]$Force
 )
@@ -130,7 +132,7 @@ if ($Key) {
     Write-Host ''
 }
 
-if ($Ip -or $Install -or $Gemini -or $Groq -or $Migrate -or $AddPlayer -or $Status -or $Update -or $Shell -or $Publish -or $ResetPassword -or $Invite) { $server = Get-Server }
+if ($Ip -or $Install -or $Gemini -or $Groq -or $Migrate -or $AddPlayer -or $Status -or $Update -or $Shell -or $Publish -or $ResetPassword -or $Invite -or $Panel) { $server = Get-Server }
 
 if ($Install) {
     Copy-ToServer (Join-Path $PSScriptRoot 'deploy\vps\setup.sh') '/root/lain-setup.sh'
@@ -253,6 +255,18 @@ if ($Publish) {
     Write-Host ''
     Write-Host "Listo. Los jugadores recibirán la $Publish al abrir LAIN.exe."
     Write-Host "Descarga para gente nueva: https://$($server.host)"
+}
+
+if ($Panel) {
+    # A private tunnel: your PC's port 8765 reaches the engine's own port on the server.
+    $options = Get-SshOptions
+    $tunnel = Start-Process ssh.exe -ArgumentList ($options + @('-N', '-L', '8765:127.0.0.1:8000', "root@$($server.ip)")) -PassThru -WindowStyle Hidden
+    Start-Sleep -Seconds 3
+    if ($tunnel.HasExited) { throw 'No se pudo abrir el túnel SSH con el servidor.' }
+    Start-Process 'http://localhost:8765/admin'
+    Write-Host 'Panel abierto en http://localhost:8765/admin (se actualiza cada 5 segundos).'
+    Read-Host 'Pulsa Enter aquí para cerrar el panel'
+    Stop-Process -Id $tunnel.Id -ErrorAction SilentlyContinue
 }
 
 if ($Invite) {

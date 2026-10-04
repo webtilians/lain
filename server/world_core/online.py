@@ -26,6 +26,9 @@ PRESENCE_TTL = 12
 # The shadow (BIBLIA_NARRATIVA.md, section 7): while a player is offline, others
 # see something with their face walking the routes they used to take.
 TRAIL_POINTS = 48
+# Connection history for the owner's panel: a session ends after this long without requests.
+SESSION_GAP = 120
+_session_seen = {}
 TRAIL_EVERY = 2.0
 MAX_SHADOWS = 3
 _trail_clock = {}
@@ -82,6 +85,9 @@ def initialize():
                 actor_id TEXT NOT NULL, request_id TEXT NOT NULL,
                 command TEXT NOT NULL, result TEXT,
                 PRIMARY KEY(actor_id, request_id));
+            CREATE TABLE IF NOT EXISTS online_sessions (
+                id INTEGER PRIMARY KEY AUTOINCREMENT, player_id TEXT NOT NULL,
+                started REAL NOT NULL, last_seen REAL NOT NULL);
             CREATE TABLE IF NOT EXISTS online_trails (
                 player_id TEXT NOT NULL, location TEXT NOT NULL, slot INTEGER NOT NULL,
                 x REAL NOT NULL, y REAL NOT NULL, z REAL NOT NULL, yaw REAL NOT NULL,
@@ -169,6 +175,25 @@ def connect(actor_id, instance):
         ):
             raise ValueError("PLAYER_ALREADY_CONNECTED")
         _connections[actor_id] = (instance, time.monotonic())
+    _track_session(actor_id)
+
+
+def _track_session(actor_id):
+    """Extends the player's current session, or opens a new one after a gap."""
+    now = time.time()
+    if now - _session_seen.get(actor_id, 0.0) < 20:
+        return
+    _session_seen[actor_id] = now
+    with get_connection() as conn:
+        if not conn.execute("SELECT 1 FROM sqlite_master WHERE name='online_sessions'").fetchone():
+            return
+        row = conn.execute("SELECT id, last_seen FROM online_sessions WHERE player_id=? ORDER BY id DESC LIMIT 1",
+                           (actor_id,)).fetchone()
+        if row and now - row[1] < SESSION_GAP:
+            conn.execute("UPDATE online_sessions SET last_seen=? WHERE id=?", (now, row[0]))
+        else:
+            conn.execute("INSERT INTO online_sessions(player_id, started, last_seen) VALUES(?,?,?)",
+                         (actor_id, now, now))
 
 
 def is_active(actor_id):

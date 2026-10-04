@@ -14,7 +14,7 @@ from fastapi import (
     Depends,
     Request,
 )
-from fastapi.responses import JSONResponse
+from fastapi.responses import HTMLResponse, JSONResponse
 from server.world_core import i18n
 
 
@@ -583,6 +583,22 @@ def acknowledge_player_message(
             "effect": result,
             "state": build_player_snapshot(player_id),
         }
+
+
+@app.get("/admin", response_class=HTMLResponse, include_in_schema=False)
+def admin_page(request: Request):
+    from server.world_core import admin
+    if not admin.local_request(request.client.host if request.client else None, request.headers):
+        raise HTTPException(status_code=404)
+    return HTMLResponse(admin.PAGE)
+
+
+@app.get("/admin/data", include_in_schema=False)
+def admin_data(request: Request):
+    from server.world_core import admin
+    if not admin.local_request(request.client.host if request.client else None, request.headers):
+        raise HTTPException(status_code=404)
+    return admin.overview()
 
 
 @app.get("/health")

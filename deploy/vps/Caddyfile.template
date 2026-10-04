@@ -2,7 +2,8 @@
 __HOST__ {
 	encode gzip
 	# Mutually exclusive, first match wins: docs closed, download page, World Core.
-	@docs path /docs /docs/* /redoc /openapi.json
+	# The owner's panel is reached only through an SSH tunnel (vps.ps1 -Panel).
+	@docs path /docs /docs/* /redoc /openapi.json /admin /admin/*
 	handle @docs {
 		respond 404
 	}
