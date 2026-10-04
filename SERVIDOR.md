@@ -17,7 +17,8 @@ Todo se maneja desde el PC con `vps.ps1`.
 ## Que juegue gente nueva (sin que tú hagas nada)
 
 1. Pásales la web del servidor: **https://178-105-103-4.sslip.io**. Tiene el
-   botón de descarga. El enlace directo, que siempre baja la última versión,
+   botón de descarga y capturas del juego (`deploy/vps/web`; las imágenes se
+   rehacen con `client/tools/capture_landing.gd`). El enlace directo, que siempre baja la última versión,
    es `https://github.com/webtilians/lain/releases/latest/download/LAIN-Windows.zip`.
 2. Pásales también el **código de invitación**. Para verlo o cambiarlo:
 

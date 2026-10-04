@@ -111,3 +111,18 @@ def test_ai_key_helper_accepts_googles_dotted_keys():
     assert re.fullmatch(pattern, "AQ." + "Ab8xY_z-" * 6)
     assert re.fullmatch(pattern, "AIza" + "x" * 35)
     assert not re.fullmatch(pattern, "gsk_" + "x" * 30 + "'; rm -rf /")
+
+
+def test_download_page_images_exist_are_light_and_are_served():
+    page = (VPS / "web" / "index.html").read_text(encoding="utf-8")
+    images = re.findall(r'src="/img/([^"]+)"', page)
+    assert len(images) >= 5
+    for name in images:
+        path = VPS / "web" / "img" / name
+        assert path.is_file(), name
+        assert path.stat().st_size < 200_000, name
+        assert path.read_bytes()[8:12] == b"WEBP", name
+    caddy = (VPS / "Caddyfile.template").read_text(encoding="utf-8")
+    assert "@images path /img/*" in caddy
+    # The images are files, never routed to World Core, and never rewritten to the page.
+    assert caddy.index("@images") < caddy.index("reverse_proxy")

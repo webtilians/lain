@@ -1,3 +1,5 @@
 # Server scripts run on Linux: keep LF even with core.autocrlf.
 *.sh text eol=lf
 deploy/vps/** text eol=lf
+# Page images under deploy/vps are binary, never line-ending converted.
+deploy/vps/web/img/** binary
