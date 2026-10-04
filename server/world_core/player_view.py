@@ -26,6 +26,7 @@ from .layer_five import layer_snapshot as layer_five_snapshot
 from .layer_six import layer_snapshot as layer_six_snapshot
 from .layer_seven import layer_snapshot as layer_seven_snapshot
 from .layer_one import layer_snapshot as layer_one_snapshot
+from .layer_two import layer_snapshot as layer_two_snapshot
 from .protocol import current_layer
 from .network_conflict import network_snapshot
 from .workshop import workshop_snapshot
@@ -403,6 +404,7 @@ def build_player_snapshot(
         "prologue": prologue,
         "chapter_one": chapter_snapshot(player_id),
         "layer_one": layer_one_snapshot(player_id),
+        "layer_two": layer_two_snapshot(player_id),
         "layer_three": layer_snapshot(player_id),
         "layer_four": layer_four_snapshot(player_id),
         "layer_five": layer_five_snapshot(player_id),

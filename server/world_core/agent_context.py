@@ -87,7 +87,9 @@ class AgentContextBuilder:
         from .layer_six import layer_actor_context as layer_six_context
         from .layer_seven import layer_actor_context as layer_seven_context
         from .layer_one import layer_actor_context as layer_one_context
-        received = (layer_one_context(agent_id, player_id) + layer_actor_context(agent_id, player_id) + layer_four_context(agent_id, player_id)
+        from .layer_two import layer_actor_context as layer_two_context
+        received = (layer_one_context(agent_id, player_id) + layer_two_context(agent_id, player_id)
+                    + layer_actor_context(agent_id, player_id) + layer_four_context(agent_id, player_id)
                     + layer_five_context(agent_id, player_id) + layer_six_context(agent_id, player_id)
                     + layer_seven_context(agent_id, player_id))
         if received:

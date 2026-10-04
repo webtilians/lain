@@ -98,7 +98,7 @@ pregunta y recupera un fragmento de la Sesión Cero. El prólogo y el capítulo 
 | Capa | Técnica que hay que dominar | Puzzle principal | Pregunta | Revelación |
 | --- | --- | --- | --- | --- |
 | 01 · Física | Señales, bits, codificación Manchester, ruido | Leer en un osciloscopio el cable cortado de un armario y reparar la señal | ¿Qué es un cuerpo? | La Sesión Cero cortó un cable para que no la siguieran. |
-| 02 · Enlace | Direcciones MAC, tramas, *checksum*, suplantación | Alguien usa tu dirección; encontrar la trama falsa por su *checksum* | ¿Quién eres si te pueden copiar? | KAGAMI tiene una réplica tuya en funcionamiento. |
+| 02 · Enlace | Direcciones MAC, tramas, FCS (CRC-32), tabla del conmutador | Tu dirección aparece en dos puertos del conmutador; distinguir el tuyo con los latidos y el FCS | ¿Quién eres si te pueden copiar? | KAGAMI tiene una réplica tuya en funcionamiento. |
 | 03 · Red | IP, rutas, **TTL**, saltos | Averiguar en qué router murió un paquete y reconstruirlo | ¿Qué significa que algo se acabe? | La Sesión Cero no cerró: la terminaron. |
 | 04 · Transporte | Handshake TCP, ACK, retransmisión, ventana | Restablecer una conexión con alguien que dejó de contestar | ¿Necesito que me respondan para existir? | Nora mantiene viva una conexión con la Sesión Cero. |
 | 05 · Sesión | Caducidad de sesiones, arrendamientos (*leases*) con token de exclusión, concurrencia optimista, fusión a tres bandas | Fusionar tu estado con el de la Sesión Cero y decidir quién conserva la cuenta | ¿Soy la misma persona que ayer? | Solo una de las dos sesiones puede seguir activa. |
@@ -167,6 +167,7 @@ Lo que incluye la primera versión, jugable después del capítulo 1:
 ## 11. Estado
 
 - Capa 01 · Física: jugable (v0.19). Se abre con la conexión a la Wired, junto a la Capa 03; quien ya iba más adelante la tiene abierta. Los fragmentos cuentan capas completadas. Guía: [CAPA01_README.md](CAPA01_README.md).
+- Capa 02 · Enlace: jugable (v0.20). Empieza al terminar la Capa 01. Guía: [CAPA02_README.md](CAPA02_README.md).
 - Capa 03 · TTL: jugable (v0.13). Guía: [CAPA03_README.md](CAPA03_README.md).
 - Capa 04 · Transporte: jugable (v0.15). Guía: [CAPA04_README.md](CAPA04_README.md).
 - Capa 05 · Sesión: jugable (v0.16). Guía: [CAPA05_README.md](CAPA05_README.md).

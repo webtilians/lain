@@ -313,7 +313,7 @@ func scrolling(parent: Node) -> VBoxContainer:
 
 func _mail() -> void:
 	var box := scrolling(content)
-	for key in ["layer_seven", "layer_six", "layer_five", "layer_four", "layer_three", "layer_one"]:
+	for key in ["layer_seven", "layer_six", "layer_five", "layer_four", "layer_three", "layer_two", "layer_one"]:
 		var entry: Dictionary = WorldApi.snapshot.get(key, {})
 		if not bool(entry.get("active", false)):
 			continue

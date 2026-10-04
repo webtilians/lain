@@ -243,6 +243,8 @@ class Simulation:
         initialize_layer()
         from .layer_one import initialize_layer_one
         initialize_layer_one()
+        from .layer_two import initialize_layer_two
+        initialize_layer_two()
         from .layer_four import initialize_layer_four
         initialize_layer_four()
         from .layer_five import initialize_layer_five

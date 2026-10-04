@@ -76,6 +76,7 @@ jobs:
           $env:LAIN_LAYER_SIX = "1"
           $env:LAIN_LAYER_SEVEN = "1"
           $env:LAIN_LAYER_ONE = "1"
+          $env:LAIN_LAYER_TWO = "1"
           $env:LAIN_WORLD_CLOCK = "0"
           $out = Join-Path $env:RUNNER_TEMP "lain-beta-server-stdout.log"
           $err = Join-Path $env:RUNNER_TEMP "lain-beta-server-stderr.log"
