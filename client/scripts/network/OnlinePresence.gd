@@ -140,6 +140,19 @@ func _received(result: int, code: int, _headers: PackedStringArray, body: Packed
 			name_label.font_size = 32
 			name_label.pixel_size = 0.006
 			peer.add_child(name_label)
+			if bool(item.get("shadow", false)):
+				# Someone offline: their shadow walks the routes they used to take.
+				for mesh in peer.find_children("*", "GeometryInstance3D", true, false):
+					mesh.transparency = 0.7
+				name_label.modulate = Color(0.75, 0.8, 1.0, 0.6)
+				var shadow_label := Label3D.new()
+				shadow_label.text = "sombra"
+				shadow_label.position.y = 1.18
+				shadow_label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+				shadow_label.font_size = 22
+				shadow_label.pixel_size = 0.006
+				shadow_label.modulate = Color(0.75, 0.8, 1.0, 0.6)
+				peer.add_child(shadow_label)
 			_peers[id] = peer
 		_targets[id] = position
 	for id in _peers.keys():
@@ -150,7 +163,11 @@ func _received(result: int, code: int, _headers: PackedStringArray, body: Packed
 			_targets.erase(id)
 	var location := str(WorldApi.snapshot.get("player", {}).get("location", ""))
 	var own_name := str(WorldApi.snapshot.get("player", {}).get("name", ""))
-	_status.text = "ONLINE · %s · %s" % [own_name, "en casa" if location == "APARTMENT" else "%s más aquí" % present.size()]
+	var people := 0
+	for item in data.get("players", []):
+		if not bool(item.get("shadow", false)):
+			people += 1
+	_status.text = "ONLINE · %s · %s" % [own_name, "en casa" if location == "APARTMENT" else "%s más aquí" % people]
 	if not data.get("accepted", true):
 		var player := get_tree().get_first_node_in_group("player") as CharacterBody3D
 		if player != null:

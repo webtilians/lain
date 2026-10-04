@@ -439,4 +439,7 @@ def build_player_snapshot(
         ),
     }
     view["current_layer"] = current_layer(view)
+    from .journal import diary
+    # Top level, not inside the private player sheet, so it is shown in the request language.
+    view["diary"] = diary(player_id)
     return view

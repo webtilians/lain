@@ -222,7 +222,18 @@ func _render_player() -> void:
 			else "INVESTIGACIÓN NODE_07  " + str(data.get("case_status", "UNSEEN"))
 		)
 		+ "\n\nLas fichas solo incluyen conocimientos accesibles al jugador."
+		+ _diary_text(WorldApi.snapshot.get("diary", []))
 	)
+
+
+func _diary_text(entries: Array) -> String:
+	# What the diary says now; the hash chain that proves it lives in the Terminal.
+	if entries.is_empty():
+		return ""
+	var text := "\n\nDIARIO"
+	for entry in entries:
+		text += "\n[%d] %s" % [int(entry.get("minute", 0)), str(entry.get("text", ""))]
+	return text + "\nLa cadena de hashes de tu diario está en el Terminal: cat ~/diario"
 
 func _render_network() -> void:
 	var data: Dictionary=WorldApi.snapshot.get("network_conflict",{})

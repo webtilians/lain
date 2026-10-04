@@ -565,8 +565,8 @@ def run_shell(player: str, host: str, cwd: str, command: str, minute: int) -> di
 
 def _later_layers(c, player):
     """The other layers of the protocol the player has already reached, in order."""
-    from . import layer_one, layer_two, layer_four, layer_five, layer_six, layer_seven
-    layers = (layer_one, layer_two, layer_four, layer_five, layer_six, layer_seven)
+    from . import journal, layer_one, layer_two, layer_four, layer_five, layer_six, layer_seven
+    layers = (layer_one, layer_two, layer_four, layer_five, layer_six, layer_seven, journal)
     return [layer for layer in layers if layer.run_for(c, player) is not None]
 
 

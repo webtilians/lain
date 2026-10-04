@@ -23,6 +23,13 @@ _connections = {}
 _chat = deque(maxlen=100)
 _limits = defaultdict(deque)
 PRESENCE_TTL = 12
+# The shadow (BIBLIA_NARRATIVA.md, section 7): while a player is offline, others
+# see something with their face walking the routes they used to take.
+TRAIL_POINTS = 48
+TRAIL_EVERY = 2.0
+MAX_SHADOWS = 3
+_trail_clock = {}
+_trail_slot = {}
 PRIVATE_ROOMS = {"APARTMENT"}
 
 
@@ -75,6 +82,10 @@ def initialize():
                 actor_id TEXT NOT NULL, request_id TEXT NOT NULL,
                 command TEXT NOT NULL, result TEXT,
                 PRIMARY KEY(actor_id, request_id));
+            CREATE TABLE IF NOT EXISTS online_trails (
+                player_id TEXT NOT NULL, location TEXT NOT NULL, slot INTEGER NOT NULL,
+                x REAL NOT NULL, y REAL NOT NULL, z REAL NOT NULL, yaw REAL NOT NULL,
+                PRIMARY KEY(player_id, location, slot));
         """
         )
 
@@ -220,12 +231,69 @@ def heartbeat(actor_id, instance, location, x, y, z, yaw, dialogue=False, receiv
             instance=instance,
             dialogue=dialogue,
         )
-        return {
+        response = {
             "accepted": accepted,
             "position": {"x": x, "y": y, "z": z},
             "players": visible_players(actor_id, location),
             "chat": visible_chat(actor_id, location),
         }
+        present = {item["id"] for item in _presence.values() if now - item["at"] < PRESENCE_TTL}
+    if accepted:
+        _record_trail(actor_id, location, x, y, z, yaw, now)
+    response["players"] += shadows(actor_id, location, present)
+    return response
+
+
+def shadows_enabled():
+    return enabled() and os.getenv("LAIN_SHADOW", "0") == "1"
+
+
+def _record_trail(actor_id, location, x, y, z, yaw, now):
+    """A point every few seconds, a ring of the last ones per place."""
+    if not shadows_enabled() or location in PRIVATE_ROOMS:
+        return
+    if now - _trail_clock.get(actor_id, float("-inf")) < TRAIL_EVERY:
+        return
+    _trail_clock[actor_id] = now
+    slot = _trail_slot.get((actor_id, location), 0)
+    _trail_slot[(actor_id, location)] = (slot + 1) % TRAIL_POINTS
+    with get_connection() as conn:
+        conn.execute("INSERT OR REPLACE INTO online_trails VALUES(?,?,?,?,?,?,?)",
+                     (actor_id, location, slot, x, y, z, yaw))
+
+
+def shadows(actor_id, location, present):
+    """Offline players' shadows walking their recorded route here."""
+    if not shadows_enabled() or location in PRIVATE_ROOMS:
+        return []
+    with get_connection() as conn:
+        rows = conn.execute(
+            """SELECT t.player_id, a.name, t.x, t.y, t.z, t.yaw FROM online_trails t
+            JOIN agents a ON a.id=t.player_id WHERE t.location=? AND t.player_id!=?
+            ORDER BY t.player_id, t.slot""", (location, actor_id)).fetchall()
+    trails = {}
+    for player, name, x, y, z, yaw in rows:
+        if player not in present:
+            trails.setdefault((player, name), []).append((x, y, z, yaw))
+    tick = int(time.time() / TRAIL_EVERY)
+    result = []
+    for (player, name), points in sorted(trails.items())[:MAX_SHADOWS]:
+        if len(points) < 4:
+            continue
+        x, y, z, yaw = points[tick % len(points)]
+        result.append({"id": "SHADOW_" + player, "name": name, "x": x, "y": y, "z": z, "yaw": yaw, "shadow": True})
+    return result
+
+
+def trail_summary(actor_id):
+    """{location: points} of the routes the player's shadow repeats."""
+    if not shadows_enabled():
+        return {}
+    with get_connection() as conn:
+        if not conn.execute("SELECT 1 FROM sqlite_master WHERE name='online_trails'").fetchone():
+            return {}
+        return dict(conn.execute("SELECT location, COUNT(*) FROM online_trails WHERE player_id=? GROUP BY location "
+                                 "ORDER BY COUNT(*) DESC", (actor_id,)).fetchall())
 
 
 def disconnect(actor_id, instance):

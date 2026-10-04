@@ -113,6 +113,12 @@ def _story(c, player):
 # --- what a player lived, in first person (the copy's diary and the echo) ---
 
 LIVED = {
+    "layer_one": {"SPLICE": "Empalmé el cable que la Sesión Cero cortó en el pabellón B.",
+                  "LEAVE": "Dejé cortado el cable del pabellón B, como lo dejó ella.",
+                  "BRIDGE": "Hice pasar el enlace del pabellón B por mi Navi."},
+    "layer_two": {"SHUT": "Apagué el puerto de mi réplica de KAGAMI.",
+                  "RENAME": "Me cambié la dirección y le dejé la mía a mi réplica.",
+                  "SHARE": "Dejé que mi réplica de KAGAMI usara mi misma dirección."},
     "layer_three": {"FORWARD": "Reenvié el paquete de la Sesión Cero con un TTL nuevo.",
                     "DROP": "Dejé morir el paquete de la Sesión Cero. Solo yo lo supe."},
     "layer_four": {"FIN": "Cerré con FIN la conexión que Nora mantenía viva.",
@@ -130,6 +136,8 @@ LIVED = {
 def lived(c, player: str) -> list:
     lines = []
     for table, sentences in LIVED.items():
+        if not c.execute("SELECT 1 FROM sqlite_master WHERE name=?", (table,)).fetchone():
+            continue
         row = c.execute(f"SELECT decision FROM {table} WHERE player_id=?", (player,)).fetchone()
         if row and row[0] in sentences:
             lines.append(sentences[row[0]])
@@ -146,7 +154,8 @@ def files(c, player: str, relay, story3) -> dict:
         return {}
     result = {f"{story3.home}/correo/nodo07.eml": _mail(),
               "/etc/resolv.conf": "# Resolutor de la Wired vecinal (lo gestiona NOEMA)\nnameserver 10.0.0.53"}
-    if run["decision"] == "REPLICATE":
+    from . import journal
+    if run["decision"] == "REPLICATE" and not journal.enabled():
         result[f"{story3.home}/diario"] = _diary(c, player, run)
     return result
 
