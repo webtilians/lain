@@ -2,28 +2,10 @@ name: LAIN Godot city and gameplay smoke
 
 on:
   push:
-    branches:
-      - experiment/visual-0.8-city-neighborhood
-      - experiment/visual-0.9-living-neighborhood
-      - experiment/visual-0.10-realism
-      - experiment/chapter-0.1-already-here
-      - experiment/wired-0.1-corporation
-      - experiment/wired-0.2-workshop
-      - experiment/wired-0.3-noema
-      - experiment/wired-0.4-circles
-      - experiment/wired-0.5-cafe-events
-      - experiment/wired-0.6-arcade-catalog
-      - experiment/wired-0.7-code-exchange
-      - experiment/online-0.1-shared-world
-      - experiment/online-0.1-review-fixes
+    branches: [main]
   pull_request:
-    branches:
-      - experiment/reality-0.3-visual06-integration
-      - experiment/reality-0.4-character-sheets-station-echo
-      - experiment/prologue-0.1-school-ryoko-terminal
-      - experiment/prologue-0.2-neighborhood-dialogue
-      - experiment/visual-0.7-prologue-district-pass
-
+    branches: [main]
+  workflow_dispatch:
 jobs:
   godot-visual:
     runs-on: ubuntu-latest

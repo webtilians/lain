@@ -2,10 +2,10 @@ name: Shared AI relay — deterministic and Worker runtime tests
 
 on:
   push:
-    branches: [experiment/distribution-0.2-shared-ai, experiment/online-0.1-shared-world, experiment/online-0.1-review-fixes]
+    branches: [main]
   pull_request:
+    branches: [main]
   workflow_dispatch:
-
 permissions:
   contents: read
 

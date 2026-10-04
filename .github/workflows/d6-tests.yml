@@ -2,40 +2,10 @@ name: LAIN Python regression tests
 
 on:
   push:
-    branches:
-      - develop/isometric-0.2-d6
-      - develop/isometric-0.2-d7
-      - develop/isometric-0.2-d8
-      - develop/isometric-0.2-d8-r1
-      - develop/isometric-0.2-d8-r2
-      - develop/isometric-0.2-d8-r3
-      - develop/isometric-0.2-d9
-      - develop/isometric-0.2-d9-r1
-      - experiment/isometric-0.2-d10-episodic
-      - experiment/isometric-0.2-d11-shared-experiences
-      - experiment/isometric-0.2-d11-r1-recall
-      - experiment/visual-0.3-apartment
-      - experiment/reality-0.1-generated-entities
-      - experiment/visual-reality-0.3-r1
-      - experiment/visual-0.4-lain-environments
-      - experiment/reality-0.2-autonomy-visual04
-      - experiment/visual-0.5-illustrated
-      - experiment/visual-0.8-city-neighborhood
-      - experiment/visual-0.9-living-neighborhood
-      - experiment/visual-0.10-realism
-      - experiment/chapter-0.1-already-here
-      - experiment/wired-0.1-corporation
-      - experiment/wired-0.2-workshop
-      - experiment/wired-0.3-noema
-      - experiment/wired-0.4-circles
-      - experiment/wired-0.5-cafe-events
-      - experiment/wired-0.6-arcade-catalog
-      - experiment/wired-0.7-code-exchange
-      - experiment/distribution-0.2-shared-ai
-      - experiment/online-0.1-shared-world
-      - experiment/online-0.1-review-fixes
+    branches: [main]
   pull_request:
-
+    branches: [main]
+  workflow_dispatch:
 jobs:
   python-tests:
     runs-on: ubuntu-latest

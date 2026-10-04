@@ -11,7 +11,7 @@ set -euo pipefail
 REPO=https://github.com/webtilians/lain.git
 
 main() {
-  local branch=experiment/layer-03-ttl host=""
+  local branch=main host=""
   [ -f /etc/lain/branch ] && branch=$(cat /etc/lain/branch)
   [ -f /etc/lain/host ] && host=$(cat /etc/lain/host)
   while [ $# -gt 0 ]; do

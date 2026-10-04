@@ -146,7 +146,7 @@ Notas:
 
 | Ruta | Contenido |
 | --- | --- |
-| `/opt/lain` | Solo la parte del servidor del repositorio, rama `experiment/layer-03-ttl` (Capa 03; antes `experiment/visual-0.12-gothic`). |
+| `/opt/lain` | Solo la parte del servidor del repositorio, rama `main`. |
 | `/var/lib/lain` | El mundo (`online-world.db`) y los accesos; usuario `lain`, sin login. |
 | `/etc/lain/lain.env` | Ajustes de la IA y la clave de Groq; solo root. |
 | `/var/backups/lain` | Copias diarias; se restauran como explica `lain-backup`. |

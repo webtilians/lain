@@ -227,7 +227,11 @@ if ($Publish) {
     if ($Publish -notmatch '^\d+\.\d+\.\d+$') { throw 'Usa una versión como 0.13.1' }
     $repo = 'webtilians/lain'
     $branch = (git rev-parse --abbrev-ref HEAD).Trim()
+    # Versions are published only from main: what players get is what main holds.
+    if ($branch -ne 'main') { throw "Publica desde main (ahora estás en $branch). Fusiona tu rama en main con una PR y vuelve a intentarlo." }
     if (git status --porcelain --untracked-files=no) { throw 'Hay cambios sin guardar en git. Haz commit antes de publicar.' }
+    git pull --ff-only origin main
+    if ($LASTEXITCODE -ne 0) { throw 'Tu main local no coincide con el de GitHub. Actualízalo antes de publicar.' }
     git push origin $branch
     git tag "v$Publish"
     git push origin "v$Publish"
