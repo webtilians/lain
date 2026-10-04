@@ -1770,5 +1770,13 @@
   "Sesión Cero completa.": "Session Zero complete.",
   "Gracias por recibirla.": "Thank you for receiving her.",
   "Esc · saltar": "Esc · skip",
-  "FRAGMENTO {v0}/7 · SESIÓN CERO": "FRAGMENT {v0}/7 · SESSION ZERO"
+  "FRAGMENTO {v0}/7 · SESIÓN CERO": "FRAGMENT {v0}/7 · SESSION ZERO",
+  "CINEMÁTICAS // VOLVER A VER": "CINEMATICS // WATCH AGAIN",
+  "CINEMÁTICAS": "CINEMATICS",
+  "Vuelve a ver las escenas que ya has desbloqueado. Esc las salta.": "Watch again the scenes you have unlocked. Esc skips them.",
+  "ARRANQUE // LA TERMINAL": "START-UP // THE TERMINAL",
+  "APERTURA // HAS VUELTO": "OPENING // YOU HAVE RETURNED",
+  "THE WIRED // SESIÓN UNO": "THE WIRED // SESSION ONE",
+  "FRAGMENTO {v0}/7 // {v1}": "FRAGMENT {v0}/7 // {v1}",
+  "FINAL // GRACIAS POR RECIBIRLA": "ENDING // THANK YOU FOR RECEIVING HER"
 }

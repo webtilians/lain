@@ -152,6 +152,37 @@ func run() -> void:
 	check(not cinematic.root.visible, "the cinematic layer stays on screen")
 	check(api.snapshot.prologue == before.prologue and api.snapshot.minute == before.minute, "a cinematic changed the snapshot")
 
+	# Watching again from the diary: only what this player has reached.
+	var journal := root.get_node("CharacterJournal")
+	api.snapshot = state
+	journal.open_journal()
+	journal._choose_view("CINEMATICS", "")
+	await frames(2)
+	var labels: Array = journal.cinema_controls.get_children().map(func(button): return button.text)
+	check(journal.cinema_controls.visible and labels.size() == 10, "the diary does not list every scene reached: " + str(labels))
+	check("ARRANQUE // LA TERMINAL" in labels and "FINAL // GRACIAS POR RECIBIRLA" in labels, "start-up or ending missing from the diary")
+	var third: Button = journal.cinema_controls.get_children().filter(func(button): return button.text.begins_with("FRAGMENTO 3/7")).front()
+	third.pressed.emit()
+	await frames(3)
+	check(not journal.backdrop.visible and cinematic.playing == "fragment", "replaying from the diary does not play")
+	seen = {}
+	await watch(seen)
+	check(shown(seen, "FRAGMENTO 3/7 · SESIÓN CERO") and shown(seen, "No cerré. Me terminaron."), "the replay shows the wrong fragment")
+	cinematic.replay({"id": "intro"})
+	await frames(3)
+	check(cinematic.playing == "intro" and not player.is_physics_processing(), "the start-up terminal does not replay")
+	for code in [KEY_SPACE, KEY_SPACE]:
+		var press := InputEventKey.new()
+		press.keycode = code
+		press.pressed = true
+		root.push_input(press)
+		await frames(2)
+	check(await until_idle(200), "the replayed terminal does not end")
+	check(player.is_physics_processing(), "the player stays frozen after the terminal")
+	state.prologue.stage = "FIND_TEACHER"
+	api.snapshot = {"prologue": {"stage": "FIND_TEACHER"}}
+	check(cinematic.available().size() == 2, "a new player can watch scenes not reached yet")
+
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(path))
 	DirAccess.remove_absolute(ProjectSettings.globalize_path("user://guide_cinematic_test.cfg"))
 	scene.queue_free()

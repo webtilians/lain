@@ -30,7 +30,17 @@ saltan con **Esc**, **Enter**, **Espacio** o un clic.
 
 Las frases salen de la biblia narrativa (sección 6: la pregunta y la revelación
 de cada capa) y de textos que ya estaban en el juego. La Sesión Cero habla en
-primera persona y con prisa.
+primera persona y con prisa. El número del fragmento es el de la capa, el mismo
+que dice el Terminal («fragmento 3/7» es siempre la Capa 03).
+
+## Volver a verlas
+
+En el diario (**J**), el apartado **CINEMÁTICAS // VOLVER A VER** tiene un botón
+por cada escena que ya has alcanzado: la terminal de arranque, la apertura, la
+conexión a la Wired si ya conectaste, el fragmento de cada capa completada y el
+final si llegaste a él. Lo que todavía no has vivido no aparece.
+
+![Volver a verlas desde el diario](docs/cinematics/diary.png)
 
 ![Has vuelto](docs/cinematics/opening-returned.png)
 ![El plano del ordenador](docs/cinematics/opening-camera.png)
