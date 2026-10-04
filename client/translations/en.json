@@ -1796,5 +1796,6 @@
   "sabe lo que es esperar un acuse de recibo": "knows what it is to wait for an acknowledgement of receipt",
   "lleva préstamos que caducan y copias que se pisan": "handles loans that expire and copies that overwrite each other",
   "escribe en clave y le encantan los cifrados": "writes in code and loves ciphers",
-  "mantiene los servidores del aula: nombres, direcciones y páginas": "looks after the lab's servers: names, addresses and pages"
+  "mantiene los servidores del aula: nombres, direcciones y páginas": "looks after the lab's servers: names, addresses and pages",
+  "{v0}. \"Me han dicho que sabes de esto. ¿Me ayudas con la {v1}?\"": "{v0}. \"I was told you know about this. Can you help me with {v1}?\""
 }

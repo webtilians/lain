@@ -157,7 +157,7 @@ def available_choices(
     layer = hint_layer(player_id, actor_id)
     if layer is not None:
         from . import hints
-        result.insert(len(result) - 1, {"id": "ASK_HINT", "text": f'{len(result)}. "{t(hints.ask_line(layer))}"'})
+        result.insert(len(result) - 1, {"id": "ASK_HINT", "text": t(f'{len(result)}. "{hints.ask_line(layer)}"')})
     return result
 
 
@@ -186,15 +186,34 @@ def conversation_payload(
     if row[1] != actor_id:
         raise ValueError("CONVERSATION_AWAITING_AGENT")
 
+    line = t(row[2])
+    if row[3] == "DETERMINISTIC_GREETING" and actor_id.startswith("RESIDENT_"):
+        # The activity is translated on its own, then the sentence around it.
+        line = resident_greeting(actor_id, actor_name, translate=True) or line
     return {
         "interaction_id": interaction_id,
         "actor_id": actor_id,
         "actor_name": actor_name,
         "turn_id": row[0],
-        "line": t(row[2]),
+        "line": line,
         "response_source": row[3],
         "choices": available_choices(player_id=player_id, actor_id=actor_id),
     }
+
+
+def resident_greeting(actor_id: str, actor_name: str, translate: bool = False, conn=None):
+    """«Soy …. Ahora mismo: …. ¿Qué necesitas?», from the resident's current activity."""
+    query = "SELECT activity FROM city_residents WHERE actor_id=?"
+    if conn is not None:
+        row = conn.execute(query, (actor_id,)).fetchone()
+    else:
+        with get_connection() as own:
+            row = own.execute(query, (actor_id,)).fetchone()
+    if row is None:
+        return None
+    activity = t(row[0]) if translate else row[0]
+    text = f"Soy {actor_name}. Ahora mismo: {activity[:1].lower() + activity[1:]}. ¿Qué necesitas?"
+    return t(text) if translate else text
 
 
 def start_player_conversation(
@@ -237,10 +256,7 @@ def start_player_conversation(
                 else "Nos volvemos a encontrar. ¿Qué quieres contarme?"
             )
             if actor_id.startswith("RESIDENT_"):
-                resident = conn.execute("""SELECT activity FROM city_residents
-                    WHERE actor_id=?""", (actor_id,)).fetchone()
-                if resident is not None:
-                    greeting = f"Soy {actor_name}. Ahora mismo: {resident[0].lower()}. ¿Qué necesitas?"
+                greeting = resident_greeting(actor_id, actor_name, conn=conn) or greeting
             greeting_turn = conn.execute(
                 """
                 INSERT INTO player_conversation_turns (

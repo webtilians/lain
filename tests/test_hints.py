@@ -218,7 +218,8 @@ def test_the_expert_in_english(residents_on, physical):
         assert "Can you help me with Layer 01" in offer["text"] or "Can you help me with" in offer["text"]
         reply = choose(sim, "RESIDENT_027", conversation, "ASK_HINT")
         spanish = re.compile(r"[áéíóúñ¿¡]|\b(?:el|los|las|que|para|con|una|del|tu|está|hay|escribe|otra)\b", re.I)
-        lines = [line for line in (first + "\n" + offer["text"] + "\n" + reply["line"]).splitlines() if spanish.search(line)]
+        shown = "\n".join([first, conversation["line"], offer["text"], reply["line"]])
+        lines = [line for line in shown.splitlines() if spanish.search(line)]
         assert not lines, lines[:3]
     finally:
         i18n.reset(token)
