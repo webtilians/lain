@@ -43,8 +43,9 @@ def version() -> str:
     if _version is None:
         try:
             root = Path(__file__).resolve().parents[2]
-            _version = subprocess.run(["git", "-C", str(root), "log", "-1", "--format=%h %s"], capture_output=True,
-                                      text=True, timeout=5).stdout.strip()
+            # The service user does not own the checkout; tell git it is safe to read.
+            _version = subprocess.run(["git", "-c", f"safe.directory={root}", "-C", str(root), "log", "-1",
+                                       "--format=%h %s"], capture_output=True, text=True, timeout=5).stdout.strip()
         except (OSError, subprocess.SubprocessError):
             _version = ""
     return _version
