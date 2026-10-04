@@ -31,7 +31,7 @@ func _ready() -> void:
 
 func _layer() -> Dictionary:
 	# The most recent layer the player has reached.
-	for key in ["layer_five", "layer_four"]:
+	for key in ["layer_six", "layer_five", "layer_four"]:
 		var entry: Dictionary = WorldApi.snapshot.get(key, {})
 		if bool(entry.get("active", false)):
 			return entry

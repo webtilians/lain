@@ -155,6 +155,28 @@ func run() -> void:
 	check("Capa 05" in terminal_text and "2/7" in terminal_text, "Terminal page does not show Capa 05")
 	await snap("layer05-pc")
 	ws.close_pc()
+
+	# And Capa 06 after it.
+	state["layer_six"] = {"active": true, "title": "Capa 06 · Presentación", "decision": null, "fragments": 3,
+		"goal": "El último paquete de la Sesión Cero llegó con tres caras. En la consola del videoclub, descubre cuál es la suya.",
+		"mail": {"subject": "Tres caras", "from": "relay-video@wired",
+			"body": "El último paquete de la Sesión Cero ha llegado tres veces. Lee ~/correo/caras.eml en el Terminal."}}
+	api.snapshot = state
+	await process_frame
+	await process_frame
+	check("Capa 06" in presence.hud.text and "videoclub" in presence.hud.text, "HUD does not follow Capa 06: " + presence.hud.text)
+	ws.open_pc()
+	mails = ""
+	for node in ws.content.find_children("*", "Label", true, false):
+		mails += node.text + "\n"
+	check(mails.find("Tres caras") >= 0 and mails.find("Tres caras") < mails.find("Dos sesiones"), "Capa 06 mail must come first")
+	ws._select("Terminal")
+	terminal_text = ""
+	for node in ws.content.find_children("*", "Label", true, false):
+		terminal_text += node.text + "\n"
+	check("Capa 06" in terminal_text and "3/7" in terminal_text, "Terminal page does not show Capa 06")
+	await snap("layer06-pc")
+	ws.close_pc()
 	current_scene = null
 	scene.queue_free()
 	await process_frame

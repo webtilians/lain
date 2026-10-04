@@ -84,8 +84,9 @@ class AgentContextBuilder:
         from .layer_three import layer_actor_context
         from .layer_four import layer_actor_context as layer_four_context
         from .layer_five import layer_actor_context as layer_five_context
+        from .layer_six import layer_actor_context as layer_six_context
         received = (layer_actor_context(agent_id, player_id) + layer_four_context(agent_id, player_id)
-                    + layer_five_context(agent_id, player_id))
+                    + layer_five_context(agent_id, player_id) + layer_six_context(agent_id, player_id))
         if received:
             chapter = chapter or {"memories": [], "relationship": None,
                                   "limits": "These are my recollections and received reports, not verified world facts."}

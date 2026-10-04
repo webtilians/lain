@@ -531,7 +531,7 @@ def run_shell(player: str, host: str, cwd: str, command: str, minute: int) -> di
         # Hashed evidence and packet segments are immutable. Auxiliary files
         # (manuals, mail and route headings) may follow the current UI language.
         for path, content in files.items():
-            if path.endswith((".seg", "/diario", "/diario.espejo", "/sesion0.txt", "/flujo-4004.txt", ".json")):
+            if path.endswith((".seg", "/diario", "/diario.espejo", "/sesion0.txt", "/flujo-4004.txt", ".json", ".pkt")):
                 continue
             files[path] = i18n.t(content)
         hostname = RELAYS[relay][0] if relay else story.navi
@@ -554,15 +554,16 @@ def run_shell(player: str, host: str, cwd: str, command: str, minute: int) -> di
             out = owner.dispatch(c, player, story, relay, result, name, args, minute)
         else:
             out = _dispatch(c, player, story, run, relay, files, home, result, name, args, minute)
-        # cat/grep/sha256 must show precisely the bytes they inspected.
-        result["output"] = out if name in {"cat", "grep", "sha256", "ensamblar"} else i18n.t(out)
+        # cat/grep/sha256 (and a layer's byte inspectors) must show precisely the bytes they inspected.
+        raw = name in {"cat", "grep", "sha256", "ensamblar"} or name in getattr(owner, "RAW_COMMANDS", ())
+        result["output"] = out if raw else i18n.t(out)
         return result
 
 
 def _later_layers(c, player):
     """Layers after this one that the player has already reached, in order."""
-    from . import layer_four, layer_five
-    return [layer for layer in (layer_four, layer_five) if layer.run_for(c, player) is not None]
+    from . import layer_four, layer_five, layer_six
+    return [layer for layer in (layer_four, layer_five, layer_six) if layer.run_for(c, player) is not None]
 
 
 def _read(files, cwd, home, path):

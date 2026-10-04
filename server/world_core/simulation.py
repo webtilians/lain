@@ -245,6 +245,8 @@ class Simulation:
         initialize_layer_four()
         from .layer_five import initialize_layer_five
         initialize_layer_five()
+        from .layer_six import initialize_layer_six
+        initialize_layer_six()
 
         for person in self.all_agents.values():
             if person.controller_type == "HUMAN":
