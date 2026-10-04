@@ -30,7 +30,10 @@ func _ready() -> void:
 	hud.hide()
 
 func _layer() -> Dictionary:
-	# The most recent layer the player has reached.
+	# The layer the player is in the middle of; the server decides which.
+	var current = WorldApi.snapshot.get("current_layer", null)
+	if current is String and WorldApi.snapshot.has(current):
+		return WorldApi.snapshot.get(current, {})
 	for key in ["layer_seven", "layer_six", "layer_five", "layer_four"]:
 		var entry: Dictionary = WorldApi.snapshot.get(key, {})
 		if bool(entry.get("active", false)):

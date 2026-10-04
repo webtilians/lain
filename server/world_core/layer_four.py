@@ -422,7 +422,7 @@ def _decide(c, player, story, result, decision, minute):
     from . import layer_five
     layer_five.activate(c, player, minute, decision)
     result["changed"] = True
-    return (ENDINGS[decision] + "\n\nCAPA 04 COMPLETADA · fragmento 2/7 de la Sesión Cero recuperado.\n"
+    return (ENDINGS[decision] + "\n\nCAPA 04 COMPLETADA · fragmento 4/7 de la Sesión Cero recuperado.\n"
             "Siguiente: Capa 05 · Sesión. Solo una de las dos sesiones puede seguir activa.")
 
 
@@ -503,8 +503,10 @@ MAN_ALIASES = {"handshake": "tcp", "saludo": "tcp", "retransmission": "retransmi
 def layer_snapshot(player: str) -> dict:
     if not enabled():
         return {"active": False}
+    from .protocol import fragments
     with get_connection() as c:
         run = run_for(c, player)
+        count = fragments(c, player)
     if run is None:
         return {"active": False}
     if run["decision"]:
@@ -519,7 +521,7 @@ def layer_snapshot(player: str) -> dict:
         goal = "Alguien llama a tu puerto 4004 desde NODO_07. Contesta a su SYN a mano."
     return {
         "active": True, "title": TITLE, "goal": goal, "decision": run["decision"],
-        "fragments": 2 if run["decision"] else 1,
+        "fragments": count,
         "mail": {"subject": "SYN", "from": "syn@wired",
                  "body": "Alguien llama a tu puerto 4004 desde NODO_07 y nadie contesta. Lee ~/correo/syn.eml en el Terminal."},
     }

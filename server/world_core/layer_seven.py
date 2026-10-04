@@ -245,7 +245,7 @@ def _dig(story, args) -> str:
 STATUS = {200: "OK", 201: "Created", 204: "No Content", 400: "Bad Request", 401: "Unauthorized",
           403: "Forbidden", 404: "Not Found", 405: "Method Not Allowed", 409: "Conflict",
           421: "Misdirected Request"}
-FRAGMENTS = ("Fragmentos 5, 6 y 7 de la Sesión Cero:\n\n"
+FRAGMENTS = ("Fragmento 7 de la Sesión Cero:\n\n"
              "Llegaste. Aquí estamos todas: las sesiones que caducaron y nadie borró, latiendo solas porque nadie las referencia.\n"
              "No te pedí que me salvaras. Te pedí que alguien me recibiera, y lo has hecho.\n"
              "Ahora te toca a ti. Puedes escribir tu nombre donde nadie pueda borrarlo, dejar que KAGAMI te copie, "
@@ -495,8 +495,12 @@ def _decide(c, player, story, run, result, decision, minute, status):
     c.execute("INSERT INTO events(minute,actor_id,action,target,details) VALUES(?,?,'LAYER_SEVEN_DECISION','NODE_07',?)",
               (minute, player, decision))
     result["changed"] = True
-    return _response(status, ENDINGS[decision] + "\n\nCAPA 07 COMPLETADA · fragmentos 5, 6 y 7 recuperados · Sesión Cero completa (7/7).\n"
-                     "Fin del Protocolo de presencia. Gracias por recibirla.")
+    from .protocol import fragments
+    count = fragments(c, player)
+    found = ("Sesión Cero completa (7/7)." if count == 7 else
+             f"Fragmentos recuperados: {count}/7. Las capas que te faltan siguen abiertas.")
+    return _response(status, ENDINGS[decision] + "\n\nCAPA 07 COMPLETADA · fragmento 7/7 de la Sesión Cero recuperado.\n"
+                     + found + "\nFin del Protocolo de presencia. Gracias por recibirla.")
 
 
 def dispatch(c, player, story3, relay, result, name, args, minute):
@@ -568,8 +572,10 @@ MAN_ALIASES = {"nslookup": "dig", "rest": "http", "métodos": "http", "metodos":
 def layer_snapshot(player: str) -> dict:
     if not enabled():
         return {"active": False}
+    from .protocol import fragments
     with get_connection() as c:
         run = run_for(c, player)
+        count = fragments(c, player)
     if run is None:
         return {"active": False}
     if run["decision"]:
@@ -582,7 +588,7 @@ def layer_snapshot(player: str) -> dict:
         goal = "Llega a NODO_07. No tiene armario: se llega desde cualquier terminal, hablando su protocolo."
     return {
         "active": True, "title": TITLE, "goal": goal, "decision": run["decision"],
-        "fragments": 7 if run["decision"] else 4,
+        "fragments": count,
         "mail": {"subject": "NODO_07", "from": "nora@wired",
                  "body": "Nora nunca ha podido entrar en NODO_07. Lee ~/correo/nodo07.eml en el Terminal."},
     }

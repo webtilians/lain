@@ -282,7 +282,7 @@ def _decide(c, player, story, run, result, decision, minute):
     from . import layer_six
     layer_six.activate(c, player, minute, decision)
     result["changed"] = True
-    return (ENDINGS[decision] + "\n\nCAPA 05 COMPLETADA · fragmento 3/7 de la Sesión Cero recuperado.\n"
+    return (ENDINGS[decision] + "\n\nCAPA 05 COMPLETADA · fragmento 5/7 de la Sesión Cero recuperado.\n"
             f"Siguiente: Capa 06 · Presentación. La palabra que guardaba la Sesión Cero ({story.word}) abre algo.")
 
 
@@ -359,8 +359,10 @@ MAN_ALIASES = {"session": "sesion", "sesión": "sesion", "fusion": "merge", "fus
 def layer_snapshot(player: str) -> dict:
     if not enabled():
         return {"active": False}
+    from .protocol import fragments
     with get_connection() as c:
         run = run_for(c, player)
+        count = fragments(c, player)
     if run is None:
         return {"active": False}
     if run["decision"]:
@@ -371,7 +373,7 @@ def layer_snapshot(player: str) -> dict:
         goal = "Tu cuenta solo admite una sesión. En la consola del andén, fusiona tu estado con el de la Sesión Cero."
     return {
         "active": True, "title": TITLE, "goal": goal, "decision": run["decision"],
-        "fragments": 3 if run["decision"] else 2,
+        "fragments": count,
         "mail": {"subject": "Dos sesiones, una cuenta", "from": "sesiones@wired",
                  "body": "NODO_07 ha encontrado una sesión caducada con tu nombre. Lee ~/correo/sesion.eml en el Terminal."},
     }

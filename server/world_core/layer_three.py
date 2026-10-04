@@ -102,6 +102,9 @@ def activate_layer(player: str) -> bool:
             "INSERT OR IGNORE INTO layer_three(player_id, started_minute, connection_minute, language) VALUES(?,?,?,?)",
             (player, minute, first, i18n.language()),
         ).rowcount
+        # Capa 01 opens with the same connection (and for earlier players, as an open layer).
+        from . import layer_one
+        layer_one.activate(c, player, minute)
         if created:
             story = _story(c, player, _run(c, player))
             evidence = {key: getattr(story, key) for key in Story.EVIDENCE_FIELDS}
@@ -561,9 +564,9 @@ def run_shell(player: str, host: str, cwd: str, command: str, minute: int) -> di
 
 
 def _later_layers(c, player):
-    """Layers after this one that the player has already reached, in order."""
-    from . import layer_four, layer_five, layer_six, layer_seven
-    layers = (layer_four, layer_five, layer_six, layer_seven)
+    """The other layers of the protocol the player has already reached, in order."""
+    from . import layer_one, layer_four, layer_five, layer_six, layer_seven
+    layers = (layer_one, layer_four, layer_five, layer_six, layer_seven)
     return [layer for layer in layers if layer.run_for(c, player) is not None]
 
 
@@ -770,7 +773,7 @@ def _decide(c, player, story, run, result, name, args, minute):
     else:
         ending = (f"{story.packet} se queda en el búfer hasta que lo borren.\n"
                   "Nadie más lo leerá. Lo recordarás tú, mientras dure tu sesión.")
-    return ending + ("\n\nCAPA 03 COMPLETADA · fragmento 1/7 de la Sesión Cero recuperado.\n"
+    return ending + ("\n\nCAPA 03 COMPLETADA · fragmento 3/7 de la Sesión Cero recuperado.\n"
                      "Siguiente: Capa 04 · Transporte. Alguien mantiene abierta una conexión con ella.")
 
 
@@ -783,11 +786,13 @@ def console_available(c, player: str) -> bool:
 def layer_snapshot(player: str) -> dict:
     if not enabled():
         return {"active": False}
+    from .protocol import fragments
     with get_connection() as c:
         run = _run(c, player)
         if run is None:
             return {"active": False}
         story = _story(c, player, run)
+        count = fragments(c, player)
     if run["decision"]:
         goal = "Capa 03 completada. Siguiente: Capa 04 · Transporte."
     elif run["exposed"]:
@@ -799,7 +804,7 @@ def layer_snapshot(player: str) -> dict:
     return {
         "active": True, "title": TITLE, "packet": story.packet, "hostname": story.navi,
         "assembled": bool(run["assembled"]), "exposed": bool(run["exposed"]),
-        "decision": run["decision"], "fragments": 1 if run["decision"] else 0, "goal": goal,
+        "decision": run["decision"], "fragments": count, "goal": goal,
         "mail": {"subject": "TTL=1", "from": "desconocido@wired",
                  "body": "Si lees esto, me queda un salto. Abre el Terminal de este PC y lee ~/correo/ttl1.eml."},
     }

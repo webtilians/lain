@@ -199,6 +199,23 @@ func run() -> void:
 	check("Capa 07" in terminal_text and "4/7" in terminal_text, "Terminal page does not show Capa 07")
 	await snap("layer07-pc")
 	ws.close_pc()
+
+	# The server can point the HUD at an open lower layer.
+	state["layer_one"] = {"active": true, "title": "Capa 01 · Física", "decision": null, "fragments": 4,
+		"goal": "Alguien cortó el cable del armario del aula de informática. Lee en el osciloscopio lo último que llevaba.",
+		"mail": {"subject": "Parte de incidencia · enlace del pabellón B", "from": "partes@escuela.wired",
+			"body": "El enlace del pabellón B lleva días mudo. Lee ~/correo/cable.eml en el Terminal."}}
+	state["current_layer"] = "layer_one"
+	api.snapshot = state
+	await process_frame
+	await process_frame
+	check("Capa 01" in presence.hud.text and "osciloscopio" in presence.hud.text, "HUD does not follow current_layer: " + presence.hud.text)
+	ws.open_pc()
+	mails = ""
+	for node in ws.content.find_children("*", "Label", true, false):
+		mails += node.text + "\n"
+	check(mails.find("pabellón B") > mails.find("TTL=1"), "Capa 01 mail must be listed after the other layers")
+	ws.close_pc()
 	current_scene = null
 	scene.queue_free()
 	await process_frame

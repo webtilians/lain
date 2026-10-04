@@ -117,7 +117,10 @@ func exchange_active() -> bool:
 	return bool(exchange_data().get("active",false))
 
 func layer_data() -> Dictionary:
-	# The most recent layer the player has reached.
+	# The layer the player is in the middle of; the server decides which.
+	var current = WorldApi.snapshot.get("current_layer", null)
+	if current is String and WorldApi.snapshot.has(current):
+		return WorldApi.snapshot.get(current, {})
 	for key in ["layer_seven", "layer_six", "layer_five", "layer_four"]:
 		var entry: Dictionary = WorldApi.snapshot.get(key, {})
 		if bool(entry.get("active", false)):
@@ -310,7 +313,7 @@ func scrolling(parent: Node) -> VBoxContainer:
 
 func _mail() -> void:
 	var box := scrolling(content)
-	for key in ["layer_seven", "layer_six", "layer_five", "layer_four", "layer_three"]:
+	for key in ["layer_seven", "layer_six", "layer_five", "layer_four", "layer_three", "layer_one"]:
 		var entry: Dictionary = WorldApi.snapshot.get(key, {})
 		if not bool(entry.get("active", false)):
 			continue

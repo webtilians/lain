@@ -284,7 +284,7 @@ def _decide(c, player, run, result, decision, minute):
     from . import layer_seven
     layer_seven.activate(c, player, minute, decision)
     result["changed"] = True
-    return (ENDINGS[decision] + "\n\nCAPA 06 COMPLETADA · fragmento 4/7 de la Sesión Cero recuperado.\n"
+    return (ENDINGS[decision] + "\n\nCAPA 06 COMPLETADA · fragmento 6/7 de la Sesión Cero recuperado.\n"
             "Siguiente: Capa 07 · Aplicación. El camino a NODO_07 está abierto.")
 
 
@@ -372,8 +372,10 @@ MAN_ALIASES = {"codificación": "codificacion", "encoding": "codificacion", "utf
 def layer_snapshot(player: str) -> dict:
     if not enabled():
         return {"active": False}
+    from .protocol import fragments
     with get_connection() as c:
         run = run_for(c, player)
+        count = fragments(c, player)
     if run is None:
         return {"active": False}
     if run["decision"]:
@@ -384,7 +386,7 @@ def layer_snapshot(player: str) -> dict:
         goal = "El último paquete de la Sesión Cero llegó con tres caras. En la consola del videoclub, descubre cuál es la suya."
     return {
         "active": True, "title": TITLE, "goal": goal, "decision": run["decision"],
-        "fragments": 4 if run["decision"] else 3,
+        "fragments": count,
         "mail": {"subject": "Tres caras", "from": "relay-video@wired",
                  "body": "El último paquete de la Sesión Cero ha llegado tres veces. Lee ~/correo/caras.eml en el Terminal."},
     }

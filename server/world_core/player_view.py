@@ -25,6 +25,8 @@ from .layer_four import layer_snapshot as layer_four_snapshot
 from .layer_five import layer_snapshot as layer_five_snapshot
 from .layer_six import layer_snapshot as layer_six_snapshot
 from .layer_seven import layer_snapshot as layer_seven_snapshot
+from .layer_one import layer_snapshot as layer_one_snapshot
+from .protocol import current_layer
 from .network_conflict import network_snapshot
 from .workshop import workshop_snapshot
 from .circles import circle_snapshot
@@ -374,7 +376,7 @@ def build_player_snapshot(
             "role_assignment": "OBSERVED_IDENTITY",
             "focus": person.get("focus","Dice que revisa las líneas y los permisos de conexión de este lugar."),
         })
-    return {
+    view = {
         "schema_version": "0.1",
         "minute": load_simulation_minute(),
         "player": {
@@ -400,6 +402,7 @@ def build_player_snapshot(
         "station_case": station_case,
         "prologue": prologue,
         "chapter_one": chapter_snapshot(player_id),
+        "layer_one": layer_one_snapshot(player_id),
         "layer_three": layer_snapshot(player_id),
         "layer_four": layer_four_snapshot(player_id),
         "layer_five": layer_five_snapshot(player_id),
@@ -433,3 +436,5 @@ def build_player_snapshot(
             player_id=player_id,
         ),
     }
+    view["current_layer"] = current_layer(view)
+    return view

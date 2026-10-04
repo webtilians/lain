@@ -166,6 +166,7 @@ Lo que incluye la primera versión, jugable después del capítulo 1:
 
 ## 11. Estado
 
+- Capa 01 · Física: jugable (v0.19). Se abre con la conexión a la Wired, junto a la Capa 03; quien ya iba más adelante la tiene abierta. Los fragmentos cuentan capas completadas. Guía: [CAPA01_README.md](CAPA01_README.md).
 - Capa 03 · TTL: jugable (v0.13). Guía: [CAPA03_README.md](CAPA03_README.md).
 - Capa 04 · Transporte: jugable (v0.15). Guía: [CAPA04_README.md](CAPA04_README.md).
 - Capa 05 · Sesión: jugable (v0.16). Guía: [CAPA05_README.md](CAPA05_README.md).

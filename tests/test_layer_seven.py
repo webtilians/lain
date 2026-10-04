@@ -84,10 +84,10 @@ def test_dns_virtual_host_and_basic_auth_lead_inside_then_persist(node):
     assert "¿Quieres quedarte?" in curl(sim, f"{auth} http://nodo07.wired/sesiones/{s0}")
     assert "403" in curl(sim, f"-i -X PUT {auth} http://nodo07.wired/registro/Otra%20persona")
     ending = curl(sim, f"-i -X PUT {auth} http://nodo07.wired/registro/{name}")
-    assert "201 Created" in ending and "Sesión Cero completa (7/7)" in ending
+    assert "201 Created" in ending and "Fragmentos recuperados: 5/7" in ending
     assert re.search(rf"0001 \|\s+\d+ \| prev 00000000 \| [0-9a-f]{{8}} \| {name}", curl(sim, f"{auth} http://nodo07.wired/registro"))
     assert "409" in curl(sim, f"-i -X DELETE {auth} http://nodo07.wired/sesiones/{s1}")
-    assert "persistente" in out(sim, "whoami") and layer_seven.layer_snapshot(PLAYER)["fragments"] == 7
+    assert "persistente" in out(sim, "whoami") and layer_seven.layer_snapshot(PLAYER)["fragments"] == 5
     nora = AgentContextBuilder().build("AGENT_NORA")["chapter_memory"]["memories"]
     assert any("registro de NODO_07" in memory["text"] for memory in nora)
 
