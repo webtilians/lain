@@ -37,6 +37,7 @@ $defaults = @{
     LAIN_CODE_EXCHANGE = '1'
     LAIN_LAYER_THREE = '1'
     LAIN_LAYER_FOUR = '1'
+    LAIN_LAYER_FIVE = '1'
 }
 foreach ($key in $defaults.Keys) {
     if ([string]::IsNullOrWhiteSpace([Environment]::GetEnvironmentVariable($key))) {

@@ -101,7 +101,7 @@ pregunta y recupera un fragmento de la Sesión Cero. El prólogo y el capítulo 
 | 02 · Enlace | Direcciones MAC, tramas, *checksum*, suplantación | Alguien usa tu dirección; encontrar la trama falsa por su *checksum* | ¿Quién eres si te pueden copiar? | KAGAMI tiene una réplica tuya en funcionamiento. |
 | 03 · Red | IP, rutas, **TTL**, saltos | Averiguar en qué router murió un paquete y reconstruirlo | ¿Qué significa que algo se acabe? | La Sesión Cero no cerró: la terminaron. |
 | 04 · Transporte | Handshake TCP, ACK, retransmisión, ventana | Restablecer una conexión con alguien que dejó de contestar | ¿Necesito que me respondan para existir? | Nora mantiene viva una conexión con la Sesión Cero. |
-| 05 · Sesión | Tokens, cookies, caducidad, secuestro de sesión | Recuperar la sesión anterior sin invalidar la tuya | ¿Soy la misma persona que ayer? | Solo una de las dos sesiones puede seguir activa. |
+| 05 · Sesión | Caducidad de sesiones, arrendamientos (*leases*) con token de exclusión, concurrencia optimista, fusión a tres bandas | Fusionar tu estado con el de la Sesión Cero y decidir quién conserva la cuenta | ¿Soy la misma persona que ayer? | Solo una de las dos sesiones puede seguir activa. |
 | 06 · Presentación | Codificación, XOR, cifrado, firmas | Descifrar el último paquete con la clave que la Sesión Cero escondió en tus recuerdos | ¿Qué máscara llevo? | La clave es algo que solo tú has vivido en esta partida. |
 | 07 · Aplicación | Protocolos, la Wired completa | Llegar a NODO_07 | ¿Quiero quedarme? | NODO_07 está lleno de sesiones que nadie recuerda. |
 
@@ -168,4 +168,5 @@ Lo que incluye la primera versión, jugable después del capítulo 1:
 
 - Capa 03 · TTL: jugable (v0.13). Guía: [CAPA03_README.md](CAPA03_README.md).
 - Capa 04 · Transporte: jugable (v0.15). Guía: [CAPA04_README.md](CAPA04_README.md).
+- Capa 05 · Sesión: jugable (v0.16). Guía: [CAPA05_README.md](CAPA05_README.md).
 - Todo el juego en español e inglés (v0.14): [TRADUCCION.md](TRADUCCION.md).

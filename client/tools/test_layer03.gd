@@ -133,6 +133,28 @@ func run() -> void:
 	check("Capa 04" in terminal_text and "1/7" in terminal_text, "Terminal page does not show Capa 04")
 	await snap("layer04-pc")
 	ws.close_pc()
+
+	# Capa 05 follows the same way, newest mail first.
+	state["layer_five"] = {"active": true, "title": "Capa 05 · Sesión", "decision": null, "fragments": 2,
+		"goal": "Tu cuenta solo admite una sesión. En la consola del andén, fusiona tu estado con el de la Sesión Cero.",
+		"mail": {"subject": "Dos sesiones, una cuenta", "from": "sesiones@wired",
+			"body": "NODO_07 ha encontrado una sesión caducada con tu nombre. Lee ~/correo/sesion.eml en el Terminal."}}
+	api.snapshot = state
+	await process_frame
+	await process_frame
+	check("Capa 05" in presence.hud.text and "Sesión Cero" in presence.hud.text, "HUD does not follow Capa 05: " + presence.hud.text)
+	ws.open_pc()
+	mails = ""
+	for node in ws.content.find_children("*", "Label", true, false):
+		mails += node.text + "\n"
+	check(mails.find("Dos sesiones") >= 0 and mails.find("Dos sesiones") < mails.find("SYN"), "Capa 05 mail must come first")
+	ws._select("Terminal")
+	terminal_text = ""
+	for node in ws.content.find_children("*", "Label", true, false):
+		terminal_text += node.text + "\n"
+	check("Capa 05" in terminal_text and "2/7" in terminal_text, "Terminal page does not show Capa 05")
+	await snap("layer05-pc")
+	ws.close_pc()
 	current_scene = null
 	scene.queue_free()
 	await process_frame

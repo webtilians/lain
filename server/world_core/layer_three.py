@@ -524,12 +524,14 @@ def run_shell(player: str, host: str, cwd: str, command: str, minute: int) -> di
         relay = _host(c, player, host)
         story = _story(c, player, run)
         files = _relay_files(story, relay) if relay else _navi_files(story, run)
-        from . import layer_four
-        files.update(layer_four.files(c, player, relay, story))
+        # Later layers share this shell: their files and commands join once each starts.
+        layers = _later_layers(c, player)
+        for layer in layers:
+            files.update(layer.files(c, player, relay, story))
         # Hashed evidence and packet segments are immutable. Auxiliary files
         # (manuals, mail and route headings) may follow the current UI language.
         for path, content in files.items():
-            if path.endswith((".seg", "/diario", "/diario.espejo", "/sesion0.txt", "/flujo-4004.txt")):
+            if path.endswith((".seg", "/diario", "/diario.espejo", "/sesion0.txt", "/flujo-4004.txt", ".json")):
                 continue
             files[path] = i18n.t(content)
         hostname = RELAYS[relay][0] if relay else story.navi
@@ -547,13 +549,20 @@ def run_shell(player: str, host: str, cwd: str, command: str, minute: int) -> di
             return result
         name, args = words[0], words[1:]
         name = {"assemble": "ensamblar", "report": "denunciar", "forward": "reenviar", "drop": "soltar"}.get(name, name)
-        if name in layer_four.COMMANDS and layer_four.run_for(c, player) is not None:
-            out = layer_four.dispatch(c, player, story, relay, result, name, args, minute)
+        owner = next((layer for layer in layers if name in layer.COMMANDS), None)
+        if owner is not None:
+            out = owner.dispatch(c, player, story, relay, result, name, args, minute)
         else:
             out = _dispatch(c, player, story, run, relay, files, home, result, name, args, minute)
         # cat/grep/sha256 must show precisely the bytes they inspected.
         result["output"] = out if name in {"cat", "grep", "sha256", "ensamblar"} else i18n.t(out)
         return result
+
+
+def _later_layers(c, player):
+    """Layers after this one that the player has already reached, in order."""
+    from . import layer_four, layer_five
+    return [layer for layer in (layer_four, layer_five) if layer.run_for(c, player) is not None]
 
 
 def _read(files, cwd, home, path):
@@ -569,22 +578,18 @@ def _dispatch(c, player, story, run, relay, files, home, result, name, args, min
     cwd = result["cwd"]
     try:
         if name == "help":
-            from . import layer_four
-            extra = "\n" + i18n.t(layer_four.HELP) if layer_four.run_for(c, player) is not None else ""
-            return i18n.t(HELP) + extra
+            return "\n".join([i18n.t(HELP)] + [i18n.t(layer.HELP) for layer in _later_layers(c, player)])
         if name == "man":
             topic = (args[0] if args else "").lower()
             topic = {"routes": "rutas", "segments": "segmentos", "chain": "cadena",
                      "console": "consola", "heartbeat": "latido", "assemble": "ensamblar",
                      "report": "denunciar", "forward": "reenviar", "drop": "soltar"}.get(topic, topic)
-            from . import layer_four
-            if layer_four.run_for(c, player) is not None:
-                topic = layer_four.MAN_ALIASES.get(topic, topic)
-                if topic in layer_four.MAN:
-                    return i18n.t(layer_four.MAN[topic])
-                topics = sorted(MAN) + sorted(layer_four.MAN)
-            else:
-                topics = sorted(MAN)
+            topics = sorted(MAN)
+            for layer in _later_layers(c, player):
+                alias = layer.MAN_ALIASES.get(topic, topic)
+                if alias in layer.MAN:
+                    return i18n.t(layer.MAN[alias])
+                topics += sorted(layer.MAN)
             return i18n.t(MAN.get(topic, "Temas: " + ", ".join(topics)))
         if name == "pwd":
             return cwd
@@ -634,8 +639,9 @@ def _dispatch(c, player, story, run, relay, files, home, result, name, args, min
             target = args[0] if args else "yo"
             return _ping(c, player, story, "yo" if target == "me" else target)
         if name == "whoami":
-            return (f"{story.name} · sesión 1 · {player}\n"
-                    "El servidor no guarda tu llave, solo su huella. Si alguien la copiara, sería tú.")
+            from . import layer_five
+            return (f"{story.name} · {layer_five.session_label(c, player)} · {player}\n"
+                    + i18n.t("El servidor no guarda tu llave, solo su huella. Si alguien la copiara, sería tú."))
         if name == "uptime":
             return _uptime(minute)
         if name == "date":

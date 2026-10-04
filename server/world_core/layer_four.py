@@ -419,6 +419,8 @@ def _decide(c, player, story, result, decision, minute):
         c.execute("INSERT OR REPLACE INTO layer_four_knowledge VALUES(?,?,?,?)", (player, actor, text, minute))
     c.execute("INSERT INTO events(minute,actor_id,action,target,details) VALUES(?,?,'LAYER_FOUR_DECISION','NODE_07',?)",
               (minute, player, decision))
+    from . import layer_five
+    layer_five.activate(c, player, minute, decision)
     result["changed"] = True
     return (ENDINGS[decision] + "\n\nCAPA 04 COMPLETADA · fragmento 2/7 de la Sesión Cero recuperado.\n"
             "Siguiente: Capa 05 · Sesión. Solo una de las dos sesiones puede seguir activa.")
