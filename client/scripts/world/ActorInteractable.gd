@@ -100,6 +100,7 @@ func _on_choice_selected(
 		"ASK_IDENTITY",
 		"ASK_SIGNAL",
 		"TELL_OBSERVED",
+		"ASK_HINT",  # only offered by the neighbour `pista` sent the player to
 	]:
 		_request_chat_reply(choice_id)
 		return
@@ -362,7 +363,11 @@ func _on_chat_request_completed(
 
 	# Free conversation is the main interaction in D7. Retain
 	# a quick question and LEAVE without crowding the compact modal.
+	# Asking for help comes first when `pista` sent the player here.
 	var quick_choices: Array[Dictionary] = []
+	for choice in choices:
+		if str(choice.get("id", "")) == "ASK_HINT":
+			quick_choices.append(choice)
 	for choice in choices:
 		if str(choice.get("id", "")) in ["ASK_SIGNAL", "LEAVE"]:
 			quick_choices.append(choice)
