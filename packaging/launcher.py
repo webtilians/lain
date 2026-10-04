@@ -252,6 +252,7 @@ def server_environment(data: Path, use_ai: bool, gateway: str = "") -> dict[str,
             "LAIN_LAYER_TWO": "1",
             "LAIN_JOURNAL": "1",
             "LAIN_SHADOW": "1",
+            "LAIN_HINTS": "1",
         }
     )
     env.pop("LAIN_ARCADE_CATALOG_PATH", None)

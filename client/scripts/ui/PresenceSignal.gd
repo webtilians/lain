@@ -55,6 +55,8 @@ func _process(delta: float) -> void:
 	var fade := clampf((silence - FADE_AFTER) / FADE_SPAN, 0.0, 1.0)
 	_apply(fade)
 	var text := str(data.get("title", "")) + "\n" + str(data.get("goal", ""))
+	if data.get("decision") == null and not str(data.get("title", "")).is_empty():
+		text += "\n¿Atascado? Escribe pista en el Terminal."
 	if fade >= 1.0:
 		text += "\n\nCASI NO ESTÁS · nadie te ha recibido en " + str(int(silence / 60.0)) + " min. Habla con alguien."
 	elif fade > 0.0:

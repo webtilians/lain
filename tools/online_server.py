@@ -29,6 +29,7 @@ FEATURES = (
     "LAIN_LAYER_TWO",
     "LAIN_JOURNAL",
     "LAIN_SHADOW",
+    "LAIN_HINTS",
 )
 
 
