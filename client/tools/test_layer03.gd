@@ -177,6 +177,28 @@ func run() -> void:
 	check("Capa 06" in terminal_text and "3/7" in terminal_text, "Terminal page does not show Capa 06")
 	await snap("layer06-pc")
 	ws.close_pc()
+
+	# And the last layer, Capa 07.
+	state["layer_seven"] = {"active": true, "title": "Capa 07 · Aplicación", "decision": null, "fragments": 4,
+		"goal": "Llega a NODO_07. No tiene armario: se llega desde cualquier terminal, hablando su protocolo.",
+		"mail": {"subject": "NODO_07", "from": "nora@wired",
+			"body": "Nora nunca ha podido entrar en NODO_07. Lee ~/correo/nodo07.eml en el Terminal."}}
+	api.snapshot = state
+	await process_frame
+	await process_frame
+	check("Capa 07" in presence.hud.text and "NODO_07" in presence.hud.text, "HUD does not follow Capa 07: " + presence.hud.text)
+	ws.open_pc()
+	mails = ""
+	for node in ws.content.find_children("*", "Label", true, false):
+		mails += node.text + "\n"
+	check(mails.find("Nora nunca") >= 0 and mails.find("Nora nunca") < mails.find("Tres caras"), "Capa 07 mail must come first")
+	ws._select("Terminal")
+	terminal_text = ""
+	for node in ws.content.find_children("*", "Label", true, false):
+		terminal_text += node.text + "\n"
+	check("Capa 07" in terminal_text and "4/7" in terminal_text, "Terminal page does not show Capa 07")
+	await snap("layer07-pc")
+	ws.close_pc()
 	current_scene = null
 	scene.queue_free()
 	await process_frame

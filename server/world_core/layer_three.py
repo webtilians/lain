@@ -562,8 +562,9 @@ def run_shell(player: str, host: str, cwd: str, command: str, minute: int) -> di
 
 def _later_layers(c, player):
     """Layers after this one that the player has already reached, in order."""
-    from . import layer_four, layer_five, layer_six
-    return [layer for layer in (layer_four, layer_five, layer_six) if layer.run_for(c, player) is not None]
+    from . import layer_four, layer_five, layer_six, layer_seven
+    layers = (layer_four, layer_five, layer_six, layer_seven)
+    return [layer for layer in layers if layer.run_for(c, player) is not None]
 
 
 def _read(files, cwd, home, path):
@@ -640,8 +641,9 @@ def _dispatch(c, player, story, run, relay, files, home, result, name, args, min
             target = args[0] if args else "yo"
             return _ping(c, player, story, "yo" if target == "me" else target)
         if name == "whoami":
-            from . import layer_five
-            return (f"{story.name} · {layer_five.session_label(c, player)} · {player}\n"
+            from . import layer_five, layer_seven
+            label = layer_seven.identity_label(c, player) or layer_five.session_label(c, player)
+            return (f"{story.name} · {label} · {player}\n"
                     + i18n.t("El servidor no guarda tu llave, solo su huella. Si alguien la copiara, sería tú."))
         if name == "uptime":
             return _uptime(minute)

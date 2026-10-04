@@ -24,6 +24,7 @@ FEATURES = (
     "LAIN_LAYER_FOUR",
     "LAIN_LAYER_FIVE",
     "LAIN_LAYER_SIX",
+    "LAIN_LAYER_SEVEN",
 )
 
 
