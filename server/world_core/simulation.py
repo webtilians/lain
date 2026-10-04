@@ -255,6 +255,8 @@ class Simulation:
         initialize_layer_seven()
         from .journal import initialize_journal
         initialize_journal()
+        from .hints import initialize_hints
+        initialize_hints()
 
         for person in self.all_agents.values():
             if person.controller_type == "HUMAN":
