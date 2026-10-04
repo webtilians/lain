@@ -1,10 +1,13 @@
+import os
 import sqlite3
 from pathlib import Path
 
 from .models import Agent, WorldNode, WorldState
 
 
-DB_PATH = Path("world.db")
+# A NEW GAME may use an explicit, isolated save path. Legacy saves remain
+# at world.db and existing pytest fixtures may still monkeypatch DB_PATH.
+DB_PATH = Path(os.getenv("LAIN_WORLD_DB", "world.db"))
 
 
 def get_connection():
@@ -437,9 +440,10 @@ def record_event(
     action: str,
     target: str,
     details: str = "",
+    location: str | None = None,
 ):
     with get_connection() as conn:
-        conn.execute(
+        cursor = conn.execute(
             """
             INSERT INTO events (
                 minute,
@@ -459,4 +463,82 @@ def record_event(
             ),
         )
 
+        if location is not None:
+            from .shared_experiences import record_action_experience
+            record_action_experience(conn, cursor.lastrowid, actor_id, action,
+                                     target, minute, location)
         conn.commit()
+        return cursor.lastrowid
+
+
+def list_nodes() -> list[WorldNode]:
+
+    initialize_database()
+
+    with get_connection() as conn:
+
+        rows = conn.execute(
+            """
+            SELECT
+                id,
+                location,
+                node_type,
+                discovered,
+                active,
+                anomaly_strength
+
+            FROM nodes
+
+            ORDER BY id
+            """
+        ).fetchall()
+
+    return [
+        WorldNode(
+            id=row[0],
+            location=row[1],
+            node_type=row[2],
+            discovered=bool(row[3]),
+            active=bool(row[4]),
+            anomaly_strength=row[5],
+        )
+        for row in rows
+    ]
+
+
+def load_node(
+    node_id: str,
+) -> WorldNode | None:
+
+    initialize_database()
+
+    with get_connection() as conn:
+
+        row = conn.execute(
+            """
+            SELECT
+                id,
+                location,
+                node_type,
+                discovered,
+                active,
+                anomaly_strength
+
+            FROM nodes
+
+            WHERE id = ?
+            """,
+            (node_id,),
+        ).fetchone()
+
+    if row is None:
+        return None
+
+    return WorldNode(
+        id=row[0],
+        location=row[1],
+        node_type=row[2],
+        discovered=bool(row[3]),
+        active=bool(row[4]),
+        anomaly_strength=row[5],
+    )

@@ -1,0 +1,653 @@
+[
+ {
+  "name": "blk_apartments",
+  "node": "Apartments",
+  "kind": "apato",
+  "width": 14.0,
+  "depth": 7.8,
+  "height": 7.1,
+  "centre": [
+   -14.0,
+   11.8
+  ],
+  "rotation_deg": 180,
+  "door_a": -2.0,
+  "wall": "wall_siding",
+  "seed": 1100
+ },
+ {
+  "name": "blk_cornerbooks",
+  "node": "CornerBooks",
+  "kind": "shop",
+  "width": 10.0,
+  "depth": 9.0,
+  "height": 6.1,
+  "centre": [
+   11.0,
+   3.0
+  ],
+  "rotation_deg": 0,
+  "door_a": 0.0,
+  "wall": "wall_mortar",
+  "seed": 1101,
+  "awning": "awning_green"
+ },
+ {
+  "name": "blk_residence02",
+  "node": "Residence02",
+  "kind": "house1",
+  "width": 11.0,
+  "depth": 7.0,
+  "height": 4.0,
+  "centre": [
+   -20.0,
+   -4.0
+  ],
+  "rotation_deg": 90,
+  "door_a": 0.0,
+  "wall": "wall_mortar",
+  "seed": 1102
+ },
+ {
+  "name": "blk_grocer",
+  "node": "Grocer",
+  "kind": "shop",
+  "width": 7.0,
+  "depth": 14.0,
+  "height": 4.4,
+  "centre": [
+   21.0,
+   0.0
+  ],
+  "rotation_deg": 0,
+  "door_a": 0.0,
+  "wall": "wall_siding",
+  "seed": 1103,
+  "awning": "awning_red"
+ },
+ {
+  "name": "blk_school",
+  "node": "School",
+  "kind": "school",
+  "width": 17.0,
+  "depth": 15.0,
+  "height": 7.4,
+  "centre": [
+   -17.0,
+   -28.5
+  ],
+  "rotation_deg": 0,
+  "door_a": -1.0,
+  "wall": "wall_mortar",
+  "seed": 1104
+ },
+ {
+  "name": "blk_arcade",
+  "node": "Arcade",
+  "kind": "shop",
+  "width": 13.0,
+  "depth": 10.0,
+  "height": 6.3,
+  "centre": [
+   18.0,
+   -50.5
+  ],
+  "rotation_deg": 0,
+  "door_a": 0.0,
+  "wall": "wall_siding",
+  "seed": 1105,
+  "awning": "awning_blue",
+  "sign": "sign_dark"
+ },
+ {
+  "name": "blk_clinic",
+  "node": "Clinic",
+  "kind": "shop",
+  "width": 8.0,
+  "depth": 12.0,
+  "height": 7.8,
+  "centre": [
+   -10.0,
+   -52.0
+  ],
+  "rotation_deg": 0,
+  "door_a": 0.0,
+  "wall": "wall_mortar",
+  "seed": 1106,
+  "awning": "awning_brown"
+ },
+ {
+  "name": "blk_tenements",
+  "node": "Tenements",
+  "kind": "mansion",
+  "width": 24.0,
+  "depth": 7.0,
+  "height": 8.1,
+  "centre": [
+   -20.5,
+   -58.0
+  ],
+  "rotation_deg": 90,
+  "door_a": 0.0,
+  "wall": "wall_siding",
+  "seed": 1107
+ },
+ {
+  "name": "blk_nightclub",
+  "node": "Nightclub",
+  "kind": "club",
+  "width": 12.0,
+  "depth": 13.0,
+  "height": 5.3,
+  "centre": [
+   18.5,
+   -65.0
+  ],
+  "rotation_deg": 90,
+  "door_a": -0.0,
+  "wall": "wall_siding",
+  "seed": 1108
+ },
+ {
+  "name": "blk_repairshop",
+  "node": "RepairShop",
+  "kind": "shop",
+  "width": 10.0,
+  "depth": 16.0,
+  "height": 5.6,
+  "centre": [
+   -11.0,
+   -88.5
+  ],
+  "rotation_deg": 0,
+  "door_a": 0.0,
+  "wall": "wall_mortar",
+  "seed": 1109,
+  "awning": "awning_red",
+  "sign": "sign_dark"
+ },
+ {
+  "name": "blk_printshop",
+  "node": "PrintShop",
+  "kind": "shop",
+  "width": 11.0,
+  "depth": 15.0,
+  "height": 4.5,
+  "centre": [
+   12.0,
+   -89.0
+  ],
+  "rotation_deg": 0,
+  "door_a": 0.0,
+  "wall": "wall_siding",
+  "seed": 1110,
+  "awning": "awning_blue"
+ },
+ {
+  "name": "blk_southhomes",
+  "node": "SouthHomes",
+  "kind": "apato",
+  "width": 18.0,
+  "depth": 7.0,
+  "height": 7.0,
+  "centre": [
+   22.0,
+   -87.0
+  ],
+  "rotation_deg": 90,
+  "door_a": 0.0,
+  "wall": "wall_mortar",
+  "seed": 1111,
+  "solid_balcony": true
+ },
+ {
+  "name": "blk_outerm1_0_0",
+  "node": "Outer-1_0_0",
+  "kind": "house1",
+  "width": 8.4,
+  "depth": 9.0,
+  "height": 4.0,
+  "centre": [
+   -39.0,
+   5.0
+  ],
+  "rotation_deg": 90,
+  "door_a": 0.0,
+  "wall": "wall_mortar",
+  "seed": 1112
+ },
+ {
+  "name": "blk_outerm1_0_1",
+  "node": "Outer-1_0_1",
+  "kind": "apato",
+  "width": 8.4,
+  "depth": 9.0,
+  "height": 5.7,
+  "centre": [
+   -39.0,
+   -6.0
+  ],
+  "rotation_deg": 90,
+  "door_a": 0.0,
+  "wall": "wall_siding",
+  "seed": 1113
+ },
+ {
+  "name": "blk_outerm1_0_2",
+  "node": "Outer-1_0_2",
+  "kind": "mansion",
+  "width": 8.4,
+  "depth": 9.0,
+  "height": 7.4,
+  "centre": [
+   -39.0,
+   -27.0
+  ],
+  "rotation_deg": 90,
+  "door_a": 0.0,
+  "wall": "wall_mortar",
+  "seed": 1114
+ },
+ {
+  "name": "blk_outerm1_0_3",
+  "node": "Outer-1_0_3",
+  "kind": "house1",
+  "width": 8.4,
+  "depth": 9.0,
+  "height": 4.0,
+  "centre": [
+   -39.0,
+   -51.0
+  ],
+  "rotation_deg": 90,
+  "door_a": 0.0,
+  "wall": "wall_siding",
+  "seed": 1115
+ },
+ {
+  "name": "blk_outerm1_0_4",
+  "node": "Outer-1_0_4",
+  "kind": "apato",
+  "width": 8.4,
+  "depth": 9.0,
+  "height": 5.7,
+  "centre": [
+   -39.0,
+   -64.0
+  ],
+  "rotation_deg": 90,
+  "door_a": 0.0,
+  "wall": "wall_mortar",
+  "seed": 1116
+ },
+ {
+  "name": "blk_outerm1_0_5",
+  "node": "Outer-1_0_5",
+  "kind": "mansion",
+  "width": 8.4,
+  "depth": 9.0,
+  "height": 7.4,
+  "centre": [
+   -39.0,
+   -88.0
+  ],
+  "rotation_deg": 90,
+  "door_a": 0.0,
+  "wall": "wall_siding",
+  "seed": 1117
+ },
+ {
+  "name": "blk_outerm1_0_6",
+  "node": "Outer-1_0_6",
+  "kind": "house1",
+  "width": 8.4,
+  "depth": 9.0,
+  "height": 4.0,
+  "centre": [
+   -39.0,
+   -109.0
+  ],
+  "rotation_deg": 90,
+  "door_a": 0.0,
+  "wall": "wall_mortar",
+  "seed": 1118
+ },
+ {
+  "name": "blk_outerm1_0_7",
+  "node": "Outer-1_0_7",
+  "kind": "apato",
+  "width": 8.4,
+  "depth": 9.0,
+  "height": 5.7,
+  "centre": [
+   -39.0,
+   12.0
+  ],
+  "rotation_deg": 90,
+  "door_a": 0.0,
+  "wall": "wall_siding",
+  "seed": 1119
+ },
+ {
+  "name": "blk_outer1_0_0",
+  "node": "Outer1_0_0",
+  "kind": "house1",
+  "width": 8.4,
+  "depth": 9.0,
+  "height": 4.0,
+  "centre": [
+   39.0,
+   5.0
+  ],
+  "rotation_deg": -90,
+  "door_a": 0.0,
+  "wall": "wall_mortar",
+  "seed": 1120
+ },
+ {
+  "name": "blk_outer1_0_1",
+  "node": "Outer1_0_1",
+  "kind": "apato",
+  "width": 8.4,
+  "depth": 9.0,
+  "height": 5.7,
+  "centre": [
+   39.0,
+   -6.0
+  ],
+  "rotation_deg": -90,
+  "door_a": 0.0,
+  "wall": "wall_siding",
+  "seed": 1121
+ },
+ {
+  "name": "blk_outer1_0_2",
+  "node": "Outer1_0_2",
+  "kind": "mansion",
+  "width": 8.4,
+  "depth": 9.0,
+  "height": 7.4,
+  "centre": [
+   39.0,
+   -27.0
+  ],
+  "rotation_deg": -90,
+  "door_a": 0.0,
+  "wall": "wall_mortar",
+  "seed": 1122
+ },
+ {
+  "name": "blk_outer1_0_3",
+  "node": "Outer1_0_3",
+  "kind": "house1",
+  "width": 8.4,
+  "depth": 9.0,
+  "height": 4.0,
+  "centre": [
+   39.0,
+   -51.0
+  ],
+  "rotation_deg": -90,
+  "door_a": 0.0,
+  "wall": "wall_siding",
+  "seed": 1123
+ },
+ {
+  "name": "blk_outer1_0_4",
+  "node": "Outer1_0_4",
+  "kind": "apato",
+  "width": 8.4,
+  "depth": 9.0,
+  "height": 5.7,
+  "centre": [
+   39.0,
+   -64.0
+  ],
+  "rotation_deg": -90,
+  "door_a": 0.0,
+  "wall": "wall_mortar",
+  "seed": 1124
+ },
+ {
+  "name": "blk_outer1_0_5",
+  "node": "Outer1_0_5",
+  "kind": "mansion",
+  "width": 8.4,
+  "depth": 9.0,
+  "height": 7.4,
+  "centre": [
+   39.0,
+   -88.0
+  ],
+  "rotation_deg": -90,
+  "door_a": 0.0,
+  "wall": "wall_siding",
+  "seed": 1125
+ },
+ {
+  "name": "blk_outer1_0_6",
+  "node": "Outer1_0_6",
+  "kind": "house1",
+  "width": 8.4,
+  "depth": 9.0,
+  "height": 4.0,
+  "centre": [
+   39.0,
+   -109.0
+  ],
+  "rotation_deg": -90,
+  "door_a": 0.0,
+  "wall": "wall_mortar",
+  "seed": 1126
+ },
+ {
+  "name": "blk_outer1_0_7",
+  "node": "Outer1_0_7",
+  "kind": "apato",
+  "width": 8.4,
+  "depth": 9.0,
+  "height": 5.7,
+  "centre": [
+   39.0,
+   12.0
+  ],
+  "rotation_deg": -90,
+  "door_a": 0.0,
+  "wall": "wall_siding",
+  "seed": 1127
+ },
+ {
+  "name": "blk_skyline0",
+  "node": "Skyline0",
+  "kind": "mansion",
+  "width": 8.0,
+  "depth": 10.0,
+  "height": 7.0,
+  "centre": [
+   -48.0,
+   -124.0
+  ],
+  "rotation_deg": 0,
+  "door_a": 0.0,
+  "wall": "wall_mortar",
+  "seed": 1128
+ },
+ {
+  "name": "blk_skyline1",
+  "node": "Skyline1",
+  "kind": "mansion",
+  "width": 8.0,
+  "depth": 10.0,
+  "height": 11.2,
+  "centre": [
+   -38.5,
+   -124.0
+  ],
+  "rotation_deg": 0,
+  "door_a": 0.0,
+  "wall": "wall_siding",
+  "seed": 1129
+ },
+ {
+  "name": "blk_skyline2",
+  "node": "Skyline2",
+  "kind": "mansion",
+  "width": 8.0,
+  "depth": 10.0,
+  "height": 15.4,
+  "centre": [
+   -29.0,
+   -124.0
+  ],
+  "rotation_deg": 0,
+  "door_a": 0.0,
+  "wall": "wall_mortar",
+  "seed": 1130
+ },
+ {
+  "name": "blk_skyline3",
+  "node": "Skyline3",
+  "kind": "mansion",
+  "width": 8.0,
+  "depth": 10.0,
+  "height": 9.1,
+  "centre": [
+   -19.5,
+   -124.0
+  ],
+  "rotation_deg": 0,
+  "door_a": 0.0,
+  "wall": "wall_siding",
+  "seed": 1131
+ },
+ {
+  "name": "blk_skyline4",
+  "node": "Skyline4",
+  "kind": "mansion",
+  "width": 8.0,
+  "depth": 10.0,
+  "height": 13.3,
+  "centre": [
+   -10.0,
+   -124.0
+  ],
+  "rotation_deg": 0,
+  "door_a": 0.0,
+  "wall": "wall_mortar",
+  "seed": 1132
+ },
+ {
+  "name": "blk_skyline5",
+  "node": "Skyline5",
+  "kind": "mansion",
+  "width": 8.0,
+  "depth": 10.0,
+  "height": 7.0,
+  "centre": [
+   -0.5,
+   -124.0
+  ],
+  "rotation_deg": 0,
+  "door_a": 0.0,
+  "wall": "wall_siding",
+  "seed": 1133
+ },
+ {
+  "name": "blk_skyline6",
+  "node": "Skyline6",
+  "kind": "mansion",
+  "width": 8.0,
+  "depth": 10.0,
+  "height": 11.2,
+  "centre": [
+   9.0,
+   -124.0
+  ],
+  "rotation_deg": 0,
+  "door_a": 0.0,
+  "wall": "wall_mortar",
+  "seed": 1134
+ },
+ {
+  "name": "blk_skyline7",
+  "node": "Skyline7",
+  "kind": "mansion",
+  "width": 8.0,
+  "depth": 10.0,
+  "height": 15.4,
+  "centre": [
+   18.5,
+   -124.0
+  ],
+  "rotation_deg": 0,
+  "door_a": 0.0,
+  "wall": "wall_siding",
+  "seed": 1135
+ },
+ {
+  "name": "blk_skyline8",
+  "node": "Skyline8",
+  "kind": "mansion",
+  "width": 8.0,
+  "depth": 10.0,
+  "height": 9.1,
+  "centre": [
+   28.0,
+   -124.0
+  ],
+  "rotation_deg": 0,
+  "door_a": 0.0,
+  "wall": "wall_mortar",
+  "seed": 1136
+ },
+ {
+  "name": "blk_skyline9",
+  "node": "Skyline9",
+  "kind": "mansion",
+  "width": 8.0,
+  "depth": 10.0,
+  "height": 13.3,
+  "centre": [
+   37.5,
+   -124.0
+  ],
+  "rotation_deg": 0,
+  "door_a": 0.0,
+  "wall": "wall_siding",
+  "seed": 1137
+ },
+ {
+  "name": "blk_skyline10",
+  "node": "Skyline10",
+  "kind": "mansion",
+  "width": 8.0,
+  "depth": 10.0,
+  "height": 7.0,
+  "centre": [
+   47.0,
+   -124.0
+  ],
+  "rotation_deg": 0,
+  "door_a": 0.0,
+  "wall": "wall_mortar",
+  "seed": 1138
+ },
+ {
+  "name": "blk_stationhall",
+  "node": "StationHall",
+  "kind": "station",
+  "width": 18.0,
+  "depth": 6.5,
+  "height": 4.2,
+  "centre": [
+   0.0,
+   -110.0
+  ],
+  "rotation_deg": 0,
+  "door_a": 0.0,
+  "wall": "wall_siding",
+  "seed": 1139,
+  "awning": "awning_blue",
+  "sign": "sign_dark"
+ }
+]

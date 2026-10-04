@@ -1,0 +1,115 @@
+[gd_scene load_steps=11 format=3]
+
+[ext_resource type="Script" path="res://scripts/world/NeighborhoodEntry.gd" id="entry"]
+[ext_resource type="Script" path="res://scripts/player/IsoController.gd" id="player"]
+[ext_resource type="Script" path="res://scripts/world/ActorSpawner.gd" id="actors"]
+[ext_resource type="Script" path="res://scripts/world/PrologueDistrictEntrances.gd" id="doors"]
+[ext_resource type="Script" path="res://scripts/art/CityPresentation.gd" id="presentation"]
+[ext_resource type="PackedScene" path="res://art/photoreal11/Neighborhood.tscn" id="city"]
+[ext_resource type="PackedScene" path="res://art/characters/LainSlender.tscn" id="avatar"]
+[ext_resource type="PackedScene" path="res://scenes/ui/RetroOverlay.tscn" id="overlay"]
+
+[sub_resource type="CapsuleShape3D" id="PlayerShape"]
+radius = 0.35
+height = 1.8
+
+[sub_resource type="Environment" id="DistrictEnvironment"]
+background_mode = 1
+background_color = Color(0.24, 0.26, 0.32, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.62, 0.65, 0.76, 1)
+ambient_light_energy = 0.72
+ambient_light_sky_contribution = 0.0
+tonemap_mode = 0
+ssao_enabled = true
+ssao_radius = 1.0
+ssao_intensity = 1.1
+ssao_power = 1.4
+ssao_detail = 0.55
+ssil_enabled = true
+ssil_radius = 3.5
+ssil_intensity = 0.55
+
+[node name="ApartmentDistrict" type="Node3D"]
+script = ExtResource("entry")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("DistrictEnvironment")
+
+[node name="CityArt" parent="." instance=ExtResource("city")]
+
+[node name="PrologueEntrances" type="Node3D" parent="."]
+script = ExtResource("doors")
+visible_doors = false
+
+[node name="Player" type="CharacterBody3D" parent="."]
+position = Vector3(-12, 0.91, 5.7)
+script = ExtResource("player")
+orthographic_size = 16.0
+
+[node name="Collision" type="CollisionShape3D" parent="Player"]
+shape = SubResource("PlayerShape")
+
+[node name="Head" type="Node3D" parent="Player"]
+position = Vector3(0, 0.65, 0)
+
+[node name="Camera3D" type="Camera3D" parent="Player/Head"]
+current = true
+far = 220.0
+
+[node name="Silhouette" parent="Player" instance=ExtResource("avatar")]
+
+[node name="Actors" type="Node3D" parent="."]
+script = ExtResource("actors")
+location_id = "APARTMENT_DISTRICT"
+
+[node name="Spawns" type="Node3D" parent="Actors"]
+
+[node name="AGENT_K" type="Marker3D" parent="Actors/Spawns"]
+position = Vector3(-4, 0, -5)
+
+[node name="AGENT_NORA" type="Marker3D" parent="Actors/Spawns"]
+position = Vector3(10, 0, -32)
+
+[node name="ENTITY_ANCHOR" type="Marker3D" parent="Actors/Spawns"]
+position = Vector3(9, 0, -26)
+
+[node name="RetroOverlay" parent="." instance=ExtResource("overlay")]
+layer = 15
+
+[node name="HUD" type="CanvasLayer" parent="."]
+layer = 20
+
+[node name="Location" type="Label" parent="HUD"]
+offset_left = 28.0
+offset_top = 27.0
+offset_right = 400.0
+offset_bottom = 54.0
+theme_override_font_sizes/font_size = 22
+text = "Residencial"
+
+[node name="Hint" type="Label" parent="HUD"]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -320.0
+offset_top = -42.0
+offset_right = 320.0
+offset_bottom = -16.0
+text = "WASD  Caminar     E  Interactuar     J  Diario"
+horizontal_alignment = 1
+
+[node name="Presentation" type="Node3D" parent="."]
+script = ExtResource("presentation")
+
+[node name="OvercastSun" type="DirectionalLight3D" parent="."]
+rotation_degrees = Vector3(-39, -32, 0)
+light_color = Color(0.99, 0.91, 0.83, 1)
+light_energy = 1.07
+light_angular_distance = 0.55
+shadow_enabled = true
+directional_shadow_max_distance = 95.0
+directional_shadow_mode = 2
+shadow_bias = 0.025

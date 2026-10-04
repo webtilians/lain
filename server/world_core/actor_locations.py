@@ -316,13 +316,19 @@ def perceive_colocated_actors(
     perception.
     """
 
+    from .online import enabled, is_active
+
+    if enabled() and observer.controller_type == "HUMAN" and not is_active(observer.id):
+        return
+
     with get_connection() as conn:
 
         rows = conn.execute(
             """
             SELECT
                 id,
-                location
+                location,
+                controller_type
 
             FROM agents
 
@@ -336,6 +342,9 @@ def perceive_colocated_actors(
         ).fetchall()
 
     for row in rows:
+
+        if enabled() and row[2] == "HUMAN" and not is_active(row[0]):
+            continue
 
         subject_actor_id = row[0]
         location = row[1]

@@ -1,0 +1,42 @@
+name: LAIN Python regression tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+jobs:
+  python-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Run deterministic and mocked LLM tests
+        env:
+          LAIN_LLM_ENABLED: "0"
+          LAIN_MEMORY_SEMANTIC: "0"
+          # The audit fails the run if a player-facing text has no English translation.
+          LAIN_I18N_AUDIT: outputs/i18n-audit.json
+          LAIN_I18N_AUDIT_STRICT: "1"
+        run: python -m pytest -q -p tools.i18n_audit_plugin
+      - name: Chapter one real HTTP boundary in a disposable world
+        run: python tools/smoke_chapter01_http.py
+      - name: Corporate conflict HTTP and server-bound identity
+        run: python tools/smoke_chapter01_http.py --network
+      - name: Workshop HTTP lesson, equipment and replay
+        run: python tools/smoke_chapter01_http.py --workshop
+      - name: NOEMA HTTP independent orders and individual evidence
+        run: python tools/smoke_chapter01_http.py --noema
+      - name: Circles HTTP local consent, deduplication and actual shared modules
+        run: python tools/smoke_chapter01_http.py --circles
+      - name: Cafe tournaments HTTP window, verified replay and awarded module
+        run: python tools/smoke_chapter01_http.py --events
+      - name: Snake practice, custom catalogue and authoritative tournament replay
+        run: python tools/smoke_chapter01_http.py --events --arcade
+      - name: Tournament prize, two NPC exchanges and individual provenance over HTTP
+        run: python tools/smoke_chapter01_http.py --events --exchange

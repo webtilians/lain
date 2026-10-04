@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# Kept for older instructions: same as lain-set-ai-key groq (or --off).
+set -euo pipefail
+if [ "${1:-}" = "--off" ]; then
+  exec lain-set-ai-key --off
+fi
+exec lain-set-ai-key groq

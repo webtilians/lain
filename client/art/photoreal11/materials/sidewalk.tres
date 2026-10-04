@@ -1,0 +1,29 @@
+[gd_resource type="ShaderMaterial" format=3]
+
+[ext_resource type="Shader" path="res://shaders/gothic_wet_ground.gdshader" id="1_x7cc4"]
+[ext_resource type="Texture2D" path="res://art/photoreal11/textures/concrete_pavement/concrete_pavement_diff_2k.jpg" id="2_ty3bp"]
+[ext_resource type="Texture2D" path="res://art/photoreal11/textures/concrete_pavement/concrete_pavement_arm_2k.jpg" id="3_dvrr6"]
+[ext_resource type="Texture2D" path="res://art/photoreal11/textures/concrete_pavement/concrete_pavement_nor_gl_2k.jpg" id="4_3xgwy"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_5vt4t"]
+seed = 1212
+frequency = 0.012
+fractal_octaves = 3
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_ehi5e"]
+noise = SubResource("FastNoiseLite_5vt4t")
+seamless = true
+
+[resource]
+resource_name = "PR11_sidewalk"
+render_priority = 0
+shader = ExtResource("1_x7cc4")
+shader_parameter/albedo_tex = ExtResource("2_ty3bp")
+shader_parameter/normal_tex = ExtResource("4_3xgwy")
+shader_parameter/arm_tex = ExtResource("3_dvrr6")
+shader_parameter/puddle_noise = SubResource("NoiseTexture2D_ehi5e")
+shader_parameter/tint = Color(0.46666667, 0.4509804, 0.42745098, 1)
+shader_parameter/tile_size = 1.8
+shader_parameter/puddle_scale = null
+shader_parameter/wetness = null
+shader_parameter/puddle_threshold = null

@@ -1,0 +1,5053 @@
+[
+  {
+    "name": "wired-message",
+    "at": [
+      0,
+      0.91,
+      1
+    ],
+    "result": {
+      "speaker": "THE WIRED · ARCHIVO",
+      "text": "BUZÓN · IDENTIDAD DESCONOCIDA\n\n«Has vuelto».\n\nEl mensaje no incluye una firma. La conexión sigue abierta.",
+      "choices": [
+        {
+          "text": "Responder: «¿Quién eres?»",
+          "action": "WIRED",
+          "target": "REPLY",
+          "data": {}
+        },
+        {
+          "text": "Buscar la escuela en el archivo remoto.",
+          "action": "WIRED",
+          "target": "SEARCH",
+          "data": {}
+        }
+      ]
+    },
+    "mode": "terminal",
+    "state": {
+      "schema_version": "0.1",
+      "minute": 80,
+      "player": {
+        "id": "PLAYER_1",
+        "name": "Player",
+        "faction": "UNALIGNED",
+        "location": "APARTMENT",
+        "goal": "UNKNOWN",
+        "energy": 1.0
+      },
+      "navigation": {
+        "reachable_locations": [
+          "APARTMENT_DISTRICT"
+        ]
+      },
+      "known_nodes": [
+        {
+          "id": "NODE_07",
+          "knowledge_confidence": 0.35,
+          "knowledge_source": "WIRED_MESSAGE",
+          "belief": {
+            "location": "STATION",
+            "strength": 0.5,
+            "confidence": 0.35,
+            "source": "WIRED_MESSAGE",
+            "updated_minute": 80
+          }
+        }
+      ],
+      "visible_actors": [],
+      "character_sheets": {
+        "player": {
+          "id": "PLAYER_1",
+          "name": "Player",
+          "kind": "PLAYER",
+          "faction": "UNALIGNED",
+          "location": "APARTMENT",
+          "energy": 1.0,
+          "known_nodes": 1,
+          "case_status": "UNSEEN",
+          "agency": "HUMAN_ONLY"
+        },
+        "visible_npcs": []
+      },
+      "station_case": {
+        "id": "STATION_ECHO_07",
+        "title": "El pulso ausente",
+        "status": "UNSEEN",
+        "resolution": null,
+        "summary": "Investiga NODE_07 en la estacion para buscar el rastro.",
+        "witness_count": 0,
+        "responses": []
+      },
+      "prologue": {
+        "enabled": true,
+        "stage": "CONNECTED",
+        "hint": "La conexión cambió algo. Quizá ahora puedas descubrir qué."
+      },
+      "chapter_one": {
+        "active": true,
+        "title": "Ya habías estado aquí",
+        "started_minute": 80,
+        "connection_minute": 80,
+        "decision": null,
+        "hypothesis": "",
+        "hypothesis_status": "UNVERIFIED",
+        "evidence": [
+          {
+            "id": "RETURN_MESSAGE",
+            "title": "Has vuelto",
+            "kind": "MESSAGE",
+            "source_id": "UNKNOWN_WIRED",
+            "source_label": "Identidad desconocida · Wired",
+            "text": "Has vuelto.",
+            "acquired_minute": 80,
+            "claimed_time": "Recibido al abrir este capítulo, minuto 80",
+            "event_id": null
+          }
+        ],
+        "links": [],
+        "contradiction_linked": false,
+        "characters": [
+          "RESIDENT_001",
+          "RESIDENT_006",
+          "PROFESSOR",
+          "RYOKO"
+        ],
+        "notification": "Has vuelto"
+      },
+      "situations": [],
+      "interaction": null,
+      "outgoing_interaction": null,
+      "messages": [
+        {
+          "id": "MSG_BOOTSTRAP_001",
+          "sender": "unknown@wired",
+          "subject": "NO SUBJECT",
+          "body": "NO ESTOY MUERTA.\n\nSOLO DEJÉ DE ESTAR AHÍ.",
+          "created_minute": 0,
+          "read": true,
+          "acknowledged": true,
+          "acknowledged_minute": 80
+        }
+      ],
+      "unread_messages": 0,
+      "wired": {
+        "connected": true,
+        "signals": [
+          {
+            "node_id": "NODE_07",
+            "location": "STATION",
+            "strength": 0.5,
+            "confidence": 0.35,
+            "origin_source": "WIRED_MESSAGE",
+            "current_source": "WIRED_MESSAGE",
+            "verified": false,
+            "updated_minute": 80
+          }
+        ],
+        "digital_presences": []
+      }
+    }
+  },
+  {
+    "name": "haruto",
+    "at": [
+      -3,
+      0.91,
+      2
+    ],
+    "result": {
+      "speaker": "Haruto Senda",
+      "text": "«El otro día preguntabas por Ryoko. El profesor no estaba; te respondió una alumna desde la puerta.»",
+      "choices": [
+        {
+          "text": "¿Qué recuerdas de aquella noche?",
+          "action": "TALK",
+          "target": "RESIDENT_001",
+          "data": {
+            "choice": "NIGHT"
+          }
+        },
+        {
+          "text": "¿Con quién me viste hablar?",
+          "action": "TALK",
+          "target": "RESIDENT_001",
+          "data": {
+            "choice": "DETAIL"
+          }
+        }
+      ]
+    },
+    "mode": "dialogue",
+    "state": {
+      "schema_version": "0.1",
+      "minute": 90,
+      "player": {
+        "id": "PLAYER_1",
+        "name": "Player",
+        "faction": "UNALIGNED",
+        "location": "APARTMENT_DISTRICT",
+        "goal": "UNKNOWN",
+        "energy": 1.0
+      },
+      "navigation": {
+        "reachable_locations": [
+          "APARTMENT",
+          "ARCADE",
+          "BOOKSHOP",
+          "CAFE",
+          "GROCERY",
+          "IZAKAYA",
+          "NIGHTCLUB",
+          "SCHOOL",
+          "STATION",
+          "VIDEO_CLUB"
+        ]
+      },
+      "known_nodes": [
+        {
+          "id": "NODE_07",
+          "knowledge_confidence": 0.35,
+          "knowledge_source": "WIRED_MESSAGE",
+          "belief": {
+            "location": "STATION",
+            "strength": 0.5,
+            "confidence": 0.35,
+            "source": "WIRED_MESSAGE",
+            "updated_minute": 80
+          }
+        }
+      ],
+      "visible_actors": [
+        {
+          "id": "RESIDENT_001",
+          "name": "Haruto Senda",
+          "role": "Cartero",
+          "role_label": "Cartero",
+          "skills": {
+            "Orientación": 3,
+            "Observación": 1
+          },
+          "public_objective": "Entregar la última carta antes de volver a correos.",
+          "activity": "Busca el siguiente portal",
+          "slot": 0,
+          "patrol_step": 3,
+          "appearance": "worker",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_002",
+          "name": "Emi Ogawa",
+          "role": "Florista ambulante",
+          "role_label": "Florista ambulante",
+          "skills": {
+            "Jardinería": 4,
+            "Observación": 2
+          },
+          "public_objective": "Preparar ramos para los vecinos que vuelven del trabajo.",
+          "activity": "Retira hojas secas",
+          "slot": 1,
+          "patrol_step": 2,
+          "appearance": "apron",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_003",
+          "name": "Kenta Mizuno",
+          "role": "Repartidor",
+          "role_label": "Repartidor",
+          "skills": {
+            "Mecánica": 5,
+            "Observación": 3
+          },
+          "public_objective": "Localizar al vecino que espera una pieza de radio.",
+          "activity": "Busca el número del portal",
+          "slot": 2,
+          "patrol_step": 2,
+          "appearance": "worker",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_004",
+          "name": "Yui Sawada",
+          "role": "Amiga del barrio",
+          "role_label": "Amiga del barrio",
+          "skills": {
+            "Matemáticas": 3,
+            "Observación": 1
+          },
+          "public_objective": "Encontrar a alguien con quien repasar el examen de mañana.",
+          "activity": "Espera a una amiga",
+          "slot": 3,
+          "patrol_step": 3,
+          "appearance": "student",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_005",
+          "name": "Daichi Fujita",
+          "role": "Empleado de limpieza",
+          "role_label": "Empleado de limpieza",
+          "skills": {
+            "Mantenimiento": 4,
+            "Observación": 2
+          },
+          "public_objective": "Dejar limpio el paseo antes de que salgan los alumnos.",
+          "activity": "Se toma un descanso",
+          "slot": 4,
+          "patrol_step": 3,
+          "appearance": "worker",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_006",
+          "name": "Aiko Mori",
+          "role": "Vecina jubilada",
+          "role_label": "Vecina jubilada",
+          "skills": {
+            "Botánica": 5,
+            "Observación": 3
+          },
+          "public_objective": "Volver a caminar una vuelta completa al parque cada tarde.",
+          "activity": "Observa los árboles",
+          "slot": 5,
+          "patrol_step": 2,
+          "appearance": "elder",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_007",
+          "name": "Sota Hasegawa",
+          "role": "Fotógrafo aficionado",
+          "role_label": "Fotógrafo aficionado",
+          "skills": {
+            "Fotografía": 3,
+            "Observación": 1
+          },
+          "public_objective": "Terminar un carrete sobre los cables y tejados del barrio.",
+          "activity": "Revisa el contador del carrete",
+          "slot": 6,
+          "patrol_step": 3,
+          "appearance": "casual",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_008",
+          "name": "Mika Ueno",
+          "role": "Estudiante de dibujo",
+          "role_label": "Estudiante de dibujo",
+          "skills": {
+            "Dibujo": 4,
+            "Observación": 2
+          },
+          "public_objective": "Dibujar el parque para el mural de la escuela.",
+          "activity": "Busca otro ángulo",
+          "slot": 7,
+          "patrol_step": 2,
+          "appearance": "student",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_009",
+          "name": "Toru Nakahara",
+          "role": "Jardinero",
+          "role_label": "Jardinero",
+          "skills": {
+            "Jardinería": 5,
+            "Observación": 3
+          },
+          "public_objective": "Recuperar los arbustos dañados junto al camino.",
+          "activity": "Revisa la tierra",
+          "slot": 8,
+          "patrol_step": 2,
+          "appearance": "worker",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_010",
+          "name": "Chie Hayashi",
+          "role": "Cuidadora",
+          "role_label": "Cuidadora",
+          "skills": {
+            "Primeros auxilios": 3,
+            "Observación": 1
+          },
+          "public_objective": "Acompañar a los mayores durante el paseo de la tarde.",
+          "activity": "Descansa unos minutos",
+          "slot": 9,
+          "patrol_step": 3,
+          "appearance": "casual",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_011",
+          "name": "Riku Abe",
+          "role": "Amigo del colegio",
+          "role_label": "Amigo del colegio",
+          "skills": {
+            "Deporte": 4,
+            "Observación": 2
+          },
+          "public_objective": "Reunir compañeros para un partido después de clase.",
+          "activity": "Estira las piernas",
+          "slot": 10,
+          "patrol_step": 2,
+          "appearance": "student",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_012",
+          "name": "Naoko Ishida",
+          "role": "Vecina lectora",
+          "role_label": "Vecina lectora",
+          "skills": {
+            "Literatura": 5,
+            "Observación": 3
+          },
+          "public_objective": "Acabar un capítulo antes de que anochezca.",
+          "activity": "Marca una página",
+          "slot": 11,
+          "patrol_step": 2,
+          "appearance": "elder",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_013",
+          "name": "Shun Okada",
+          "role": "Músico callejero",
+          "role_label": "Músico callejero",
+          "skills": {
+            "Música": 3,
+            "Observación": 1
+          },
+          "public_objective": "Ensayar una canción antes de tocar en el bar.",
+          "activity": "Ensaya el estribillo",
+          "slot": 12,
+          "patrol_step": 3,
+          "appearance": "casual",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_014",
+          "name": "Fumiko Endo",
+          "role": "Tenderita jubilada",
+          "role_label": "Tenderita jubilada",
+          "skills": {
+            "Organización": 4,
+            "Observación": 2
+          },
+          "public_objective": "Recoger ideas para la fiesta de la asociación vecinal.",
+          "activity": "Ordena sus notas",
+          "slot": 13,
+          "patrol_step": 2,
+          "appearance": "elder",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_015",
+          "name": "Ren Takeda",
+          "role": "Ayudante de mantenimiento",
+          "role_label": "Ayudante de mantenimiento",
+          "skills": {
+            "Electricidad": 5,
+            "Observación": 3
+          },
+          "public_objective": "Anotar las farolas averiadas para el turno de mañana.",
+          "activity": "Comprueba su cuaderno",
+          "slot": 14,
+          "patrol_step": 1,
+          "appearance": "worker",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_016",
+          "name": "Mayu Kondo",
+          "role": "Vecina que pasea",
+          "role_label": "Vecina que pasea",
+          "skills": {
+            "Observación": 1
+          },
+          "public_objective": "Completar un paseo para despejarse tras estudiar.",
+          "activity": "Hace una pausa",
+          "slot": 15,
+          "patrol_step": 3,
+          "appearance": "casual",
+          "role_assignment": "CITY_PROVISIONAL"
+        }
+      ],
+      "character_sheets": {
+        "player": {
+          "id": "PLAYER_1",
+          "name": "Player",
+          "kind": "PLAYER",
+          "faction": "UNALIGNED",
+          "location": "APARTMENT_DISTRICT",
+          "energy": 1.0,
+          "known_nodes": 1,
+          "case_status": "UNSEEN",
+          "agency": "HUMAN_ONLY"
+        },
+        "visible_npcs": [
+          {
+            "id": "RESIDENT_001",
+            "name": "Haruto Senda",
+            "kind": "NPC",
+            "observed_location": "APARTMENT_DISTRICT",
+            "focus": "Busca el siguiente portal",
+            "role": "Cartero",
+            "role_label": "Cartero",
+            "skills": {
+              "Orientación": 3,
+              "Observación": 1
+            },
+            "public_objective": "Entregar la última carta antes de volver a correos.",
+            "activity": "Busca el siguiente portal",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_002",
+            "name": "Emi Ogawa",
+            "kind": "NPC",
+            "observed_location": "APARTMENT_DISTRICT",
+            "focus": "Retira hojas secas",
+            "role": "Florista ambulante",
+            "role_label": "Florista ambulante",
+            "skills": {
+              "Jardinería": 4,
+              "Observación": 2
+            },
+            "public_objective": "Preparar ramos para los vecinos que vuelven del trabajo.",
+            "activity": "Retira hojas secas",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_003",
+            "name": "Kenta Mizuno",
+            "kind": "NPC",
+            "observed_location": "APARTMENT_DISTRICT",
+            "focus": "Busca el número del portal",
+            "role": "Repartidor",
+            "role_label": "Repartidor",
+            "skills": {
+              "Mecánica": 5,
+              "Observación": 3
+            },
+            "public_objective": "Localizar al vecino que espera una pieza de radio.",
+            "activity": "Busca el número del portal",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_004",
+            "name": "Yui Sawada",
+            "kind": "NPC",
+            "observed_location": "APARTMENT_DISTRICT",
+            "focus": "Espera a una amiga",
+            "role": "Amiga del barrio",
+            "role_label": "Amiga del barrio",
+            "skills": {
+              "Matemáticas": 3,
+              "Observación": 1
+            },
+            "public_objective": "Encontrar a alguien con quien repasar el examen de mañana.",
+            "activity": "Espera a una amiga",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_005",
+            "name": "Daichi Fujita",
+            "kind": "NPC",
+            "observed_location": "APARTMENT_DISTRICT",
+            "focus": "Se toma un descanso",
+            "role": "Empleado de limpieza",
+            "role_label": "Empleado de limpieza",
+            "skills": {
+              "Mantenimiento": 4,
+              "Observación": 2
+            },
+            "public_objective": "Dejar limpio el paseo antes de que salgan los alumnos.",
+            "activity": "Se toma un descanso",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_006",
+            "name": "Aiko Mori",
+            "kind": "NPC",
+            "observed_location": "APARTMENT_DISTRICT",
+            "focus": "Observa los árboles",
+            "role": "Vecina jubilada",
+            "role_label": "Vecina jubilada",
+            "skills": {
+              "Botánica": 5,
+              "Observación": 3
+            },
+            "public_objective": "Volver a caminar una vuelta completa al parque cada tarde.",
+            "activity": "Observa los árboles",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_007",
+            "name": "Sota Hasegawa",
+            "kind": "NPC",
+            "observed_location": "APARTMENT_DISTRICT",
+            "focus": "Revisa el contador del carrete",
+            "role": "Fotógrafo aficionado",
+            "role_label": "Fotógrafo aficionado",
+            "skills": {
+              "Fotografía": 3,
+              "Observación": 1
+            },
+            "public_objective": "Terminar un carrete sobre los cables y tejados del barrio.",
+            "activity": "Revisa el contador del carrete",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_008",
+            "name": "Mika Ueno",
+            "kind": "NPC",
+            "observed_location": "APARTMENT_DISTRICT",
+            "focus": "Busca otro ángulo",
+            "role": "Estudiante de dibujo",
+            "role_label": "Estudiante de dibujo",
+            "skills": {
+              "Dibujo": 4,
+              "Observación": 2
+            },
+            "public_objective": "Dibujar el parque para el mural de la escuela.",
+            "activity": "Busca otro ángulo",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_009",
+            "name": "Toru Nakahara",
+            "kind": "NPC",
+            "observed_location": "APARTMENT_DISTRICT",
+            "focus": "Revisa la tierra",
+            "role": "Jardinero",
+            "role_label": "Jardinero",
+            "skills": {
+              "Jardinería": 5,
+              "Observación": 3
+            },
+            "public_objective": "Recuperar los arbustos dañados junto al camino.",
+            "activity": "Revisa la tierra",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_010",
+            "name": "Chie Hayashi",
+            "kind": "NPC",
+            "observed_location": "APARTMENT_DISTRICT",
+            "focus": "Descansa unos minutos",
+            "role": "Cuidadora",
+            "role_label": "Cuidadora",
+            "skills": {
+              "Primeros auxilios": 3,
+              "Observación": 1
+            },
+            "public_objective": "Acompañar a los mayores durante el paseo de la tarde.",
+            "activity": "Descansa unos minutos",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_011",
+            "name": "Riku Abe",
+            "kind": "NPC",
+            "observed_location": "APARTMENT_DISTRICT",
+            "focus": "Estira las piernas",
+            "role": "Amigo del colegio",
+            "role_label": "Amigo del colegio",
+            "skills": {
+              "Deporte": 4,
+              "Observación": 2
+            },
+            "public_objective": "Reunir compañeros para un partido después de clase.",
+            "activity": "Estira las piernas",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_012",
+            "name": "Naoko Ishida",
+            "kind": "NPC",
+            "observed_location": "APARTMENT_DISTRICT",
+            "focus": "Marca una página",
+            "role": "Vecina lectora",
+            "role_label": "Vecina lectora",
+            "skills": {
+              "Literatura": 5,
+              "Observación": 3
+            },
+            "public_objective": "Acabar un capítulo antes de que anochezca.",
+            "activity": "Marca una página",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_013",
+            "name": "Shun Okada",
+            "kind": "NPC",
+            "observed_location": "APARTMENT_DISTRICT",
+            "focus": "Ensaya el estribillo",
+            "role": "Músico callejero",
+            "role_label": "Músico callejero",
+            "skills": {
+              "Música": 3,
+              "Observación": 1
+            },
+            "public_objective": "Ensayar una canción antes de tocar en el bar.",
+            "activity": "Ensaya el estribillo",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_014",
+            "name": "Fumiko Endo",
+            "kind": "NPC",
+            "observed_location": "APARTMENT_DISTRICT",
+            "focus": "Ordena sus notas",
+            "role": "Tenderita jubilada",
+            "role_label": "Tenderita jubilada",
+            "skills": {
+              "Organización": 4,
+              "Observación": 2
+            },
+            "public_objective": "Recoger ideas para la fiesta de la asociación vecinal.",
+            "activity": "Ordena sus notas",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_015",
+            "name": "Ren Takeda",
+            "kind": "NPC",
+            "observed_location": "APARTMENT_DISTRICT",
+            "focus": "Comprueba su cuaderno",
+            "role": "Ayudante de mantenimiento",
+            "role_label": "Ayudante de mantenimiento",
+            "skills": {
+              "Electricidad": 5,
+              "Observación": 3
+            },
+            "public_objective": "Anotar las farolas averiadas para el turno de mañana.",
+            "activity": "Comprueba su cuaderno",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_016",
+            "name": "Mayu Kondo",
+            "kind": "NPC",
+            "observed_location": "APARTMENT_DISTRICT",
+            "focus": "Hace una pausa",
+            "role": "Vecina que pasea",
+            "role_label": "Vecina que pasea",
+            "skills": {
+              "Observación": 1
+            },
+            "public_objective": "Completar un paseo para despejarse tras estudiar.",
+            "activity": "Hace una pausa",
+            "role_assignment": "CITY_PROVISIONAL"
+          }
+        ]
+      },
+      "station_case": {
+        "id": "STATION_ECHO_07",
+        "title": "El pulso ausente",
+        "status": "UNSEEN",
+        "resolution": null,
+        "summary": "Investiga NODE_07 en la estacion para buscar el rastro.",
+        "witness_count": 0,
+        "responses": []
+      },
+      "prologue": {
+        "enabled": true,
+        "stage": "CONNECTED",
+        "hint": "La conexión cambió algo. Quizá ahora puedas descubrir qué."
+      },
+      "chapter_one": {
+        "active": true,
+        "title": "Ya habías estado aquí",
+        "started_minute": 80,
+        "connection_minute": 80,
+        "decision": null,
+        "hypothesis": "",
+        "hypothesis_status": "UNVERIFIED",
+        "evidence": [
+          {
+            "id": "RETURN_MESSAGE",
+            "title": "Has vuelto",
+            "kind": "MESSAGE",
+            "source_id": "UNKNOWN_WIRED",
+            "source_label": "Identidad desconocida · Wired",
+            "text": "Has vuelto.",
+            "acquired_minute": 80,
+            "claimed_time": "Recibido al abrir este capítulo, minuto 80",
+            "event_id": null
+          },
+          {
+            "id": "NIGHT_SIGHTING",
+            "title": "Haruto te sitúa en la escuela",
+            "kind": "TESTIMONY",
+            "source_id": "RESIDENT_001",
+            "source_label": "Haruto Senda",
+            "text": "«Ya habías estado aquí. Te vi en la escuela anoche, cuando todo estaba oscuro. Llevabas un papel doblado. O al menos... pensé que eras tú.»",
+            "acquired_minute": 90,
+            "claimed_time": "La noche anterior, según Haruto",
+            "event_id": null
+          },
+          {
+            "id": "WRONG_DETAIL",
+            "title": "Una visita recordada de otra manera",
+            "kind": "TESTIMONY",
+            "source_id": "RESIDENT_001",
+            "source_label": "Haruto Senda",
+            "text": "«El otro día preguntabas por Ryoko. El profesor no estaba; te respondió una alumna desde la puerta.»",
+            "acquired_minute": 90,
+            "claimed_time": "La visita del prólogo, según Haruto",
+            "event_id": null
+          },
+          {
+            "id": "MY_VISIT",
+            "title": "Mi conversación con el profesor",
+            "kind": "OBSERVATION",
+            "source_id": "PLAYER_1",
+            "source_label": "Tu experiencia conservada",
+            "text": "Pregunté por el antiguo alumno y fue el profesor quien me dijo el nombre de Ryoko. Estaba presente.",
+            "acquired_minute": 90,
+            "claimed_time": "Prólogo · minuto 30",
+            "event_id": 11
+          }
+        ],
+        "links": [],
+        "contradiction_linked": false,
+        "characters": [
+          "RESIDENT_001",
+          "RESIDENT_006",
+          "PROFESSOR",
+          "RYOKO"
+        ],
+        "notification": "Has vuelto"
+      },
+      "situations": [],
+      "interaction": null,
+      "outgoing_interaction": null,
+      "messages": [
+        {
+          "id": "MSG_BOOTSTRAP_001",
+          "sender": "unknown@wired",
+          "subject": "NO SUBJECT",
+          "body": "NO ESTOY MUERTA.\n\nSOLO DEJÉ DE ESTAR AHÍ.",
+          "created_minute": 0,
+          "read": true,
+          "acknowledged": true,
+          "acknowledged_minute": 80
+        }
+      ],
+      "unread_messages": 0,
+      "wired": {
+        "connected": true,
+        "signals": [
+          {
+            "node_id": "NODE_07",
+            "location": "STATION",
+            "strength": 0.5,
+            "confidence": 0.35,
+            "origin_source": "WIRED_MESSAGE",
+            "current_source": "WIRED_MESSAGE",
+            "verified": false,
+            "updated_minute": 80
+          }
+        ],
+        "digital_presences": []
+      }
+    }
+  },
+  {
+    "name": "aiko",
+    "at": [
+      10.5,
+      0.91,
+      -28
+    ],
+    "result": {
+      "speaker": "Aiko Mori",
+      "text": "«Miré el reloj exterior del colegio, no el mío. Lleva días marcando lo mismo. No sé cuánto cambia eso lo que oí.»",
+      "choices": [
+        {
+          "text": "Preguntarle en voz baja por la escuela.",
+          "action": "TALK",
+          "target": "RESIDENT_006",
+          "data": {
+            "choice": "PRIVATE"
+          }
+        },
+        {
+          "text": "¿Cómo sabes qué hora era?",
+          "action": "TALK",
+          "target": "RESIDENT_006",
+          "data": {
+            "choice": "CLOCK"
+          }
+        },
+        {
+          "text": "Repetir su testimonio delante de los vecinos.",
+          "action": "TALK",
+          "target": "RESIDENT_006",
+          "data": {
+            "choice": "PUBLIC"
+          }
+        }
+      ]
+    },
+    "mode": "dialogue",
+    "state": {
+      "schema_version": "0.1",
+      "minute": 90,
+      "player": {
+        "id": "PLAYER_1",
+        "name": "Player",
+        "faction": "UNALIGNED",
+        "location": "APARTMENT_DISTRICT",
+        "goal": "UNKNOWN",
+        "energy": 1.0
+      },
+      "navigation": {
+        "reachable_locations": [
+          "APARTMENT",
+          "ARCADE",
+          "BOOKSHOP",
+          "CAFE",
+          "GROCERY",
+          "IZAKAYA",
+          "NIGHTCLUB",
+          "SCHOOL",
+          "STATION",
+          "VIDEO_CLUB"
+        ]
+      },
+      "known_nodes": [
+        {
+          "id": "NODE_07",
+          "knowledge_confidence": 0.35,
+          "knowledge_source": "WIRED_MESSAGE",
+          "belief": {
+            "location": "STATION",
+            "strength": 0.5,
+            "confidence": 0.35,
+            "source": "WIRED_MESSAGE",
+            "updated_minute": 80
+          }
+        }
+      ],
+      "visible_actors": [
+        {
+          "id": "RESIDENT_001",
+          "name": "Haruto Senda",
+          "role": "Cartero",
+          "role_label": "Cartero",
+          "skills": {
+            "Orientación": 3,
+            "Observación": 1
+          },
+          "public_objective": "Entregar la última carta antes de volver a correos.",
+          "activity": "Busca el siguiente portal",
+          "slot": 0,
+          "patrol_step": 3,
+          "appearance": "worker",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_002",
+          "name": "Emi Ogawa",
+          "role": "Florista ambulante",
+          "role_label": "Florista ambulante",
+          "skills": {
+            "Jardinería": 4,
+            "Observación": 2
+          },
+          "public_objective": "Preparar ramos para los vecinos que vuelven del trabajo.",
+          "activity": "Retira hojas secas",
+          "slot": 1,
+          "patrol_step": 2,
+          "appearance": "apron",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_003",
+          "name": "Kenta Mizuno",
+          "role": "Repartidor",
+          "role_label": "Repartidor",
+          "skills": {
+            "Mecánica": 5,
+            "Observación": 3
+          },
+          "public_objective": "Localizar al vecino que espera una pieza de radio.",
+          "activity": "Busca el número del portal",
+          "slot": 2,
+          "patrol_step": 2,
+          "appearance": "worker",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_004",
+          "name": "Yui Sawada",
+          "role": "Amiga del barrio",
+          "role_label": "Amiga del barrio",
+          "skills": {
+            "Matemáticas": 3,
+            "Observación": 1
+          },
+          "public_objective": "Encontrar a alguien con quien repasar el examen de mañana.",
+          "activity": "Espera a una amiga",
+          "slot": 3,
+          "patrol_step": 3,
+          "appearance": "student",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_005",
+          "name": "Daichi Fujita",
+          "role": "Empleado de limpieza",
+          "role_label": "Empleado de limpieza",
+          "skills": {
+            "Mantenimiento": 4,
+            "Observación": 2
+          },
+          "public_objective": "Dejar limpio el paseo antes de que salgan los alumnos.",
+          "activity": "Se toma un descanso",
+          "slot": 4,
+          "patrol_step": 3,
+          "appearance": "worker",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_006",
+          "name": "Aiko Mori",
+          "role": "Vecina jubilada",
+          "role_label": "Vecina jubilada",
+          "skills": {
+            "Botánica": 5,
+            "Observación": 3
+          },
+          "public_objective": "Volver a caminar una vuelta completa al parque cada tarde.",
+          "activity": "Observa los árboles",
+          "slot": 5,
+          "patrol_step": 2,
+          "appearance": "elder",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_007",
+          "name": "Sota Hasegawa",
+          "role": "Fotógrafo aficionado",
+          "role_label": "Fotógrafo aficionado",
+          "skills": {
+            "Fotografía": 3,
+            "Observación": 1
+          },
+          "public_objective": "Terminar un carrete sobre los cables y tejados del barrio.",
+          "activity": "Revisa el contador del carrete",
+          "slot": 6,
+          "patrol_step": 3,
+          "appearance": "casual",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_008",
+          "name": "Mika Ueno",
+          "role": "Estudiante de dibujo",
+          "role_label": "Estudiante de dibujo",
+          "skills": {
+            "Dibujo": 4,
+            "Observación": 2
+          },
+          "public_objective": "Dibujar el parque para el mural de la escuela.",
+          "activity": "Busca otro ángulo",
+          "slot": 7,
+          "patrol_step": 2,
+          "appearance": "student",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_009",
+          "name": "Toru Nakahara",
+          "role": "Jardinero",
+          "role_label": "Jardinero",
+          "skills": {
+            "Jardinería": 5,
+            "Observación": 3
+          },
+          "public_objective": "Recuperar los arbustos dañados junto al camino.",
+          "activity": "Revisa la tierra",
+          "slot": 8,
+          "patrol_step": 2,
+          "appearance": "worker",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_010",
+          "name": "Chie Hayashi",
+          "role": "Cuidadora",
+          "role_label": "Cuidadora",
+          "skills": {
+            "Primeros auxilios": 3,
+            "Observación": 1
+          },
+          "public_objective": "Acompañar a los mayores durante el paseo de la tarde.",
+          "activity": "Descansa unos minutos",
+          "slot": 9,
+          "patrol_step": 3,
+          "appearance": "casual",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_011",
+          "name": "Riku Abe",
+          "role": "Amigo del colegio",
+          "role_label": "Amigo del colegio",
+          "skills": {
+            "Deporte": 4,
+            "Observación": 2
+          },
+          "public_objective": "Reunir compañeros para un partido después de clase.",
+          "activity": "Estira las piernas",
+          "slot": 10,
+          "patrol_step": 2,
+          "appearance": "student",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_012",
+          "name": "Naoko Ishida",
+          "role": "Vecina lectora",
+          "role_label": "Vecina lectora",
+          "skills": {
+            "Literatura": 5,
+            "Observación": 3
+          },
+          "public_objective": "Acabar un capítulo antes de que anochezca.",
+          "activity": "Marca una página",
+          "slot": 11,
+          "patrol_step": 2,
+          "appearance": "elder",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_013",
+          "name": "Shun Okada",
+          "role": "Músico callejero",
+          "role_label": "Músico callejero",
+          "skills": {
+            "Música": 3,
+            "Observación": 1
+          },
+          "public_objective": "Ensayar una canción antes de tocar en el bar.",
+          "activity": "Ensaya el estribillo",
+          "slot": 12,
+          "patrol_step": 3,
+          "appearance": "casual",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_014",
+          "name": "Fumiko Endo",
+          "role": "Tenderita jubilada",
+          "role_label": "Tenderita jubilada",
+          "skills": {
+            "Organización": 4,
+            "Observación": 2
+          },
+          "public_objective": "Recoger ideas para la fiesta de la asociación vecinal.",
+          "activity": "Ordena sus notas",
+          "slot": 13,
+          "patrol_step": 2,
+          "appearance": "elder",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_015",
+          "name": "Ren Takeda",
+          "role": "Ayudante de mantenimiento",
+          "role_label": "Ayudante de mantenimiento",
+          "skills": {
+            "Electricidad": 5,
+            "Observación": 3
+          },
+          "public_objective": "Anotar las farolas averiadas para el turno de mañana.",
+          "activity": "Comprueba su cuaderno",
+          "slot": 14,
+          "patrol_step": 1,
+          "appearance": "worker",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_016",
+          "name": "Mayu Kondo",
+          "role": "Vecina que pasea",
+          "role_label": "Vecina que pasea",
+          "skills": {
+            "Observación": 1
+          },
+          "public_objective": "Completar un paseo para despejarse tras estudiar.",
+          "activity": "Hace una pausa",
+          "slot": 15,
+          "patrol_step": 3,
+          "appearance": "casual",
+          "role_assignment": "CITY_PROVISIONAL"
+        }
+      ],
+      "character_sheets": {
+        "player": {
+          "id": "PLAYER_1",
+          "name": "Player",
+          "kind": "PLAYER",
+          "faction": "UNALIGNED",
+          "location": "APARTMENT_DISTRICT",
+          "energy": 1.0,
+          "known_nodes": 1,
+          "case_status": "UNSEEN",
+          "agency": "HUMAN_ONLY"
+        },
+        "visible_npcs": [
+          {
+            "id": "RESIDENT_001",
+            "name": "Haruto Senda",
+            "kind": "NPC",
+            "observed_location": "APARTMENT_DISTRICT",
+            "focus": "Busca el siguiente portal",
+            "role": "Cartero",
+            "role_label": "Cartero",
+            "skills": {
+              "Orientación": 3,
+              "Observación": 1
+            },
+            "public_objective": "Entregar la última carta antes de volver a correos.",
+            "activity": "Busca el siguiente portal",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_002",
+            "name": "Emi Ogawa",
+            "kind": "NPC",
+            "observed_location": "APARTMENT_DISTRICT",
+            "focus": "Retira hojas secas",
+            "role": "Florista ambulante",
+            "role_label": "Florista ambulante",
+            "skills": {
+              "Jardinería": 4,
+              "Observación": 2
+            },
+            "public_objective": "Preparar ramos para los vecinos que vuelven del trabajo.",
+            "activity": "Retira hojas secas",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_003",
+            "name": "Kenta Mizuno",
+            "kind": "NPC",
+            "observed_location": "APARTMENT_DISTRICT",
+            "focus": "Busca el número del portal",
+            "role": "Repartidor",
+            "role_label": "Repartidor",
+            "skills": {
+              "Mecánica": 5,
+              "Observación": 3
+            },
+            "public_objective": "Localizar al vecino que espera una pieza de radio.",
+            "activity": "Busca el número del portal",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_004",
+            "name": "Yui Sawada",
+            "kind": "NPC",
+            "observed_location": "APARTMENT_DISTRICT",
+            "focus": "Espera a una amiga",
+            "role": "Amiga del barrio",
+            "role_label": "Amiga del barrio",
+            "skills": {
+              "Matemáticas": 3,
+              "Observación": 1
+            },
+            "public_objective": "Encontrar a alguien con quien repasar el examen de mañana.",
+            "activity": "Espera a una amiga",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_005",
+            "name": "Daichi Fujita",
+            "kind": "NPC",
+            "observed_location": "APARTMENT_DISTRICT",
+            "focus": "Se toma un descanso",
+            "role": "Empleado de limpieza",
+            "role_label": "Empleado de limpieza",
+            "skills": {
+              "Mantenimiento": 4,
+              "Observación": 2
+            },
+            "public_objective": "Dejar limpio el paseo antes de que salgan los alumnos.",
+            "activity": "Se toma un descanso",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_006",
+            "name": "Aiko Mori",
+            "kind": "NPC",
+            "observed_location": "APARTMENT_DISTRICT",
+            "focus": "Observa los árboles",
+            "role": "Vecina jubilada",
+            "role_label": "Vecina jubilada",
+            "skills": {
+              "Botánica": 5,
+              "Observación": 3
+            },
+            "public_objective": "Volver a caminar una vuelta completa al parque cada tarde.",
+            "activity": "Observa los árboles",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_007",
+            "name": "Sota Hasegawa",
+            "kind": "NPC",
+            "observed_location": "APARTMENT_DISTRICT",
+            "focus": "Revisa el contador del carrete",
+            "role": "Fotógrafo aficionado",
+            "role_label": "Fotógrafo aficionado",
+            "skills": {
+              "Fotografía": 3,
+              "Observación": 1
+            },
+            "public_objective": "Terminar un carrete sobre los cables y tejados del barrio.",
+            "activity": "Revisa el contador del carrete",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_008",
+            "name": "Mika Ueno",
+            "kind": "NPC",
+            "observed_location": "APARTMENT_DISTRICT",
+            "focus": "Busca otro ángulo",
+            "role": "Estudiante de dibujo",
+            "role_label": "Estudiante de dibujo",
+            "skills": {
+              "Dibujo": 4,
+              "Observación": 2
+            },
+            "public_objective": "Dibujar el parque para el mural de la escuela.",
+            "activity": "Busca otro ángulo",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_009",
+            "name": "Toru Nakahara",
+            "kind": "NPC",
+            "observed_location": "APARTMENT_DISTRICT",
+            "focus": "Revisa la tierra",
+            "role": "Jardinero",
+            "role_label": "Jardinero",
+            "skills": {
+              "Jardinería": 5,
+              "Observación": 3
+            },
+            "public_objective": "Recuperar los arbustos dañados junto al camino.",
+            "activity": "Revisa la tierra",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_010",
+            "name": "Chie Hayashi",
+            "kind": "NPC",
+            "observed_location": "APARTMENT_DISTRICT",
+            "focus": "Descansa unos minutos",
+            "role": "Cuidadora",
+            "role_label": "Cuidadora",
+            "skills": {
+              "Primeros auxilios": 3,
+              "Observación": 1
+            },
+            "public_objective": "Acompañar a los mayores durante el paseo de la tarde.",
+            "activity": "Descansa unos minutos",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_011",
+            "name": "Riku Abe",
+            "kind": "NPC",
+            "observed_location": "APARTMENT_DISTRICT",
+            "focus": "Estira las piernas",
+            "role": "Amigo del colegio",
+            "role_label": "Amigo del colegio",
+            "skills": {
+              "Deporte": 4,
+              "Observación": 2
+            },
+            "public_objective": "Reunir compañeros para un partido después de clase.",
+            "activity": "Estira las piernas",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_012",
+            "name": "Naoko Ishida",
+            "kind": "NPC",
+            "observed_location": "APARTMENT_DISTRICT",
+            "focus": "Marca una página",
+            "role": "Vecina lectora",
+            "role_label": "Vecina lectora",
+            "skills": {
+              "Literatura": 5,
+              "Observación": 3
+            },
+            "public_objective": "Acabar un capítulo antes de que anochezca.",
+            "activity": "Marca una página",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_013",
+            "name": "Shun Okada",
+            "kind": "NPC",
+            "observed_location": "APARTMENT_DISTRICT",
+            "focus": "Ensaya el estribillo",
+            "role": "Músico callejero",
+            "role_label": "Músico callejero",
+            "skills": {
+              "Música": 3,
+              "Observación": 1
+            },
+            "public_objective": "Ensayar una canción antes de tocar en el bar.",
+            "activity": "Ensaya el estribillo",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_014",
+            "name": "Fumiko Endo",
+            "kind": "NPC",
+            "observed_location": "APARTMENT_DISTRICT",
+            "focus": "Ordena sus notas",
+            "role": "Tenderita jubilada",
+            "role_label": "Tenderita jubilada",
+            "skills": {
+              "Organización": 4,
+              "Observación": 2
+            },
+            "public_objective": "Recoger ideas para la fiesta de la asociación vecinal.",
+            "activity": "Ordena sus notas",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_015",
+            "name": "Ren Takeda",
+            "kind": "NPC",
+            "observed_location": "APARTMENT_DISTRICT",
+            "focus": "Comprueba su cuaderno",
+            "role": "Ayudante de mantenimiento",
+            "role_label": "Ayudante de mantenimiento",
+            "skills": {
+              "Electricidad": 5,
+              "Observación": 3
+            },
+            "public_objective": "Anotar las farolas averiadas para el turno de mañana.",
+            "activity": "Comprueba su cuaderno",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_016",
+            "name": "Mayu Kondo",
+            "kind": "NPC",
+            "observed_location": "APARTMENT_DISTRICT",
+            "focus": "Hace una pausa",
+            "role": "Vecina que pasea",
+            "role_label": "Vecina que pasea",
+            "skills": {
+              "Observación": 1
+            },
+            "public_objective": "Completar un paseo para despejarse tras estudiar.",
+            "activity": "Hace una pausa",
+            "role_assignment": "CITY_PROVISIONAL"
+          }
+        ]
+      },
+      "station_case": {
+        "id": "STATION_ECHO_07",
+        "title": "El pulso ausente",
+        "status": "UNSEEN",
+        "resolution": null,
+        "summary": "Investiga NODE_07 en la estacion para buscar el rastro.",
+        "witness_count": 0,
+        "responses": []
+      },
+      "prologue": {
+        "enabled": true,
+        "stage": "CONNECTED",
+        "hint": "La conexión cambió algo. Quizá ahora puedas descubrir qué."
+      },
+      "chapter_one": {
+        "active": true,
+        "title": "Ya habías estado aquí",
+        "started_minute": 80,
+        "connection_minute": 80,
+        "decision": null,
+        "hypothesis": "",
+        "hypothesis_status": "UNVERIFIED",
+        "evidence": [
+          {
+            "id": "RETURN_MESSAGE",
+            "title": "Has vuelto",
+            "kind": "MESSAGE",
+            "source_id": "UNKNOWN_WIRED",
+            "source_label": "Identidad desconocida · Wired",
+            "text": "Has vuelto.",
+            "acquired_minute": 80,
+            "claimed_time": "Recibido al abrir este capítulo, minuto 80",
+            "event_id": null
+          },
+          {
+            "id": "NIGHT_SIGHTING",
+            "title": "Haruto te sitúa en la escuela",
+            "kind": "TESTIMONY",
+            "source_id": "RESIDENT_001",
+            "source_label": "Haruto Senda",
+            "text": "«Ya habías estado aquí. Te vi en la escuela anoche, cuando todo estaba oscuro. Llevabas un papel doblado. O al menos... pensé que eras tú.»",
+            "acquired_minute": 90,
+            "claimed_time": "La noche anterior, según Haruto",
+            "event_id": null
+          },
+          {
+            "id": "WRONG_DETAIL",
+            "title": "Una visita recordada de otra manera",
+            "kind": "TESTIMONY",
+            "source_id": "RESIDENT_001",
+            "source_label": "Haruto Senda",
+            "text": "«El otro día preguntabas por Ryoko. El profesor no estaba; te respondió una alumna desde la puerta.»",
+            "acquired_minute": 90,
+            "claimed_time": "La visita del prólogo, según Haruto",
+            "event_id": null
+          },
+          {
+            "id": "MY_VISIT",
+            "title": "Mi conversación con el profesor",
+            "kind": "OBSERVATION",
+            "source_id": "PLAYER_1",
+            "source_label": "Tu experiencia conservada",
+            "text": "Pregunté por el antiguo alumno y fue el profesor quien me dijo el nombre de Ryoko. Estaba presente.",
+            "acquired_minute": 90,
+            "claimed_time": "Prólogo · minuto 30",
+            "event_id": 11
+          },
+          {
+            "id": "AIKO_PRIVATE",
+            "title": "Aiko: un cerrojo y una silueta",
+            "kind": "TESTIMONY",
+            "source_id": "RESIDENT_006",
+            "source_label": "Aiko Mori · conversación privada",
+            "text": "Baja la voz. «Oí un cerrojo y vi una silueta junto al pabellón. El reloj marcaba 22:10. No le vi la cara. No pongas mi nombre en boca de todos.»",
+            "acquired_minute": 90,
+            "claimed_time": "22:10 según el reloj que miró Aiko",
+            "event_id": null
+          },
+          {
+            "id": "CLOCK_ACCOUNT",
+            "title": "La hora de Aiko",
+            "kind": "TESTIMONY",
+            "source_id": "RESIDENT_006",
+            "source_label": "Aiko Mori",
+            "text": "«Miré el reloj exterior del colegio, no el mío. Lleva días marcando lo mismo. No sé cuánto cambia eso lo que oí.»",
+            "acquired_minute": 90,
+            "claimed_time": "Fecha no comprobada",
+            "event_id": null
+          }
+        ],
+        "links": [],
+        "contradiction_linked": false,
+        "characters": [
+          "RESIDENT_001",
+          "RESIDENT_006",
+          "PROFESSOR",
+          "RYOKO"
+        ],
+        "notification": "Has vuelto"
+      },
+      "situations": [],
+      "interaction": null,
+      "outgoing_interaction": null,
+      "messages": [
+        {
+          "id": "MSG_BOOTSTRAP_001",
+          "sender": "unknown@wired",
+          "subject": "NO SUBJECT",
+          "body": "NO ESTOY MUERTA.\n\nSOLO DEJÉ DE ESTAR AHÍ.",
+          "created_minute": 0,
+          "read": true,
+          "acknowledged": true,
+          "acknowledged_minute": 80
+        }
+      ],
+      "unread_messages": 0,
+      "wired": {
+        "connected": true,
+        "signals": [
+          {
+            "node_id": "NODE_07",
+            "location": "STATION",
+            "strength": 0.5,
+            "confidence": 0.35,
+            "origin_source": "WIRED_MESSAGE",
+            "current_source": "WIRED_MESSAGE",
+            "verified": false,
+            "updated_minute": 80
+          }
+        ],
+        "digital_presences": []
+      }
+    }
+  },
+  {
+    "name": "school-sheet",
+    "at": [
+      -5.2,
+      0.91,
+      0.7
+    ],
+    "result": {
+      "speaker": "Parte en el pasillo",
+      "text": "PARTE DE CIERRE · NOCHE ANTERIOR\nPabellón B cerrado. Llave entregada. Firma: profesor de informática.\nLa hoja está sujeta con una grapa nueva. El texto declara un cierre; no demuestra que nadie entrara después.",
+      "choices": []
+    },
+    "mode": "scene",
+    "state": {
+      "schema_version": "0.1",
+      "minute": 100,
+      "player": {
+        "id": "PLAYER_1",
+        "name": "Player",
+        "faction": "UNALIGNED",
+        "location": "SCHOOL",
+        "goal": "UNKNOWN",
+        "energy": 1.0
+      },
+      "navigation": {
+        "reachable_locations": [
+          "APARTMENT_DISTRICT",
+          "SCHOOL_LAB"
+        ]
+      },
+      "known_nodes": [
+        {
+          "id": "NODE_07",
+          "knowledge_confidence": 0.35,
+          "knowledge_source": "WIRED_MESSAGE",
+          "belief": {
+            "location": "STATION",
+            "strength": 0.5,
+            "confidence": 0.35,
+            "source": "WIRED_MESSAGE",
+            "updated_minute": 80
+          }
+        }
+      ],
+      "visible_actors": [
+        {
+          "id": "RESIDENT_017",
+          "name": "Masao Kuroda",
+          "role": "Profesor de matemáticas",
+          "role_label": "Profesor de matemáticas",
+          "skills": {
+            "Matemáticas": 4,
+            "Observación": 2
+          },
+          "public_objective": "Preparar problemas para el examen de recuperación.",
+          "activity": "Corrige sus notas",
+          "slot": 0,
+          "patrol_step": 3,
+          "appearance": "teacher",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_018",
+          "name": "Sachiko Arai",
+          "role": "Profesora de literatura",
+          "role_label": "Profesora de literatura",
+          "skills": {
+            "Literatura": 5,
+            "Observación": 3
+          },
+          "public_objective": "Elegir textos para la revista del colegio.",
+          "activity": "Ordena trabajos",
+          "slot": 1,
+          "patrol_step": 2,
+          "appearance": "teacher",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_019",
+          "name": "Hideo Sakamoto",
+          "role": "Profesor de ciencias",
+          "role_label": "Profesor de ciencias",
+          "skills": {
+            "Ciencias": 3,
+            "Observación": 1
+          },
+          "public_objective": "Conseguir material para la práctica de electricidad.",
+          "activity": "Revisa el inventario",
+          "slot": 2,
+          "patrol_step": 0,
+          "appearance": "teacher",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_020",
+          "name": "Yoko Matsuda",
+          "role": "Orientadora",
+          "role_label": "Orientadora",
+          "skills": {
+            "Escucha": 4,
+            "Observación": 2
+          },
+          "public_objective": "Encontrar una actividad para alumnos que se sienten aislados.",
+          "activity": "Espera a los alumnos",
+          "slot": 3,
+          "patrol_step": 2,
+          "appearance": "teacher",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_021",
+          "name": "Akira Shimizu",
+          "role": "Conserje",
+          "role_label": "Conserje",
+          "skills": {
+            "Mantenimiento": 5,
+            "Observación": 3
+          },
+          "public_objective": "Revisar las aulas antes del cierre.",
+          "activity": "Anota una avería",
+          "slot": 4,
+          "patrol_step": 2,
+          "appearance": "worker",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_022",
+          "name": "Nana Sugimoto",
+          "role": "Amiga de clase",
+          "role_label": "Amiga de clase",
+          "skills": {
+            "Literatura": 3,
+            "Observación": 1
+          },
+          "public_objective": "Entregar a tiempo el trabajo de literatura.",
+          "activity": "Lee sus apuntes",
+          "slot": 5,
+          "patrol_step": 0,
+          "appearance": "student",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_023",
+          "name": "Yuji Tanaka",
+          "role": "Alumno del club de radio",
+          "role_label": "Alumno del club de radio",
+          "skills": {
+            "Electrónica": 4,
+            "Observación": 2
+          },
+          "public_objective": "Convencer a alguien para reparar la radio del club.",
+          "activity": "Anota componentes",
+          "slot": 6,
+          "patrol_step": 2,
+          "appearance": "student",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_024",
+          "name": "Kaori Nishida",
+          "role": "Delegada de clase",
+          "role_label": "Delegada de clase",
+          "skills": {
+            "Organización": 5,
+            "Observación": 3
+          },
+          "public_objective": "Reunir propuestas para la excursión escolar.",
+          "activity": "Anota una propuesta",
+          "slot": 7,
+          "patrol_step": 2,
+          "appearance": "student",
+          "role_assignment": "CITY_PROVISIONAL"
+        }
+      ],
+      "character_sheets": {
+        "player": {
+          "id": "PLAYER_1",
+          "name": "Player",
+          "kind": "PLAYER",
+          "faction": "UNALIGNED",
+          "location": "SCHOOL",
+          "energy": 1.0,
+          "known_nodes": 1,
+          "case_status": "UNSEEN",
+          "agency": "HUMAN_ONLY"
+        },
+        "visible_npcs": [
+          {
+            "id": "RESIDENT_017",
+            "name": "Masao Kuroda",
+            "kind": "NPC",
+            "observed_location": "SCHOOL",
+            "focus": "Corrige sus notas",
+            "role": "Profesor de matemáticas",
+            "role_label": "Profesor de matemáticas",
+            "skills": {
+              "Matemáticas": 4,
+              "Observación": 2
+            },
+            "public_objective": "Preparar problemas para el examen de recuperación.",
+            "activity": "Corrige sus notas",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_018",
+            "name": "Sachiko Arai",
+            "kind": "NPC",
+            "observed_location": "SCHOOL",
+            "focus": "Ordena trabajos",
+            "role": "Profesora de literatura",
+            "role_label": "Profesora de literatura",
+            "skills": {
+              "Literatura": 5,
+              "Observación": 3
+            },
+            "public_objective": "Elegir textos para la revista del colegio.",
+            "activity": "Ordena trabajos",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_019",
+            "name": "Hideo Sakamoto",
+            "kind": "NPC",
+            "observed_location": "SCHOOL",
+            "focus": "Revisa el inventario",
+            "role": "Profesor de ciencias",
+            "role_label": "Profesor de ciencias",
+            "skills": {
+              "Ciencias": 3,
+              "Observación": 1
+            },
+            "public_objective": "Conseguir material para la práctica de electricidad.",
+            "activity": "Revisa el inventario",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_020",
+            "name": "Yoko Matsuda",
+            "kind": "NPC",
+            "observed_location": "SCHOOL",
+            "focus": "Espera a los alumnos",
+            "role": "Orientadora",
+            "role_label": "Orientadora",
+            "skills": {
+              "Escucha": 4,
+              "Observación": 2
+            },
+            "public_objective": "Encontrar una actividad para alumnos que se sienten aislados.",
+            "activity": "Espera a los alumnos",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_021",
+            "name": "Akira Shimizu",
+            "kind": "NPC",
+            "observed_location": "SCHOOL",
+            "focus": "Anota una avería",
+            "role": "Conserje",
+            "role_label": "Conserje",
+            "skills": {
+              "Mantenimiento": 5,
+              "Observación": 3
+            },
+            "public_objective": "Revisar las aulas antes del cierre.",
+            "activity": "Anota una avería",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_022",
+            "name": "Nana Sugimoto",
+            "kind": "NPC",
+            "observed_location": "SCHOOL",
+            "focus": "Lee sus apuntes",
+            "role": "Amiga de clase",
+            "role_label": "Amiga de clase",
+            "skills": {
+              "Literatura": 3,
+              "Observación": 1
+            },
+            "public_objective": "Entregar a tiempo el trabajo de literatura.",
+            "activity": "Lee sus apuntes",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_023",
+            "name": "Yuji Tanaka",
+            "kind": "NPC",
+            "observed_location": "SCHOOL",
+            "focus": "Anota componentes",
+            "role": "Alumno del club de radio",
+            "role_label": "Alumno del club de radio",
+            "skills": {
+              "Electrónica": 4,
+              "Observación": 2
+            },
+            "public_objective": "Convencer a alguien para reparar la radio del club.",
+            "activity": "Anota componentes",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_024",
+            "name": "Kaori Nishida",
+            "kind": "NPC",
+            "observed_location": "SCHOOL",
+            "focus": "Anota una propuesta",
+            "role": "Delegada de clase",
+            "role_label": "Delegada de clase",
+            "skills": {
+              "Organización": 5,
+              "Observación": 3
+            },
+            "public_objective": "Reunir propuestas para la excursión escolar.",
+            "activity": "Anota una propuesta",
+            "role_assignment": "CITY_PROVISIONAL"
+          }
+        ]
+      },
+      "station_case": {
+        "id": "STATION_ECHO_07",
+        "title": "El pulso ausente",
+        "status": "UNSEEN",
+        "resolution": null,
+        "summary": "Investiga NODE_07 en la estacion para buscar el rastro.",
+        "witness_count": 0,
+        "responses": []
+      },
+      "prologue": {
+        "enabled": true,
+        "stage": "CONNECTED",
+        "hint": "La conexión cambió algo. Quizá ahora puedas descubrir qué."
+      },
+      "chapter_one": {
+        "active": true,
+        "title": "Ya habías estado aquí",
+        "started_minute": 80,
+        "connection_minute": 80,
+        "decision": null,
+        "hypothesis": "",
+        "hypothesis_status": "UNVERIFIED",
+        "evidence": [
+          {
+            "id": "RETURN_MESSAGE",
+            "title": "Has vuelto",
+            "kind": "MESSAGE",
+            "source_id": "UNKNOWN_WIRED",
+            "source_label": "Identidad desconocida · Wired",
+            "text": "Has vuelto.",
+            "acquired_minute": 80,
+            "claimed_time": "Recibido al abrir este capítulo, minuto 80",
+            "event_id": null
+          },
+          {
+            "id": "NIGHT_SIGHTING",
+            "title": "Haruto te sitúa en la escuela",
+            "kind": "TESTIMONY",
+            "source_id": "RESIDENT_001",
+            "source_label": "Haruto Senda",
+            "text": "«Ya habías estado aquí. Te vi en la escuela anoche, cuando todo estaba oscuro. Llevabas un papel doblado. O al menos... pensé que eras tú.»",
+            "acquired_minute": 90,
+            "claimed_time": "La noche anterior, según Haruto",
+            "event_id": null
+          },
+          {
+            "id": "WRONG_DETAIL",
+            "title": "Una visita recordada de otra manera",
+            "kind": "TESTIMONY",
+            "source_id": "RESIDENT_001",
+            "source_label": "Haruto Senda",
+            "text": "«El otro día preguntabas por Ryoko. El profesor no estaba; te respondió una alumna desde la puerta.»",
+            "acquired_minute": 90,
+            "claimed_time": "La visita del prólogo, según Haruto",
+            "event_id": null
+          },
+          {
+            "id": "MY_VISIT",
+            "title": "Mi conversación con el profesor",
+            "kind": "OBSERVATION",
+            "source_id": "PLAYER_1",
+            "source_label": "Tu experiencia conservada",
+            "text": "Pregunté por el antiguo alumno y fue el profesor quien me dijo el nombre de Ryoko. Estaba presente.",
+            "acquired_minute": 90,
+            "claimed_time": "Prólogo · minuto 30",
+            "event_id": 11
+          },
+          {
+            "id": "AIKO_PRIVATE",
+            "title": "Aiko: un cerrojo y una silueta",
+            "kind": "TESTIMONY",
+            "source_id": "RESIDENT_006",
+            "source_label": "Aiko Mori · conversación privada",
+            "text": "Baja la voz. «Oí un cerrojo y vi una silueta junto al pabellón. El reloj marcaba 22:10. No le vi la cara. No pongas mi nombre en boca de todos.»",
+            "acquired_minute": 90,
+            "claimed_time": "22:10 según el reloj que miró Aiko",
+            "event_id": null
+          },
+          {
+            "id": "CLOCK_ACCOUNT",
+            "title": "La hora de Aiko",
+            "kind": "TESTIMONY",
+            "source_id": "RESIDENT_006",
+            "source_label": "Aiko Mori",
+            "text": "«Miré el reloj exterior del colegio, no el mío. Lleva días marcando lo mismo. No sé cuánto cambia eso lo que oí.»",
+            "acquired_minute": 90,
+            "claimed_time": "Fecha no comprobada",
+            "event_id": null
+          },
+          {
+            "id": "CLOSURE_SHEET",
+            "title": "El parte de cierre",
+            "kind": "DOCUMENT",
+            "source_id": "CLOSURE_SHEET",
+            "source_label": "Hoja del pasillo · firmada por el profesor",
+            "text": "PARTE DE CIERRE · NOCHE ANTERIOR\nPabellón B cerrado. Llave entregada. Firma: profesor de informática.\nLa hoja está sujeta con una grapa nueva. El texto declara un cierre; no demuestra que nadie entrara después.",
+            "acquired_minute": 100,
+            "claimed_time": "Noche anterior, según el documento",
+            "event_id": null
+          }
+        ],
+        "links": [],
+        "contradiction_linked": false,
+        "characters": [
+          "RESIDENT_001",
+          "RESIDENT_006",
+          "PROFESSOR",
+          "RYOKO"
+        ],
+        "notification": "Has vuelto"
+      },
+      "situations": [],
+      "interaction": null,
+      "outgoing_interaction": null,
+      "messages": [
+        {
+          "id": "MSG_BOOTSTRAP_001",
+          "sender": "unknown@wired",
+          "subject": "NO SUBJECT",
+          "body": "NO ESTOY MUERTA.\n\nSOLO DEJÉ DE ESTAR AHÍ.",
+          "created_minute": 0,
+          "read": true,
+          "acknowledged": true,
+          "acknowledged_minute": 80
+        }
+      ],
+      "unread_messages": 0,
+      "wired": {
+        "connected": true,
+        "signals": [
+          {
+            "node_id": "NODE_07",
+            "location": "STATION",
+            "strength": 0.5,
+            "confidence": 0.35,
+            "origin_source": "WIRED_MESSAGE",
+            "current_source": "WIRED_MESSAGE",
+            "verified": false,
+            "updated_minute": 80
+          }
+        ],
+        "digital_presences": []
+      }
+    }
+  },
+  {
+    "name": "school-clock",
+    "at": [
+      0,
+      0.91,
+      -6.8
+    ],
+    "result": {
+      "speaker": "22:10",
+      "text": "El reloj del pabellón marca 22:10. El segundero no avanza. Hay una nota de mantenimiento: «Pila pendiente». Esto no permite fechar lo que vio Aiko.",
+      "choices": []
+    },
+    "mode": "scene",
+    "state": {
+      "schema_version": "0.1",
+      "minute": 100,
+      "player": {
+        "id": "PLAYER_1",
+        "name": "Player",
+        "faction": "UNALIGNED",
+        "location": "SCHOOL",
+        "goal": "UNKNOWN",
+        "energy": 1.0
+      },
+      "navigation": {
+        "reachable_locations": [
+          "APARTMENT_DISTRICT",
+          "SCHOOL_LAB"
+        ]
+      },
+      "known_nodes": [
+        {
+          "id": "NODE_07",
+          "knowledge_confidence": 0.35,
+          "knowledge_source": "WIRED_MESSAGE",
+          "belief": {
+            "location": "STATION",
+            "strength": 0.5,
+            "confidence": 0.35,
+            "source": "WIRED_MESSAGE",
+            "updated_minute": 80
+          }
+        }
+      ],
+      "visible_actors": [
+        {
+          "id": "RESIDENT_017",
+          "name": "Masao Kuroda",
+          "role": "Profesor de matemáticas",
+          "role_label": "Profesor de matemáticas",
+          "skills": {
+            "Matemáticas": 4,
+            "Observación": 2
+          },
+          "public_objective": "Preparar problemas para el examen de recuperación.",
+          "activity": "Corrige sus notas",
+          "slot": 0,
+          "patrol_step": 3,
+          "appearance": "teacher",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_018",
+          "name": "Sachiko Arai",
+          "role": "Profesora de literatura",
+          "role_label": "Profesora de literatura",
+          "skills": {
+            "Literatura": 5,
+            "Observación": 3
+          },
+          "public_objective": "Elegir textos para la revista del colegio.",
+          "activity": "Ordena trabajos",
+          "slot": 1,
+          "patrol_step": 2,
+          "appearance": "teacher",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_019",
+          "name": "Hideo Sakamoto",
+          "role": "Profesor de ciencias",
+          "role_label": "Profesor de ciencias",
+          "skills": {
+            "Ciencias": 3,
+            "Observación": 1
+          },
+          "public_objective": "Conseguir material para la práctica de electricidad.",
+          "activity": "Revisa el inventario",
+          "slot": 2,
+          "patrol_step": 0,
+          "appearance": "teacher",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_020",
+          "name": "Yoko Matsuda",
+          "role": "Orientadora",
+          "role_label": "Orientadora",
+          "skills": {
+            "Escucha": 4,
+            "Observación": 2
+          },
+          "public_objective": "Encontrar una actividad para alumnos que se sienten aislados.",
+          "activity": "Espera a los alumnos",
+          "slot": 3,
+          "patrol_step": 2,
+          "appearance": "teacher",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_021",
+          "name": "Akira Shimizu",
+          "role": "Conserje",
+          "role_label": "Conserje",
+          "skills": {
+            "Mantenimiento": 5,
+            "Observación": 3
+          },
+          "public_objective": "Revisar las aulas antes del cierre.",
+          "activity": "Anota una avería",
+          "slot": 4,
+          "patrol_step": 2,
+          "appearance": "worker",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_022",
+          "name": "Nana Sugimoto",
+          "role": "Amiga de clase",
+          "role_label": "Amiga de clase",
+          "skills": {
+            "Literatura": 3,
+            "Observación": 1
+          },
+          "public_objective": "Entregar a tiempo el trabajo de literatura.",
+          "activity": "Lee sus apuntes",
+          "slot": 5,
+          "patrol_step": 0,
+          "appearance": "student",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_023",
+          "name": "Yuji Tanaka",
+          "role": "Alumno del club de radio",
+          "role_label": "Alumno del club de radio",
+          "skills": {
+            "Electrónica": 4,
+            "Observación": 2
+          },
+          "public_objective": "Convencer a alguien para reparar la radio del club.",
+          "activity": "Anota componentes",
+          "slot": 6,
+          "patrol_step": 2,
+          "appearance": "student",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_024",
+          "name": "Kaori Nishida",
+          "role": "Delegada de clase",
+          "role_label": "Delegada de clase",
+          "skills": {
+            "Organización": 5,
+            "Observación": 3
+          },
+          "public_objective": "Reunir propuestas para la excursión escolar.",
+          "activity": "Anota una propuesta",
+          "slot": 7,
+          "patrol_step": 2,
+          "appearance": "student",
+          "role_assignment": "CITY_PROVISIONAL"
+        }
+      ],
+      "character_sheets": {
+        "player": {
+          "id": "PLAYER_1",
+          "name": "Player",
+          "kind": "PLAYER",
+          "faction": "UNALIGNED",
+          "location": "SCHOOL",
+          "energy": 1.0,
+          "known_nodes": 1,
+          "case_status": "UNSEEN",
+          "agency": "HUMAN_ONLY"
+        },
+        "visible_npcs": [
+          {
+            "id": "RESIDENT_017",
+            "name": "Masao Kuroda",
+            "kind": "NPC",
+            "observed_location": "SCHOOL",
+            "focus": "Corrige sus notas",
+            "role": "Profesor de matemáticas",
+            "role_label": "Profesor de matemáticas",
+            "skills": {
+              "Matemáticas": 4,
+              "Observación": 2
+            },
+            "public_objective": "Preparar problemas para el examen de recuperación.",
+            "activity": "Corrige sus notas",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_018",
+            "name": "Sachiko Arai",
+            "kind": "NPC",
+            "observed_location": "SCHOOL",
+            "focus": "Ordena trabajos",
+            "role": "Profesora de literatura",
+            "role_label": "Profesora de literatura",
+            "skills": {
+              "Literatura": 5,
+              "Observación": 3
+            },
+            "public_objective": "Elegir textos para la revista del colegio.",
+            "activity": "Ordena trabajos",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_019",
+            "name": "Hideo Sakamoto",
+            "kind": "NPC",
+            "observed_location": "SCHOOL",
+            "focus": "Revisa el inventario",
+            "role": "Profesor de ciencias",
+            "role_label": "Profesor de ciencias",
+            "skills": {
+              "Ciencias": 3,
+              "Observación": 1
+            },
+            "public_objective": "Conseguir material para la práctica de electricidad.",
+            "activity": "Revisa el inventario",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_020",
+            "name": "Yoko Matsuda",
+            "kind": "NPC",
+            "observed_location": "SCHOOL",
+            "focus": "Espera a los alumnos",
+            "role": "Orientadora",
+            "role_label": "Orientadora",
+            "skills": {
+              "Escucha": 4,
+              "Observación": 2
+            },
+            "public_objective": "Encontrar una actividad para alumnos que se sienten aislados.",
+            "activity": "Espera a los alumnos",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_021",
+            "name": "Akira Shimizu",
+            "kind": "NPC",
+            "observed_location": "SCHOOL",
+            "focus": "Anota una avería",
+            "role": "Conserje",
+            "role_label": "Conserje",
+            "skills": {
+              "Mantenimiento": 5,
+              "Observación": 3
+            },
+            "public_objective": "Revisar las aulas antes del cierre.",
+            "activity": "Anota una avería",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_022",
+            "name": "Nana Sugimoto",
+            "kind": "NPC",
+            "observed_location": "SCHOOL",
+            "focus": "Lee sus apuntes",
+            "role": "Amiga de clase",
+            "role_label": "Amiga de clase",
+            "skills": {
+              "Literatura": 3,
+              "Observación": 1
+            },
+            "public_objective": "Entregar a tiempo el trabajo de literatura.",
+            "activity": "Lee sus apuntes",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_023",
+            "name": "Yuji Tanaka",
+            "kind": "NPC",
+            "observed_location": "SCHOOL",
+            "focus": "Anota componentes",
+            "role": "Alumno del club de radio",
+            "role_label": "Alumno del club de radio",
+            "skills": {
+              "Electrónica": 4,
+              "Observación": 2
+            },
+            "public_objective": "Convencer a alguien para reparar la radio del club.",
+            "activity": "Anota componentes",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_024",
+            "name": "Kaori Nishida",
+            "kind": "NPC",
+            "observed_location": "SCHOOL",
+            "focus": "Anota una propuesta",
+            "role": "Delegada de clase",
+            "role_label": "Delegada de clase",
+            "skills": {
+              "Organización": 5,
+              "Observación": 3
+            },
+            "public_objective": "Reunir propuestas para la excursión escolar.",
+            "activity": "Anota una propuesta",
+            "role_assignment": "CITY_PROVISIONAL"
+          }
+        ]
+      },
+      "station_case": {
+        "id": "STATION_ECHO_07",
+        "title": "El pulso ausente",
+        "status": "UNSEEN",
+        "resolution": null,
+        "summary": "Investiga NODE_07 en la estacion para buscar el rastro.",
+        "witness_count": 0,
+        "responses": []
+      },
+      "prologue": {
+        "enabled": true,
+        "stage": "CONNECTED",
+        "hint": "La conexión cambió algo. Quizá ahora puedas descubrir qué."
+      },
+      "chapter_one": {
+        "active": true,
+        "title": "Ya habías estado aquí",
+        "started_minute": 80,
+        "connection_minute": 80,
+        "decision": null,
+        "hypothesis": "",
+        "hypothesis_status": "UNVERIFIED",
+        "evidence": [
+          {
+            "id": "RETURN_MESSAGE",
+            "title": "Has vuelto",
+            "kind": "MESSAGE",
+            "source_id": "UNKNOWN_WIRED",
+            "source_label": "Identidad desconocida · Wired",
+            "text": "Has vuelto.",
+            "acquired_minute": 80,
+            "claimed_time": "Recibido al abrir este capítulo, minuto 80",
+            "event_id": null
+          },
+          {
+            "id": "NIGHT_SIGHTING",
+            "title": "Haruto te sitúa en la escuela",
+            "kind": "TESTIMONY",
+            "source_id": "RESIDENT_001",
+            "source_label": "Haruto Senda",
+            "text": "«Ya habías estado aquí. Te vi en la escuela anoche, cuando todo estaba oscuro. Llevabas un papel doblado. O al menos... pensé que eras tú.»",
+            "acquired_minute": 90,
+            "claimed_time": "La noche anterior, según Haruto",
+            "event_id": null
+          },
+          {
+            "id": "WRONG_DETAIL",
+            "title": "Una visita recordada de otra manera",
+            "kind": "TESTIMONY",
+            "source_id": "RESIDENT_001",
+            "source_label": "Haruto Senda",
+            "text": "«El otro día preguntabas por Ryoko. El profesor no estaba; te respondió una alumna desde la puerta.»",
+            "acquired_minute": 90,
+            "claimed_time": "La visita del prólogo, según Haruto",
+            "event_id": null
+          },
+          {
+            "id": "MY_VISIT",
+            "title": "Mi conversación con el profesor",
+            "kind": "OBSERVATION",
+            "source_id": "PLAYER_1",
+            "source_label": "Tu experiencia conservada",
+            "text": "Pregunté por el antiguo alumno y fue el profesor quien me dijo el nombre de Ryoko. Estaba presente.",
+            "acquired_minute": 90,
+            "claimed_time": "Prólogo · minuto 30",
+            "event_id": 11
+          },
+          {
+            "id": "AIKO_PRIVATE",
+            "title": "Aiko: un cerrojo y una silueta",
+            "kind": "TESTIMONY",
+            "source_id": "RESIDENT_006",
+            "source_label": "Aiko Mori · conversación privada",
+            "text": "Baja la voz. «Oí un cerrojo y vi una silueta junto al pabellón. El reloj marcaba 22:10. No le vi la cara. No pongas mi nombre en boca de todos.»",
+            "acquired_minute": 90,
+            "claimed_time": "22:10 según el reloj que miró Aiko",
+            "event_id": null
+          },
+          {
+            "id": "CLOCK_ACCOUNT",
+            "title": "La hora de Aiko",
+            "kind": "TESTIMONY",
+            "source_id": "RESIDENT_006",
+            "source_label": "Aiko Mori",
+            "text": "«Miré el reloj exterior del colegio, no el mío. Lleva días marcando lo mismo. No sé cuánto cambia eso lo que oí.»",
+            "acquired_minute": 90,
+            "claimed_time": "Fecha no comprobada",
+            "event_id": null
+          },
+          {
+            "id": "CLOSURE_SHEET",
+            "title": "El parte de cierre",
+            "kind": "DOCUMENT",
+            "source_id": "CLOSURE_SHEET",
+            "source_label": "Hoja del pasillo · firmada por el profesor",
+            "text": "PARTE DE CIERRE · NOCHE ANTERIOR\nPabellón B cerrado. Llave entregada. Firma: profesor de informática.\nLa hoja está sujeta con una grapa nueva. El texto declara un cierre; no demuestra que nadie entrara después.",
+            "acquired_minute": 100,
+            "claimed_time": "Noche anterior, según el documento",
+            "event_id": null
+          },
+          {
+            "id": "SCHOOL_CLOCK",
+            "title": "El reloj está detenido",
+            "kind": "OBSERVATION",
+            "source_id": "SCHOOL_CLOCK",
+            "source_label": "Reloj que has examinado",
+            "text": "El reloj del pabellón marca 22:10. El segundero no avanza. Hay una nota de mantenimiento: «Pila pendiente». Esto no permite fechar lo que vio Aiko.",
+            "acquired_minute": 100,
+            "claimed_time": "Observado ahora · minuto 100",
+            "event_id": null
+          }
+        ],
+        "links": [],
+        "contradiction_linked": false,
+        "characters": [
+          "RESIDENT_001",
+          "RESIDENT_006",
+          "PROFESSOR",
+          "RYOKO"
+        ],
+        "notification": "Has vuelto"
+      },
+      "situations": [],
+      "interaction": null,
+      "outgoing_interaction": null,
+      "messages": [
+        {
+          "id": "MSG_BOOTSTRAP_001",
+          "sender": "unknown@wired",
+          "subject": "NO SUBJECT",
+          "body": "NO ESTOY MUERTA.\n\nSOLO DEJÉ DE ESTAR AHÍ.",
+          "created_minute": 0,
+          "read": true,
+          "acknowledged": true,
+          "acknowledged_minute": 80
+        }
+      ],
+      "unread_messages": 0,
+      "wired": {
+        "connected": true,
+        "signals": [
+          {
+            "node_id": "NODE_07",
+            "location": "STATION",
+            "strength": 0.5,
+            "confidence": 0.35,
+            "origin_source": "WIRED_MESSAGE",
+            "current_source": "WIRED_MESSAGE",
+            "verified": false,
+            "updated_minute": 80
+          }
+        ],
+        "digital_presences": []
+      }
+    }
+  },
+  {
+    "name": "journal",
+    "at": [
+      0,
+      0.91,
+      1
+    ],
+    "result": null,
+    "mode": "journal",
+    "state": {
+      "schema_version": "0.1",
+      "minute": 100,
+      "player": {
+        "id": "PLAYER_1",
+        "name": "Player",
+        "faction": "UNALIGNED",
+        "location": "SCHOOL",
+        "goal": "UNKNOWN",
+        "energy": 1.0
+      },
+      "navigation": {
+        "reachable_locations": [
+          "APARTMENT_DISTRICT",
+          "SCHOOL_LAB"
+        ]
+      },
+      "known_nodes": [
+        {
+          "id": "NODE_07",
+          "knowledge_confidence": 0.35,
+          "knowledge_source": "WIRED_MESSAGE",
+          "belief": {
+            "location": "STATION",
+            "strength": 0.5,
+            "confidence": 0.35,
+            "source": "WIRED_MESSAGE",
+            "updated_minute": 80
+          }
+        }
+      ],
+      "visible_actors": [
+        {
+          "id": "RESIDENT_017",
+          "name": "Masao Kuroda",
+          "role": "Profesor de matemáticas",
+          "role_label": "Profesor de matemáticas",
+          "skills": {
+            "Matemáticas": 4,
+            "Observación": 2
+          },
+          "public_objective": "Preparar problemas para el examen de recuperación.",
+          "activity": "Corrige sus notas",
+          "slot": 0,
+          "patrol_step": 3,
+          "appearance": "teacher",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_018",
+          "name": "Sachiko Arai",
+          "role": "Profesora de literatura",
+          "role_label": "Profesora de literatura",
+          "skills": {
+            "Literatura": 5,
+            "Observación": 3
+          },
+          "public_objective": "Elegir textos para la revista del colegio.",
+          "activity": "Ordena trabajos",
+          "slot": 1,
+          "patrol_step": 2,
+          "appearance": "teacher",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_019",
+          "name": "Hideo Sakamoto",
+          "role": "Profesor de ciencias",
+          "role_label": "Profesor de ciencias",
+          "skills": {
+            "Ciencias": 3,
+            "Observación": 1
+          },
+          "public_objective": "Conseguir material para la práctica de electricidad.",
+          "activity": "Revisa el inventario",
+          "slot": 2,
+          "patrol_step": 0,
+          "appearance": "teacher",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_020",
+          "name": "Yoko Matsuda",
+          "role": "Orientadora",
+          "role_label": "Orientadora",
+          "skills": {
+            "Escucha": 4,
+            "Observación": 2
+          },
+          "public_objective": "Encontrar una actividad para alumnos que se sienten aislados.",
+          "activity": "Espera a los alumnos",
+          "slot": 3,
+          "patrol_step": 2,
+          "appearance": "teacher",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_021",
+          "name": "Akira Shimizu",
+          "role": "Conserje",
+          "role_label": "Conserje",
+          "skills": {
+            "Mantenimiento": 5,
+            "Observación": 3
+          },
+          "public_objective": "Revisar las aulas antes del cierre.",
+          "activity": "Anota una avería",
+          "slot": 4,
+          "patrol_step": 2,
+          "appearance": "worker",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_022",
+          "name": "Nana Sugimoto",
+          "role": "Amiga de clase",
+          "role_label": "Amiga de clase",
+          "skills": {
+            "Literatura": 3,
+            "Observación": 1
+          },
+          "public_objective": "Entregar a tiempo el trabajo de literatura.",
+          "activity": "Lee sus apuntes",
+          "slot": 5,
+          "patrol_step": 0,
+          "appearance": "student",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_023",
+          "name": "Yuji Tanaka",
+          "role": "Alumno del club de radio",
+          "role_label": "Alumno del club de radio",
+          "skills": {
+            "Electrónica": 4,
+            "Observación": 2
+          },
+          "public_objective": "Convencer a alguien para reparar la radio del club.",
+          "activity": "Anota componentes",
+          "slot": 6,
+          "patrol_step": 2,
+          "appearance": "student",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_024",
+          "name": "Kaori Nishida",
+          "role": "Delegada de clase",
+          "role_label": "Delegada de clase",
+          "skills": {
+            "Organización": 5,
+            "Observación": 3
+          },
+          "public_objective": "Reunir propuestas para la excursión escolar.",
+          "activity": "Anota una propuesta",
+          "slot": 7,
+          "patrol_step": 2,
+          "appearance": "student",
+          "role_assignment": "CITY_PROVISIONAL"
+        }
+      ],
+      "character_sheets": {
+        "player": {
+          "id": "PLAYER_1",
+          "name": "Player",
+          "kind": "PLAYER",
+          "faction": "UNALIGNED",
+          "location": "SCHOOL",
+          "energy": 1.0,
+          "known_nodes": 1,
+          "case_status": "UNSEEN",
+          "agency": "HUMAN_ONLY"
+        },
+        "visible_npcs": [
+          {
+            "id": "RESIDENT_017",
+            "name": "Masao Kuroda",
+            "kind": "NPC",
+            "observed_location": "SCHOOL",
+            "focus": "Corrige sus notas",
+            "role": "Profesor de matemáticas",
+            "role_label": "Profesor de matemáticas",
+            "skills": {
+              "Matemáticas": 4,
+              "Observación": 2
+            },
+            "public_objective": "Preparar problemas para el examen de recuperación.",
+            "activity": "Corrige sus notas",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_018",
+            "name": "Sachiko Arai",
+            "kind": "NPC",
+            "observed_location": "SCHOOL",
+            "focus": "Ordena trabajos",
+            "role": "Profesora de literatura",
+            "role_label": "Profesora de literatura",
+            "skills": {
+              "Literatura": 5,
+              "Observación": 3
+            },
+            "public_objective": "Elegir textos para la revista del colegio.",
+            "activity": "Ordena trabajos",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_019",
+            "name": "Hideo Sakamoto",
+            "kind": "NPC",
+            "observed_location": "SCHOOL",
+            "focus": "Revisa el inventario",
+            "role": "Profesor de ciencias",
+            "role_label": "Profesor de ciencias",
+            "skills": {
+              "Ciencias": 3,
+              "Observación": 1
+            },
+            "public_objective": "Conseguir material para la práctica de electricidad.",
+            "activity": "Revisa el inventario",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_020",
+            "name": "Yoko Matsuda",
+            "kind": "NPC",
+            "observed_location": "SCHOOL",
+            "focus": "Espera a los alumnos",
+            "role": "Orientadora",
+            "role_label": "Orientadora",
+            "skills": {
+              "Escucha": 4,
+              "Observación": 2
+            },
+            "public_objective": "Encontrar una actividad para alumnos que se sienten aislados.",
+            "activity": "Espera a los alumnos",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_021",
+            "name": "Akira Shimizu",
+            "kind": "NPC",
+            "observed_location": "SCHOOL",
+            "focus": "Anota una avería",
+            "role": "Conserje",
+            "role_label": "Conserje",
+            "skills": {
+              "Mantenimiento": 5,
+              "Observación": 3
+            },
+            "public_objective": "Revisar las aulas antes del cierre.",
+            "activity": "Anota una avería",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_022",
+            "name": "Nana Sugimoto",
+            "kind": "NPC",
+            "observed_location": "SCHOOL",
+            "focus": "Lee sus apuntes",
+            "role": "Amiga de clase",
+            "role_label": "Amiga de clase",
+            "skills": {
+              "Literatura": 3,
+              "Observación": 1
+            },
+            "public_objective": "Entregar a tiempo el trabajo de literatura.",
+            "activity": "Lee sus apuntes",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_023",
+            "name": "Yuji Tanaka",
+            "kind": "NPC",
+            "observed_location": "SCHOOL",
+            "focus": "Anota componentes",
+            "role": "Alumno del club de radio",
+            "role_label": "Alumno del club de radio",
+            "skills": {
+              "Electrónica": 4,
+              "Observación": 2
+            },
+            "public_objective": "Convencer a alguien para reparar la radio del club.",
+            "activity": "Anota componentes",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_024",
+            "name": "Kaori Nishida",
+            "kind": "NPC",
+            "observed_location": "SCHOOL",
+            "focus": "Anota una propuesta",
+            "role": "Delegada de clase",
+            "role_label": "Delegada de clase",
+            "skills": {
+              "Organización": 5,
+              "Observación": 3
+            },
+            "public_objective": "Reunir propuestas para la excursión escolar.",
+            "activity": "Anota una propuesta",
+            "role_assignment": "CITY_PROVISIONAL"
+          }
+        ]
+      },
+      "station_case": {
+        "id": "STATION_ECHO_07",
+        "title": "El pulso ausente",
+        "status": "UNSEEN",
+        "resolution": null,
+        "summary": "Investiga NODE_07 en la estacion para buscar el rastro.",
+        "witness_count": 0,
+        "responses": []
+      },
+      "prologue": {
+        "enabled": true,
+        "stage": "CONNECTED",
+        "hint": "La conexión cambió algo. Quizá ahora puedas descubrir qué."
+      },
+      "chapter_one": {
+        "active": true,
+        "title": "Ya habías estado aquí",
+        "started_minute": 80,
+        "connection_minute": 80,
+        "decision": null,
+        "hypothesis": "Quizá alguien restauró una copia antigua. El nombre de una cuenta no demuestra quién entró.",
+        "hypothesis_status": "UNVERIFIED",
+        "evidence": [
+          {
+            "id": "RETURN_MESSAGE",
+            "title": "Has vuelto",
+            "kind": "MESSAGE",
+            "source_id": "UNKNOWN_WIRED",
+            "source_label": "Identidad desconocida · Wired",
+            "text": "Has vuelto.",
+            "acquired_minute": 80,
+            "claimed_time": "Recibido al abrir este capítulo, minuto 80",
+            "event_id": null
+          },
+          {
+            "id": "NIGHT_SIGHTING",
+            "title": "Haruto te sitúa en la escuela",
+            "kind": "TESTIMONY",
+            "source_id": "RESIDENT_001",
+            "source_label": "Haruto Senda",
+            "text": "«Ya habías estado aquí. Te vi en la escuela anoche, cuando todo estaba oscuro. Llevabas un papel doblado. O al menos... pensé que eras tú.»",
+            "acquired_minute": 90,
+            "claimed_time": "La noche anterior, según Haruto",
+            "event_id": null
+          },
+          {
+            "id": "WRONG_DETAIL",
+            "title": "Una visita recordada de otra manera",
+            "kind": "TESTIMONY",
+            "source_id": "RESIDENT_001",
+            "source_label": "Haruto Senda",
+            "text": "«El otro día preguntabas por Ryoko. El profesor no estaba; te respondió una alumna desde la puerta.»",
+            "acquired_minute": 90,
+            "claimed_time": "La visita del prólogo, según Haruto",
+            "event_id": null
+          },
+          {
+            "id": "MY_VISIT",
+            "title": "Mi conversación con el profesor",
+            "kind": "OBSERVATION",
+            "source_id": "PLAYER_1",
+            "source_label": "Tu experiencia conservada",
+            "text": "Pregunté por el antiguo alumno y fue el profesor quien me dijo el nombre de Ryoko. Estaba presente.",
+            "acquired_minute": 90,
+            "claimed_time": "Prólogo · minuto 30",
+            "event_id": 11
+          },
+          {
+            "id": "AIKO_PRIVATE",
+            "title": "Aiko: un cerrojo y una silueta",
+            "kind": "TESTIMONY",
+            "source_id": "RESIDENT_006",
+            "source_label": "Aiko Mori · conversación privada",
+            "text": "Baja la voz. «Oí un cerrojo y vi una silueta junto al pabellón. El reloj marcaba 22:10. No le vi la cara. No pongas mi nombre en boca de todos.»",
+            "acquired_minute": 90,
+            "claimed_time": "22:10 según el reloj que miró Aiko",
+            "event_id": null
+          },
+          {
+            "id": "CLOCK_ACCOUNT",
+            "title": "La hora de Aiko",
+            "kind": "TESTIMONY",
+            "source_id": "RESIDENT_006",
+            "source_label": "Aiko Mori",
+            "text": "«Miré el reloj exterior del colegio, no el mío. Lleva días marcando lo mismo. No sé cuánto cambia eso lo que oí.»",
+            "acquired_minute": 90,
+            "claimed_time": "Fecha no comprobada",
+            "event_id": null
+          },
+          {
+            "id": "CLOSURE_SHEET",
+            "title": "El parte de cierre",
+            "kind": "DOCUMENT",
+            "source_id": "CLOSURE_SHEET",
+            "source_label": "Hoja del pasillo · firmada por el profesor",
+            "text": "PARTE DE CIERRE · NOCHE ANTERIOR\nPabellón B cerrado. Llave entregada. Firma: profesor de informática.\nLa hoja está sujeta con una grapa nueva. El texto declara un cierre; no demuestra que nadie entrara después.",
+            "acquired_minute": 100,
+            "claimed_time": "Noche anterior, según el documento",
+            "event_id": null
+          },
+          {
+            "id": "SCHOOL_CLOCK",
+            "title": "El reloj está detenido",
+            "kind": "OBSERVATION",
+            "source_id": "SCHOOL_CLOCK",
+            "source_label": "Reloj que has examinado",
+            "text": "El reloj del pabellón marca 22:10. El segundero no avanza. Hay una nota de mantenimiento: «Pila pendiente». Esto no permite fechar lo que vio Aiko.",
+            "acquired_minute": 100,
+            "claimed_time": "Observado ahora · minuto 100",
+            "event_id": null
+          }
+        ],
+        "links": [
+          {
+            "first": "CLOSURE_SHEET",
+            "second": "NIGHT_SIGHTING",
+            "relation": "CONTRADICTS",
+            "minute": 100
+          }
+        ],
+        "contradiction_linked": true,
+        "characters": [
+          "RESIDENT_001",
+          "RESIDENT_006",
+          "PROFESSOR",
+          "RYOKO"
+        ],
+        "notification": "Has vuelto"
+      },
+      "situations": [],
+      "interaction": null,
+      "outgoing_interaction": null,
+      "messages": [
+        {
+          "id": "MSG_BOOTSTRAP_001",
+          "sender": "unknown@wired",
+          "subject": "NO SUBJECT",
+          "body": "NO ESTOY MUERTA.\n\nSOLO DEJÉ DE ESTAR AHÍ.",
+          "created_minute": 0,
+          "read": true,
+          "acknowledged": true,
+          "acknowledged_minute": 80
+        }
+      ],
+      "unread_messages": 0,
+      "wired": {
+        "connected": true,
+        "signals": [
+          {
+            "node_id": "NODE_07",
+            "location": "STATION",
+            "strength": 0.5,
+            "confidence": 0.35,
+            "origin_source": "WIRED_MESSAGE",
+            "current_source": "WIRED_MESSAGE",
+            "verified": false,
+            "updated_minute": 80
+          }
+        ],
+        "digital_presences": []
+      }
+    }
+  },
+  {
+    "name": "computer",
+    "at": [
+      -4.15,
+      0.91,
+      0.5
+    ],
+    "result": {
+      "speaker": "Ordenador de la escuela",
+      "text": "ARCHIVO LOCAL · CABECERA 04-17\nCuenta: [índice pendiente]\nProcedencia: restauración externa\nEstado: firma ausente\nUn margen escrito a mano dice: «No confundas una cuenta con quien la recuerda».",
+      "choices": [
+        {
+          "text": "Contrastar las referencias y leer la cuenta.",
+          "action": "EXAMINE",
+          "target": "SCHOOL_PC",
+          "data": {
+            "choice": "RECONSTRUCT"
+          }
+        }
+      ]
+    },
+    "mode": "scene",
+    "state": {
+      "schema_version": "0.1",
+      "minute": 110,
+      "player": {
+        "id": "PLAYER_1",
+        "name": "Player",
+        "faction": "UNALIGNED",
+        "location": "SCHOOL_LAB",
+        "goal": "UNKNOWN",
+        "energy": 1.0
+      },
+      "navigation": {
+        "reachable_locations": [
+          "SCHOOL"
+        ]
+      },
+      "known_nodes": [
+        {
+          "id": "NODE_07",
+          "knowledge_confidence": 0.35,
+          "knowledge_source": "WIRED_MESSAGE",
+          "belief": {
+            "location": "STATION",
+            "strength": 0.5,
+            "confidence": 0.35,
+            "source": "WIRED_MESSAGE",
+            "updated_minute": 80
+          }
+        }
+      ],
+      "visible_actors": [
+        {
+          "id": "RESIDENT_025",
+          "name": "Takeshi Uno",
+          "role": "Ayudante de informática",
+          "role_label": "Ayudante de informática",
+          "skills": {
+            "Informática": 3,
+            "Observación": 1
+          },
+          "public_objective": "Recuperar un disquete con ejercicios del aula.",
+          "activity": "Comprueba una etiqueta",
+          "slot": 0,
+          "patrol_step": 0,
+          "appearance": "teacher",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_026",
+          "name": "Misaki Ito",
+          "role": "Alumna de informática",
+          "role_label": "Alumna de informática",
+          "skills": {
+            "Programación": 4,
+            "Observación": 2
+          },
+          "public_objective": "Entender por qué su primer programa no termina.",
+          "activity": "Repasa el bucle",
+          "slot": 1,
+          "patrol_step": 3,
+          "appearance": "student",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_027",
+          "name": "Jun Saito",
+          "role": "Alumno del taller",
+          "role_label": "Alumno del taller",
+          "skills": {
+            "Electrónica": 5,
+            "Observación": 3
+          },
+          "public_objective": "Preparar un pequeño catálogo de componentes usados.",
+          "activity": "Cuenta piezas",
+          "slot": 2,
+          "patrol_step": 2,
+          "appearance": "student",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_028",
+          "name": "Rina Watanabe",
+          "role": "Amiga del aula",
+          "role_label": "Amiga del aula",
+          "skills": {
+            "Informática": 3,
+            "Observación": 1
+          },
+          "public_objective": "Guardar una copia del trabajo antes de salir.",
+          "activity": "Revisa su disquete",
+          "slot": 3,
+          "patrol_step": 0,
+          "appearance": "student",
+          "role_assignment": "CITY_PROVISIONAL"
+        }
+      ],
+      "character_sheets": {
+        "player": {
+          "id": "PLAYER_1",
+          "name": "Player",
+          "kind": "PLAYER",
+          "faction": "UNALIGNED",
+          "location": "SCHOOL_LAB",
+          "energy": 1.0,
+          "known_nodes": 1,
+          "case_status": "UNSEEN",
+          "agency": "HUMAN_ONLY"
+        },
+        "visible_npcs": [
+          {
+            "id": "RESIDENT_025",
+            "name": "Takeshi Uno",
+            "kind": "NPC",
+            "observed_location": "SCHOOL_LAB",
+            "focus": "Comprueba una etiqueta",
+            "role": "Ayudante de informática",
+            "role_label": "Ayudante de informática",
+            "skills": {
+              "Informática": 3,
+              "Observación": 1
+            },
+            "public_objective": "Recuperar un disquete con ejercicios del aula.",
+            "activity": "Comprueba una etiqueta",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_026",
+            "name": "Misaki Ito",
+            "kind": "NPC",
+            "observed_location": "SCHOOL_LAB",
+            "focus": "Repasa el bucle",
+            "role": "Alumna de informática",
+            "role_label": "Alumna de informática",
+            "skills": {
+              "Programación": 4,
+              "Observación": 2
+            },
+            "public_objective": "Entender por qué su primer programa no termina.",
+            "activity": "Repasa el bucle",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_027",
+            "name": "Jun Saito",
+            "kind": "NPC",
+            "observed_location": "SCHOOL_LAB",
+            "focus": "Cuenta piezas",
+            "role": "Alumno del taller",
+            "role_label": "Alumno del taller",
+            "skills": {
+              "Electrónica": 5,
+              "Observación": 3
+            },
+            "public_objective": "Preparar un pequeño catálogo de componentes usados.",
+            "activity": "Cuenta piezas",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_028",
+            "name": "Rina Watanabe",
+            "kind": "NPC",
+            "observed_location": "SCHOOL_LAB",
+            "focus": "Revisa su disquete",
+            "role": "Amiga del aula",
+            "role_label": "Amiga del aula",
+            "skills": {
+              "Informática": 3,
+              "Observación": 1
+            },
+            "public_objective": "Guardar una copia del trabajo antes de salir.",
+            "activity": "Revisa su disquete",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "PROFESSOR",
+            "name": "Profesor",
+            "role": "TEACHER",
+            "role_label": "Profesor de informática",
+            "focus": "Recuerda a un antiguo alumno, no conoce su paradero actual.",
+            "kind": "NPC",
+            "role_assignment": "AUTHORED_PROLOGUE",
+            "observed_location": "SCHOOL_LAB"
+          }
+        ]
+      },
+      "station_case": {
+        "id": "STATION_ECHO_07",
+        "title": "El pulso ausente",
+        "status": "UNSEEN",
+        "resolution": null,
+        "summary": "Investiga NODE_07 en la estacion para buscar el rastro.",
+        "witness_count": 0,
+        "responses": []
+      },
+      "prologue": {
+        "enabled": true,
+        "stage": "CONNECTED",
+        "hint": "La conexión cambió algo. Quizá ahora puedas descubrir qué."
+      },
+      "chapter_one": {
+        "active": true,
+        "title": "Ya habías estado aquí",
+        "started_minute": 80,
+        "connection_minute": 80,
+        "decision": null,
+        "hypothesis": "Quizá alguien restauró una copia antigua. El nombre de una cuenta no demuestra quién entró.",
+        "hypothesis_status": "UNVERIFIED",
+        "evidence": [
+          {
+            "id": "RETURN_MESSAGE",
+            "title": "Has vuelto",
+            "kind": "MESSAGE",
+            "source_id": "UNKNOWN_WIRED",
+            "source_label": "Identidad desconocida · Wired",
+            "text": "Has vuelto.",
+            "acquired_minute": 80,
+            "claimed_time": "Recibido al abrir este capítulo, minuto 80",
+            "event_id": null
+          },
+          {
+            "id": "NIGHT_SIGHTING",
+            "title": "Haruto te sitúa en la escuela",
+            "kind": "TESTIMONY",
+            "source_id": "RESIDENT_001",
+            "source_label": "Haruto Senda",
+            "text": "«Ya habías estado aquí. Te vi en la escuela anoche, cuando todo estaba oscuro. Llevabas un papel doblado. O al menos... pensé que eras tú.»",
+            "acquired_minute": 90,
+            "claimed_time": "La noche anterior, según Haruto",
+            "event_id": null
+          },
+          {
+            "id": "WRONG_DETAIL",
+            "title": "Una visita recordada de otra manera",
+            "kind": "TESTIMONY",
+            "source_id": "RESIDENT_001",
+            "source_label": "Haruto Senda",
+            "text": "«El otro día preguntabas por Ryoko. El profesor no estaba; te respondió una alumna desde la puerta.»",
+            "acquired_minute": 90,
+            "claimed_time": "La visita del prólogo, según Haruto",
+            "event_id": null
+          },
+          {
+            "id": "MY_VISIT",
+            "title": "Mi conversación con el profesor",
+            "kind": "OBSERVATION",
+            "source_id": "PLAYER_1",
+            "source_label": "Tu experiencia conservada",
+            "text": "Pregunté por el antiguo alumno y fue el profesor quien me dijo el nombre de Ryoko. Estaba presente.",
+            "acquired_minute": 90,
+            "claimed_time": "Prólogo · minuto 30",
+            "event_id": 11
+          },
+          {
+            "id": "AIKO_PRIVATE",
+            "title": "Aiko: un cerrojo y una silueta",
+            "kind": "TESTIMONY",
+            "source_id": "RESIDENT_006",
+            "source_label": "Aiko Mori · conversación privada",
+            "text": "Baja la voz. «Oí un cerrojo y vi una silueta junto al pabellón. El reloj marcaba 22:10. No le vi la cara. No pongas mi nombre en boca de todos.»",
+            "acquired_minute": 90,
+            "claimed_time": "22:10 según el reloj que miró Aiko",
+            "event_id": null
+          },
+          {
+            "id": "CLOCK_ACCOUNT",
+            "title": "La hora de Aiko",
+            "kind": "TESTIMONY",
+            "source_id": "RESIDENT_006",
+            "source_label": "Aiko Mori",
+            "text": "«Miré el reloj exterior del colegio, no el mío. Lleva días marcando lo mismo. No sé cuánto cambia eso lo que oí.»",
+            "acquired_minute": 90,
+            "claimed_time": "Fecha no comprobada",
+            "event_id": null
+          },
+          {
+            "id": "CLOSURE_SHEET",
+            "title": "El parte de cierre",
+            "kind": "DOCUMENT",
+            "source_id": "CLOSURE_SHEET",
+            "source_label": "Hoja del pasillo · firmada por el profesor",
+            "text": "PARTE DE CIERRE · NOCHE ANTERIOR\nPabellón B cerrado. Llave entregada. Firma: profesor de informática.\nLa hoja está sujeta con una grapa nueva. El texto declara un cierre; no demuestra que nadie entrara después.",
+            "acquired_minute": 100,
+            "claimed_time": "Noche anterior, según el documento",
+            "event_id": null
+          },
+          {
+            "id": "SCHOOL_CLOCK",
+            "title": "El reloj está detenido",
+            "kind": "OBSERVATION",
+            "source_id": "SCHOOL_CLOCK",
+            "source_label": "Reloj que has examinado",
+            "text": "El reloj del pabellón marca 22:10. El segundero no avanza. Hay una nota de mantenimiento: «Pila pendiente». Esto no permite fechar lo que vio Aiko.",
+            "acquired_minute": 100,
+            "claimed_time": "Observado ahora · minuto 100",
+            "event_id": null
+          },
+          {
+            "id": "LOCAL_LOG",
+            "title": "Cabecera del ordenador de la escuela",
+            "kind": "RECORD",
+            "source_id": "SCHOOL_PC",
+            "source_label": "Archivo local del tercer ordenador",
+            "text": "ARCHIVO LOCAL · CABECERA 04-17\nCuenta: [índice pendiente]\nProcedencia: restauración externa\nEstado: firma ausente\nUn margen escrito a mano dice: «No confundas una cuenta con quien la recuerda».",
+            "acquired_minute": 110,
+            "claimed_time": "Reloj local sin verificar",
+            "event_id": null
+          }
+        ],
+        "links": [
+          {
+            "first": "CLOSURE_SHEET",
+            "second": "NIGHT_SIGHTING",
+            "relation": "CONTRADICTS",
+            "minute": 100
+          }
+        ],
+        "contradiction_linked": true,
+        "characters": [
+          "RESIDENT_001",
+          "RESIDENT_006",
+          "PROFESSOR",
+          "RYOKO"
+        ],
+        "notification": "Has vuelto"
+      },
+      "situations": [],
+      "interaction": null,
+      "outgoing_interaction": null,
+      "messages": [
+        {
+          "id": "MSG_BOOTSTRAP_001",
+          "sender": "unknown@wired",
+          "subject": "NO SUBJECT",
+          "body": "NO ESTOY MUERTA.\n\nSOLO DEJÉ DE ESTAR AHÍ.",
+          "created_minute": 0,
+          "read": true,
+          "acknowledged": true,
+          "acknowledged_minute": 80
+        }
+      ],
+      "unread_messages": 0,
+      "wired": {
+        "connected": true,
+        "signals": [
+          {
+            "node_id": "NODE_07",
+            "location": "STATION",
+            "strength": 0.5,
+            "confidence": 0.35,
+            "origin_source": "WIRED_MESSAGE",
+            "current_source": "WIRED_MESSAGE",
+            "verified": false,
+            "updated_minute": 80
+          }
+        ],
+        "digital_presences": []
+      }
+    }
+  },
+  {
+    "name": "identity-record",
+    "at": [
+      -4.15,
+      0.91,
+      0.5
+    ],
+    "result": {
+      "speaker": "Un nombre que ya estaba escrito",
+      "text": "CUENTA: Player\nMARCA LOCAL: minuto 20\nPRIMERA CONEXIÓN CONSERVADA: minuto 80\nEl archivo fecha ese acceso 60 minutos antes de tu primera conexión conservada. No hay firma verificable ni prueba de quién utilizó la cuenta. El reloj local puede estar equivocado.\n\nPuedes conservar la copia, enseñársela al profesor o hablar con Ryoko. Nadie sabe todavía si es un registro falso, otra persona o un recuerdo incompleto.",
+      "choices": []
+    },
+    "mode": "dialogue",
+    "state": {
+      "schema_version": "0.1",
+      "minute": 110,
+      "player": {
+        "id": "PLAYER_1",
+        "name": "Player",
+        "faction": "UNALIGNED",
+        "location": "SCHOOL_LAB",
+        "goal": "UNKNOWN",
+        "energy": 1.0
+      },
+      "navigation": {
+        "reachable_locations": [
+          "SCHOOL"
+        ]
+      },
+      "known_nodes": [
+        {
+          "id": "NODE_07",
+          "knowledge_confidence": 0.35,
+          "knowledge_source": "WIRED_MESSAGE",
+          "belief": {
+            "location": "STATION",
+            "strength": 0.5,
+            "confidence": 0.35,
+            "source": "WIRED_MESSAGE",
+            "updated_minute": 80
+          }
+        }
+      ],
+      "visible_actors": [
+        {
+          "id": "RESIDENT_025",
+          "name": "Takeshi Uno",
+          "role": "Ayudante de informática",
+          "role_label": "Ayudante de informática",
+          "skills": {
+            "Informática": 3,
+            "Observación": 1
+          },
+          "public_objective": "Recuperar un disquete con ejercicios del aula.",
+          "activity": "Comprueba una etiqueta",
+          "slot": 0,
+          "patrol_step": 0,
+          "appearance": "teacher",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_026",
+          "name": "Misaki Ito",
+          "role": "Alumna de informática",
+          "role_label": "Alumna de informática",
+          "skills": {
+            "Programación": 4,
+            "Observación": 2
+          },
+          "public_objective": "Entender por qué su primer programa no termina.",
+          "activity": "Repasa el bucle",
+          "slot": 1,
+          "patrol_step": 3,
+          "appearance": "student",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_027",
+          "name": "Jun Saito",
+          "role": "Alumno del taller",
+          "role_label": "Alumno del taller",
+          "skills": {
+            "Electrónica": 5,
+            "Observación": 3
+          },
+          "public_objective": "Preparar un pequeño catálogo de componentes usados.",
+          "activity": "Cuenta piezas",
+          "slot": 2,
+          "patrol_step": 2,
+          "appearance": "student",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_028",
+          "name": "Rina Watanabe",
+          "role": "Amiga del aula",
+          "role_label": "Amiga del aula",
+          "skills": {
+            "Informática": 3,
+            "Observación": 1
+          },
+          "public_objective": "Guardar una copia del trabajo antes de salir.",
+          "activity": "Revisa su disquete",
+          "slot": 3,
+          "patrol_step": 0,
+          "appearance": "student",
+          "role_assignment": "CITY_PROVISIONAL"
+        }
+      ],
+      "character_sheets": {
+        "player": {
+          "id": "PLAYER_1",
+          "name": "Player",
+          "kind": "PLAYER",
+          "faction": "UNALIGNED",
+          "location": "SCHOOL_LAB",
+          "energy": 1.0,
+          "known_nodes": 1,
+          "case_status": "UNSEEN",
+          "agency": "HUMAN_ONLY"
+        },
+        "visible_npcs": [
+          {
+            "id": "RESIDENT_025",
+            "name": "Takeshi Uno",
+            "kind": "NPC",
+            "observed_location": "SCHOOL_LAB",
+            "focus": "Comprueba una etiqueta",
+            "role": "Ayudante de informática",
+            "role_label": "Ayudante de informática",
+            "skills": {
+              "Informática": 3,
+              "Observación": 1
+            },
+            "public_objective": "Recuperar un disquete con ejercicios del aula.",
+            "activity": "Comprueba una etiqueta",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_026",
+            "name": "Misaki Ito",
+            "kind": "NPC",
+            "observed_location": "SCHOOL_LAB",
+            "focus": "Repasa el bucle",
+            "role": "Alumna de informática",
+            "role_label": "Alumna de informática",
+            "skills": {
+              "Programación": 4,
+              "Observación": 2
+            },
+            "public_objective": "Entender por qué su primer programa no termina.",
+            "activity": "Repasa el bucle",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_027",
+            "name": "Jun Saito",
+            "kind": "NPC",
+            "observed_location": "SCHOOL_LAB",
+            "focus": "Cuenta piezas",
+            "role": "Alumno del taller",
+            "role_label": "Alumno del taller",
+            "skills": {
+              "Electrónica": 5,
+              "Observación": 3
+            },
+            "public_objective": "Preparar un pequeño catálogo de componentes usados.",
+            "activity": "Cuenta piezas",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_028",
+            "name": "Rina Watanabe",
+            "kind": "NPC",
+            "observed_location": "SCHOOL_LAB",
+            "focus": "Revisa su disquete",
+            "role": "Amiga del aula",
+            "role_label": "Amiga del aula",
+            "skills": {
+              "Informática": 3,
+              "Observación": 1
+            },
+            "public_objective": "Guardar una copia del trabajo antes de salir.",
+            "activity": "Revisa su disquete",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "PROFESSOR",
+            "name": "Profesor",
+            "role": "TEACHER",
+            "role_label": "Profesor de informática",
+            "focus": "Recuerda a un antiguo alumno, no conoce su paradero actual.",
+            "kind": "NPC",
+            "role_assignment": "AUTHORED_PROLOGUE",
+            "observed_location": "SCHOOL_LAB"
+          }
+        ]
+      },
+      "station_case": {
+        "id": "STATION_ECHO_07",
+        "title": "El pulso ausente",
+        "status": "UNSEEN",
+        "resolution": null,
+        "summary": "Investiga NODE_07 en la estacion para buscar el rastro.",
+        "witness_count": 0,
+        "responses": []
+      },
+      "prologue": {
+        "enabled": true,
+        "stage": "CONNECTED",
+        "hint": "La conexión cambió algo. Quizá ahora puedas descubrir qué."
+      },
+      "chapter_one": {
+        "active": true,
+        "title": "Ya habías estado aquí",
+        "started_minute": 80,
+        "connection_minute": 80,
+        "decision": null,
+        "hypothesis": "Quizá alguien restauró una copia antigua. El nombre de una cuenta no demuestra quién entró.",
+        "hypothesis_status": "UNVERIFIED",
+        "evidence": [
+          {
+            "id": "RETURN_MESSAGE",
+            "title": "Has vuelto",
+            "kind": "MESSAGE",
+            "source_id": "UNKNOWN_WIRED",
+            "source_label": "Identidad desconocida · Wired",
+            "text": "Has vuelto.",
+            "acquired_minute": 80,
+            "claimed_time": "Recibido al abrir este capítulo, minuto 80",
+            "event_id": null
+          },
+          {
+            "id": "NIGHT_SIGHTING",
+            "title": "Haruto te sitúa en la escuela",
+            "kind": "TESTIMONY",
+            "source_id": "RESIDENT_001",
+            "source_label": "Haruto Senda",
+            "text": "«Ya habías estado aquí. Te vi en la escuela anoche, cuando todo estaba oscuro. Llevabas un papel doblado. O al menos... pensé que eras tú.»",
+            "acquired_minute": 90,
+            "claimed_time": "La noche anterior, según Haruto",
+            "event_id": null
+          },
+          {
+            "id": "WRONG_DETAIL",
+            "title": "Una visita recordada de otra manera",
+            "kind": "TESTIMONY",
+            "source_id": "RESIDENT_001",
+            "source_label": "Haruto Senda",
+            "text": "«El otro día preguntabas por Ryoko. El profesor no estaba; te respondió una alumna desde la puerta.»",
+            "acquired_minute": 90,
+            "claimed_time": "La visita del prólogo, según Haruto",
+            "event_id": null
+          },
+          {
+            "id": "MY_VISIT",
+            "title": "Mi conversación con el profesor",
+            "kind": "OBSERVATION",
+            "source_id": "PLAYER_1",
+            "source_label": "Tu experiencia conservada",
+            "text": "Pregunté por el antiguo alumno y fue el profesor quien me dijo el nombre de Ryoko. Estaba presente.",
+            "acquired_minute": 90,
+            "claimed_time": "Prólogo · minuto 30",
+            "event_id": 11
+          },
+          {
+            "id": "AIKO_PRIVATE",
+            "title": "Aiko: un cerrojo y una silueta",
+            "kind": "TESTIMONY",
+            "source_id": "RESIDENT_006",
+            "source_label": "Aiko Mori · conversación privada",
+            "text": "Baja la voz. «Oí un cerrojo y vi una silueta junto al pabellón. El reloj marcaba 22:10. No le vi la cara. No pongas mi nombre en boca de todos.»",
+            "acquired_minute": 90,
+            "claimed_time": "22:10 según el reloj que miró Aiko",
+            "event_id": null
+          },
+          {
+            "id": "CLOCK_ACCOUNT",
+            "title": "La hora de Aiko",
+            "kind": "TESTIMONY",
+            "source_id": "RESIDENT_006",
+            "source_label": "Aiko Mori",
+            "text": "«Miré el reloj exterior del colegio, no el mío. Lleva días marcando lo mismo. No sé cuánto cambia eso lo que oí.»",
+            "acquired_minute": 90,
+            "claimed_time": "Fecha no comprobada",
+            "event_id": null
+          },
+          {
+            "id": "CLOSURE_SHEET",
+            "title": "El parte de cierre",
+            "kind": "DOCUMENT",
+            "source_id": "CLOSURE_SHEET",
+            "source_label": "Hoja del pasillo · firmada por el profesor",
+            "text": "PARTE DE CIERRE · NOCHE ANTERIOR\nPabellón B cerrado. Llave entregada. Firma: profesor de informática.\nLa hoja está sujeta con una grapa nueva. El texto declara un cierre; no demuestra que nadie entrara después.",
+            "acquired_minute": 100,
+            "claimed_time": "Noche anterior, según el documento",
+            "event_id": null
+          },
+          {
+            "id": "SCHOOL_CLOCK",
+            "title": "El reloj está detenido",
+            "kind": "OBSERVATION",
+            "source_id": "SCHOOL_CLOCK",
+            "source_label": "Reloj que has examinado",
+            "text": "El reloj del pabellón marca 22:10. El segundero no avanza. Hay una nota de mantenimiento: «Pila pendiente». Esto no permite fechar lo que vio Aiko.",
+            "acquired_minute": 100,
+            "claimed_time": "Observado ahora · minuto 100",
+            "event_id": null
+          },
+          {
+            "id": "LOCAL_LOG",
+            "title": "Cabecera del ordenador de la escuela",
+            "kind": "RECORD",
+            "source_id": "SCHOOL_PC",
+            "source_label": "Archivo local del tercer ordenador",
+            "text": "ARCHIVO LOCAL · CABECERA 04-17\nCuenta: [índice pendiente]\nProcedencia: restauración externa\nEstado: firma ausente\nUn margen escrito a mano dice: «No confundas una cuenta con quien la recuerda».",
+            "acquired_minute": 110,
+            "claimed_time": "Reloj local sin verificar",
+            "event_id": null
+          },
+          {
+            "id": "IDENTITY_LOG",
+            "title": "Tu nombre antes de la primera conexión",
+            "kind": "RECORD",
+            "source_id": "SCHOOL_ARCHIVE",
+            "source_label": "Registro reconstruido · firma no verificada",
+            "text": "CUENTA: Player\nMARCA LOCAL: minuto 20\nPRIMERA CONEXIÓN CONSERVADA: minuto 80\nEl archivo fecha ese acceso 60 minutos antes de tu primera conexión conservada. No hay firma verificable ni prueba de quién utilizó la cuenta. El reloj local puede estar equivocado.",
+            "acquired_minute": 110,
+            "claimed_time": "El documento afirma minuto 20; autenticidad pendiente",
+            "event_id": null
+          }
+        ],
+        "links": [
+          {
+            "first": "CLOSURE_SHEET",
+            "second": "NIGHT_SIGHTING",
+            "relation": "CONTRADICTS",
+            "minute": 100
+          }
+        ],
+        "contradiction_linked": true,
+        "characters": [
+          "RESIDENT_001",
+          "RESIDENT_006",
+          "PROFESSOR",
+          "RYOKO"
+        ],
+        "notification": "Has vuelto"
+      },
+      "situations": [],
+      "interaction": null,
+      "outgoing_interaction": null,
+      "messages": [
+        {
+          "id": "MSG_BOOTSTRAP_001",
+          "sender": "unknown@wired",
+          "subject": "NO SUBJECT",
+          "body": "NO ESTOY MUERTA.\n\nSOLO DEJÉ DE ESTAR AHÍ.",
+          "created_minute": 0,
+          "read": true,
+          "acknowledged": true,
+          "acknowledged_minute": 80
+        }
+      ],
+      "unread_messages": 0,
+      "wired": {
+        "connected": true,
+        "signals": [
+          {
+            "node_id": "NODE_07",
+            "location": "STATION",
+            "strength": 0.5,
+            "confidence": 0.35,
+            "origin_source": "WIRED_MESSAGE",
+            "current_source": "WIRED_MESSAGE",
+            "verified": false,
+            "updated_minute": 80
+          }
+        ],
+        "digital_presences": []
+      }
+    }
+  },
+  {
+    "name": "decision",
+    "at": [
+      3.2,
+      0.91,
+      -3
+    ],
+    "result": {
+      "speaker": "Profesor",
+      "text": "«Puedo incorporarla al archivo con tu nombre. Informaré a Ryoko de la copia; quizá no le guste verse implicada. Tú decides.»",
+      "choices": [
+        {
+          "text": "Entregar la copia y autorizar el aviso a Ryoko.",
+          "action": "DECIDE",
+          "target": "PROFESSOR",
+          "data": {
+            "decision": "DISCLOSE"
+          }
+        }
+      ]
+    },
+    "mode": "dialogue",
+    "state": {
+      "schema_version": "0.1",
+      "minute": 110,
+      "player": {
+        "id": "PLAYER_1",
+        "name": "Player",
+        "faction": "UNALIGNED",
+        "location": "SCHOOL_LAB",
+        "goal": "UNKNOWN",
+        "energy": 1.0
+      },
+      "navigation": {
+        "reachable_locations": [
+          "SCHOOL"
+        ]
+      },
+      "known_nodes": [
+        {
+          "id": "NODE_07",
+          "knowledge_confidence": 0.35,
+          "knowledge_source": "WIRED_MESSAGE",
+          "belief": {
+            "location": "STATION",
+            "strength": 0.5,
+            "confidence": 0.35,
+            "source": "WIRED_MESSAGE",
+            "updated_minute": 80
+          }
+        }
+      ],
+      "visible_actors": [
+        {
+          "id": "RESIDENT_025",
+          "name": "Takeshi Uno",
+          "role": "Ayudante de informática",
+          "role_label": "Ayudante de informática",
+          "skills": {
+            "Informática": 3,
+            "Observación": 1
+          },
+          "public_objective": "Recuperar un disquete con ejercicios del aula.",
+          "activity": "Comprueba una etiqueta",
+          "slot": 0,
+          "patrol_step": 0,
+          "appearance": "teacher",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_026",
+          "name": "Misaki Ito",
+          "role": "Alumna de informática",
+          "role_label": "Alumna de informática",
+          "skills": {
+            "Programación": 4,
+            "Observación": 2
+          },
+          "public_objective": "Entender por qué su primer programa no termina.",
+          "activity": "Repasa el bucle",
+          "slot": 1,
+          "patrol_step": 3,
+          "appearance": "student",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_027",
+          "name": "Jun Saito",
+          "role": "Alumno del taller",
+          "role_label": "Alumno del taller",
+          "skills": {
+            "Electrónica": 5,
+            "Observación": 3
+          },
+          "public_objective": "Preparar un pequeño catálogo de componentes usados.",
+          "activity": "Cuenta piezas",
+          "slot": 2,
+          "patrol_step": 2,
+          "appearance": "student",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_028",
+          "name": "Rina Watanabe",
+          "role": "Amiga del aula",
+          "role_label": "Amiga del aula",
+          "skills": {
+            "Informática": 3,
+            "Observación": 1
+          },
+          "public_objective": "Guardar una copia del trabajo antes de salir.",
+          "activity": "Revisa su disquete",
+          "slot": 3,
+          "patrol_step": 0,
+          "appearance": "student",
+          "role_assignment": "CITY_PROVISIONAL"
+        }
+      ],
+      "character_sheets": {
+        "player": {
+          "id": "PLAYER_1",
+          "name": "Player",
+          "kind": "PLAYER",
+          "faction": "UNALIGNED",
+          "location": "SCHOOL_LAB",
+          "energy": 1.0,
+          "known_nodes": 1,
+          "case_status": "UNSEEN",
+          "agency": "HUMAN_ONLY"
+        },
+        "visible_npcs": [
+          {
+            "id": "RESIDENT_025",
+            "name": "Takeshi Uno",
+            "kind": "NPC",
+            "observed_location": "SCHOOL_LAB",
+            "focus": "Comprueba una etiqueta",
+            "role": "Ayudante de informática",
+            "role_label": "Ayudante de informática",
+            "skills": {
+              "Informática": 3,
+              "Observación": 1
+            },
+            "public_objective": "Recuperar un disquete con ejercicios del aula.",
+            "activity": "Comprueba una etiqueta",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_026",
+            "name": "Misaki Ito",
+            "kind": "NPC",
+            "observed_location": "SCHOOL_LAB",
+            "focus": "Repasa el bucle",
+            "role": "Alumna de informática",
+            "role_label": "Alumna de informática",
+            "skills": {
+              "Programación": 4,
+              "Observación": 2
+            },
+            "public_objective": "Entender por qué su primer programa no termina.",
+            "activity": "Repasa el bucle",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_027",
+            "name": "Jun Saito",
+            "kind": "NPC",
+            "observed_location": "SCHOOL_LAB",
+            "focus": "Cuenta piezas",
+            "role": "Alumno del taller",
+            "role_label": "Alumno del taller",
+            "skills": {
+              "Electrónica": 5,
+              "Observación": 3
+            },
+            "public_objective": "Preparar un pequeño catálogo de componentes usados.",
+            "activity": "Cuenta piezas",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_028",
+            "name": "Rina Watanabe",
+            "kind": "NPC",
+            "observed_location": "SCHOOL_LAB",
+            "focus": "Revisa su disquete",
+            "role": "Amiga del aula",
+            "role_label": "Amiga del aula",
+            "skills": {
+              "Informática": 3,
+              "Observación": 1
+            },
+            "public_objective": "Guardar una copia del trabajo antes de salir.",
+            "activity": "Revisa su disquete",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "PROFESSOR",
+            "name": "Profesor",
+            "role": "TEACHER",
+            "role_label": "Profesor de informática",
+            "focus": "Recuerda a un antiguo alumno, no conoce su paradero actual.",
+            "kind": "NPC",
+            "role_assignment": "AUTHORED_PROLOGUE",
+            "observed_location": "SCHOOL_LAB"
+          }
+        ]
+      },
+      "station_case": {
+        "id": "STATION_ECHO_07",
+        "title": "El pulso ausente",
+        "status": "UNSEEN",
+        "resolution": null,
+        "summary": "Investiga NODE_07 en la estacion para buscar el rastro.",
+        "witness_count": 0,
+        "responses": []
+      },
+      "prologue": {
+        "enabled": true,
+        "stage": "CONNECTED",
+        "hint": "La conexión cambió algo. Quizá ahora puedas descubrir qué."
+      },
+      "chapter_one": {
+        "active": true,
+        "title": "Ya habías estado aquí",
+        "started_minute": 80,
+        "connection_minute": 80,
+        "decision": null,
+        "hypothesis": "Quizá alguien restauró una copia antigua. El nombre de una cuenta no demuestra quién entró.",
+        "hypothesis_status": "UNVERIFIED",
+        "evidence": [
+          {
+            "id": "RETURN_MESSAGE",
+            "title": "Has vuelto",
+            "kind": "MESSAGE",
+            "source_id": "UNKNOWN_WIRED",
+            "source_label": "Identidad desconocida · Wired",
+            "text": "Has vuelto.",
+            "acquired_minute": 80,
+            "claimed_time": "Recibido al abrir este capítulo, minuto 80",
+            "event_id": null
+          },
+          {
+            "id": "NIGHT_SIGHTING",
+            "title": "Haruto te sitúa en la escuela",
+            "kind": "TESTIMONY",
+            "source_id": "RESIDENT_001",
+            "source_label": "Haruto Senda",
+            "text": "«Ya habías estado aquí. Te vi en la escuela anoche, cuando todo estaba oscuro. Llevabas un papel doblado. O al menos... pensé que eras tú.»",
+            "acquired_minute": 90,
+            "claimed_time": "La noche anterior, según Haruto",
+            "event_id": null
+          },
+          {
+            "id": "WRONG_DETAIL",
+            "title": "Una visita recordada de otra manera",
+            "kind": "TESTIMONY",
+            "source_id": "RESIDENT_001",
+            "source_label": "Haruto Senda",
+            "text": "«El otro día preguntabas por Ryoko. El profesor no estaba; te respondió una alumna desde la puerta.»",
+            "acquired_minute": 90,
+            "claimed_time": "La visita del prólogo, según Haruto",
+            "event_id": null
+          },
+          {
+            "id": "MY_VISIT",
+            "title": "Mi conversación con el profesor",
+            "kind": "OBSERVATION",
+            "source_id": "PLAYER_1",
+            "source_label": "Tu experiencia conservada",
+            "text": "Pregunté por el antiguo alumno y fue el profesor quien me dijo el nombre de Ryoko. Estaba presente.",
+            "acquired_minute": 90,
+            "claimed_time": "Prólogo · minuto 30",
+            "event_id": 11
+          },
+          {
+            "id": "AIKO_PRIVATE",
+            "title": "Aiko: un cerrojo y una silueta",
+            "kind": "TESTIMONY",
+            "source_id": "RESIDENT_006",
+            "source_label": "Aiko Mori · conversación privada",
+            "text": "Baja la voz. «Oí un cerrojo y vi una silueta junto al pabellón. El reloj marcaba 22:10. No le vi la cara. No pongas mi nombre en boca de todos.»",
+            "acquired_minute": 90,
+            "claimed_time": "22:10 según el reloj que miró Aiko",
+            "event_id": null
+          },
+          {
+            "id": "CLOCK_ACCOUNT",
+            "title": "La hora de Aiko",
+            "kind": "TESTIMONY",
+            "source_id": "RESIDENT_006",
+            "source_label": "Aiko Mori",
+            "text": "«Miré el reloj exterior del colegio, no el mío. Lleva días marcando lo mismo. No sé cuánto cambia eso lo que oí.»",
+            "acquired_minute": 90,
+            "claimed_time": "Fecha no comprobada",
+            "event_id": null
+          },
+          {
+            "id": "CLOSURE_SHEET",
+            "title": "El parte de cierre",
+            "kind": "DOCUMENT",
+            "source_id": "CLOSURE_SHEET",
+            "source_label": "Hoja del pasillo · firmada por el profesor",
+            "text": "PARTE DE CIERRE · NOCHE ANTERIOR\nPabellón B cerrado. Llave entregada. Firma: profesor de informática.\nLa hoja está sujeta con una grapa nueva. El texto declara un cierre; no demuestra que nadie entrara después.",
+            "acquired_minute": 100,
+            "claimed_time": "Noche anterior, según el documento",
+            "event_id": null
+          },
+          {
+            "id": "SCHOOL_CLOCK",
+            "title": "El reloj está detenido",
+            "kind": "OBSERVATION",
+            "source_id": "SCHOOL_CLOCK",
+            "source_label": "Reloj que has examinado",
+            "text": "El reloj del pabellón marca 22:10. El segundero no avanza. Hay una nota de mantenimiento: «Pila pendiente». Esto no permite fechar lo que vio Aiko.",
+            "acquired_minute": 100,
+            "claimed_time": "Observado ahora · minuto 100",
+            "event_id": null
+          },
+          {
+            "id": "LOCAL_LOG",
+            "title": "Cabecera del ordenador de la escuela",
+            "kind": "RECORD",
+            "source_id": "SCHOOL_PC",
+            "source_label": "Archivo local del tercer ordenador",
+            "text": "ARCHIVO LOCAL · CABECERA 04-17\nCuenta: [índice pendiente]\nProcedencia: restauración externa\nEstado: firma ausente\nUn margen escrito a mano dice: «No confundas una cuenta con quien la recuerda».",
+            "acquired_minute": 110,
+            "claimed_time": "Reloj local sin verificar",
+            "event_id": null
+          },
+          {
+            "id": "IDENTITY_LOG",
+            "title": "Tu nombre antes de la primera conexión",
+            "kind": "RECORD",
+            "source_id": "SCHOOL_ARCHIVE",
+            "source_label": "Registro reconstruido · firma no verificada",
+            "text": "CUENTA: Player\nMARCA LOCAL: minuto 20\nPRIMERA CONEXIÓN CONSERVADA: minuto 80\nEl archivo fecha ese acceso 60 minutos antes de tu primera conexión conservada. No hay firma verificable ni prueba de quién utilizó la cuenta. El reloj local puede estar equivocado.",
+            "acquired_minute": 110,
+            "claimed_time": "El documento afirma minuto 20; autenticidad pendiente",
+            "event_id": null
+          },
+          {
+            "id": "PROFESSOR_CLOSED",
+            "title": "El profesor afirma haber cerrado",
+            "kind": "TESTIMONY",
+            "source_id": "PROFESSOR",
+            "source_label": "Profesor",
+            "text": "«Cerré la escuela anoche. Firmé el parte del pasillo. Nadie tenía permiso para estar dentro. Eso no significa que yo vigilase la puerta toda la noche.»",
+            "acquired_minute": 110,
+            "claimed_time": "La noche anterior, según el profesor",
+            "event_id": null
+          }
+        ],
+        "links": [
+          {
+            "first": "CLOSURE_SHEET",
+            "second": "NIGHT_SIGHTING",
+            "relation": "CONTRADICTS",
+            "minute": 100
+          }
+        ],
+        "contradiction_linked": true,
+        "characters": [
+          "RESIDENT_001",
+          "RESIDENT_006",
+          "PROFESSOR",
+          "RYOKO"
+        ],
+        "notification": "Has vuelto"
+      },
+      "situations": [],
+      "interaction": null,
+      "outgoing_interaction": null,
+      "messages": [
+        {
+          "id": "MSG_BOOTSTRAP_001",
+          "sender": "unknown@wired",
+          "subject": "NO SUBJECT",
+          "body": "NO ESTOY MUERTA.\n\nSOLO DEJÉ DE ESTAR AHÍ.",
+          "created_minute": 0,
+          "read": true,
+          "acknowledged": true,
+          "acknowledged_minute": 80
+        }
+      ],
+      "unread_messages": 0,
+      "wired": {
+        "connected": true,
+        "signals": [
+          {
+            "node_id": "NODE_07",
+            "location": "STATION",
+            "strength": 0.5,
+            "confidence": 0.35,
+            "origin_source": "WIRED_MESSAGE",
+            "current_source": "WIRED_MESSAGE",
+            "verified": false,
+            "updated_minute": 80
+          }
+        ],
+        "digital_presences": []
+      }
+    }
+  },
+  {
+    "name": "return-to-school",
+    "at": [
+      0,
+      0.91,
+      -2
+    ],
+    "result": {
+      "speaker": "Profesor",
+      "text": "El profesor aparta una silla. «Has dejado constancia con tu nombre. Confío en que leas también lo que no encaja: he puesto el anexo junto al tercer ordenador.»",
+      "choices": []
+    },
+    "mode": "scene",
+    "state": {
+      "schema_version": "0.1",
+      "minute": 110,
+      "player": {
+        "id": "PLAYER_1",
+        "name": "Player",
+        "faction": "UNALIGNED",
+        "location": "SCHOOL_LAB",
+        "goal": "UNKNOWN",
+        "energy": 1.0
+      },
+      "navigation": {
+        "reachable_locations": [
+          "SCHOOL"
+        ]
+      },
+      "known_nodes": [
+        {
+          "id": "NODE_07",
+          "knowledge_confidence": 0.35,
+          "knowledge_source": "WIRED_MESSAGE",
+          "belief": {
+            "location": "STATION",
+            "strength": 0.5,
+            "confidence": 0.35,
+            "source": "WIRED_MESSAGE",
+            "updated_minute": 80
+          }
+        }
+      ],
+      "visible_actors": [
+        {
+          "id": "RESIDENT_025",
+          "name": "Takeshi Uno",
+          "role": "Ayudante de informática",
+          "role_label": "Ayudante de informática",
+          "skills": {
+            "Informática": 3,
+            "Observación": 1
+          },
+          "public_objective": "Recuperar un disquete con ejercicios del aula.",
+          "activity": "Comprueba una etiqueta",
+          "slot": 0,
+          "patrol_step": 0,
+          "appearance": "teacher",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_026",
+          "name": "Misaki Ito",
+          "role": "Alumna de informática",
+          "role_label": "Alumna de informática",
+          "skills": {
+            "Programación": 4,
+            "Observación": 2
+          },
+          "public_objective": "Entender por qué su primer programa no termina.",
+          "activity": "Repasa el bucle",
+          "slot": 1,
+          "patrol_step": 3,
+          "appearance": "student",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_027",
+          "name": "Jun Saito",
+          "role": "Alumno del taller",
+          "role_label": "Alumno del taller",
+          "skills": {
+            "Electrónica": 5,
+            "Observación": 3
+          },
+          "public_objective": "Preparar un pequeño catálogo de componentes usados.",
+          "activity": "Cuenta piezas",
+          "slot": 2,
+          "patrol_step": 2,
+          "appearance": "student",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_028",
+          "name": "Rina Watanabe",
+          "role": "Amiga del aula",
+          "role_label": "Amiga del aula",
+          "skills": {
+            "Informática": 3,
+            "Observación": 1
+          },
+          "public_objective": "Guardar una copia del trabajo antes de salir.",
+          "activity": "Revisa su disquete",
+          "slot": 3,
+          "patrol_step": 0,
+          "appearance": "student",
+          "role_assignment": "CITY_PROVISIONAL"
+        }
+      ],
+      "character_sheets": {
+        "player": {
+          "id": "PLAYER_1",
+          "name": "Player",
+          "kind": "PLAYER",
+          "faction": "UNALIGNED",
+          "location": "SCHOOL_LAB",
+          "energy": 1.0,
+          "known_nodes": 1,
+          "case_status": "UNSEEN",
+          "agency": "HUMAN_ONLY"
+        },
+        "visible_npcs": [
+          {
+            "id": "RESIDENT_025",
+            "name": "Takeshi Uno",
+            "kind": "NPC",
+            "observed_location": "SCHOOL_LAB",
+            "focus": "Comprueba una etiqueta",
+            "role": "Ayudante de informática",
+            "role_label": "Ayudante de informática",
+            "skills": {
+              "Informática": 3,
+              "Observación": 1
+            },
+            "public_objective": "Recuperar un disquete con ejercicios del aula.",
+            "activity": "Comprueba una etiqueta",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_026",
+            "name": "Misaki Ito",
+            "kind": "NPC",
+            "observed_location": "SCHOOL_LAB",
+            "focus": "Repasa el bucle",
+            "role": "Alumna de informática",
+            "role_label": "Alumna de informática",
+            "skills": {
+              "Programación": 4,
+              "Observación": 2
+            },
+            "public_objective": "Entender por qué su primer programa no termina.",
+            "activity": "Repasa el bucle",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_027",
+            "name": "Jun Saito",
+            "kind": "NPC",
+            "observed_location": "SCHOOL_LAB",
+            "focus": "Cuenta piezas",
+            "role": "Alumno del taller",
+            "role_label": "Alumno del taller",
+            "skills": {
+              "Electrónica": 5,
+              "Observación": 3
+            },
+            "public_objective": "Preparar un pequeño catálogo de componentes usados.",
+            "activity": "Cuenta piezas",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_028",
+            "name": "Rina Watanabe",
+            "kind": "NPC",
+            "observed_location": "SCHOOL_LAB",
+            "focus": "Revisa su disquete",
+            "role": "Amiga del aula",
+            "role_label": "Amiga del aula",
+            "skills": {
+              "Informática": 3,
+              "Observación": 1
+            },
+            "public_objective": "Guardar una copia del trabajo antes de salir.",
+            "activity": "Revisa su disquete",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "PROFESSOR",
+            "name": "Profesor",
+            "role": "TEACHER",
+            "role_label": "Profesor de informática",
+            "focus": "Recuerda a un antiguo alumno, no conoce su paradero actual.",
+            "kind": "NPC",
+            "role_assignment": "AUTHORED_PROLOGUE",
+            "observed_location": "SCHOOL_LAB"
+          }
+        ]
+      },
+      "station_case": {
+        "id": "STATION_ECHO_07",
+        "title": "El pulso ausente",
+        "status": "UNSEEN",
+        "resolution": null,
+        "summary": "Investiga NODE_07 en la estacion para buscar el rastro.",
+        "witness_count": 0,
+        "responses": []
+      },
+      "prologue": {
+        "enabled": true,
+        "stage": "CONNECTED",
+        "hint": "La conexión cambió algo. Quizá ahora puedas descubrir qué."
+      },
+      "chapter_one": {
+        "active": true,
+        "title": "Ya habías estado aquí",
+        "started_minute": 80,
+        "connection_minute": 80,
+        "decision": "DISCLOSE",
+        "hypothesis": "Quizá alguien restauró una copia antigua. El nombre de una cuenta no demuestra quién entró.",
+        "hypothesis_status": "UNVERIFIED",
+        "evidence": [
+          {
+            "id": "RETURN_MESSAGE",
+            "title": "Has vuelto",
+            "kind": "MESSAGE",
+            "source_id": "UNKNOWN_WIRED",
+            "source_label": "Identidad desconocida · Wired",
+            "text": "Has vuelto.",
+            "acquired_minute": 80,
+            "claimed_time": "Recibido al abrir este capítulo, minuto 80",
+            "event_id": null
+          },
+          {
+            "id": "NIGHT_SIGHTING",
+            "title": "Haruto te sitúa en la escuela",
+            "kind": "TESTIMONY",
+            "source_id": "RESIDENT_001",
+            "source_label": "Haruto Senda",
+            "text": "«Ya habías estado aquí. Te vi en la escuela anoche, cuando todo estaba oscuro. Llevabas un papel doblado. O al menos... pensé que eras tú.»",
+            "acquired_minute": 90,
+            "claimed_time": "La noche anterior, según Haruto",
+            "event_id": null
+          },
+          {
+            "id": "WRONG_DETAIL",
+            "title": "Una visita recordada de otra manera",
+            "kind": "TESTIMONY",
+            "source_id": "RESIDENT_001",
+            "source_label": "Haruto Senda",
+            "text": "«El otro día preguntabas por Ryoko. El profesor no estaba; te respondió una alumna desde la puerta.»",
+            "acquired_minute": 90,
+            "claimed_time": "La visita del prólogo, según Haruto",
+            "event_id": null
+          },
+          {
+            "id": "MY_VISIT",
+            "title": "Mi conversación con el profesor",
+            "kind": "OBSERVATION",
+            "source_id": "PLAYER_1",
+            "source_label": "Tu experiencia conservada",
+            "text": "Pregunté por el antiguo alumno y fue el profesor quien me dijo el nombre de Ryoko. Estaba presente.",
+            "acquired_minute": 90,
+            "claimed_time": "Prólogo · minuto 30",
+            "event_id": 11
+          },
+          {
+            "id": "AIKO_PRIVATE",
+            "title": "Aiko: un cerrojo y una silueta",
+            "kind": "TESTIMONY",
+            "source_id": "RESIDENT_006",
+            "source_label": "Aiko Mori · conversación privada",
+            "text": "Baja la voz. «Oí un cerrojo y vi una silueta junto al pabellón. El reloj marcaba 22:10. No le vi la cara. No pongas mi nombre en boca de todos.»",
+            "acquired_minute": 90,
+            "claimed_time": "22:10 según el reloj que miró Aiko",
+            "event_id": null
+          },
+          {
+            "id": "CLOCK_ACCOUNT",
+            "title": "La hora de Aiko",
+            "kind": "TESTIMONY",
+            "source_id": "RESIDENT_006",
+            "source_label": "Aiko Mori",
+            "text": "«Miré el reloj exterior del colegio, no el mío. Lleva días marcando lo mismo. No sé cuánto cambia eso lo que oí.»",
+            "acquired_minute": 90,
+            "claimed_time": "Fecha no comprobada",
+            "event_id": null
+          },
+          {
+            "id": "CLOSURE_SHEET",
+            "title": "El parte de cierre",
+            "kind": "DOCUMENT",
+            "source_id": "CLOSURE_SHEET",
+            "source_label": "Hoja del pasillo · firmada por el profesor",
+            "text": "PARTE DE CIERRE · NOCHE ANTERIOR\nPabellón B cerrado. Llave entregada. Firma: profesor de informática.\nLa hoja está sujeta con una grapa nueva. El texto declara un cierre; no demuestra que nadie entrara después.",
+            "acquired_minute": 100,
+            "claimed_time": "Noche anterior, según el documento",
+            "event_id": null
+          },
+          {
+            "id": "SCHOOL_CLOCK",
+            "title": "El reloj está detenido",
+            "kind": "OBSERVATION",
+            "source_id": "SCHOOL_CLOCK",
+            "source_label": "Reloj que has examinado",
+            "text": "El reloj del pabellón marca 22:10. El segundero no avanza. Hay una nota de mantenimiento: «Pila pendiente». Esto no permite fechar lo que vio Aiko.",
+            "acquired_minute": 100,
+            "claimed_time": "Observado ahora · minuto 100",
+            "event_id": null
+          },
+          {
+            "id": "LOCAL_LOG",
+            "title": "Cabecera del ordenador de la escuela",
+            "kind": "RECORD",
+            "source_id": "SCHOOL_PC",
+            "source_label": "Archivo local del tercer ordenador",
+            "text": "ARCHIVO LOCAL · CABECERA 04-17\nCuenta: [índice pendiente]\nProcedencia: restauración externa\nEstado: firma ausente\nUn margen escrito a mano dice: «No confundas una cuenta con quien la recuerda».",
+            "acquired_minute": 110,
+            "claimed_time": "Reloj local sin verificar",
+            "event_id": null
+          },
+          {
+            "id": "IDENTITY_LOG",
+            "title": "Tu nombre antes de la primera conexión",
+            "kind": "RECORD",
+            "source_id": "SCHOOL_ARCHIVE",
+            "source_label": "Registro reconstruido · firma no verificada",
+            "text": "CUENTA: Player\nMARCA LOCAL: minuto 20\nPRIMERA CONEXIÓN CONSERVADA: minuto 80\nEl archivo fecha ese acceso 60 minutos antes de tu primera conexión conservada. No hay firma verificable ni prueba de quién utilizó la cuenta. El reloj local puede estar equivocado.",
+            "acquired_minute": 110,
+            "claimed_time": "El documento afirma minuto 20; autenticidad pendiente",
+            "event_id": null
+          },
+          {
+            "id": "PROFESSOR_CLOSED",
+            "title": "El profesor afirma haber cerrado",
+            "kind": "TESTIMONY",
+            "source_id": "PROFESSOR",
+            "source_label": "Profesor",
+            "text": "«Cerré la escuela anoche. Firmé el parte del pasillo. Nadie tenía permiso para estar dentro. Eso no significa que yo vigilase la puerta toda la noche.»",
+            "acquired_minute": 110,
+            "claimed_time": "La noche anterior, según el profesor",
+            "event_id": null
+          }
+        ],
+        "links": [
+          {
+            "first": "CLOSURE_SHEET",
+            "second": "NIGHT_SIGHTING",
+            "relation": "CONTRADICTS",
+            "minute": 100
+          }
+        ],
+        "contradiction_linked": true,
+        "characters": [
+          "RESIDENT_001",
+          "RESIDENT_006",
+          "PROFESSOR",
+          "RYOKO"
+        ],
+        "notification": "Has vuelto"
+      },
+      "situations": [],
+      "interaction": null,
+      "outgoing_interaction": null,
+      "messages": [
+        {
+          "id": "MSG_BOOTSTRAP_001",
+          "sender": "unknown@wired",
+          "subject": "NO SUBJECT",
+          "body": "NO ESTOY MUERTA.\n\nSOLO DEJÉ DE ESTAR AHÍ.",
+          "created_minute": 0,
+          "read": true,
+          "acknowledged": true,
+          "acknowledged_minute": 80
+        }
+      ],
+      "unread_messages": 0,
+      "wired": {
+        "connected": true,
+        "signals": [
+          {
+            "node_id": "NODE_07",
+            "location": "STATION",
+            "strength": 0.5,
+            "confidence": 0.35,
+            "origin_source": "WIRED_MESSAGE",
+            "current_source": "WIRED_MESSAGE",
+            "verified": false,
+            "updated_minute": 80
+          }
+        ],
+        "digital_presences": []
+      }
+    }
+  },
+  {
+    "name": "ryoko",
+    "at": [
+      0,
+      0.91,
+      1
+    ],
+    "result": {
+      "speaker": "Ryoko",
+      "text": "Ryoko guarda su disquete. «El profesor me envió la copia que autorizaste. Ahora mi nombre también circula. Seguiré hablando contigo, pero el otro paquete me lo quedo.»",
+      "choices": [
+        {
+          "text": "Contarle que alguien escribió «Has vuelto».",
+          "action": "TALK",
+          "target": "RYOKO",
+          "data": {
+            "choice": "MESSAGE"
+          }
+        },
+        {
+          "text": "¿Una fecha de acceso puede estar equivocada?",
+          "action": "TALK",
+          "target": "RYOKO",
+          "data": {
+            "choice": "CLOCK"
+          }
+        },
+        {
+          "text": "Hablar de la copia con mi nombre.",
+          "action": "TALK",
+          "target": "RYOKO",
+          "data": {
+            "choice": "REPORT"
+          }
+        }
+      ]
+    },
+    "mode": "dialogue",
+    "state": {
+      "schema_version": "0.1",
+      "minute": 140,
+      "player": {
+        "id": "PLAYER_1",
+        "name": "Player",
+        "faction": "UNALIGNED",
+        "location": "NIGHTCLUB",
+        "goal": "UNKNOWN",
+        "energy": 1.0
+      },
+      "navigation": {
+        "reachable_locations": [
+          "APARTMENT_DISTRICT"
+        ]
+      },
+      "known_nodes": [
+        {
+          "id": "NODE_07",
+          "knowledge_confidence": 0.35,
+          "knowledge_source": "WIRED_MESSAGE",
+          "belief": {
+            "location": "STATION",
+            "strength": 0.5,
+            "confidence": 0.35,
+            "source": "WIRED_MESSAGE",
+            "updated_minute": 80
+          }
+        }
+      ],
+      "visible_actors": [
+        {
+          "id": "RESIDENT_029",
+          "name": "Koji Murata",
+          "role": "Camarero de la discoteca",
+          "role_label": "Camarero de la discoteca",
+          "skills": {
+            "Atención al público": 4,
+            "Observación": 2
+          },
+          "public_objective": "Atender a la sala sin perder los pedidos.",
+          "activity": "Vuelve a comprobar la barra",
+          "slot": 0,
+          "patrol_step": 3,
+          "appearance": "apron",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_030",
+          "name": "Erika Hoshino",
+          "role": "DJ",
+          "role_label": "DJ",
+          "skills": {
+            "Música": 5,
+            "Observación": 3
+          },
+          "public_objective": "Encontrar la siguiente pista entre sus discos.",
+          "activity": "Observa la pista",
+          "slot": 1,
+          "patrol_step": 2,
+          "appearance": "casual",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_031",
+          "name": "Tatsuya Ota",
+          "role": "Técnico de sonido",
+          "role_label": "Técnico de sonido",
+          "skills": {
+            "Sonido": 3,
+            "Observación": 1
+          },
+          "public_objective": "Localizar un zumbido en el equipo de la sala.",
+          "activity": "Revisa sus notas",
+          "slot": 2,
+          "patrol_step": 1,
+          "appearance": "worker",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_032",
+          "name": "Aya Nomura",
+          "role": "Amiga de Ryoko",
+          "role_label": "Amiga de Ryoko",
+          "skills": {
+            "Baile": 4,
+            "Observación": 2
+          },
+          "public_objective": "Esperar a su grupo antes de empezar a bailar.",
+          "activity": "Busca a su grupo",
+          "slot": 3,
+          "patrol_step": 3,
+          "appearance": "casual",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_033",
+          "name": "Shinji Fukuda",
+          "role": "Habitual de la discoteca",
+          "role_label": "Habitual de la discoteca",
+          "skills": {
+            "Música": 5,
+            "Observación": 3
+          },
+          "public_objective": "Conseguir el nombre de la canción que sonó ayer.",
+          "activity": "Espera entre canciones",
+          "slot": 4,
+          "patrol_step": 3,
+          "appearance": "casual",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_034",
+          "name": "Reiko Sakai",
+          "role": "Encargada de sala",
+          "role_label": "Encargada de sala",
+          "skills": {
+            "Organización": 3,
+            "Observación": 1
+          },
+          "public_objective": "Mantener despejadas las salidas durante la sesión.",
+          "activity": "Comprueba el paso",
+          "slot": 5,
+          "patrol_step": 1,
+          "appearance": "worker",
+          "role_assignment": "CITY_PROVISIONAL"
+        }
+      ],
+      "character_sheets": {
+        "player": {
+          "id": "PLAYER_1",
+          "name": "Player",
+          "kind": "PLAYER",
+          "faction": "UNALIGNED",
+          "location": "NIGHTCLUB",
+          "energy": 1.0,
+          "known_nodes": 1,
+          "case_status": "UNSEEN",
+          "agency": "HUMAN_ONLY"
+        },
+        "visible_npcs": [
+          {
+            "id": "RESIDENT_029",
+            "name": "Koji Murata",
+            "kind": "NPC",
+            "observed_location": "NIGHTCLUB",
+            "focus": "Vuelve a comprobar la barra",
+            "role": "Camarero de la discoteca",
+            "role_label": "Camarero de la discoteca",
+            "skills": {
+              "Atención al público": 4,
+              "Observación": 2
+            },
+            "public_objective": "Atender a la sala sin perder los pedidos.",
+            "activity": "Vuelve a comprobar la barra",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_030",
+            "name": "Erika Hoshino",
+            "kind": "NPC",
+            "observed_location": "NIGHTCLUB",
+            "focus": "Observa la pista",
+            "role": "DJ",
+            "role_label": "DJ",
+            "skills": {
+              "Música": 5,
+              "Observación": 3
+            },
+            "public_objective": "Encontrar la siguiente pista entre sus discos.",
+            "activity": "Observa la pista",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_031",
+            "name": "Tatsuya Ota",
+            "kind": "NPC",
+            "observed_location": "NIGHTCLUB",
+            "focus": "Revisa sus notas",
+            "role": "Técnico de sonido",
+            "role_label": "Técnico de sonido",
+            "skills": {
+              "Sonido": 3,
+              "Observación": 1
+            },
+            "public_objective": "Localizar un zumbido en el equipo de la sala.",
+            "activity": "Revisa sus notas",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_032",
+            "name": "Aya Nomura",
+            "kind": "NPC",
+            "observed_location": "NIGHTCLUB",
+            "focus": "Busca a su grupo",
+            "role": "Amiga de Ryoko",
+            "role_label": "Amiga de Ryoko",
+            "skills": {
+              "Baile": 4,
+              "Observación": 2
+            },
+            "public_objective": "Esperar a su grupo antes de empezar a bailar.",
+            "activity": "Busca a su grupo",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_033",
+            "name": "Shinji Fukuda",
+            "kind": "NPC",
+            "observed_location": "NIGHTCLUB",
+            "focus": "Espera entre canciones",
+            "role": "Habitual de la discoteca",
+            "role_label": "Habitual de la discoteca",
+            "skills": {
+              "Música": 5,
+              "Observación": 3
+            },
+            "public_objective": "Conseguir el nombre de la canción que sonó ayer.",
+            "activity": "Espera entre canciones",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_034",
+            "name": "Reiko Sakai",
+            "kind": "NPC",
+            "observed_location": "NIGHTCLUB",
+            "focus": "Comprueba el paso",
+            "role": "Encargada de sala",
+            "role_label": "Encargada de sala",
+            "skills": {
+              "Organización": 3,
+              "Observación": 1
+            },
+            "public_objective": "Mantener despejadas las salidas durante la sesión.",
+            "activity": "Comprueba el paso",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RYOKO",
+            "name": "Ryoko",
+            "role": "FORMER_STUDENT",
+            "role_label": "Antiguo alumno",
+            "focus": "Conoce el protocolo de acceso, pero no ha revelado la orden completa.",
+            "kind": "NPC",
+            "role_assignment": "AUTHORED_PROLOGUE",
+            "observed_location": "NIGHTCLUB"
+          }
+        ]
+      },
+      "station_case": {
+        "id": "STATION_ECHO_07",
+        "title": "El pulso ausente",
+        "status": "UNSEEN",
+        "resolution": null,
+        "summary": "Investiga NODE_07 en la estacion para buscar el rastro.",
+        "witness_count": 0,
+        "responses": []
+      },
+      "prologue": {
+        "enabled": true,
+        "stage": "CONNECTED",
+        "hint": "La conexión cambió algo. Quizá ahora puedas descubrir qué."
+      },
+      "chapter_one": {
+        "active": true,
+        "title": "Ya habías estado aquí",
+        "started_minute": 80,
+        "connection_minute": 80,
+        "decision": "DISCLOSE",
+        "hypothesis": "Quizá alguien restauró una copia antigua. El nombre de una cuenta no demuestra quién entró.",
+        "hypothesis_status": "UNVERIFIED",
+        "evidence": [
+          {
+            "id": "RETURN_MESSAGE",
+            "title": "Has vuelto",
+            "kind": "MESSAGE",
+            "source_id": "UNKNOWN_WIRED",
+            "source_label": "Identidad desconocida · Wired",
+            "text": "Has vuelto.",
+            "acquired_minute": 80,
+            "claimed_time": "Recibido al abrir este capítulo, minuto 80",
+            "event_id": null
+          },
+          {
+            "id": "NIGHT_SIGHTING",
+            "title": "Haruto te sitúa en la escuela",
+            "kind": "TESTIMONY",
+            "source_id": "RESIDENT_001",
+            "source_label": "Haruto Senda",
+            "text": "«Ya habías estado aquí. Te vi en la escuela anoche, cuando todo estaba oscuro. Llevabas un papel doblado. O al menos... pensé que eras tú.»",
+            "acquired_minute": 90,
+            "claimed_time": "La noche anterior, según Haruto",
+            "event_id": null
+          },
+          {
+            "id": "WRONG_DETAIL",
+            "title": "Una visita recordada de otra manera",
+            "kind": "TESTIMONY",
+            "source_id": "RESIDENT_001",
+            "source_label": "Haruto Senda",
+            "text": "«El otro día preguntabas por Ryoko. El profesor no estaba; te respondió una alumna desde la puerta.»",
+            "acquired_minute": 90,
+            "claimed_time": "La visita del prólogo, según Haruto",
+            "event_id": null
+          },
+          {
+            "id": "MY_VISIT",
+            "title": "Mi conversación con el profesor",
+            "kind": "OBSERVATION",
+            "source_id": "PLAYER_1",
+            "source_label": "Tu experiencia conservada",
+            "text": "Pregunté por el antiguo alumno y fue el profesor quien me dijo el nombre de Ryoko. Estaba presente.",
+            "acquired_minute": 90,
+            "claimed_time": "Prólogo · minuto 30",
+            "event_id": 11
+          },
+          {
+            "id": "AIKO_PRIVATE",
+            "title": "Aiko: un cerrojo y una silueta",
+            "kind": "TESTIMONY",
+            "source_id": "RESIDENT_006",
+            "source_label": "Aiko Mori · conversación privada",
+            "text": "Baja la voz. «Oí un cerrojo y vi una silueta junto al pabellón. El reloj marcaba 22:10. No le vi la cara. No pongas mi nombre en boca de todos.»",
+            "acquired_minute": 90,
+            "claimed_time": "22:10 según el reloj que miró Aiko",
+            "event_id": null
+          },
+          {
+            "id": "CLOCK_ACCOUNT",
+            "title": "La hora de Aiko",
+            "kind": "TESTIMONY",
+            "source_id": "RESIDENT_006",
+            "source_label": "Aiko Mori",
+            "text": "«Miré el reloj exterior del colegio, no el mío. Lleva días marcando lo mismo. No sé cuánto cambia eso lo que oí.»",
+            "acquired_minute": 90,
+            "claimed_time": "Fecha no comprobada",
+            "event_id": null
+          },
+          {
+            "id": "CLOSURE_SHEET",
+            "title": "El parte de cierre",
+            "kind": "DOCUMENT",
+            "source_id": "CLOSURE_SHEET",
+            "source_label": "Hoja del pasillo · firmada por el profesor",
+            "text": "PARTE DE CIERRE · NOCHE ANTERIOR\nPabellón B cerrado. Llave entregada. Firma: profesor de informática.\nLa hoja está sujeta con una grapa nueva. El texto declara un cierre; no demuestra que nadie entrara después.",
+            "acquired_minute": 100,
+            "claimed_time": "Noche anterior, según el documento",
+            "event_id": null
+          },
+          {
+            "id": "SCHOOL_CLOCK",
+            "title": "El reloj está detenido",
+            "kind": "OBSERVATION",
+            "source_id": "SCHOOL_CLOCK",
+            "source_label": "Reloj que has examinado",
+            "text": "El reloj del pabellón marca 22:10. El segundero no avanza. Hay una nota de mantenimiento: «Pila pendiente». Esto no permite fechar lo que vio Aiko.",
+            "acquired_minute": 100,
+            "claimed_time": "Observado ahora · minuto 100",
+            "event_id": null
+          },
+          {
+            "id": "LOCAL_LOG",
+            "title": "Cabecera del ordenador de la escuela",
+            "kind": "RECORD",
+            "source_id": "SCHOOL_PC",
+            "source_label": "Archivo local del tercer ordenador",
+            "text": "ARCHIVO LOCAL · CABECERA 04-17\nCuenta: [índice pendiente]\nProcedencia: restauración externa\nEstado: firma ausente\nUn margen escrito a mano dice: «No confundas una cuenta con quien la recuerda».",
+            "acquired_minute": 110,
+            "claimed_time": "Reloj local sin verificar",
+            "event_id": null
+          },
+          {
+            "id": "IDENTITY_LOG",
+            "title": "Tu nombre antes de la primera conexión",
+            "kind": "RECORD",
+            "source_id": "SCHOOL_ARCHIVE",
+            "source_label": "Registro reconstruido · firma no verificada",
+            "text": "CUENTA: Player\nMARCA LOCAL: minuto 20\nPRIMERA CONEXIÓN CONSERVADA: minuto 80\nEl archivo fecha ese acceso 60 minutos antes de tu primera conexión conservada. No hay firma verificable ni prueba de quién utilizó la cuenta. El reloj local puede estar equivocado.",
+            "acquired_minute": 110,
+            "claimed_time": "El documento afirma minuto 20; autenticidad pendiente",
+            "event_id": null
+          },
+          {
+            "id": "PROFESSOR_CLOSED",
+            "title": "El profesor afirma haber cerrado",
+            "kind": "TESTIMONY",
+            "source_id": "PROFESSOR",
+            "source_label": "Profesor",
+            "text": "«Cerré la escuela anoche. Firmé el parte del pasillo. Nadie tenía permiso para estar dentro. Eso no significa que yo vigilase la puerta toda la noche.»",
+            "acquired_minute": 110,
+            "claimed_time": "La noche anterior, según el profesor",
+            "event_id": null
+          }
+        ],
+        "links": [
+          {
+            "first": "CLOSURE_SHEET",
+            "second": "NIGHT_SIGHTING",
+            "relation": "CONTRADICTS",
+            "minute": 100
+          }
+        ],
+        "contradiction_linked": true,
+        "characters": [
+          "RESIDENT_001",
+          "RESIDENT_006",
+          "PROFESSOR",
+          "RYOKO"
+        ],
+        "notification": "Has vuelto"
+      },
+      "situations": [],
+      "interaction": null,
+      "outgoing_interaction": null,
+      "messages": [
+        {
+          "id": "MSG_BOOTSTRAP_001",
+          "sender": "unknown@wired",
+          "subject": "NO SUBJECT",
+          "body": "NO ESTOY MUERTA.\n\nSOLO DEJÉ DE ESTAR AHÍ.",
+          "created_minute": 0,
+          "read": true,
+          "acknowledged": true,
+          "acknowledged_minute": 80
+        }
+      ],
+      "unread_messages": 0,
+      "wired": {
+        "connected": true,
+        "signals": [
+          {
+            "node_id": "NODE_07",
+            "location": "STATION",
+            "strength": 0.5,
+            "confidence": 0.35,
+            "origin_source": "WIRED_MESSAGE",
+            "current_source": "WIRED_MESSAGE",
+            "verified": false,
+            "updated_minute": 80
+          }
+        ],
+        "digital_presences": []
+      }
+    }
+  }
+]

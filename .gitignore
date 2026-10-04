@@ -1,0 +1,58 @@
+# Python virtual environment, caches and tests
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Godot-generated project cache
+client/.godot/
+
+# Local runtime worlds and private dialogue records
+world.db
+world.db-*
+world_backup*.db
+city08*.db
+city08*.db-*
+outputs/
+*.sqlite
+*.sqlite3
+
+# Local configuration and secrets
+.env
+.env.*
+!.env.example
+
+*.log
+city09*.db*
+city10*.db*
+chapter01*.db*
+corporation01*.db*
+workshop01*.db*
+noema01*.db*
+circles01*.db*
+events01*.db*
+arcade01*.db*
+exchange01*.db*
+
+# Generated Windows beta packages (never commit compiled builds or saves)
+*.spec
+/build/
+/dist/
+/release/
+/LAIN-Beta-*.zip
+
+# Shared AI deployment secrets and build cache
+node_modules/
+.wrangler/
+.dev.vars*
+ai-session.json
+ai-session.tmp
+
+# Owner-only online world and individual access files
+online-world.db*
+/lain-online.json
+/online-data/
+*.host.lock
+/LAIN-Online-*.zip

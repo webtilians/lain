@@ -1,0 +1,6 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[resource]
+resource_name = "PR11_cable_black"
+albedo_color = Color(0.02745098, 0.02745098, 0.02745098, 1)
+roughness = 0.45

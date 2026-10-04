@@ -1,0 +1,61 @@
+LAIN — ONLINE 0.1 + VISUAL 0.11 PARA WINDOWS (64 BITS)
+======================================================
+
+Extrae TODO el ZIP en una carpeta. Abre LAIN.exe desde esa carpeta.
+No necesitas instalar Python ni Godot.
+
+JUGAR CON AMIGOS
+1. Pide al anfitrion tu archivo personal lain-online.json.
+2. Copialo junto a LAIN.exe, sustituyendo la plantilla vacia.
+3. El anfitrion debe tener abierto el servidor. Abre LAIN.exe.
+4. Sal al barrio para ver a otros jugadores. Enter abre el chat local;
+   escribe y vuelve a pulsar Enter para enviar.
+
+Cada persona necesita SU archivo. No lo compartas con otra persona:
+da acceso a tu personaje. No hace falta una cuenta de Groq o Cloudflare.
+Al cerrar el juego conservas tu progreso en el servidor del anfitrion.
+El apartamento es privado. Los mensajes solo llegan a quienes estan
+en tu zona en ese momento. El chat no se guarda como recuerdo de PNJ.
+Para abrir el mismo personaje en otro equipo, cierra el anterior y
+espera hasta 12 segundos. No se permite abrirlo dos veces a la vez.
+
+JUGAR SOLO
+Deja vacios server_url y player_token en lain-online.json.
+LAIN.exe abrira su servidor local. Conserva tu partida anterior en:
+%LOCALAPPDATA%\LAIN\Beta01\save.db
+Cerrar el juego cierra tambien ese servidor local.
+
+GRAFICOS
+El barrio usa iluminacion y materiales realistas. Hace falta una tarjeta
+grafica compatible con Vulkan (GeForce GTX 900 / Radeon RX 400 o mejor).
+F6 alterna Ligera, Equilibrada y Alta. Si va lento, usa Ligera.
+Si la pantalla sale negra, actualiza el controlador de la grafica.
+
+CONTROLES
+WASD: moverse. E: interactuar. J: diario. F6: calidad grafica.
+Enter: chat con otros jugadores, solo en modo online.
+
+IA OPCIONAL
+En modo online la configura el anfitrion; no entregues claves API.
+Si activa el servicio compartido, las conversaciones y los recuerdos
+seleccionados se envian mediante Cloudflare a Groq. Evita escribir
+datos personales reales. La cuota del servicio puede limitar la IA.
+Sin IA siguen disponibles el prologo y las respuestas deterministas.
+En modo individual se mantiene lain-ai.json para la IA compartida y
+la opcion de Ollama local con el modelo lain-qwen7b.
+
+PRIMERA BETA ONLINE
+Hay mundo compartido, presencia, chat y progreso individual.
+Los movimientos visuales aun no tienen proteccion completa antitrampas.
+Los circulos e intercambios con PNJ siguen disponibles; los acuerdos
+directos entre personas se ampliaran en una fase posterior.
+
+No publiques lain-online.json si contiene un acceso, ni guardados,
+ai-session.json, claves o archivos .env. El ZIP publico lleva plantillas
+vacias. Esta version no esta firmada digitalmente: descargala solo del
+enlace que te facilite el autor.
+
+Instrucciones del anfitrion: ONLINE01.md, en la rama
+experiment/online-0.1-review-fixes del repositorio webtilians/lain.
+Correcciones y pruebas de esta revisión: REVIEW_ONLINE01.md.
+Origen de materiales y recursos: documentado en ese repositorio.

@@ -1,0 +1,119 @@
+name: LAIN — publicar versión online (Windows)
+
+# Pushing a tag like v0.13.0 builds the online client and publishes it as the
+# latest GitHub release. Every installed LAIN.exe updates itself from there and
+# https://github.com/webtilians/lain/releases/latest/download/LAIN-Windows.zip
+# is the permanent download link for new players.
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Versión a publicar, por ejemplo 0.13.1"
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-2022
+    timeout-minutes: 60
+    env:
+      LAIN_LLM_ENABLED: "0"
+      PYTHONUTF8: "1"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Version
+        shell: pwsh
+        run: |
+          $v = if ("${{ github.event_name }}" -eq "push") { "${{ github.ref_name }}".TrimStart("v") } else { "${{ inputs.version }}" }
+          if ($v -notmatch '^[0-9]+\.[0-9]+\.[0-9]+([.-][0-9A-Za-z]+)?$') { throw "Versión inválida: $v" }
+          "LAIN_VERSION=$v" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+
+      - name: Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Build tools and launcher tests
+        shell: pwsh
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt "pyinstaller==6.16.0"
+          if ($LASTEXITCODE -ne 0) { throw "Python dependencies failed" }
+          python -m unittest discover -s packaging -p "test_*.py" -v
+          if ($LASTEXITCODE -ne 0) { throw "Launcher tests failed" }
+
+      - name: Freeze the launcher and its updater
+        shell: pwsh
+        run: |
+          python -m PyInstaller --noconfirm --clean --onefile --windowed --name LAIN --paths packaging --hidden-import updater --hidden-import update_window packaging/launcher.py
+          if ($LASTEXITCODE -ne 0 -or !(Test-Path "dist/LAIN.exe")) { throw "Launcher packaging failed" }
+
+      - name: Download official Godot 4.7.2 editor and Windows export template
+        shell: pwsh
+        run: |
+          $base = "https://github.com/godotengine/godot-builds/releases/download/4.7.2-stable"
+          $editorZip = Join-Path $env:RUNNER_TEMP "godot-4.7.2.zip"
+          $templateZip = Join-Path $env:RUNNER_TEMP "godot-templates.zip"
+          curl.exe --fail --location --retry 3 --output $editorZip "$base/Godot_v4.7.2-stable_win64.exe.zip"
+          if ($LASTEXITCODE -ne 0) { throw "Godot editor download failed" }
+          Expand-Archive -Path $editorZip -DestinationPath (Join-Path $env:RUNNER_TEMP "godot") -Force
+          $editor = Get-ChildItem (Join-Path $env:RUNNER_TEMP "godot") -Filter "*win64_console.exe" -Recurse | Select-Object -First 1
+          if ($null -eq $editor) { throw "Godot Windows console editor missing" }
+          $editor.FullName | Set-Content (Join-Path $env:RUNNER_TEMP "godot-editor-path.txt")
+          curl.exe --fail --location --retry 3 --output $templateZip "$base/Godot_v4.7.2-stable_export_templates.tpz"
+          if ($LASTEXITCODE -ne 0) { throw "Godot export templates download failed" }
+          Expand-Archive -Path $templateZip -DestinationPath (Join-Path $env:RUNNER_TEMP "godot-export") -Force
+          $template = Get-ChildItem (Join-Path $env:RUNNER_TEMP "godot-export") -Filter "windows_release_x86_64.exe" -Recurse | Select-Object -First 1
+          if ($null -eq $template) { throw "Windows release template missing" }
+          $target = Join-Path $env:APPDATA "Godot/export_templates/4.7.2.stable"
+          New-Item -ItemType Directory -Force $target | Out-Null
+          Copy-Item $template.FullName (Join-Path $target "windows_release_x86_64.exe") -Force
+          $version = Join-Path $template.DirectoryName "version.txt"
+          if (Test-Path $version) { Copy-Item $version $target -Force }
+
+      - name: Import resources and export the Windows client
+        shell: pwsh
+        run: |
+          $godot = (Get-Content (Join-Path $env:RUNNER_TEMP "godot-editor-path.txt") -Raw).Trim()
+          New-Item -ItemType Directory -Force "release/Game" | Out-Null
+          & $godot --headless --path client --editor --import --quit
+          if ($LASTEXITCODE -ne 0) { throw "Godot import failed" }
+          $out = Join-Path (Resolve-Path "release/Game") "LAIN-Game.exe"
+          & $godot --headless --path client --export-release "Windows Desktop" $out
+          if ($LASTEXITCODE -ne 0 -or !(Test-Path "release/Game/LAIN-Game.pck")) { throw "Godot export failed" }
+
+      - name: Verify two exported games share one online world
+        shell: pwsh
+        run: |
+          python tools/smoke_online01.py --godot (Resolve-Path "release/Game/LAIN-Game.exe").Path --exported
+          if ($LASTEXITCODE -ne 0) { throw "Exported online client test failed" }
+
+      - name: Assemble the shared download and its update manifest
+        shell: pwsh
+        run: |
+          Copy-Item "dist/LAIN.exe" "release/LAIN.exe"
+          Copy-Item "packaging/LEEME-JUGADOR.txt" "release/LEEME.txt"
+          Copy-Item "packaging/lain-server.json" "release/lain-server.json"
+          python tools/make_release_manifest.py --root release --version $env:LAIN_VERSION --out release/version.json manifest.json
+          if ($LASTEXITCODE -ne 0) { throw "Manifest failed" }
+          $names = (Get-ChildItem release -Recurse -File | ForEach-Object { $_.FullName.Substring((Resolve-Path release).Path.Length + 1) }) -join "`n"
+          Write-Host $names
+          if ($names -match '\.db|lain-online\.json|lain-ai\.json|Server[\\/]') { throw "Unexpected file in the online client" }
+          Compress-Archive -Path "release/*" -DestinationPath "LAIN-Windows.zip" -CompressionLevel Optimal
+          Copy-Item "release/Game/LAIN-Game.exe", "release/Game/LAIN-Game.pck", "release/LAIN.exe", "release/LEEME.txt" -Destination .
+          Get-FileHash LAIN-Windows.zip, manifest.json -Algorithm SHA256
+
+      - name: Publish as the latest release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $tag = "v$env:LAIN_VERSION"
+          $notes = "LAIN $env:LAIN_VERSION. Descarga LAIN-Windows.zip, extráelo y abre LAIN.exe. Si ya lo tienes, se actualiza solo al abrirlo."
+          gh release create $tag LAIN-Windows.zip manifest.json LAIN.exe LAIN-Game.exe LAIN-Game.pck LEEME.txt --title "LAIN $env:LAIN_VERSION" --notes $notes --target $env:GITHUB_SHA --latest
+          if ($LASTEXITCODE -ne 0) { throw "Release publication failed" }

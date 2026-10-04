@@ -1,0 +1,21 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[ext_resource type="Texture2D" path="res://art/photoreal11/textures/concrete_pavement/concrete_pavement_diff_2k.jpg" id="1_nf3cm"]
+[ext_resource type="Texture2D" path="res://art/photoreal11/textures/concrete_pavement/concrete_pavement_arm_2k.jpg" id="2_yn1kc"]
+[ext_resource type="Texture2D" path="res://art/photoreal11/textures/concrete_pavement/concrete_pavement_nor_gl_2k.jpg" id="3_vfjuk"]
+
+[resource]
+resource_name = "PR11_porch_tile"
+albedo_color = Color(0.46666667, 0.4509804, 0.43137255, 1)
+albedo_texture = ExtResource("1_nf3cm")
+roughness = 0.5
+roughness_texture = ExtResource("2_yn1kc")
+roughness_texture_channel = 1
+normal_enabled = true
+normal_scale = 0.6
+normal_texture = ExtResource("3_vfjuk")
+ao_enabled = true
+ao_light_affect = 0.1
+ao_texture = ExtResource("2_yn1kc")
+uv1_scale = Vector3(0.5555556, 0.5555556, 1)
+texture_filter = 5

@@ -1,0 +1,22 @@
+LAIN - TU COPIA PARA JUGAR ONLINE
+=================================
+
+1. Extrae este ZIP entero en una carpeta
+   (clic derecho > Extraer todo...).
+2. Abre LAIN.exe. Ya esta: entras directamente al mundo compartido.
+
+El servidor esta siempre encendido. Puedes entrar cuando quieras,
+aunque no haya nadie mas conectado.
+
+Esta copia lleva tu llave personal (lain-online.json): quien tenga
+este ZIP entra con tu personaje. No lo compartas ni lo subas a ningun
+sitio.
+
+Si Windows dice "Windows protegio su PC": pulsa "Mas informacion" y
+despues "Ejecutar de todas formas" (el juego no esta firmado).
+
+DENTRO DEL JUEGO
+WASD moverse, E interactuar, J diario, F6 calidad grafica.
+Enter abre el chat; escribe y vuelve a pulsar Enter para enviar.
+Solo te leen los jugadores que estan en tu misma zona.
+Si cierras el juego, espera unos 12 segundos antes de volver a entrar.

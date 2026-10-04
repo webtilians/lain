@@ -183,7 +183,7 @@ def find_open_interaction(
             WHERE initiator_id = ?
               AND recipient_id = ?
               AND topic = ?
-              AND status = 'OPEN'
+              AND status IN ('OPEN', 'PAUSED', 'RESUMING')
 
             ORDER BY created_minute DESC
 
@@ -249,6 +249,53 @@ def find_latest_open_for_recipient(
     )
 
 
+def find_latest_open_for_initiator(
+    initiator_id: str,
+) -> Interaction | None:
+
+    initialize_interactions()
+
+    with get_connection() as conn:
+
+        row = conn.execute(
+            """
+            SELECT
+                id,
+                interaction_type,
+
+                initiator_id,
+                recipient_id,
+
+                topic,
+                status,
+
+                source_goal,
+
+                created_minute,
+                updated_minute
+
+            FROM interactions
+
+            WHERE initiator_id = ?
+              AND status = 'OPEN'
+
+            ORDER BY
+                created_minute DESC,
+                id DESC
+
+            LIMIT 1
+            """,
+            (initiator_id,),
+        ).fetchone()
+
+    if row is None:
+        return None
+
+    return row_to_interaction(
+        row
+    )
+
+
 def create_or_get_interaction(
     initiator_id: str,
     recipient_id: str,
@@ -267,11 +314,22 @@ def create_or_get_interaction(
     )
 
     if existing is not None:
-
-        return (
-            existing,
-            False,
-        )
+        if existing.status == "PAUSED":
+            # CONTACT is accepted, but the new greeting has not been
+            # delivered yet. START must append it once before returning
+            # the conversation to OPEN. Repeated CONTACT remains idempotent.
+            with get_connection() as conn:
+                conn.execute(
+                    """
+                    UPDATE interactions
+                    SET status = 'RESUMING', updated_minute = ?
+                    WHERE id = ? AND status = 'PAUSED'
+                    """,
+                    (minute, existing.id),
+                )
+                conn.commit()
+            existing = get_interaction(existing.id)
+        return existing, False
 
     interaction = Interaction(
         id=(

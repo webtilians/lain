@@ -1,0 +1,182 @@
+extends CharacterBody3D
+
+@export var fixed_camera := false
+@export var orthographic_size: float = 12.0
+
+@export var move_speed: float = 3.5
+@export var acceleration: float = 20.0
+@export var interaction_distance: float = 2.3
+
+# Same isometric direction as before, 2.5x further back: the view is
+# orthographic so framing is unchanged, but tall roofs, aerials and water
+# tanks near the bottom of the screen no longer cross the near clip plane.
+const CAMERA_OFFSET := Vector3(
+	25.0,
+	30.0,
+	25.0
+)
+
+@onready var camera: Camera3D = (
+	$Head/Camera3D
+)
+
+var gravity: float = (
+	ProjectSettings.get_setting(
+		"physics/3d/default_gravity"
+	)
+)
+
+# ==================================================
+# CAMERA
+# ==================================================
+
+func _ready() -> void:
+	add_to_group("player")
+
+	Input.mouse_mode = (
+		Input.MOUSE_MODE_VISIBLE
+	)
+
+	camera.top_level = true
+
+	camera.projection = (
+		Camera3D.PROJECTION_ORTHOGONAL
+	)
+
+	camera.size = orthographic_size
+
+	_update_camera()
+
+	if fixed_camera:
+		return
+	camera.look_at(
+		global_position
+		+ Vector3(0.0, 0.6, 0.0),
+		Vector3.UP
+	)
+
+	print(
+		"ISO CONTROLLER ACTIVE"
+	)
+
+func _update_camera() -> void:
+	if fixed_camera:
+		camera.global_position = Vector3(10, 12, 10)
+		camera.look_at(Vector3(0, 0.5, 0), Vector3.UP)
+		return
+	camera.global_position = (
+		global_position
+		+ CAMERA_OFFSET
+	)
+
+# ==================================================
+# MOVEMENT
+# ==================================================
+
+func _physics_process(
+	delta: float
+) -> void:
+	if not is_on_floor():
+		velocity.y -= gravity * delta
+	elif velocity.y < 0.0:
+		velocity.y = 0.0
+
+	var input_vector := Input.get_vector(
+		"move_left",
+		"move_right",
+		"move_forward",
+		"move_backward"
+	)
+	var focus := get_viewport().gui_get_focus_owner()
+	if ServerConnection.is_online() and (focus is LineEdit or focus is TextEdit):
+		input_vector = Vector2.ZERO
+
+	var right := (
+		camera.global_transform.basis.x
+	)
+
+	var forward := (
+		-camera.global_transform.basis.z
+	)
+
+	right.y = 0.0
+	forward.y = 0.0
+
+	right = right.normalized()
+	forward = forward.normalized()
+
+	var direction := (
+		right * input_vector.x
+		- forward * input_vector.y
+	).normalized()
+
+	velocity.x = move_toward(
+		velocity.x,
+		direction.x * move_speed,
+		acceleration * delta
+	)
+
+	velocity.z = move_toward(
+		velocity.z,
+		direction.z * move_speed,
+		acceleration * delta
+	)
+
+	move_and_slide()
+
+	_update_camera()
+
+# ==================================================
+# INTERACTION
+# ==================================================
+
+func _unhandled_input(
+	event: InputEvent
+) -> void:
+	if event.is_action_pressed(
+		"interact"
+	):
+		_try_interaction()
+		get_viewport().set_input_as_handled()
+
+func _try_interaction() -> void:
+	var nearest: Node3D = null
+	var nearest_distance := interaction_distance
+
+	for candidate in (
+		get_tree().get_nodes_in_group(
+			"interactable"
+		)
+	):
+		if not candidate is Node3D:
+			continue
+
+		if not candidate.has_method(
+			"interact"
+		):
+			continue
+
+		var distance := (
+			global_position.distance_to(
+				candidate.global_position
+			)
+		)
+
+		if distance > nearest_distance:
+			continue
+
+		nearest = candidate
+		nearest_distance = distance
+
+	if nearest == null:
+		print(
+			"ISO // NO INTERACTABLE NEARBY"
+		)
+		return
+
+	print(
+		"ISO // INTERACT -> ",
+		nearest.name
+	)
+
+	nearest.interact()

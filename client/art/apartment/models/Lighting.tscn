@@ -1,0 +1,22 @@
+[gd_scene format=3]
+
+[sub_resource type="Environment" id="Environment_l3w4k"]
+background_mode = 1
+background_color = Color(0.09019608, 0.105882354, 0.14509805, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.60784316, 0.5764706, 0.7137255, 1)
+ambient_light_energy = 0.3
+tonemap_mode = 2
+
+[node name="Lighting" type="Node3D" unique_id=1454579]
+
+[node name="@WorldEnvironment@314" type="WorldEnvironment" parent="." unique_id=1074387204]
+environment = SubResource("Environment_l3w4k")
+metadata/asset_group = "Lighting"
+
+[node name="@OmniLight3D@315" type="OmniLight3D" parent="." unique_id=1172246732]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.65, 2.25, -3.15)
+light_color = Color(0.7254902, 0.6784314, 0.7882353, 1)
+light_energy = 0.65
+omni_range = 5.8
+metadata/asset_group = "Lighting"

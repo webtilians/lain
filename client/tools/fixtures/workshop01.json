@@ -1,0 +1,1963 @@
+{
+  "home": {
+    "schema_version": "0.1",
+    "minute": 0,
+    "player": {
+      "id": "PLAYER_1",
+      "name": "Player",
+      "faction": "UNALIGNED",
+      "location": "APARTMENT",
+      "goal": "UNKNOWN",
+      "energy": 1.0
+    },
+    "navigation": {
+      "reachable_locations": [
+        "APARTMENT_DISTRICT"
+      ]
+    },
+    "known_nodes": [
+      {
+        "id": "NODE_07",
+        "knowledge_confidence": 0.35,
+        "knowledge_source": "WIRED_MESSAGE",
+        "belief": {
+          "location": "STATION",
+          "strength": 0.5,
+          "confidence": 0.35,
+          "source": "WIRED_MESSAGE",
+          "updated_minute": 0
+        }
+      }
+    ],
+    "visible_actors": [],
+    "character_sheets": {
+      "player": {
+        "id": "PLAYER_1",
+        "name": "Player",
+        "kind": "PLAYER",
+        "faction": "UNALIGNED",
+        "location": "APARTMENT",
+        "energy": 1.0,
+        "known_nodes": 1,
+        "case_status": "UNSEEN",
+        "agency": "HUMAN_ONLY"
+      },
+      "visible_npcs": []
+    },
+    "station_case": {
+      "id": "STATION_ECHO_07",
+      "title": "El pulso ausente",
+      "status": "UNSEEN",
+      "resolution": null,
+      "summary": "Investiga NODE_07 en la estacion para buscar el rastro.",
+      "witness_count": 0,
+      "responses": []
+    },
+    "prologue": {
+      "enabled": false,
+      "stage": "LEGACY",
+      "hint": ""
+    },
+    "chapter_one": {
+      "active": true,
+      "title": "Ya habías estado aquí",
+      "started_minute": 0,
+      "connection_minute": 0,
+      "decision": null,
+      "hypothesis": "",
+      "hypothesis_status": "UNVERIFIED",
+      "evidence": [
+        {
+          "id": "RETURN_MESSAGE",
+          "title": "Has vuelto",
+          "kind": "MESSAGE",
+          "source_id": "UNKNOWN_WIRED",
+          "source_label": "Identidad desconocida · Wired",
+          "text": "Has vuelto.",
+          "acquired_minute": 0,
+          "claimed_time": "Recibido al abrir este capítulo, minuto 0",
+          "event_id": null
+        }
+      ],
+      "links": [],
+      "contradiction_linked": false,
+      "characters": [
+        "RESIDENT_001",
+        "RESIDENT_006",
+        "PROFESSOR",
+        "RYOKO"
+      ],
+      "notification": "Has vuelto"
+    },
+    "network_conflict": {
+      "active": true,
+      "corporation": "Administrador desconocido",
+      "corporate_control": 100.0,
+      "trace": 0,
+      "ready_in": 0,
+      "relays": [
+        {
+          "id": "RELAY_STATION",
+          "name": "Enlace del andén",
+          "location": "STATION",
+          "corporation": 100,
+          "mine": 0,
+          "defense": 0,
+          "suppressed_until": 0,
+          "inspected": false
+        },
+        {
+          "id": "RELAY_SCHOOL",
+          "name": "Enlace del pabellón B",
+          "location": "SCHOOL_LAB",
+          "corporation": 100,
+          "mine": 0,
+          "defense": 0,
+          "suppressed_until": 0,
+          "inspected": false
+        },
+        {
+          "id": "RELAY_VIDEO",
+          "name": "Enlace del videoclub",
+          "location": "VIDEO_CLUB",
+          "corporation": 100,
+          "mine": 0,
+          "defense": 0,
+          "suppressed_until": 0,
+          "inspected": false
+        }
+      ],
+      "rankings": [
+        {
+          "actor_id": "PLAYER_1",
+          "name": "Player",
+          "control": 0.0
+        }
+      ],
+      "pending": [],
+      "reports": [
+        {
+          "id": 1,
+          "minute": 0,
+          "source": "WORKSHOP",
+          "text": "El PC dispone de un taller de código. En Kissa Café han instalado un terminal: su técnico busca ayuda para comprobar un coprocesador."
+        }
+      ],
+      "visible_personnel": [],
+      "session_mode": "LOCAL"
+    },
+    "workshop": {
+      "active": true,
+      "lesson": 2,
+      "life_source": "def next_cell(alive, neighbors):\n    if alive:\n        return neighbors == 2 or neighbors == 3\n    return neighbors == 3\n",
+      "draft": "use(\"routing\")\nuse(\"shield\")\nuse(\"scan\")\n",
+      "compiled": "use(\"routing\")\nuse(\"shield\")\nuse(\"scan\")\n",
+      "modules": [
+        "routing",
+        "shield",
+        "scan"
+      ],
+      "contract": "INDEPENDENT",
+      "best_score": 272,
+      "capacity": 11,
+      "cost": 9,
+      "assets": [
+        {
+          "id": "cafe_routing_copy",
+          "kind": "CODE",
+          "model": "routing",
+          "source": "Copia del técnico de Kissa Café",
+          "minute": 0,
+          "active": 0,
+          "ownership": "OWNED",
+          "name": "Enrutamiento",
+          "capacity": 0
+        },
+        {
+          "id": "courier_interface",
+          "kind": "DEVICE",
+          "model": "interface",
+          "source": "Bit Courier · desafío local completado",
+          "minute": 0,
+          "active": 1,
+          "ownership": "OWNED",
+          "name": "Interfaz R",
+          "capacity": 3
+        },
+        {
+          "id": "courier_scan",
+          "kind": "CODE",
+          "model": "scan",
+          "source": "Bit Courier · desafío local completado",
+          "minute": 0,
+          "active": 0,
+          "ownership": "OWNED",
+          "name": "Exploración",
+          "capacity": 0
+        },
+        {
+          "id": "first_connection",
+          "kind": "CODE",
+          "model": "routing",
+          "source": "Tu primera conexión a la Wired",
+          "minute": 0,
+          "active": 0,
+          "ownership": "OWNED",
+          "name": "Enrutamiento",
+          "capacity": 0
+        },
+        {
+          "id": "home_navi",
+          "kind": "DEVICE",
+          "model": "navi",
+          "source": "Ordenador de casa",
+          "minute": 0,
+          "active": 1,
+          "ownership": "OWNED",
+          "name": "Navi A",
+          "capacity": 4
+        },
+        {
+          "id": "life_matrix",
+          "kind": "DEVICE",
+          "model": "matrix",
+          "source": "Juego de la Vida · validado en el PC",
+          "minute": 0,
+          "active": 1,
+          "ownership": "OWNED",
+          "name": "Coprocesador M",
+          "capacity": 4
+        },
+        {
+          "id": "life_shield",
+          "kind": "CODE",
+          "model": "shield",
+          "source": "Juego de la Vida · módulo del coprocesador",
+          "minute": 0,
+          "active": 0,
+          "ownership": "OWNED",
+          "name": "Protección",
+          "capacity": 0
+        }
+      ],
+      "library": [
+        {
+          "id": "routing",
+          "name": "Enrutamiento",
+          "cost": 2,
+          "effect": "Conexión del montaje; conserva las acciones básicas del enlace."
+        },
+        {
+          "id": "shield",
+          "name": "Protección",
+          "cost": 4,
+          "effect": "Preparar las dos defensas de un enlace propio con una operación local."
+        },
+        {
+          "id": "scan",
+          "name": "Exploración",
+          "cost": 3,
+          "effect": "Desde casa, leer la actividad de un enlace previamente examinado."
+        }
+      ],
+      "offers": {
+        "KAGAMI": "Contrato local KAGAMI: préstamo de un segundo Navi A y cobertura que absorbe 15 puntos de cada intervención. La copia no duplica capacidad. Reservas 1 unidad de cálculo mientras dure el acuerdo. Puedes terminarlo desde este PC; se retiran préstamo y cobertura. No se envían conversaciones ni recuerdos.",
+        "NOEMA": "Contrato local NOEMA: acceso prestado al módulo Exploración. Reserva 1 unidad de cálculo. Los escaneos posteriores entregan a NOEMA únicamente relay, minuto y número de intervenciones sobre tu cuenta. Puedes terminarlo; se retira el permiso, no tus fragmentos propios. No incluye testimonios ni memorias privadas."
+      },
+      "life_hint": "def next_cell(alive, neighbors):\n    if alive:\n        return neighbors == 2 or neighbors == 3\n    return neighbors == 3\n",
+      "session_mode": "LOCAL"
+    },
+    "situations": [],
+    "interaction": null,
+    "outgoing_interaction": null,
+    "messages": [
+      {
+        "id": "MSG_BOOTSTRAP_001",
+        "sender": "unknown@wired",
+        "subject": "NO SUBJECT",
+        "body": "NO ESTOY MUERTA.\n\nSOLO DEJÉ DE ESTAR AHÍ.",
+        "created_minute": 0,
+        "read": true,
+        "acknowledged": true,
+        "acknowledged_minute": 0
+      }
+    ],
+    "unread_messages": 0,
+    "wired": {
+      "connected": true,
+      "signals": [
+        {
+          "node_id": "NODE_07",
+          "location": "STATION",
+          "strength": 0.5,
+          "confidence": 0.35,
+          "origin_source": "WIRED_MESSAGE",
+          "current_source": "WIRED_MESSAGE",
+          "verified": false,
+          "updated_minute": 0
+        }
+      ],
+      "digital_presences": []
+    }
+  },
+  "cafe": {
+    "schema_version": "0.1",
+    "minute": 0,
+    "player": {
+      "id": "PLAYER_1",
+      "name": "Player",
+      "faction": "UNALIGNED",
+      "location": "CAFE",
+      "goal": "UNKNOWN",
+      "energy": 1.0
+    },
+    "navigation": {
+      "reachable_locations": [
+        "APARTMENT_DISTRICT"
+      ]
+    },
+    "known_nodes": [
+      {
+        "id": "NODE_07",
+        "knowledge_confidence": 0.35,
+        "knowledge_source": "WIRED_MESSAGE",
+        "belief": {
+          "location": "STATION",
+          "strength": 0.5,
+          "confidence": 0.35,
+          "source": "WIRED_MESSAGE",
+          "updated_minute": 0
+        }
+      }
+    ],
+    "visible_actors": [
+      {
+        "id": "RESIDENT_054",
+        "name": "Keiko Oshima",
+        "role": "Dueña del café",
+        "role_label": "Dueña del café",
+        "skills": {
+          "Cocina": 5,
+          "Observación": 3
+        },
+        "public_objective": "Preparar la mesa para la reunión del club de lectura.",
+        "activity": "Revisa las reservas",
+        "slot": 0,
+        "patrol_step": 0,
+        "appearance": "apron",
+        "role_assignment": "CITY_PROVISIONAL"
+      },
+      {
+        "id": "RESIDENT_055",
+        "name": "Yusuke Sano",
+        "role": "Camarero",
+        "role_label": "Camarero",
+        "skills": {
+          "Atención al público": 3,
+          "Observación": 1
+        },
+        "public_objective": "Aprender los pedidos sin tener que mirar la libreta.",
+        "activity": "Repasa su libreta",
+        "slot": 1,
+        "patrol_step": 0,
+        "appearance": "apron",
+        "role_assignment": "CITY_PROVISIONAL"
+      },
+      {
+        "id": "RESIDENT_056",
+        "name": "Natsumi Honda",
+        "role": "Estudiante del café",
+        "role_label": "Estudiante del café",
+        "skills": {
+          "Escritura": 4,
+          "Observación": 2
+        },
+        "public_objective": "Terminar una carta antes de tomar el tren.",
+        "activity": "Relee su carta",
+        "slot": 2,
+        "patrol_step": 0,
+        "appearance": "student",
+        "role_assignment": "CITY_PROVISIONAL"
+      }
+    ],
+    "character_sheets": {
+      "player": {
+        "id": "PLAYER_1",
+        "name": "Player",
+        "kind": "PLAYER",
+        "faction": "UNALIGNED",
+        "location": "CAFE",
+        "energy": 1.0,
+        "known_nodes": 1,
+        "case_status": "UNSEEN",
+        "agency": "HUMAN_ONLY"
+      },
+      "visible_npcs": [
+        {
+          "id": "RESIDENT_054",
+          "name": "Keiko Oshima",
+          "kind": "NPC",
+          "observed_location": "CAFE",
+          "focus": "Revisa las reservas",
+          "role": "Dueña del café",
+          "role_label": "Dueña del café",
+          "skills": {
+            "Cocina": 5,
+            "Observación": 3
+          },
+          "public_objective": "Preparar la mesa para la reunión del club de lectura.",
+          "activity": "Revisa las reservas",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_055",
+          "name": "Yusuke Sano",
+          "kind": "NPC",
+          "observed_location": "CAFE",
+          "focus": "Repasa su libreta",
+          "role": "Camarero",
+          "role_label": "Camarero",
+          "skills": {
+            "Atención al público": 3,
+            "Observación": 1
+          },
+          "public_objective": "Aprender los pedidos sin tener que mirar la libreta.",
+          "activity": "Repasa su libreta",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_056",
+          "name": "Natsumi Honda",
+          "kind": "NPC",
+          "observed_location": "CAFE",
+          "focus": "Relee su carta",
+          "role": "Estudiante del café",
+          "role_label": "Estudiante del café",
+          "skills": {
+            "Escritura": 4,
+            "Observación": 2
+          },
+          "public_objective": "Terminar una carta antes de tomar el tren.",
+          "activity": "Relee su carta",
+          "role_assignment": "CITY_PROVISIONAL"
+        }
+      ]
+    },
+    "station_case": {
+      "id": "STATION_ECHO_07",
+      "title": "El pulso ausente",
+      "status": "UNSEEN",
+      "resolution": null,
+      "summary": "Investiga NODE_07 en la estacion para buscar el rastro.",
+      "witness_count": 0,
+      "responses": []
+    },
+    "prologue": {
+      "enabled": false,
+      "stage": "LEGACY",
+      "hint": ""
+    },
+    "chapter_one": {
+      "active": true,
+      "title": "Ya habías estado aquí",
+      "started_minute": 0,
+      "connection_minute": 0,
+      "decision": null,
+      "hypothesis": "",
+      "hypothesis_status": "UNVERIFIED",
+      "evidence": [
+        {
+          "id": "RETURN_MESSAGE",
+          "title": "Has vuelto",
+          "kind": "MESSAGE",
+          "source_id": "UNKNOWN_WIRED",
+          "source_label": "Identidad desconocida · Wired",
+          "text": "Has vuelto.",
+          "acquired_minute": 0,
+          "claimed_time": "Recibido al abrir este capítulo, minuto 0",
+          "event_id": null
+        }
+      ],
+      "links": [],
+      "contradiction_linked": false,
+      "characters": [
+        "RESIDENT_001",
+        "RESIDENT_006",
+        "PROFESSOR",
+        "RYOKO"
+      ],
+      "notification": "Has vuelto"
+    },
+    "network_conflict": {
+      "active": true,
+      "corporation": "Administrador desconocido",
+      "corporate_control": 100.0,
+      "trace": 0,
+      "ready_in": 0,
+      "relays": [
+        {
+          "id": "RELAY_STATION",
+          "name": "Enlace del andén",
+          "location": "STATION",
+          "corporation": 100,
+          "mine": 0,
+          "defense": 0,
+          "suppressed_until": 0,
+          "inspected": false
+        },
+        {
+          "id": "RELAY_SCHOOL",
+          "name": "Enlace del pabellón B",
+          "location": "SCHOOL_LAB",
+          "corporation": 100,
+          "mine": 0,
+          "defense": 0,
+          "suppressed_until": 0,
+          "inspected": false
+        },
+        {
+          "id": "RELAY_VIDEO",
+          "name": "Enlace del videoclub",
+          "location": "VIDEO_CLUB",
+          "corporation": 100,
+          "mine": 0,
+          "defense": 0,
+          "suppressed_until": 0,
+          "inspected": false
+        }
+      ],
+      "rankings": [
+        {
+          "actor_id": "PLAYER_1",
+          "name": "Player",
+          "control": 0.0
+        }
+      ],
+      "pending": [],
+      "reports": [
+        {
+          "id": 1,
+          "minute": 0,
+          "source": "WORKSHOP",
+          "text": "El PC dispone de un taller de código. En Kissa Café han instalado un terminal: su técnico busca ayuda para comprobar un coprocesador."
+        }
+      ],
+      "visible_personnel": [],
+      "session_mode": "LOCAL"
+    },
+    "workshop": {
+      "active": true,
+      "lesson": 0,
+      "life_source": "def next_cell(alive, neighbors):\n    # Completa las reglas de nacimiento y supervivencia.\n    return False\n",
+      "draft": "use(\"routing\")\n",
+      "compiled": "use(\"routing\")\n",
+      "modules": [
+        "routing"
+      ],
+      "contract": "INDEPENDENT",
+      "best_score": 0,
+      "capacity": 4,
+      "cost": 2,
+      "assets": [
+        {
+          "id": "cafe_routing_copy",
+          "kind": "CODE",
+          "model": "routing",
+          "source": "Copia del técnico de Kissa Café",
+          "minute": 0,
+          "active": 0,
+          "ownership": "OWNED",
+          "name": "Enrutamiento",
+          "capacity": 0
+        },
+        {
+          "id": "first_connection",
+          "kind": "CODE",
+          "model": "routing",
+          "source": "Tu primera conexión a la Wired",
+          "minute": 0,
+          "active": 0,
+          "ownership": "OWNED",
+          "name": "Enrutamiento",
+          "capacity": 0
+        },
+        {
+          "id": "home_navi",
+          "kind": "DEVICE",
+          "model": "navi",
+          "source": "Ordenador de casa",
+          "minute": 0,
+          "active": 1,
+          "ownership": "OWNED",
+          "name": "Navi A",
+          "capacity": 4
+        }
+      ],
+      "library": [
+        {
+          "id": "routing",
+          "name": "Enrutamiento",
+          "cost": 2,
+          "effect": "Conexión del montaje; conserva las acciones básicas del enlace."
+        }
+      ],
+      "offers": {},
+      "life_hint": "",
+      "session_mode": "LOCAL"
+    },
+    "situations": [],
+    "interaction": null,
+    "outgoing_interaction": null,
+    "messages": [
+      {
+        "id": "MSG_BOOTSTRAP_001",
+        "sender": "unknown@wired",
+        "subject": "NO SUBJECT",
+        "body": "NO ESTOY MUERTA.\n\nSOLO DEJÉ DE ESTAR AHÍ.",
+        "created_minute": 0,
+        "read": true,
+        "acknowledged": true,
+        "acknowledged_minute": 0
+      }
+    ],
+    "unread_messages": 0,
+    "wired": {
+      "connected": true,
+      "signals": [
+        {
+          "node_id": "NODE_07",
+          "location": "STATION",
+          "strength": 0.5,
+          "confidence": 0.35,
+          "origin_source": "WIRED_MESSAGE",
+          "current_source": "WIRED_MESSAGE",
+          "verified": false,
+          "updated_minute": 0
+        }
+      ],
+      "digital_presences": []
+    }
+  },
+  "arcade": {
+    "text": "BIT COURIER · Práctica local. Recoge al menos tres paquetes y llega a la salida en un máximo de 80 movimientos. Las paredes también consumen un movimiento. Sin clasificación online.",
+    "run_id": "preview_workshop_0002",
+    "board": {
+      "size": 8,
+      "start": [
+        0,
+        0
+      ],
+      "exit": [
+        7,
+        7
+      ],
+      "walls": [
+        [
+          2,
+          0
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          4,
+          2
+        ],
+        [
+          5,
+          2
+        ],
+        [
+          6,
+          2
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          5,
+          4
+        ],
+        [
+          5,
+          5
+        ],
+        [
+          5,
+          6
+        ]
+      ],
+      "chips": [
+        [
+          1,
+          2
+        ],
+        [
+          3,
+          1
+        ],
+        [
+          6,
+          3
+        ],
+        [
+          2,
+          6
+        ],
+        [
+          6,
+          6
+        ]
+      ],
+      "max_moves": 80,
+      "version": 1
+    }
+  },
+  "life": {
+    "passed": true,
+    "text": "18/18 casos correctos. Simulación 8×8: los bordes exteriores están muertos; todas las células cambian a la vez. Coprocesador M y Protección disponibles. Conecta el equipo en Dispositivos e integra el módulo en Código.",
+    "frames": [
+      [
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          1,
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      ],
+      [
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          1,
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      ],
+      [
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          1,
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      ],
+      [
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          1,
+          1,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          1,
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      ],
+      [
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          1,
+          1,
+          1,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      ],
+      [
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          1,
+          0,
+          1,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          1,
+          1,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      ],
+      [
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          1,
+          0,
+          1,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          1,
+          1,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      ],
+      [
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          1,
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          1,
+          1,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      ],
+      [
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          1,
+          1,
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      ]
+    ]
+  },
+  "lab": {
+    "schema_version": "0.1",
+    "minute": 10,
+    "player": {
+      "id": "PLAYER_1",
+      "name": "Player",
+      "faction": "UNALIGNED",
+      "location": "SCHOOL_LAB",
+      "goal": "UNKNOWN",
+      "energy": 1.0
+    },
+    "navigation": {
+      "reachable_locations": [
+        "SCHOOL"
+      ]
+    },
+    "known_nodes": [
+      {
+        "id": "NODE_07",
+        "knowledge_confidence": 0.35,
+        "knowledge_source": "WIRED_MESSAGE",
+        "belief": {
+          "location": "STATION",
+          "strength": 0.5,
+          "confidence": 0.35,
+          "source": "WIRED_MESSAGE",
+          "updated_minute": 0
+        }
+      }
+    ],
+    "visible_actors": [
+      {
+        "id": "RESIDENT_025",
+        "name": "Takeshi Uno",
+        "role": "Ayudante de informática",
+        "role_label": "Ayudante de informática",
+        "skills": {
+          "Informática": 3,
+          "Observación": 1
+        },
+        "public_objective": "Recuperar un disquete con ejercicios del aula.",
+        "activity": "Comprueba una etiqueta",
+        "slot": 0,
+        "patrol_step": 0,
+        "appearance": "teacher",
+        "role_assignment": "CITY_PROVISIONAL"
+      },
+      {
+        "id": "RESIDENT_026",
+        "name": "Misaki Ito",
+        "role": "Alumna de informática",
+        "role_label": "Alumna de informática",
+        "skills": {
+          "Programación": 4,
+          "Observación": 2
+        },
+        "public_objective": "Entender por qué su primer programa no termina.",
+        "activity": "Lee su código en papel",
+        "slot": 1,
+        "patrol_step": 0,
+        "appearance": "student",
+        "role_assignment": "CITY_PROVISIONAL"
+      },
+      {
+        "id": "RESIDENT_027",
+        "name": "Jun Saito",
+        "role": "Alumno del taller",
+        "role_label": "Alumno del taller",
+        "skills": {
+          "Electrónica": 5,
+          "Observación": 3
+        },
+        "public_objective": "Preparar un pequeño catálogo de componentes usados.",
+        "activity": "Clasifica componentes",
+        "slot": 2,
+        "patrol_step": 0,
+        "appearance": "student",
+        "role_assignment": "CITY_PROVISIONAL"
+      },
+      {
+        "id": "RESIDENT_028",
+        "name": "Rina Watanabe",
+        "role": "Amiga del aula",
+        "role_label": "Amiga del aula",
+        "skills": {
+          "Informática": 3,
+          "Observación": 1
+        },
+        "public_objective": "Guardar una copia del trabajo antes de salir.",
+        "activity": "Revisa su disquete",
+        "slot": 3,
+        "patrol_step": 0,
+        "appearance": "student",
+        "role_assignment": "CITY_PROVISIONAL"
+      }
+    ],
+    "character_sheets": {
+      "player": {
+        "id": "PLAYER_1",
+        "name": "Player",
+        "kind": "PLAYER",
+        "faction": "UNALIGNED",
+        "location": "SCHOOL_LAB",
+        "energy": 1.0,
+        "known_nodes": 1,
+        "case_status": "UNSEEN",
+        "agency": "HUMAN_ONLY"
+      },
+      "visible_npcs": [
+        {
+          "id": "RESIDENT_025",
+          "name": "Takeshi Uno",
+          "kind": "NPC",
+          "observed_location": "SCHOOL_LAB",
+          "focus": "Comprueba una etiqueta",
+          "role": "Ayudante de informática",
+          "role_label": "Ayudante de informática",
+          "skills": {
+            "Informática": 3,
+            "Observación": 1
+          },
+          "public_objective": "Recuperar un disquete con ejercicios del aula.",
+          "activity": "Comprueba una etiqueta",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_026",
+          "name": "Misaki Ito",
+          "kind": "NPC",
+          "observed_location": "SCHOOL_LAB",
+          "focus": "Lee su código en papel",
+          "role": "Alumna de informática",
+          "role_label": "Alumna de informática",
+          "skills": {
+            "Programación": 4,
+            "Observación": 2
+          },
+          "public_objective": "Entender por qué su primer programa no termina.",
+          "activity": "Lee su código en papel",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_027",
+          "name": "Jun Saito",
+          "kind": "NPC",
+          "observed_location": "SCHOOL_LAB",
+          "focus": "Clasifica componentes",
+          "role": "Alumno del taller",
+          "role_label": "Alumno del taller",
+          "skills": {
+            "Electrónica": 5,
+            "Observación": 3
+          },
+          "public_objective": "Preparar un pequeño catálogo de componentes usados.",
+          "activity": "Clasifica componentes",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_028",
+          "name": "Rina Watanabe",
+          "kind": "NPC",
+          "observed_location": "SCHOOL_LAB",
+          "focus": "Revisa su disquete",
+          "role": "Amiga del aula",
+          "role_label": "Amiga del aula",
+          "skills": {
+            "Informática": 3,
+            "Observación": 1
+          },
+          "public_objective": "Guardar una copia del trabajo antes de salir.",
+          "activity": "Revisa su disquete",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "CIVIL_102",
+          "name": "Reina Asano",
+          "kind": "NPC",
+          "role_label": "Consultora de equipos",
+          "observed_location": "SCHOOL_LAB",
+          "role_assignment": "OBSERVED_IDENTITY",
+          "focus": "Dice que revisa las líneas y los permisos de conexión de este lugar."
+        }
+      ]
+    },
+    "station_case": {
+      "id": "STATION_ECHO_07",
+      "title": "El pulso ausente",
+      "status": "UNSEEN",
+      "resolution": null,
+      "summary": "Investiga NODE_07 en la estacion para buscar el rastro.",
+      "witness_count": 0,
+      "responses": []
+    },
+    "prologue": {
+      "enabled": false,
+      "stage": "LEGACY",
+      "hint": ""
+    },
+    "chapter_one": {
+      "active": true,
+      "title": "Ya habías estado aquí",
+      "started_minute": 0,
+      "connection_minute": 0,
+      "decision": null,
+      "hypothesis": "",
+      "hypothesis_status": "UNVERIFIED",
+      "evidence": [
+        {
+          "id": "RETURN_MESSAGE",
+          "title": "Has vuelto",
+          "kind": "MESSAGE",
+          "source_id": "UNKNOWN_WIRED",
+          "source_label": "Identidad desconocida · Wired",
+          "text": "Has vuelto.",
+          "acquired_minute": 0,
+          "claimed_time": "Recibido al abrir este capítulo, minuto 0",
+          "event_id": null
+        }
+      ],
+      "links": [],
+      "contradiction_linked": false,
+      "characters": [
+        "RESIDENT_001",
+        "RESIDENT_006",
+        "PROFESSOR",
+        "RYOKO"
+      ],
+      "notification": "Has vuelto"
+    },
+    "network_conflict": {
+      "active": true,
+      "corporation": "Consorcio KAGAMI",
+      "corporate_control": 93.3,
+      "trace": 30,
+      "ready_in": 10,
+      "relays": [
+        {
+          "id": "RELAY_STATION",
+          "name": "Enlace del andén",
+          "location": "STATION",
+          "corporation": 100,
+          "mine": 0,
+          "defense": 0,
+          "suppressed_until": 0,
+          "inspected": false
+        },
+        {
+          "id": "RELAY_SCHOOL",
+          "name": "Enlace del pabellón B",
+          "location": "SCHOOL_LAB",
+          "corporation": 80,
+          "mine": 20,
+          "defense": 2,
+          "suppressed_until": 0,
+          "inspected": true
+        },
+        {
+          "id": "RELAY_VIDEO",
+          "name": "Enlace del videoclub",
+          "location": "VIDEO_CLUB",
+          "corporation": 100,
+          "mine": 0,
+          "defense": 0,
+          "suppressed_until": 0,
+          "inspected": false
+        }
+      ],
+      "rankings": [
+        {
+          "actor_id": "PLAYER_1",
+          "name": "Player",
+          "control": 6.7
+        }
+      ],
+      "pending": [
+        {
+          "relay": "RELAY_SCHOOL",
+          "due_minute": 100,
+          "remaining": 90
+        }
+      ],
+      "reports": [
+        {
+          "id": 3,
+          "minute": 0,
+          "source": "RELAY_TELEMETRY",
+          "text": "Enlace del pabellón B: tráfico de intervención detectado. Tienes 100 minutos del mundo para defenderte, ocultar tu enlace o examinar el tráfico y contrastar la credencial de quien lo mantiene."
+        },
+        {
+          "id": 2,
+          "minute": 0,
+          "source": "RELAY_SCHOOL",
+          "text": "CONTRATO DE CESIÓN · El protocolo y sus primeras comunidades son anteriores a KAGAMI. El consorcio adquirió los puntos de acceso y sustituyó las claves de administración; no creó la Wired."
+        },
+        {
+          "id": 1,
+          "minute": 0,
+          "source": "WORKSHOP",
+          "text": "El PC dispone de un taller de código. En Kissa Café han instalado un terminal: su técnico busca ayuda para comprobar un coprocesador."
+        }
+      ],
+      "visible_personnel": [
+        {
+          "id": "CIVIL_102",
+          "relay": "RELAY_SCHOOL",
+          "name": "Reina Asano",
+          "role": "Consultora de equipos"
+        }
+      ],
+      "session_mode": "LOCAL"
+    },
+    "workshop": {
+      "active": true,
+      "lesson": 2,
+      "life_source": "def next_cell(alive, neighbors):\n    if alive:\n        return neighbors == 2 or neighbors == 3\n    return neighbors == 3\n",
+      "draft": "use(\"routing\")\nuse(\"shield\")\nuse(\"scan\")\n",
+      "compiled": "use(\"routing\")\nuse(\"shield\")\nuse(\"scan\")\n",
+      "modules": [
+        "routing",
+        "shield",
+        "scan"
+      ],
+      "contract": "INDEPENDENT",
+      "best_score": 272,
+      "capacity": 11,
+      "cost": 9,
+      "assets": [
+        {
+          "id": "cafe_routing_copy",
+          "kind": "CODE",
+          "model": "routing",
+          "source": "Copia del técnico de Kissa Café",
+          "minute": 0,
+          "active": 0,
+          "ownership": "OWNED",
+          "name": "Enrutamiento",
+          "capacity": 0
+        },
+        {
+          "id": "courier_interface",
+          "kind": "DEVICE",
+          "model": "interface",
+          "source": "Bit Courier · desafío local completado",
+          "minute": 0,
+          "active": 1,
+          "ownership": "OWNED",
+          "name": "Interfaz R",
+          "capacity": 3
+        },
+        {
+          "id": "courier_scan",
+          "kind": "CODE",
+          "model": "scan",
+          "source": "Bit Courier · desafío local completado",
+          "minute": 0,
+          "active": 0,
+          "ownership": "OWNED",
+          "name": "Exploración",
+          "capacity": 0
+        },
+        {
+          "id": "first_connection",
+          "kind": "CODE",
+          "model": "routing",
+          "source": "Tu primera conexión a la Wired",
+          "minute": 0,
+          "active": 0,
+          "ownership": "OWNED",
+          "name": "Enrutamiento",
+          "capacity": 0
+        },
+        {
+          "id": "home_navi",
+          "kind": "DEVICE",
+          "model": "navi",
+          "source": "Ordenador de casa",
+          "minute": 0,
+          "active": 1,
+          "ownership": "OWNED",
+          "name": "Navi A",
+          "capacity": 4
+        },
+        {
+          "id": "life_matrix",
+          "kind": "DEVICE",
+          "model": "matrix",
+          "source": "Juego de la Vida · validado en el PC",
+          "minute": 0,
+          "active": 1,
+          "ownership": "OWNED",
+          "name": "Coprocesador M",
+          "capacity": 4
+        },
+        {
+          "id": "life_shield",
+          "kind": "CODE",
+          "model": "shield",
+          "source": "Juego de la Vida · módulo del coprocesador",
+          "minute": 0,
+          "active": 0,
+          "ownership": "OWNED",
+          "name": "Protección",
+          "capacity": 0
+        }
+      ],
+      "library": [
+        {
+          "id": "routing",
+          "name": "Enrutamiento",
+          "cost": 2,
+          "effect": "Conexión del montaje; conserva las acciones básicas del enlace."
+        },
+        {
+          "id": "shield",
+          "name": "Protección",
+          "cost": 4,
+          "effect": "Preparar las dos defensas de un enlace propio con una operación local."
+        },
+        {
+          "id": "scan",
+          "name": "Exploración",
+          "cost": 3,
+          "effect": "Desde casa, leer la actividad de un enlace previamente examinado."
+        }
+      ],
+      "offers": {
+        "KAGAMI": "Contrato local KAGAMI: préstamo de un segundo Navi A y cobertura que absorbe 15 puntos de cada intervención. La copia no duplica capacidad. Reservas 1 unidad de cálculo mientras dure el acuerdo. Puedes terminarlo desde este PC; se retiran préstamo y cobertura. No se envían conversaciones ni recuerdos.",
+        "NOEMA": "Contrato local NOEMA: acceso prestado al módulo Exploración. Reserva 1 unidad de cálculo. Los escaneos posteriores entregan a NOEMA únicamente relay, minuto y número de intervenciones sobre tu cuenta. Puedes terminarlo; se retira el permiso, no tus fragmentos propios. No incluye testimonios ni memorias privadas."
+      },
+      "life_hint": "def next_cell(alive, neighbors):\n    if alive:\n        return neighbors == 2 or neighbors == 3\n    return neighbors == 3\n",
+      "session_mode": "LOCAL"
+    },
+    "situations": [],
+    "interaction": null,
+    "outgoing_interaction": null,
+    "messages": [
+      {
+        "id": "MSG_BOOTSTRAP_001",
+        "sender": "unknown@wired",
+        "subject": "NO SUBJECT",
+        "body": "NO ESTOY MUERTA.\n\nSOLO DEJÉ DE ESTAR AHÍ.",
+        "created_minute": 0,
+        "read": true,
+        "acknowledged": true,
+        "acknowledged_minute": 0
+      }
+    ],
+    "unread_messages": 0,
+    "wired": {
+      "connected": true,
+      "signals": [
+        {
+          "node_id": "NODE_07",
+          "location": "STATION",
+          "strength": 0.5,
+          "confidence": 0.35,
+          "origin_source": "WIRED_MESSAGE",
+          "current_source": "WIRED_MESSAGE",
+          "verified": false,
+          "updated_minute": 0
+        }
+      ],
+      "digital_presences": []
+    }
+  },
+  "protection": {
+    "speaker": "WIRED · CONTROL DE ENLACES",
+    "text": "Defensa preparada. Cada defensa absorbe 15 puntos de la próxima intervención; se consume cuando llega. Dos defensas detienen una intervención completa.",
+    "choices": [
+      {
+        "text": "Examinar contratos y tráfico del enlace.",
+        "action": "INSPECT",
+        "relay": "RELAY_SCHOOL",
+        "rival": ""
+      },
+      {
+        "text": "Disputar 20 puntos a KAGAMI · deja rastro.",
+        "action": "CLAIM",
+        "relay": "RELAY_SCHOOL",
+        "rival": ""
+      },
+      {
+        "text": "Ocultar mi enlace · ceder hasta 5 puntos.",
+        "action": "GO_DARK",
+        "relay": "RELAY_SCHOOL",
+        "rival": ""
+      }
+    ]
+  }
+}

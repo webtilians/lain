@@ -16,6 +16,8 @@ VALID_ACTIONS = {
     "OBSERVE",
     "OBSERVE_AREA",
     "CONTACT",
+    "BROADCAST_TRACE",
+    "ARCHIVE_TRACE",
     "REST",
 }
 
@@ -25,6 +27,7 @@ def queue_action(
     action: str,
     target: str,
     source: str = "HUMAN",
+    already_claimed: bool = False,
 ) -> int:
 
     initialize_database()
@@ -49,13 +52,14 @@ def queue_action(
                 processed
             )
 
-            VALUES (?, ?, ?, ?, 0)
+            VALUES (?, ?, ?, ?, ?)
             """,
             (
                 actor_id,
                 action,
                 target,
                 source,
+                int(already_claimed),
             ),
         )
 

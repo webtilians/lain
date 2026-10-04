@@ -1,0 +1,24 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[ext_resource type="Texture2D" path="res://art/gothic12/textures/leather_red_02/leather_red_02_diff_2k.jpg" id="1_fa8e8"]
+[ext_resource type="Texture2D" path="res://art/gothic12/textures/leather_red_02/leather_red_02_arm_2k.jpg" id="2_nlr8w"]
+[ext_resource type="Texture2D" path="res://art/gothic12/textures/leather_red_02/leather_red_02_nor_gl_2k.jpg" id="3_nfu58"]
+
+[resource]
+resource_name = "PR11_leather_red"
+albedo_color = Color(0.6039216, 0.14509805, 0.1882353, 1)
+albedo_texture = ExtResource("1_fa8e8")
+roughness = 0.7
+roughness_texture = ExtResource("2_nlr8w")
+roughness_texture_channel = 1
+normal_enabled = true
+normal_scale = 0.6
+normal_texture = ExtResource("3_nfu58")
+ao_enabled = true
+ao_light_affect = 0.1
+ao_texture = ExtResource("2_nlr8w")
+uv1_scale = Vector3(1.6666666, 1.6666666, 1.6666666)
+uv1_triplanar = true
+uv1_triplanar_sharpness = 8.0
+uv1_world_triplanar = true
+texture_filter = 5

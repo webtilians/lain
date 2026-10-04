@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# Bring the engine up to date from GitHub (same branch) and restart it.
+# Backs the world up first; players reconnect by themselves.
+set -euo pipefail
+exec bash /opt/lain/deploy/vps/setup.sh "$@"

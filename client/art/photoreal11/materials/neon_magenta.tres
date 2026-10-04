@@ -1,0 +1,9 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[resource]
+resource_name = "PR11_neon_magenta"
+albedo_color = Color(1, 0.4862745, 0.7764706, 1)
+roughness = 0.3
+emission_enabled = true
+emission = Color(1, 0.18431373, 0.627451, 1)
+emission_energy_multiplier = 3.6

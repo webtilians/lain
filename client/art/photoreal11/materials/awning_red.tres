@@ -1,0 +1,6 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[resource]
+resource_name = "PR11_awning_red"
+albedo_color = Color(0.24313726, 0.039215688, 0.0627451, 1)
+roughness = 0.6

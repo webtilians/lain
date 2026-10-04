@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+# Replace this server's world with one copied from the owner's PC:
+#   /root/lain-import.db          consistent copy of online-world.db
+#   /root/lain-import-access/     the players' access folders (optional)
+# The current world is backed up first. Tokens keep working; only the
+# address inside each access file changes to this server.
+set -euo pipefail
+[ "$(id -u)" -eq 0 ] || { echo "Ejecuta como root." >&2; exit 1; }
+[ -f /root/lain-import.db ] || { echo "Falta /root/lain-import.db" >&2; exit 1; }
+host=$(cat /etc/lain/host)
+if [ "$(sqlite3 /root/lain-import.db 'PRAGMA integrity_check;')" != "ok" ]; then
+  echo "La copia del mundo está dañada; no he cambiado nada." >&2
+  exit 1
+fi
+systemctl stop lain
+trap 'systemctl start lain' EXIT
+lain-backup
+rm -f /var/lib/lain/online-world.db-wal /var/lib/lain/online-world.db-shm
+install -o lain -g lain -m 600 /root/lain-import.db /var/lib/lain/online-world.db
+if [ -d /root/lain-import-access ]; then
+  install -d -o lain -g lain -m 700 /var/lib/lain/access
+  cp -r /root/lain-import-access/. /var/lib/lain/access/
+  /opt/lain-venv/bin/python - "https://$host" <<'EOF'
+import json, pathlib, sys
+for path in pathlib.Path("/var/lib/lain/access").glob("*/lain-online.json"):
+    data = json.loads(path.read_text(encoding="utf-8-sig"))
+    data["server_url"] = sys.argv[1]
+    path.write_text(json.dumps(data, indent=2), encoding="utf-8")
+EOF
+  chown -R lain:lain /var/lib/lain/access
+  chmod -R go-rwx /var/lib/lain/access
+fi
+rm -rf /root/lain-import.db /root/lain-import-access
+echo "Mundo importado. Jugadores:"
+cd /opt/lain && runuser -u lain -- env PYTHONDONTWRITEBYTECODE=1 /opt/lain-venv/bin/python -m tools.online_server --data-dir /var/lib/lain list-players

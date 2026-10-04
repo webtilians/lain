@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# One-screen health check: service, address, AI, players, disk and backups.
+set -uo pipefail
+host=$(cat /etc/lain/host)
+echo "Dirección:  https://$host"
+echo "Motor:      $(systemctl is-active lain) (desde $(systemctl show lain -p ActiveEnterTimestamp --value))"
+echo "HTTPS:      $(curl -fsS --max-time 5 "https://$host/health" 2>/dev/null || echo 'sin respuesta')"
+if grep -q '^LAIN_LLM_ENABLED=1' /etc/lain/lain.env; then
+  model=$(sed -n 's/^LAIN_LLM_MODEL=//p' /etc/lain/lain.env)
+  provider=$(sed -n 's/^LAIN_LLM_ENDPOINT=//p' /etc/lain/lain.env | cut -d/ -f3)
+  echo "IA:         $model en $provider"
+else
+  echo "IA:         desactivada (diálogos predefinidos)"
+fi
+echo "Versión:    $(git -C /opt/lain log -1 --format='%h %s')"
+echo "$(lain-signup)"
+echo "Disco:      $(df -h /var/lib/lain | awk 'NR == 2 {print $4 " libres"}')"
+echo "Copias:     $(ls /var/backups/lain/*.sql.gz 2>/dev/null | wc -l) (última: $(ls -t /var/backups/lain/*.sql.gz 2>/dev/null | head -1 | xargs -r basename))"
+echo
+echo "Jugadores:"
+cd /opt/lain && runuser -u lain -- env PYTHONDONTWRITEBYTECODE=1 /opt/lain-venv/bin/python -m tools.online_server --data-dir /var/lib/lain list-players
+echo
+echo "Últimos avisos del motor:"
+journalctl -u lain -n 8 --no-pager -o cat

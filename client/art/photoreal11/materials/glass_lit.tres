@@ -1,0 +1,9 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[resource]
+resource_name = "PR11_glass_lit"
+albedo_color = Color(0.14117648, 0.08235294, 0.03529412, 1)
+roughness = 0.3
+emission_enabled = true
+emission = Color(1, 0.62352943, 0.32156864, 1)
+emission_energy_multiplier = 0.75

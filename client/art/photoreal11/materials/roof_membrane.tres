@@ -1,0 +1,6 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[resource]
+resource_name = "PR11_roof_membrane"
+albedo_color = Color(0.13725491, 0.13725491, 0.14509805, 1)
+roughness = 0.35

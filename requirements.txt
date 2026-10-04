@@ -1,3 +1,4 @@
 fastapi
 uvicorn[standard]
 pytest
+httpx==0.28.1

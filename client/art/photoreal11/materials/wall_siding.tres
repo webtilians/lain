@@ -1,0 +1,20 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[ext_resource type="Texture2D" path="res://art/gothic12/textures/dark_brick_wall/dark_brick_wall_diff_2k.jpg" id="1_mst87"]
+[ext_resource type="Texture2D" path="res://art/gothic12/textures/dark_brick_wall/dark_brick_wall_arm_2k.jpg" id="2_dnypd"]
+[ext_resource type="Texture2D" path="res://art/gothic12/textures/dark_brick_wall/dark_brick_wall_nor_gl_2k.jpg" id="3_f3o7s"]
+
+[resource]
+resource_name = "PR11_wall_siding"
+albedo_color = Color(0.63529414, 0.6, 0.5803922, 1)
+albedo_texture = ExtResource("1_mst87")
+roughness = 0.9
+roughness_texture = ExtResource("2_dnypd")
+roughness_texture_channel = 1
+normal_enabled = true
+normal_texture = ExtResource("3_f3o7s")
+ao_enabled = true
+ao_light_affect = 0.1
+ao_texture = ExtResource("2_dnypd")
+uv1_scale = Vector3(0.95238096, 0.95238096, 1)
+texture_filter = 5

@@ -1,0 +1,3077 @@
+[
+  {
+    "name": "station-unknown",
+    "mode": "dialogue",
+    "result": {
+      "speaker": "WIRED · CONTROL DE ENLACES",
+      "text": "Enlace del andén\nAdministrador desconocido: 100% · Tu control: 0% · Defensas: 0/2\n\nEste armario controla un enlace de la Wired. Conserva contratos antiguos y tráfico de administración. Puedes examinarlos antes de intervenir.",
+      "choices": [
+        {
+          "text": "Examinar contratos y tráfico del enlace.",
+          "action": "INSPECT",
+          "relay": "RELAY_STATION",
+          "rival": ""
+        }
+      ]
+    },
+    "state": {
+      "schema_version": "0.1",
+      "minute": 10,
+      "player": {
+        "id": "PLAYER_1",
+        "name": "Player",
+        "faction": "UNALIGNED",
+        "location": "STATION",
+        "goal": "UNKNOWN",
+        "energy": 1.0
+      },
+      "navigation": {
+        "reachable_locations": [
+          "APARTMENT_DISTRICT",
+          "OLD_DISTRICT"
+        ]
+      },
+      "known_nodes": [
+        {
+          "id": "NODE_07",
+          "knowledge_confidence": 0.35,
+          "knowledge_source": "WIRED_MESSAGE",
+          "belief": {
+            "location": "STATION",
+            "strength": 0.5,
+            "confidence": 0.35,
+            "source": "WIRED_MESSAGE",
+            "updated_minute": 0
+          }
+        }
+      ],
+      "visible_actors": [
+        {
+          "id": "RESIDENT_035",
+          "name": "Osamu Kaneko",
+          "role": "Empleado de estación",
+          "role_label": "Empleado de estación",
+          "skills": {
+            "Orientación": 4,
+            "Observación": 2
+          },
+          "public_objective": "Ayudar a viajeros que no encuentran el andén.",
+          "activity": "Revisa el andén",
+          "slot": 0,
+          "patrol_step": 0,
+          "appearance": "worker",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_036",
+          "name": "Etsuko Miura",
+          "role": "Oficinista",
+          "role_label": "Oficinista",
+          "skills": {
+            "Contabilidad": 5,
+            "Observación": 3
+          },
+          "public_objective": "Llegar a casa después de entregar el informe del día.",
+          "activity": "Consulta el horario",
+          "slot": 1,
+          "patrol_step": 0,
+          "appearance": "suit",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_037",
+          "name": "Takumi Imai",
+          "role": "Estudiante viajero",
+          "role_label": "Estudiante viajero",
+          "skills": {
+            "Idiomas": 3,
+            "Observación": 1
+          },
+          "public_objective": "Repasar unas tarjetas antes de que llegue su tren.",
+          "activity": "Lee una tarjeta",
+          "slot": 2,
+          "patrol_step": 0,
+          "appearance": "student",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_038",
+          "name": "Miyako Hara",
+          "role": "Vendedora de billetes",
+          "role_label": "Vendedora de billetes",
+          "skills": {
+            "Atención al público": 4,
+            "Observación": 2
+          },
+          "public_objective": "Comprobar las indicaciones del último servicio.",
+          "activity": "Revisa un aviso",
+          "slot": 3,
+          "patrol_step": 0,
+          "appearance": "worker",
+          "role_assignment": "CITY_PROVISIONAL"
+        }
+      ],
+      "character_sheets": {
+        "player": {
+          "id": "PLAYER_1",
+          "name": "Player",
+          "kind": "PLAYER",
+          "faction": "UNALIGNED",
+          "location": "STATION",
+          "energy": 1.0,
+          "known_nodes": 1,
+          "case_status": "UNSEEN",
+          "agency": "HUMAN_ONLY"
+        },
+        "visible_npcs": [
+          {
+            "id": "RESIDENT_035",
+            "name": "Osamu Kaneko",
+            "kind": "NPC",
+            "observed_location": "STATION",
+            "focus": "Revisa el andén",
+            "role": "Empleado de estación",
+            "role_label": "Empleado de estación",
+            "skills": {
+              "Orientación": 4,
+              "Observación": 2
+            },
+            "public_objective": "Ayudar a viajeros que no encuentran el andén.",
+            "activity": "Revisa el andén",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_036",
+            "name": "Etsuko Miura",
+            "kind": "NPC",
+            "observed_location": "STATION",
+            "focus": "Consulta el horario",
+            "role": "Oficinista",
+            "role_label": "Oficinista",
+            "skills": {
+              "Contabilidad": 5,
+              "Observación": 3
+            },
+            "public_objective": "Llegar a casa después de entregar el informe del día.",
+            "activity": "Consulta el horario",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_037",
+            "name": "Takumi Imai",
+            "kind": "NPC",
+            "observed_location": "STATION",
+            "focus": "Lee una tarjeta",
+            "role": "Estudiante viajero",
+            "role_label": "Estudiante viajero",
+            "skills": {
+              "Idiomas": 3,
+              "Observación": 1
+            },
+            "public_objective": "Repasar unas tarjetas antes de que llegue su tren.",
+            "activity": "Lee una tarjeta",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_038",
+            "name": "Miyako Hara",
+            "kind": "NPC",
+            "observed_location": "STATION",
+            "focus": "Revisa un aviso",
+            "role": "Vendedora de billetes",
+            "role_label": "Vendedora de billetes",
+            "skills": {
+              "Atención al público": 4,
+              "Observación": 2
+            },
+            "public_objective": "Comprobar las indicaciones del último servicio.",
+            "activity": "Revisa un aviso",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "CIVIL_101",
+            "name": "Daichi Kurose",
+            "kind": "NPC",
+            "role_label": "Técnico de telefonía",
+            "observed_location": "STATION",
+            "role_assignment": "OBSERVED_IDENTITY",
+            "focus": "Dice que revisa las líneas y los permisos de conexión de este lugar."
+          }
+        ]
+      },
+      "station_case": {
+        "id": "STATION_ECHO_07",
+        "title": "El pulso ausente",
+        "status": "UNSEEN",
+        "resolution": null,
+        "summary": "Investiga NODE_07 en la estacion para buscar el rastro.",
+        "witness_count": 0,
+        "responses": []
+      },
+      "prologue": {
+        "enabled": false,
+        "stage": "LEGACY",
+        "hint": ""
+      },
+      "chapter_one": {
+        "active": true,
+        "title": "Ya habías estado aquí",
+        "started_minute": 0,
+        "connection_minute": 0,
+        "decision": null,
+        "hypothesis": "",
+        "hypothesis_status": "UNVERIFIED",
+        "evidence": [
+          {
+            "id": "RETURN_MESSAGE",
+            "title": "Has vuelto",
+            "kind": "MESSAGE",
+            "source_id": "UNKNOWN_WIRED",
+            "source_label": "Identidad desconocida · Wired",
+            "text": "Has vuelto.",
+            "acquired_minute": 0,
+            "claimed_time": "Recibido al abrir este capítulo, minuto 0",
+            "event_id": null
+          }
+        ],
+        "links": [],
+        "contradiction_linked": false,
+        "characters": [
+          "RESIDENT_001",
+          "RESIDENT_006",
+          "PROFESSOR",
+          "RYOKO"
+        ],
+        "notification": "Has vuelto"
+      },
+      "network_conflict": {
+        "active": true,
+        "corporation": "Administrador desconocido",
+        "corporate_control": 100.0,
+        "trace": 0,
+        "ready_in": 0,
+        "relays": [
+          {
+            "id": "RELAY_STATION",
+            "name": "Enlace del andén",
+            "location": "STATION",
+            "corporation": 100,
+            "mine": 0,
+            "defense": 0,
+            "suppressed_until": 0,
+            "inspected": false
+          },
+          {
+            "id": "RELAY_SCHOOL",
+            "name": "Enlace del pabellón B",
+            "location": "SCHOOL_LAB",
+            "corporation": 100,
+            "mine": 0,
+            "defense": 0,
+            "suppressed_until": 0,
+            "inspected": false
+          },
+          {
+            "id": "RELAY_VIDEO",
+            "name": "Enlace del videoclub",
+            "location": "VIDEO_CLUB",
+            "corporation": 100,
+            "mine": 0,
+            "defense": 0,
+            "suppressed_until": 0,
+            "inspected": false
+          }
+        ],
+        "rankings": [
+          {
+            "actor_id": "PLAYER_1",
+            "name": "Player",
+            "control": 0.0
+          }
+        ],
+        "pending": [],
+        "reports": [],
+        "visible_personnel": [
+          {
+            "id": "CIVIL_101",
+            "relay": "RELAY_STATION",
+            "name": "Daichi Kurose",
+            "role": "Técnico de telefonía"
+          }
+        ],
+        "session_mode": "LOCAL"
+      },
+      "situations": [],
+      "interaction": null,
+      "outgoing_interaction": null,
+      "messages": [
+        {
+          "id": "MSG_BOOTSTRAP_001",
+          "sender": "unknown@wired",
+          "subject": "NO SUBJECT",
+          "body": "NO ESTOY MUERTA.\n\nSOLO DEJÉ DE ESTAR AHÍ.",
+          "created_minute": 0,
+          "read": true,
+          "acknowledged": true,
+          "acknowledged_minute": 0
+        }
+      ],
+      "unread_messages": 0,
+      "wired": {
+        "connected": true,
+        "signals": [
+          {
+            "node_id": "NODE_07",
+            "location": "STATION",
+            "strength": 0.5,
+            "confidence": 0.35,
+            "origin_source": "WIRED_MESSAGE",
+            "current_source": "WIRED_MESSAGE",
+            "verified": false,
+            "updated_minute": 0
+          }
+        ],
+        "digital_presences": []
+      }
+    }
+  },
+  {
+    "name": "station-claim",
+    "mode": "dialogue",
+    "result": {
+      "speaker": "WIRED · CONTROL DE ENLACES",
+      "text": "Has tomado 20 puntos de control a KAGAMI. Tu actividad ha dejado un rastro; consulta las intervenciones en el archivo de la red [J].",
+      "choices": [
+        {
+          "text": "Examinar contratos y tráfico del enlace.",
+          "action": "INSPECT",
+          "relay": "RELAY_STATION",
+          "rival": ""
+        },
+        {
+          "text": "Disputar 20 puntos a KAGAMI · deja rastro.",
+          "action": "CLAIM",
+          "relay": "RELAY_STATION",
+          "rival": ""
+        },
+        {
+          "text": "Preparar una defensa del enlace.",
+          "action": "FORTIFY",
+          "relay": "RELAY_STATION",
+          "rival": ""
+        },
+        {
+          "text": "Ocultar mi enlace · ceder hasta 5 puntos.",
+          "action": "GO_DARK",
+          "relay": "RELAY_STATION",
+          "rival": ""
+        }
+      ]
+    },
+    "state": {
+      "schema_version": "0.1",
+      "minute": 10,
+      "player": {
+        "id": "PLAYER_1",
+        "name": "Player",
+        "faction": "UNALIGNED",
+        "location": "STATION",
+        "goal": "UNKNOWN",
+        "energy": 1.0
+      },
+      "navigation": {
+        "reachable_locations": [
+          "APARTMENT_DISTRICT",
+          "OLD_DISTRICT"
+        ]
+      },
+      "known_nodes": [
+        {
+          "id": "NODE_07",
+          "knowledge_confidence": 0.35,
+          "knowledge_source": "WIRED_MESSAGE",
+          "belief": {
+            "location": "STATION",
+            "strength": 0.5,
+            "confidence": 0.35,
+            "source": "WIRED_MESSAGE",
+            "updated_minute": 0
+          }
+        }
+      ],
+      "visible_actors": [
+        {
+          "id": "RESIDENT_035",
+          "name": "Osamu Kaneko",
+          "role": "Empleado de estación",
+          "role_label": "Empleado de estación",
+          "skills": {
+            "Orientación": 4,
+            "Observación": 2
+          },
+          "public_objective": "Ayudar a viajeros que no encuentran el andén.",
+          "activity": "Revisa el andén",
+          "slot": 0,
+          "patrol_step": 0,
+          "appearance": "worker",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_036",
+          "name": "Etsuko Miura",
+          "role": "Oficinista",
+          "role_label": "Oficinista",
+          "skills": {
+            "Contabilidad": 5,
+            "Observación": 3
+          },
+          "public_objective": "Llegar a casa después de entregar el informe del día.",
+          "activity": "Consulta el horario",
+          "slot": 1,
+          "patrol_step": 0,
+          "appearance": "suit",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_037",
+          "name": "Takumi Imai",
+          "role": "Estudiante viajero",
+          "role_label": "Estudiante viajero",
+          "skills": {
+            "Idiomas": 3,
+            "Observación": 1
+          },
+          "public_objective": "Repasar unas tarjetas antes de que llegue su tren.",
+          "activity": "Lee una tarjeta",
+          "slot": 2,
+          "patrol_step": 0,
+          "appearance": "student",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_038",
+          "name": "Miyako Hara",
+          "role": "Vendedora de billetes",
+          "role_label": "Vendedora de billetes",
+          "skills": {
+            "Atención al público": 4,
+            "Observación": 2
+          },
+          "public_objective": "Comprobar las indicaciones del último servicio.",
+          "activity": "Revisa un aviso",
+          "slot": 3,
+          "patrol_step": 0,
+          "appearance": "worker",
+          "role_assignment": "CITY_PROVISIONAL"
+        }
+      ],
+      "character_sheets": {
+        "player": {
+          "id": "PLAYER_1",
+          "name": "Player",
+          "kind": "PLAYER",
+          "faction": "UNALIGNED",
+          "location": "STATION",
+          "energy": 1.0,
+          "known_nodes": 1,
+          "case_status": "UNSEEN",
+          "agency": "HUMAN_ONLY"
+        },
+        "visible_npcs": [
+          {
+            "id": "RESIDENT_035",
+            "name": "Osamu Kaneko",
+            "kind": "NPC",
+            "observed_location": "STATION",
+            "focus": "Revisa el andén",
+            "role": "Empleado de estación",
+            "role_label": "Empleado de estación",
+            "skills": {
+              "Orientación": 4,
+              "Observación": 2
+            },
+            "public_objective": "Ayudar a viajeros que no encuentran el andén.",
+            "activity": "Revisa el andén",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_036",
+            "name": "Etsuko Miura",
+            "kind": "NPC",
+            "observed_location": "STATION",
+            "focus": "Consulta el horario",
+            "role": "Oficinista",
+            "role_label": "Oficinista",
+            "skills": {
+              "Contabilidad": 5,
+              "Observación": 3
+            },
+            "public_objective": "Llegar a casa después de entregar el informe del día.",
+            "activity": "Consulta el horario",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_037",
+            "name": "Takumi Imai",
+            "kind": "NPC",
+            "observed_location": "STATION",
+            "focus": "Lee una tarjeta",
+            "role": "Estudiante viajero",
+            "role_label": "Estudiante viajero",
+            "skills": {
+              "Idiomas": 3,
+              "Observación": 1
+            },
+            "public_objective": "Repasar unas tarjetas antes de que llegue su tren.",
+            "activity": "Lee una tarjeta",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_038",
+            "name": "Miyako Hara",
+            "kind": "NPC",
+            "observed_location": "STATION",
+            "focus": "Revisa un aviso",
+            "role": "Vendedora de billetes",
+            "role_label": "Vendedora de billetes",
+            "skills": {
+              "Atención al público": 4,
+              "Observación": 2
+            },
+            "public_objective": "Comprobar las indicaciones del último servicio.",
+            "activity": "Revisa un aviso",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "CIVIL_101",
+            "name": "Daichi Kurose",
+            "kind": "NPC",
+            "role_label": "Técnico de telefonía",
+            "observed_location": "STATION",
+            "role_assignment": "OBSERVED_IDENTITY",
+            "focus": "Dice que revisa las líneas y los permisos de conexión de este lugar."
+          }
+        ]
+      },
+      "station_case": {
+        "id": "STATION_ECHO_07",
+        "title": "El pulso ausente",
+        "status": "UNSEEN",
+        "resolution": null,
+        "summary": "Investiga NODE_07 en la estacion para buscar el rastro.",
+        "witness_count": 0,
+        "responses": []
+      },
+      "prologue": {
+        "enabled": false,
+        "stage": "LEGACY",
+        "hint": ""
+      },
+      "chapter_one": {
+        "active": true,
+        "title": "Ya habías estado aquí",
+        "started_minute": 0,
+        "connection_minute": 0,
+        "decision": null,
+        "hypothesis": "",
+        "hypothesis_status": "UNVERIFIED",
+        "evidence": [
+          {
+            "id": "RETURN_MESSAGE",
+            "title": "Has vuelto",
+            "kind": "MESSAGE",
+            "source_id": "UNKNOWN_WIRED",
+            "source_label": "Identidad desconocida · Wired",
+            "text": "Has vuelto.",
+            "acquired_minute": 0,
+            "claimed_time": "Recibido al abrir este capítulo, minuto 0",
+            "event_id": null
+          }
+        ],
+        "links": [],
+        "contradiction_linked": false,
+        "characters": [
+          "RESIDENT_001",
+          "RESIDENT_006",
+          "PROFESSOR",
+          "RYOKO"
+        ],
+        "notification": "Has vuelto"
+      },
+      "network_conflict": {
+        "active": true,
+        "corporation": "Consorcio KAGAMI",
+        "corporate_control": 93.3,
+        "trace": 30,
+        "ready_in": 10,
+        "relays": [
+          {
+            "id": "RELAY_STATION",
+            "name": "Enlace del andén",
+            "location": "STATION",
+            "corporation": 80,
+            "mine": 20,
+            "defense": 0,
+            "suppressed_until": 0,
+            "inspected": true
+          },
+          {
+            "id": "RELAY_SCHOOL",
+            "name": "Enlace del pabellón B",
+            "location": "SCHOOL_LAB",
+            "corporation": 100,
+            "mine": 0,
+            "defense": 0,
+            "suppressed_until": 0,
+            "inspected": false
+          },
+          {
+            "id": "RELAY_VIDEO",
+            "name": "Enlace del videoclub",
+            "location": "VIDEO_CLUB",
+            "corporation": 100,
+            "mine": 0,
+            "defense": 0,
+            "suppressed_until": 0,
+            "inspected": false
+          }
+        ],
+        "rankings": [
+          {
+            "actor_id": "PLAYER_1",
+            "name": "Player",
+            "control": 6.7
+          }
+        ],
+        "pending": [
+          {
+            "relay": "RELAY_STATION",
+            "due_minute": 110,
+            "remaining": 100
+          }
+        ],
+        "reports": [
+          {
+            "id": 2,
+            "minute": 10,
+            "source": "RELAY_TELEMETRY",
+            "text": "Enlace del andén: tráfico de intervención detectado. Tienes 100 minutos del mundo para defenderte, ocultar tu enlace o examinar el tráfico y contrastar la credencial de quien lo mantiene."
+          },
+          {
+            "id": 1,
+            "minute": 10,
+            "source": "RELAY_STATION",
+            "text": "CONTRATO DE CESIÓN · El protocolo y sus primeras comunidades son anteriores a KAGAMI. El consorcio adquirió los puntos de acceso y sustituyó las claves de administración; no creó la Wired."
+          }
+        ],
+        "visible_personnel": [
+          {
+            "id": "CIVIL_101",
+            "relay": "RELAY_STATION",
+            "name": "Daichi Kurose",
+            "role": "Técnico de telefonía"
+          }
+        ],
+        "session_mode": "LOCAL"
+      },
+      "situations": [],
+      "interaction": null,
+      "outgoing_interaction": null,
+      "messages": [
+        {
+          "id": "MSG_BOOTSTRAP_001",
+          "sender": "unknown@wired",
+          "subject": "NO SUBJECT",
+          "body": "NO ESTOY MUERTA.\n\nSOLO DEJÉ DE ESTAR AHÍ.",
+          "created_minute": 0,
+          "read": true,
+          "acknowledged": true,
+          "acknowledged_minute": 0
+        }
+      ],
+      "unread_messages": 0,
+      "wired": {
+        "connected": true,
+        "signals": [
+          {
+            "node_id": "NODE_07",
+            "location": "STATION",
+            "strength": 0.5,
+            "confidence": 0.35,
+            "origin_source": "WIRED_MESSAGE",
+            "current_source": "WIRED_MESSAGE",
+            "verified": false,
+            "updated_minute": 0
+          }
+        ],
+        "digital_presences": []
+      }
+    }
+  },
+  {
+    "name": "station-intervention",
+    "mode": "scene",
+    "result": null,
+    "state": {
+      "schema_version": "0.1",
+      "minute": 10,
+      "player": {
+        "id": "PLAYER_1",
+        "name": "Player",
+        "faction": "UNALIGNED",
+        "location": "STATION",
+        "goal": "UNKNOWN",
+        "energy": 1.0
+      },
+      "navigation": {
+        "reachable_locations": [
+          "APARTMENT_DISTRICT",
+          "OLD_DISTRICT"
+        ]
+      },
+      "known_nodes": [
+        {
+          "id": "NODE_07",
+          "knowledge_confidence": 0.35,
+          "knowledge_source": "WIRED_MESSAGE",
+          "belief": {
+            "location": "STATION",
+            "strength": 0.5,
+            "confidence": 0.35,
+            "source": "WIRED_MESSAGE",
+            "updated_minute": 0
+          }
+        }
+      ],
+      "visible_actors": [
+        {
+          "id": "RESIDENT_035",
+          "name": "Osamu Kaneko",
+          "role": "Empleado de estación",
+          "role_label": "Empleado de estación",
+          "skills": {
+            "Orientación": 4,
+            "Observación": 2
+          },
+          "public_objective": "Ayudar a viajeros que no encuentran el andén.",
+          "activity": "Revisa el andén",
+          "slot": 0,
+          "patrol_step": 0,
+          "appearance": "worker",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_036",
+          "name": "Etsuko Miura",
+          "role": "Oficinista",
+          "role_label": "Oficinista",
+          "skills": {
+            "Contabilidad": 5,
+            "Observación": 3
+          },
+          "public_objective": "Llegar a casa después de entregar el informe del día.",
+          "activity": "Consulta el horario",
+          "slot": 1,
+          "patrol_step": 0,
+          "appearance": "suit",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_037",
+          "name": "Takumi Imai",
+          "role": "Estudiante viajero",
+          "role_label": "Estudiante viajero",
+          "skills": {
+            "Idiomas": 3,
+            "Observación": 1
+          },
+          "public_objective": "Repasar unas tarjetas antes de que llegue su tren.",
+          "activity": "Lee una tarjeta",
+          "slot": 2,
+          "patrol_step": 0,
+          "appearance": "student",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_038",
+          "name": "Miyako Hara",
+          "role": "Vendedora de billetes",
+          "role_label": "Vendedora de billetes",
+          "skills": {
+            "Atención al público": 4,
+            "Observación": 2
+          },
+          "public_objective": "Comprobar las indicaciones del último servicio.",
+          "activity": "Revisa un aviso",
+          "slot": 3,
+          "patrol_step": 0,
+          "appearance": "worker",
+          "role_assignment": "CITY_PROVISIONAL"
+        }
+      ],
+      "character_sheets": {
+        "player": {
+          "id": "PLAYER_1",
+          "name": "Player",
+          "kind": "PLAYER",
+          "faction": "UNALIGNED",
+          "location": "STATION",
+          "energy": 1.0,
+          "known_nodes": 1,
+          "case_status": "UNSEEN",
+          "agency": "HUMAN_ONLY"
+        },
+        "visible_npcs": [
+          {
+            "id": "RESIDENT_035",
+            "name": "Osamu Kaneko",
+            "kind": "NPC",
+            "observed_location": "STATION",
+            "focus": "Revisa el andén",
+            "role": "Empleado de estación",
+            "role_label": "Empleado de estación",
+            "skills": {
+              "Orientación": 4,
+              "Observación": 2
+            },
+            "public_objective": "Ayudar a viajeros que no encuentran el andén.",
+            "activity": "Revisa el andén",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_036",
+            "name": "Etsuko Miura",
+            "kind": "NPC",
+            "observed_location": "STATION",
+            "focus": "Consulta el horario",
+            "role": "Oficinista",
+            "role_label": "Oficinista",
+            "skills": {
+              "Contabilidad": 5,
+              "Observación": 3
+            },
+            "public_objective": "Llegar a casa después de entregar el informe del día.",
+            "activity": "Consulta el horario",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_037",
+            "name": "Takumi Imai",
+            "kind": "NPC",
+            "observed_location": "STATION",
+            "focus": "Lee una tarjeta",
+            "role": "Estudiante viajero",
+            "role_label": "Estudiante viajero",
+            "skills": {
+              "Idiomas": 3,
+              "Observación": 1
+            },
+            "public_objective": "Repasar unas tarjetas antes de que llegue su tren.",
+            "activity": "Lee una tarjeta",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_038",
+            "name": "Miyako Hara",
+            "kind": "NPC",
+            "observed_location": "STATION",
+            "focus": "Revisa un aviso",
+            "role": "Vendedora de billetes",
+            "role_label": "Vendedora de billetes",
+            "skills": {
+              "Atención al público": 4,
+              "Observación": 2
+            },
+            "public_objective": "Comprobar las indicaciones del último servicio.",
+            "activity": "Revisa un aviso",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "CIVIL_101",
+            "name": "Daichi Kurose",
+            "kind": "NPC",
+            "role_label": "Técnico de telefonía",
+            "observed_location": "STATION",
+            "role_assignment": "OBSERVED_IDENTITY",
+            "focus": "Dice que revisa las líneas y los permisos de conexión de este lugar."
+          }
+        ]
+      },
+      "station_case": {
+        "id": "STATION_ECHO_07",
+        "title": "El pulso ausente",
+        "status": "UNSEEN",
+        "resolution": null,
+        "summary": "Investiga NODE_07 en la estacion para buscar el rastro.",
+        "witness_count": 0,
+        "responses": []
+      },
+      "prologue": {
+        "enabled": false,
+        "stage": "LEGACY",
+        "hint": ""
+      },
+      "chapter_one": {
+        "active": true,
+        "title": "Ya habías estado aquí",
+        "started_minute": 0,
+        "connection_minute": 0,
+        "decision": null,
+        "hypothesis": "",
+        "hypothesis_status": "UNVERIFIED",
+        "evidence": [
+          {
+            "id": "RETURN_MESSAGE",
+            "title": "Has vuelto",
+            "kind": "MESSAGE",
+            "source_id": "UNKNOWN_WIRED",
+            "source_label": "Identidad desconocida · Wired",
+            "text": "Has vuelto.",
+            "acquired_minute": 0,
+            "claimed_time": "Recibido al abrir este capítulo, minuto 0",
+            "event_id": null
+          }
+        ],
+        "links": [],
+        "contradiction_linked": false,
+        "characters": [
+          "RESIDENT_001",
+          "RESIDENT_006",
+          "PROFESSOR",
+          "RYOKO"
+        ],
+        "notification": "Has vuelto"
+      },
+      "network_conflict": {
+        "active": true,
+        "corporation": "Consorcio KAGAMI",
+        "corporate_control": 93.3,
+        "trace": 30,
+        "ready_in": 10,
+        "relays": [
+          {
+            "id": "RELAY_STATION",
+            "name": "Enlace del andén",
+            "location": "STATION",
+            "corporation": 80,
+            "mine": 20,
+            "defense": 0,
+            "suppressed_until": 0,
+            "inspected": true
+          },
+          {
+            "id": "RELAY_SCHOOL",
+            "name": "Enlace del pabellón B",
+            "location": "SCHOOL_LAB",
+            "corporation": 100,
+            "mine": 0,
+            "defense": 0,
+            "suppressed_until": 0,
+            "inspected": false
+          },
+          {
+            "id": "RELAY_VIDEO",
+            "name": "Enlace del videoclub",
+            "location": "VIDEO_CLUB",
+            "corporation": 100,
+            "mine": 0,
+            "defense": 0,
+            "suppressed_until": 0,
+            "inspected": false
+          }
+        ],
+        "rankings": [
+          {
+            "actor_id": "PLAYER_1",
+            "name": "Player",
+            "control": 6.7
+          }
+        ],
+        "pending": [
+          {
+            "relay": "RELAY_STATION",
+            "due_minute": 110,
+            "remaining": 100
+          }
+        ],
+        "reports": [
+          {
+            "id": 2,
+            "minute": 10,
+            "source": "RELAY_TELEMETRY",
+            "text": "Enlace del andén: tráfico de intervención detectado. Tienes 100 minutos del mundo para defenderte, ocultar tu enlace o examinar el tráfico y contrastar la credencial de quien lo mantiene."
+          },
+          {
+            "id": 1,
+            "minute": 10,
+            "source": "RELAY_STATION",
+            "text": "CONTRATO DE CESIÓN · El protocolo y sus primeras comunidades son anteriores a KAGAMI. El consorcio adquirió los puntos de acceso y sustituyó las claves de administración; no creó la Wired."
+          }
+        ],
+        "visible_personnel": [
+          {
+            "id": "CIVIL_101",
+            "relay": "RELAY_STATION",
+            "name": "Daichi Kurose",
+            "role": "Técnico de telefonía"
+          }
+        ],
+        "session_mode": "LOCAL"
+      },
+      "situations": [],
+      "interaction": null,
+      "outgoing_interaction": null,
+      "messages": [
+        {
+          "id": "MSG_BOOTSTRAP_001",
+          "sender": "unknown@wired",
+          "subject": "NO SUBJECT",
+          "body": "NO ESTOY MUERTA.\n\nSOLO DEJÉ DE ESTAR AHÍ.",
+          "created_minute": 0,
+          "read": true,
+          "acknowledged": true,
+          "acknowledged_minute": 0
+        }
+      ],
+      "unread_messages": 0,
+      "wired": {
+        "connected": true,
+        "signals": [
+          {
+            "node_id": "NODE_07",
+            "location": "STATION",
+            "strength": 0.5,
+            "confidence": 0.35,
+            "origin_source": "WIRED_MESSAGE",
+            "current_source": "WIRED_MESSAGE",
+            "verified": false,
+            "updated_minute": 0
+          }
+        ],
+        "digital_presences": []
+      }
+    }
+  },
+  {
+    "name": "operative-proof",
+    "mode": "personnel",
+    "result": {
+      "speaker": "Daichi Kurose",
+      "text": "«Soy Daichi Kurose. Solo reviso las líneas. Si se cae una conexión, será un problema técnico.»",
+      "choices": [
+        {
+          "text": "Contrastar su credencial con la orden interceptada.",
+          "action": "EXPOSE",
+          "relay": "RELAY_STATION",
+          "rival": ""
+        }
+      ]
+    },
+    "state": {
+      "schema_version": "0.1",
+      "minute": 10,
+      "player": {
+        "id": "PLAYER_1",
+        "name": "Player",
+        "faction": "UNALIGNED",
+        "location": "STATION",
+        "goal": "UNKNOWN",
+        "energy": 1.0
+      },
+      "navigation": {
+        "reachable_locations": [
+          "APARTMENT_DISTRICT",
+          "OLD_DISTRICT"
+        ]
+      },
+      "known_nodes": [
+        {
+          "id": "NODE_07",
+          "knowledge_confidence": 0.35,
+          "knowledge_source": "WIRED_MESSAGE",
+          "belief": {
+            "location": "STATION",
+            "strength": 0.5,
+            "confidence": 0.35,
+            "source": "WIRED_MESSAGE",
+            "updated_minute": 0
+          }
+        }
+      ],
+      "visible_actors": [
+        {
+          "id": "RESIDENT_035",
+          "name": "Osamu Kaneko",
+          "role": "Empleado de estación",
+          "role_label": "Empleado de estación",
+          "skills": {
+            "Orientación": 4,
+            "Observación": 2
+          },
+          "public_objective": "Ayudar a viajeros que no encuentran el andén.",
+          "activity": "Revisa el andén",
+          "slot": 0,
+          "patrol_step": 0,
+          "appearance": "worker",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_036",
+          "name": "Etsuko Miura",
+          "role": "Oficinista",
+          "role_label": "Oficinista",
+          "skills": {
+            "Contabilidad": 5,
+            "Observación": 3
+          },
+          "public_objective": "Llegar a casa después de entregar el informe del día.",
+          "activity": "Consulta el horario",
+          "slot": 1,
+          "patrol_step": 0,
+          "appearance": "suit",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_037",
+          "name": "Takumi Imai",
+          "role": "Estudiante viajero",
+          "role_label": "Estudiante viajero",
+          "skills": {
+            "Idiomas": 3,
+            "Observación": 1
+          },
+          "public_objective": "Repasar unas tarjetas antes de que llegue su tren.",
+          "activity": "Lee una tarjeta",
+          "slot": 2,
+          "patrol_step": 0,
+          "appearance": "student",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_038",
+          "name": "Miyako Hara",
+          "role": "Vendedora de billetes",
+          "role_label": "Vendedora de billetes",
+          "skills": {
+            "Atención al público": 4,
+            "Observación": 2
+          },
+          "public_objective": "Comprobar las indicaciones del último servicio.",
+          "activity": "Revisa un aviso",
+          "slot": 3,
+          "patrol_step": 0,
+          "appearance": "worker",
+          "role_assignment": "CITY_PROVISIONAL"
+        }
+      ],
+      "character_sheets": {
+        "player": {
+          "id": "PLAYER_1",
+          "name": "Player",
+          "kind": "PLAYER",
+          "faction": "UNALIGNED",
+          "location": "STATION",
+          "energy": 1.0,
+          "known_nodes": 1,
+          "case_status": "UNSEEN",
+          "agency": "HUMAN_ONLY"
+        },
+        "visible_npcs": [
+          {
+            "id": "RESIDENT_035",
+            "name": "Osamu Kaneko",
+            "kind": "NPC",
+            "observed_location": "STATION",
+            "focus": "Revisa el andén",
+            "role": "Empleado de estación",
+            "role_label": "Empleado de estación",
+            "skills": {
+              "Orientación": 4,
+              "Observación": 2
+            },
+            "public_objective": "Ayudar a viajeros que no encuentran el andén.",
+            "activity": "Revisa el andén",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_036",
+            "name": "Etsuko Miura",
+            "kind": "NPC",
+            "observed_location": "STATION",
+            "focus": "Consulta el horario",
+            "role": "Oficinista",
+            "role_label": "Oficinista",
+            "skills": {
+              "Contabilidad": 5,
+              "Observación": 3
+            },
+            "public_objective": "Llegar a casa después de entregar el informe del día.",
+            "activity": "Consulta el horario",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_037",
+            "name": "Takumi Imai",
+            "kind": "NPC",
+            "observed_location": "STATION",
+            "focus": "Lee una tarjeta",
+            "role": "Estudiante viajero",
+            "role_label": "Estudiante viajero",
+            "skills": {
+              "Idiomas": 3,
+              "Observación": 1
+            },
+            "public_objective": "Repasar unas tarjetas antes de que llegue su tren.",
+            "activity": "Lee una tarjeta",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_038",
+            "name": "Miyako Hara",
+            "kind": "NPC",
+            "observed_location": "STATION",
+            "focus": "Revisa un aviso",
+            "role": "Vendedora de billetes",
+            "role_label": "Vendedora de billetes",
+            "skills": {
+              "Atención al público": 4,
+              "Observación": 2
+            },
+            "public_objective": "Comprobar las indicaciones del último servicio.",
+            "activity": "Revisa un aviso",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "CIVIL_101",
+            "name": "Daichi Kurose",
+            "kind": "NPC",
+            "role_label": "Técnico de telefonía",
+            "observed_location": "STATION",
+            "role_assignment": "OBSERVED_IDENTITY",
+            "focus": "Dice que revisa las líneas y los permisos de conexión de este lugar."
+          }
+        ]
+      },
+      "station_case": {
+        "id": "STATION_ECHO_07",
+        "title": "El pulso ausente",
+        "status": "UNSEEN",
+        "resolution": null,
+        "summary": "Investiga NODE_07 en la estacion para buscar el rastro.",
+        "witness_count": 0,
+        "responses": []
+      },
+      "prologue": {
+        "enabled": false,
+        "stage": "LEGACY",
+        "hint": ""
+      },
+      "chapter_one": {
+        "active": true,
+        "title": "Ya habías estado aquí",
+        "started_minute": 0,
+        "connection_minute": 0,
+        "decision": null,
+        "hypothesis": "",
+        "hypothesis_status": "UNVERIFIED",
+        "evidence": [
+          {
+            "id": "RETURN_MESSAGE",
+            "title": "Has vuelto",
+            "kind": "MESSAGE",
+            "source_id": "UNKNOWN_WIRED",
+            "source_label": "Identidad desconocida · Wired",
+            "text": "Has vuelto.",
+            "acquired_minute": 0,
+            "claimed_time": "Recibido al abrir este capítulo, minuto 0",
+            "event_id": null
+          }
+        ],
+        "links": [],
+        "contradiction_linked": false,
+        "characters": [
+          "RESIDENT_001",
+          "RESIDENT_006",
+          "PROFESSOR",
+          "RYOKO"
+        ],
+        "notification": "Has vuelto"
+      },
+      "network_conflict": {
+        "active": true,
+        "corporation": "Consorcio KAGAMI",
+        "corporate_control": 93.3,
+        "trace": 30,
+        "ready_in": 10,
+        "relays": [
+          {
+            "id": "RELAY_STATION",
+            "name": "Enlace del andén",
+            "location": "STATION",
+            "corporation": 80,
+            "mine": 20,
+            "defense": 0,
+            "suppressed_until": 0,
+            "inspected": true
+          },
+          {
+            "id": "RELAY_SCHOOL",
+            "name": "Enlace del pabellón B",
+            "location": "SCHOOL_LAB",
+            "corporation": 100,
+            "mine": 0,
+            "defense": 0,
+            "suppressed_until": 0,
+            "inspected": false
+          },
+          {
+            "id": "RELAY_VIDEO",
+            "name": "Enlace del videoclub",
+            "location": "VIDEO_CLUB",
+            "corporation": 100,
+            "mine": 0,
+            "defense": 0,
+            "suppressed_until": 0,
+            "inspected": false
+          }
+        ],
+        "rankings": [
+          {
+            "actor_id": "PLAYER_1",
+            "name": "Player",
+            "control": 6.7
+          }
+        ],
+        "pending": [
+          {
+            "relay": "RELAY_STATION",
+            "due_minute": 110,
+            "remaining": 100
+          }
+        ],
+        "reports": [
+          {
+            "id": 3,
+            "minute": 10,
+            "source": "RELAY_STATION",
+            "text": "CONTRATO DE CESIÓN · El protocolo y sus primeras comunidades son anteriores a KAGAMI. El consorcio adquirió los puntos de acceso y sustituyó las claves de administración; no creó la Wired.\n\nTRÁFICO ACTUAL · La orden de intervención comparte la credencial del personal de mantenimiento presente. Puedes contrastarla hablando con esa persona."
+          },
+          {
+            "id": 2,
+            "minute": 10,
+            "source": "RELAY_TELEMETRY",
+            "text": "Enlace del andén: tráfico de intervención detectado. Tienes 100 minutos del mundo para defenderte, ocultar tu enlace o examinar el tráfico y contrastar la credencial de quien lo mantiene."
+          },
+          {
+            "id": 1,
+            "minute": 10,
+            "source": "RELAY_STATION",
+            "text": "CONTRATO DE CESIÓN · El protocolo y sus primeras comunidades son anteriores a KAGAMI. El consorcio adquirió los puntos de acceso y sustituyó las claves de administración; no creó la Wired."
+          }
+        ],
+        "visible_personnel": [
+          {
+            "id": "CIVIL_101",
+            "relay": "RELAY_STATION",
+            "name": "Daichi Kurose",
+            "role": "Técnico de telefonía"
+          }
+        ],
+        "session_mode": "LOCAL"
+      },
+      "situations": [],
+      "interaction": null,
+      "outgoing_interaction": null,
+      "messages": [
+        {
+          "id": "MSG_BOOTSTRAP_001",
+          "sender": "unknown@wired",
+          "subject": "NO SUBJECT",
+          "body": "NO ESTOY MUERTA.\n\nSOLO DEJÉ DE ESTAR AHÍ.",
+          "created_minute": 0,
+          "read": true,
+          "acknowledged": true,
+          "acknowledged_minute": 0
+        }
+      ],
+      "unread_messages": 0,
+      "wired": {
+        "connected": true,
+        "signals": [
+          {
+            "node_id": "NODE_07",
+            "location": "STATION",
+            "strength": 0.5,
+            "confidence": 0.35,
+            "origin_source": "WIRED_MESSAGE",
+            "current_source": "WIRED_MESSAGE",
+            "verified": false,
+            "updated_minute": 0
+          }
+        ],
+        "digital_presences": []
+      }
+    }
+  },
+  {
+    "name": "network-journal",
+    "mode": "journal",
+    "result": null,
+    "state": {
+      "schema_version": "0.1",
+      "minute": 10,
+      "player": {
+        "id": "PLAYER_1",
+        "name": "Player",
+        "faction": "UNALIGNED",
+        "location": "STATION",
+        "goal": "UNKNOWN",
+        "energy": 1.0
+      },
+      "navigation": {
+        "reachable_locations": [
+          "APARTMENT_DISTRICT",
+          "OLD_DISTRICT"
+        ]
+      },
+      "known_nodes": [
+        {
+          "id": "NODE_07",
+          "knowledge_confidence": 0.35,
+          "knowledge_source": "WIRED_MESSAGE",
+          "belief": {
+            "location": "STATION",
+            "strength": 0.5,
+            "confidence": 0.35,
+            "source": "WIRED_MESSAGE",
+            "updated_minute": 0
+          }
+        }
+      ],
+      "visible_actors": [
+        {
+          "id": "RESIDENT_035",
+          "name": "Osamu Kaneko",
+          "role": "Empleado de estación",
+          "role_label": "Empleado de estación",
+          "skills": {
+            "Orientación": 4,
+            "Observación": 2
+          },
+          "public_objective": "Ayudar a viajeros que no encuentran el andén.",
+          "activity": "Revisa el andén",
+          "slot": 0,
+          "patrol_step": 0,
+          "appearance": "worker",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_036",
+          "name": "Etsuko Miura",
+          "role": "Oficinista",
+          "role_label": "Oficinista",
+          "skills": {
+            "Contabilidad": 5,
+            "Observación": 3
+          },
+          "public_objective": "Llegar a casa después de entregar el informe del día.",
+          "activity": "Consulta el horario",
+          "slot": 1,
+          "patrol_step": 0,
+          "appearance": "suit",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_037",
+          "name": "Takumi Imai",
+          "role": "Estudiante viajero",
+          "role_label": "Estudiante viajero",
+          "skills": {
+            "Idiomas": 3,
+            "Observación": 1
+          },
+          "public_objective": "Repasar unas tarjetas antes de que llegue su tren.",
+          "activity": "Lee una tarjeta",
+          "slot": 2,
+          "patrol_step": 0,
+          "appearance": "student",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_038",
+          "name": "Miyako Hara",
+          "role": "Vendedora de billetes",
+          "role_label": "Vendedora de billetes",
+          "skills": {
+            "Atención al público": 4,
+            "Observación": 2
+          },
+          "public_objective": "Comprobar las indicaciones del último servicio.",
+          "activity": "Revisa un aviso",
+          "slot": 3,
+          "patrol_step": 0,
+          "appearance": "worker",
+          "role_assignment": "CITY_PROVISIONAL"
+        }
+      ],
+      "character_sheets": {
+        "player": {
+          "id": "PLAYER_1",
+          "name": "Player",
+          "kind": "PLAYER",
+          "faction": "UNALIGNED",
+          "location": "STATION",
+          "energy": 1.0,
+          "known_nodes": 1,
+          "case_status": "UNSEEN",
+          "agency": "HUMAN_ONLY"
+        },
+        "visible_npcs": [
+          {
+            "id": "RESIDENT_035",
+            "name": "Osamu Kaneko",
+            "kind": "NPC",
+            "observed_location": "STATION",
+            "focus": "Revisa el andén",
+            "role": "Empleado de estación",
+            "role_label": "Empleado de estación",
+            "skills": {
+              "Orientación": 4,
+              "Observación": 2
+            },
+            "public_objective": "Ayudar a viajeros que no encuentran el andén.",
+            "activity": "Revisa el andén",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_036",
+            "name": "Etsuko Miura",
+            "kind": "NPC",
+            "observed_location": "STATION",
+            "focus": "Consulta el horario",
+            "role": "Oficinista",
+            "role_label": "Oficinista",
+            "skills": {
+              "Contabilidad": 5,
+              "Observación": 3
+            },
+            "public_objective": "Llegar a casa después de entregar el informe del día.",
+            "activity": "Consulta el horario",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_037",
+            "name": "Takumi Imai",
+            "kind": "NPC",
+            "observed_location": "STATION",
+            "focus": "Lee una tarjeta",
+            "role": "Estudiante viajero",
+            "role_label": "Estudiante viajero",
+            "skills": {
+              "Idiomas": 3,
+              "Observación": 1
+            },
+            "public_objective": "Repasar unas tarjetas antes de que llegue su tren.",
+            "activity": "Lee una tarjeta",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_038",
+            "name": "Miyako Hara",
+            "kind": "NPC",
+            "observed_location": "STATION",
+            "focus": "Revisa un aviso",
+            "role": "Vendedora de billetes",
+            "role_label": "Vendedora de billetes",
+            "skills": {
+              "Atención al público": 4,
+              "Observación": 2
+            },
+            "public_objective": "Comprobar las indicaciones del último servicio.",
+            "activity": "Revisa un aviso",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "CIVIL_101",
+            "name": "Daichi Kurose",
+            "kind": "NPC",
+            "role_label": "Técnico de telefonía",
+            "observed_location": "STATION",
+            "role_assignment": "OBSERVED_IDENTITY",
+            "focus": "Dice que revisa las líneas y los permisos de conexión de este lugar."
+          }
+        ]
+      },
+      "station_case": {
+        "id": "STATION_ECHO_07",
+        "title": "El pulso ausente",
+        "status": "UNSEEN",
+        "resolution": null,
+        "summary": "Investiga NODE_07 en la estacion para buscar el rastro.",
+        "witness_count": 0,
+        "responses": []
+      },
+      "prologue": {
+        "enabled": false,
+        "stage": "LEGACY",
+        "hint": ""
+      },
+      "chapter_one": {
+        "active": true,
+        "title": "Ya habías estado aquí",
+        "started_minute": 0,
+        "connection_minute": 0,
+        "decision": null,
+        "hypothesis": "",
+        "hypothesis_status": "UNVERIFIED",
+        "evidence": [
+          {
+            "id": "RETURN_MESSAGE",
+            "title": "Has vuelto",
+            "kind": "MESSAGE",
+            "source_id": "UNKNOWN_WIRED",
+            "source_label": "Identidad desconocida · Wired",
+            "text": "Has vuelto.",
+            "acquired_minute": 0,
+            "claimed_time": "Recibido al abrir este capítulo, minuto 0",
+            "event_id": null
+          }
+        ],
+        "links": [],
+        "contradiction_linked": false,
+        "characters": [
+          "RESIDENT_001",
+          "RESIDENT_006",
+          "PROFESSOR",
+          "RYOKO"
+        ],
+        "notification": "Has vuelto"
+      },
+      "network_conflict": {
+        "active": true,
+        "corporation": "Consorcio KAGAMI",
+        "corporate_control": 93.3,
+        "trace": 30,
+        "ready_in": 10,
+        "relays": [
+          {
+            "id": "RELAY_STATION",
+            "name": "Enlace del andén",
+            "location": "STATION",
+            "corporation": 80,
+            "mine": 20,
+            "defense": 0,
+            "suppressed_until": 0,
+            "inspected": true
+          },
+          {
+            "id": "RELAY_SCHOOL",
+            "name": "Enlace del pabellón B",
+            "location": "SCHOOL_LAB",
+            "corporation": 100,
+            "mine": 0,
+            "defense": 0,
+            "suppressed_until": 0,
+            "inspected": false
+          },
+          {
+            "id": "RELAY_VIDEO",
+            "name": "Enlace del videoclub",
+            "location": "VIDEO_CLUB",
+            "corporation": 100,
+            "mine": 0,
+            "defense": 0,
+            "suppressed_until": 0,
+            "inspected": false
+          }
+        ],
+        "rankings": [
+          {
+            "actor_id": "PLAYER_1",
+            "name": "Player",
+            "control": 6.7
+          }
+        ],
+        "pending": [
+          {
+            "relay": "RELAY_STATION",
+            "due_minute": 110,
+            "remaining": 100
+          }
+        ],
+        "reports": [
+          {
+            "id": 3,
+            "minute": 10,
+            "source": "RELAY_STATION",
+            "text": "CONTRATO DE CESIÓN · El protocolo y sus primeras comunidades son anteriores a KAGAMI. El consorcio adquirió los puntos de acceso y sustituyó las claves de administración; no creó la Wired.\n\nTRÁFICO ACTUAL · La orden de intervención comparte la credencial del personal de mantenimiento presente. Puedes contrastarla hablando con esa persona."
+          },
+          {
+            "id": 2,
+            "minute": 10,
+            "source": "RELAY_TELEMETRY",
+            "text": "Enlace del andén: tráfico de intervención detectado. Tienes 100 minutos del mundo para defenderte, ocultar tu enlace o examinar el tráfico y contrastar la credencial de quien lo mantiene."
+          },
+          {
+            "id": 1,
+            "minute": 10,
+            "source": "RELAY_STATION",
+            "text": "CONTRATO DE CESIÓN · El protocolo y sus primeras comunidades son anteriores a KAGAMI. El consorcio adquirió los puntos de acceso y sustituyó las claves de administración; no creó la Wired."
+          }
+        ],
+        "visible_personnel": [
+          {
+            "id": "CIVIL_101",
+            "relay": "RELAY_STATION",
+            "name": "Daichi Kurose",
+            "role": "Técnico de telefonía"
+          }
+        ],
+        "session_mode": "LOCAL"
+      },
+      "situations": [],
+      "interaction": null,
+      "outgoing_interaction": null,
+      "messages": [
+        {
+          "id": "MSG_BOOTSTRAP_001",
+          "sender": "unknown@wired",
+          "subject": "NO SUBJECT",
+          "body": "NO ESTOY MUERTA.\n\nSOLO DEJÉ DE ESTAR AHÍ.",
+          "created_minute": 0,
+          "read": true,
+          "acknowledged": true,
+          "acknowledged_minute": 0
+        }
+      ],
+      "unread_messages": 0,
+      "wired": {
+        "connected": true,
+        "signals": [
+          {
+            "node_id": "NODE_07",
+            "location": "STATION",
+            "strength": 0.5,
+            "confidence": 0.35,
+            "origin_source": "WIRED_MESSAGE",
+            "current_source": "WIRED_MESSAGE",
+            "verified": false,
+            "updated_minute": 0
+          }
+        ],
+        "digital_presences": []
+      }
+    }
+  },
+  {
+    "name": "operative-exposed",
+    "mode": "personnel",
+    "result": {
+      "speaker": "Daichi Kurose",
+      "text": "La credencial coincide. Guarda la herramienta y corta su transmisión. «El consorcio volverá a intentarlo.» Has interrumpido las intervenciones de este enlace para todos sus usuarios.",
+      "choices": []
+    },
+    "state": {
+      "schema_version": "0.1",
+      "minute": 10,
+      "player": {
+        "id": "PLAYER_1",
+        "name": "Player",
+        "faction": "UNALIGNED",
+        "location": "STATION",
+        "goal": "UNKNOWN",
+        "energy": 1.0
+      },
+      "navigation": {
+        "reachable_locations": [
+          "APARTMENT_DISTRICT",
+          "OLD_DISTRICT"
+        ]
+      },
+      "known_nodes": [
+        {
+          "id": "NODE_07",
+          "knowledge_confidence": 0.35,
+          "knowledge_source": "WIRED_MESSAGE",
+          "belief": {
+            "location": "STATION",
+            "strength": 0.5,
+            "confidence": 0.35,
+            "source": "WIRED_MESSAGE",
+            "updated_minute": 0
+          }
+        }
+      ],
+      "visible_actors": [
+        {
+          "id": "RESIDENT_035",
+          "name": "Osamu Kaneko",
+          "role": "Empleado de estación",
+          "role_label": "Empleado de estación",
+          "skills": {
+            "Orientación": 4,
+            "Observación": 2
+          },
+          "public_objective": "Ayudar a viajeros que no encuentran el andén.",
+          "activity": "Revisa el andén",
+          "slot": 0,
+          "patrol_step": 0,
+          "appearance": "worker",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_036",
+          "name": "Etsuko Miura",
+          "role": "Oficinista",
+          "role_label": "Oficinista",
+          "skills": {
+            "Contabilidad": 5,
+            "Observación": 3
+          },
+          "public_objective": "Llegar a casa después de entregar el informe del día.",
+          "activity": "Consulta el horario",
+          "slot": 1,
+          "patrol_step": 0,
+          "appearance": "suit",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_037",
+          "name": "Takumi Imai",
+          "role": "Estudiante viajero",
+          "role_label": "Estudiante viajero",
+          "skills": {
+            "Idiomas": 3,
+            "Observación": 1
+          },
+          "public_objective": "Repasar unas tarjetas antes de que llegue su tren.",
+          "activity": "Lee una tarjeta",
+          "slot": 2,
+          "patrol_step": 0,
+          "appearance": "student",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_038",
+          "name": "Miyako Hara",
+          "role": "Vendedora de billetes",
+          "role_label": "Vendedora de billetes",
+          "skills": {
+            "Atención al público": 4,
+            "Observación": 2
+          },
+          "public_objective": "Comprobar las indicaciones del último servicio.",
+          "activity": "Revisa un aviso",
+          "slot": 3,
+          "patrol_step": 0,
+          "appearance": "worker",
+          "role_assignment": "CITY_PROVISIONAL"
+        }
+      ],
+      "character_sheets": {
+        "player": {
+          "id": "PLAYER_1",
+          "name": "Player",
+          "kind": "PLAYER",
+          "faction": "UNALIGNED",
+          "location": "STATION",
+          "energy": 1.0,
+          "known_nodes": 1,
+          "case_status": "UNSEEN",
+          "agency": "HUMAN_ONLY"
+        },
+        "visible_npcs": [
+          {
+            "id": "RESIDENT_035",
+            "name": "Osamu Kaneko",
+            "kind": "NPC",
+            "observed_location": "STATION",
+            "focus": "Revisa el andén",
+            "role": "Empleado de estación",
+            "role_label": "Empleado de estación",
+            "skills": {
+              "Orientación": 4,
+              "Observación": 2
+            },
+            "public_objective": "Ayudar a viajeros que no encuentran el andén.",
+            "activity": "Revisa el andén",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_036",
+            "name": "Etsuko Miura",
+            "kind": "NPC",
+            "observed_location": "STATION",
+            "focus": "Consulta el horario",
+            "role": "Oficinista",
+            "role_label": "Oficinista",
+            "skills": {
+              "Contabilidad": 5,
+              "Observación": 3
+            },
+            "public_objective": "Llegar a casa después de entregar el informe del día.",
+            "activity": "Consulta el horario",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_037",
+            "name": "Takumi Imai",
+            "kind": "NPC",
+            "observed_location": "STATION",
+            "focus": "Lee una tarjeta",
+            "role": "Estudiante viajero",
+            "role_label": "Estudiante viajero",
+            "skills": {
+              "Idiomas": 3,
+              "Observación": 1
+            },
+            "public_objective": "Repasar unas tarjetas antes de que llegue su tren.",
+            "activity": "Lee una tarjeta",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_038",
+            "name": "Miyako Hara",
+            "kind": "NPC",
+            "observed_location": "STATION",
+            "focus": "Revisa un aviso",
+            "role": "Vendedora de billetes",
+            "role_label": "Vendedora de billetes",
+            "skills": {
+              "Atención al público": 4,
+              "Observación": 2
+            },
+            "public_objective": "Comprobar las indicaciones del último servicio.",
+            "activity": "Revisa un aviso",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "CIVIL_101",
+            "name": "Daichi Kurose",
+            "kind": "NPC",
+            "role_label": "Agente de KAGAMI · credencial comprobada",
+            "observed_location": "STATION",
+            "role_assignment": "OBSERVED_IDENTITY",
+            "focus": "Dice que revisa las líneas y los permisos de conexión de este lugar."
+          }
+        ]
+      },
+      "station_case": {
+        "id": "STATION_ECHO_07",
+        "title": "El pulso ausente",
+        "status": "UNSEEN",
+        "resolution": null,
+        "summary": "Investiga NODE_07 en la estacion para buscar el rastro.",
+        "witness_count": 0,
+        "responses": []
+      },
+      "prologue": {
+        "enabled": false,
+        "stage": "LEGACY",
+        "hint": ""
+      },
+      "chapter_one": {
+        "active": true,
+        "title": "Ya habías estado aquí",
+        "started_minute": 0,
+        "connection_minute": 0,
+        "decision": null,
+        "hypothesis": "",
+        "hypothesis_status": "UNVERIFIED",
+        "evidence": [
+          {
+            "id": "RETURN_MESSAGE",
+            "title": "Has vuelto",
+            "kind": "MESSAGE",
+            "source_id": "UNKNOWN_WIRED",
+            "source_label": "Identidad desconocida · Wired",
+            "text": "Has vuelto.",
+            "acquired_minute": 0,
+            "claimed_time": "Recibido al abrir este capítulo, minuto 0",
+            "event_id": null
+          }
+        ],
+        "links": [],
+        "contradiction_linked": false,
+        "characters": [
+          "RESIDENT_001",
+          "RESIDENT_006",
+          "PROFESSOR",
+          "RYOKO"
+        ],
+        "notification": "Has vuelto"
+      },
+      "network_conflict": {
+        "active": true,
+        "corporation": "Consorcio KAGAMI",
+        "corporate_control": 93.3,
+        "trace": 30,
+        "ready_in": 10,
+        "relays": [
+          {
+            "id": "RELAY_STATION",
+            "name": "Enlace del andén",
+            "location": "STATION",
+            "corporation": 80,
+            "mine": 20,
+            "defense": 0,
+            "suppressed_until": 130,
+            "inspected": true
+          },
+          {
+            "id": "RELAY_SCHOOL",
+            "name": "Enlace del pabellón B",
+            "location": "SCHOOL_LAB",
+            "corporation": 100,
+            "mine": 0,
+            "defense": 0,
+            "suppressed_until": 0,
+            "inspected": false
+          },
+          {
+            "id": "RELAY_VIDEO",
+            "name": "Enlace del videoclub",
+            "location": "VIDEO_CLUB",
+            "corporation": 100,
+            "mine": 0,
+            "defense": 0,
+            "suppressed_until": 0,
+            "inspected": false
+          }
+        ],
+        "rankings": [
+          {
+            "actor_id": "PLAYER_1",
+            "name": "Player",
+            "control": 6.7
+          }
+        ],
+        "pending": [],
+        "reports": [
+          {
+            "id": 4,
+            "minute": 10,
+            "source": "RELAY_TELEMETRY",
+            "text": "Enlace del andén: intervención suspendida. El enlace queda sin nuevas operaciones corporativas durante 120 minutos del mundo."
+          },
+          {
+            "id": 3,
+            "minute": 10,
+            "source": "RELAY_STATION",
+            "text": "CONTRATO DE CESIÓN · El protocolo y sus primeras comunidades son anteriores a KAGAMI. El consorcio adquirió los puntos de acceso y sustituyó las claves de administración; no creó la Wired.\n\nTRÁFICO ACTUAL · La orden de intervención comparte la credencial del personal de mantenimiento presente. Puedes contrastarla hablando con esa persona."
+          },
+          {
+            "id": 2,
+            "minute": 10,
+            "source": "RELAY_TELEMETRY",
+            "text": "Enlace del andén: tráfico de intervención detectado. Tienes 100 minutos del mundo para defenderte, ocultar tu enlace o examinar el tráfico y contrastar la credencial de quien lo mantiene."
+          },
+          {
+            "id": 1,
+            "minute": 10,
+            "source": "RELAY_STATION",
+            "text": "CONTRATO DE CESIÓN · El protocolo y sus primeras comunidades son anteriores a KAGAMI. El consorcio adquirió los puntos de acceso y sustituyó las claves de administración; no creó la Wired."
+          }
+        ],
+        "visible_personnel": [
+          {
+            "id": "CIVIL_101",
+            "relay": "RELAY_STATION",
+            "name": "Daichi Kurose",
+            "role": "Agente de KAGAMI · credencial comprobada"
+          }
+        ],
+        "session_mode": "LOCAL"
+      },
+      "situations": [],
+      "interaction": null,
+      "outgoing_interaction": null,
+      "messages": [
+        {
+          "id": "MSG_BOOTSTRAP_001",
+          "sender": "unknown@wired",
+          "subject": "NO SUBJECT",
+          "body": "NO ESTOY MUERTA.\n\nSOLO DEJÉ DE ESTAR AHÍ.",
+          "created_minute": 0,
+          "read": true,
+          "acknowledged": true,
+          "acknowledged_minute": 0
+        }
+      ],
+      "unread_messages": 0,
+      "wired": {
+        "connected": true,
+        "signals": [
+          {
+            "node_id": "NODE_07",
+            "location": "STATION",
+            "strength": 0.5,
+            "confidence": 0.35,
+            "origin_source": "WIRED_MESSAGE",
+            "current_source": "WIRED_MESSAGE",
+            "verified": false,
+            "updated_minute": 0
+          }
+        ],
+        "digital_presences": []
+      }
+    }
+  },
+  {
+    "name": "school-intervention",
+    "mode": "scene",
+    "result": null,
+    "state": {
+      "schema_version": "0.1",
+      "minute": 20,
+      "player": {
+        "id": "PLAYER_1",
+        "name": "Player",
+        "faction": "UNALIGNED",
+        "location": "SCHOOL_LAB",
+        "goal": "UNKNOWN",
+        "energy": 1.0
+      },
+      "navigation": {
+        "reachable_locations": [
+          "SCHOOL"
+        ]
+      },
+      "known_nodes": [
+        {
+          "id": "NODE_07",
+          "knowledge_confidence": 0.35,
+          "knowledge_source": "WIRED_MESSAGE",
+          "belief": {
+            "location": "STATION",
+            "strength": 0.5,
+            "confidence": 0.35,
+            "source": "WIRED_MESSAGE",
+            "updated_minute": 0
+          }
+        }
+      ],
+      "visible_actors": [
+        {
+          "id": "RESIDENT_025",
+          "name": "Takeshi Uno",
+          "role": "Ayudante de informática",
+          "role_label": "Ayudante de informática",
+          "skills": {
+            "Informática": 3,
+            "Observación": 1
+          },
+          "public_objective": "Recuperar un disquete con ejercicios del aula.",
+          "activity": "Comprueba una etiqueta",
+          "slot": 0,
+          "patrol_step": 0,
+          "appearance": "teacher",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_026",
+          "name": "Misaki Ito",
+          "role": "Alumna de informática",
+          "role_label": "Alumna de informática",
+          "skills": {
+            "Programación": 4,
+            "Observación": 2
+          },
+          "public_objective": "Entender por qué su primer programa no termina.",
+          "activity": "Lee su código en papel",
+          "slot": 1,
+          "patrol_step": 0,
+          "appearance": "student",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_027",
+          "name": "Jun Saito",
+          "role": "Alumno del taller",
+          "role_label": "Alumno del taller",
+          "skills": {
+            "Electrónica": 5,
+            "Observación": 3
+          },
+          "public_objective": "Preparar un pequeño catálogo de componentes usados.",
+          "activity": "Clasifica componentes",
+          "slot": 2,
+          "patrol_step": 0,
+          "appearance": "student",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_028",
+          "name": "Rina Watanabe",
+          "role": "Amiga del aula",
+          "role_label": "Amiga del aula",
+          "skills": {
+            "Informática": 3,
+            "Observación": 1
+          },
+          "public_objective": "Guardar una copia del trabajo antes de salir.",
+          "activity": "Revisa su disquete",
+          "slot": 3,
+          "patrol_step": 0,
+          "appearance": "student",
+          "role_assignment": "CITY_PROVISIONAL"
+        }
+      ],
+      "character_sheets": {
+        "player": {
+          "id": "PLAYER_1",
+          "name": "Player",
+          "kind": "PLAYER",
+          "faction": "UNALIGNED",
+          "location": "SCHOOL_LAB",
+          "energy": 1.0,
+          "known_nodes": 1,
+          "case_status": "UNSEEN",
+          "agency": "HUMAN_ONLY"
+        },
+        "visible_npcs": [
+          {
+            "id": "RESIDENT_025",
+            "name": "Takeshi Uno",
+            "kind": "NPC",
+            "observed_location": "SCHOOL_LAB",
+            "focus": "Comprueba una etiqueta",
+            "role": "Ayudante de informática",
+            "role_label": "Ayudante de informática",
+            "skills": {
+              "Informática": 3,
+              "Observación": 1
+            },
+            "public_objective": "Recuperar un disquete con ejercicios del aula.",
+            "activity": "Comprueba una etiqueta",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_026",
+            "name": "Misaki Ito",
+            "kind": "NPC",
+            "observed_location": "SCHOOL_LAB",
+            "focus": "Lee su código en papel",
+            "role": "Alumna de informática",
+            "role_label": "Alumna de informática",
+            "skills": {
+              "Programación": 4,
+              "Observación": 2
+            },
+            "public_objective": "Entender por qué su primer programa no termina.",
+            "activity": "Lee su código en papel",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_027",
+            "name": "Jun Saito",
+            "kind": "NPC",
+            "observed_location": "SCHOOL_LAB",
+            "focus": "Clasifica componentes",
+            "role": "Alumno del taller",
+            "role_label": "Alumno del taller",
+            "skills": {
+              "Electrónica": 5,
+              "Observación": 3
+            },
+            "public_objective": "Preparar un pequeño catálogo de componentes usados.",
+            "activity": "Clasifica componentes",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_028",
+            "name": "Rina Watanabe",
+            "kind": "NPC",
+            "observed_location": "SCHOOL_LAB",
+            "focus": "Revisa su disquete",
+            "role": "Amiga del aula",
+            "role_label": "Amiga del aula",
+            "skills": {
+              "Informática": 3,
+              "Observación": 1
+            },
+            "public_objective": "Guardar una copia del trabajo antes de salir.",
+            "activity": "Revisa su disquete",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "CIVIL_102",
+            "name": "Reina Asano",
+            "kind": "NPC",
+            "role_label": "Consultora de equipos",
+            "observed_location": "SCHOOL_LAB",
+            "role_assignment": "OBSERVED_IDENTITY",
+            "focus": "Dice que revisa las líneas y los permisos de conexión de este lugar."
+          }
+        ]
+      },
+      "station_case": {
+        "id": "STATION_ECHO_07",
+        "title": "El pulso ausente",
+        "status": "UNSEEN",
+        "resolution": null,
+        "summary": "Investiga NODE_07 en la estacion para buscar el rastro.",
+        "witness_count": 0,
+        "responses": []
+      },
+      "prologue": {
+        "enabled": false,
+        "stage": "LEGACY",
+        "hint": ""
+      },
+      "chapter_one": {
+        "active": true,
+        "title": "Ya habías estado aquí",
+        "started_minute": 0,
+        "connection_minute": 0,
+        "decision": null,
+        "hypothesis": "",
+        "hypothesis_status": "UNVERIFIED",
+        "evidence": [
+          {
+            "id": "RETURN_MESSAGE",
+            "title": "Has vuelto",
+            "kind": "MESSAGE",
+            "source_id": "UNKNOWN_WIRED",
+            "source_label": "Identidad desconocida · Wired",
+            "text": "Has vuelto.",
+            "acquired_minute": 0,
+            "claimed_time": "Recibido al abrir este capítulo, minuto 0",
+            "event_id": null
+          }
+        ],
+        "links": [],
+        "contradiction_linked": false,
+        "characters": [
+          "RESIDENT_001",
+          "RESIDENT_006",
+          "PROFESSOR",
+          "RYOKO"
+        ],
+        "notification": "Has vuelto"
+      },
+      "network_conflict": {
+        "active": true,
+        "corporation": "Consorcio KAGAMI",
+        "corporate_control": 86.7,
+        "trace": 60,
+        "ready_in": 10,
+        "relays": [
+          {
+            "id": "RELAY_STATION",
+            "name": "Enlace del andén",
+            "location": "STATION",
+            "corporation": 80,
+            "mine": 20,
+            "defense": 0,
+            "suppressed_until": 130,
+            "inspected": true
+          },
+          {
+            "id": "RELAY_SCHOOL",
+            "name": "Enlace del pabellón B",
+            "location": "SCHOOL_LAB",
+            "corporation": 80,
+            "mine": 20,
+            "defense": 0,
+            "suppressed_until": 0,
+            "inspected": true
+          },
+          {
+            "id": "RELAY_VIDEO",
+            "name": "Enlace del videoclub",
+            "location": "VIDEO_CLUB",
+            "corporation": 100,
+            "mine": 0,
+            "defense": 0,
+            "suppressed_until": 0,
+            "inspected": false
+          }
+        ],
+        "rankings": [
+          {
+            "actor_id": "PLAYER_1",
+            "name": "Player",
+            "control": 13.3
+          }
+        ],
+        "pending": [
+          {
+            "relay": "RELAY_SCHOOL",
+            "due_minute": 120,
+            "remaining": 100
+          }
+        ],
+        "reports": [
+          {
+            "id": 6,
+            "minute": 20,
+            "source": "RELAY_TELEMETRY",
+            "text": "Enlace del pabellón B: tráfico de intervención detectado. Tienes 100 minutos del mundo para defenderte, ocultar tu enlace o examinar el tráfico y contrastar la credencial de quien lo mantiene."
+          },
+          {
+            "id": 5,
+            "minute": 20,
+            "source": "RELAY_SCHOOL",
+            "text": "CONTRATO DE CESIÓN · El protocolo y sus primeras comunidades son anteriores a KAGAMI. El consorcio adquirió los puntos de acceso y sustituyó las claves de administración; no creó la Wired."
+          },
+          {
+            "id": 4,
+            "minute": 10,
+            "source": "RELAY_TELEMETRY",
+            "text": "Enlace del andén: intervención suspendida. El enlace queda sin nuevas operaciones corporativas durante 120 minutos del mundo."
+          },
+          {
+            "id": 3,
+            "minute": 10,
+            "source": "RELAY_STATION",
+            "text": "CONTRATO DE CESIÓN · El protocolo y sus primeras comunidades son anteriores a KAGAMI. El consorcio adquirió los puntos de acceso y sustituyó las claves de administración; no creó la Wired.\n\nTRÁFICO ACTUAL · La orden de intervención comparte la credencial del personal de mantenimiento presente. Puedes contrastarla hablando con esa persona."
+          },
+          {
+            "id": 2,
+            "minute": 10,
+            "source": "RELAY_TELEMETRY",
+            "text": "Enlace del andén: tráfico de intervención detectado. Tienes 100 minutos del mundo para defenderte, ocultar tu enlace o examinar el tráfico y contrastar la credencial de quien lo mantiene."
+          },
+          {
+            "id": 1,
+            "minute": 10,
+            "source": "RELAY_STATION",
+            "text": "CONTRATO DE CESIÓN · El protocolo y sus primeras comunidades son anteriores a KAGAMI. El consorcio adquirió los puntos de acceso y sustituyó las claves de administración; no creó la Wired."
+          }
+        ],
+        "visible_personnel": [
+          {
+            "id": "CIVIL_102",
+            "relay": "RELAY_SCHOOL",
+            "name": "Reina Asano",
+            "role": "Consultora de equipos"
+          }
+        ],
+        "session_mode": "LOCAL"
+      },
+      "situations": [],
+      "interaction": null,
+      "outgoing_interaction": null,
+      "messages": [
+        {
+          "id": "MSG_BOOTSTRAP_001",
+          "sender": "unknown@wired",
+          "subject": "NO SUBJECT",
+          "body": "NO ESTOY MUERTA.\n\nSOLO DEJÉ DE ESTAR AHÍ.",
+          "created_minute": 0,
+          "read": true,
+          "acknowledged": true,
+          "acknowledged_minute": 0
+        }
+      ],
+      "unread_messages": 0,
+      "wired": {
+        "connected": true,
+        "signals": [
+          {
+            "node_id": "NODE_07",
+            "location": "STATION",
+            "strength": 0.5,
+            "confidence": 0.35,
+            "origin_source": "WIRED_MESSAGE",
+            "current_source": "WIRED_MESSAGE",
+            "verified": false,
+            "updated_minute": 0
+          }
+        ],
+        "digital_presences": []
+      }
+    }
+  },
+  {
+    "name": "video-intervention",
+    "mode": "scene",
+    "result": null,
+    "state": {
+      "schema_version": "0.1",
+      "minute": 30,
+      "player": {
+        "id": "PLAYER_1",
+        "name": "Player",
+        "faction": "UNALIGNED",
+        "location": "VIDEO_CLUB",
+        "goal": "UNKNOWN",
+        "energy": 1.0
+      },
+      "navigation": {
+        "reachable_locations": [
+          "APARTMENT_DISTRICT"
+        ]
+      },
+      "known_nodes": [
+        {
+          "id": "NODE_07",
+          "knowledge_confidence": 0.35,
+          "knowledge_source": "WIRED_MESSAGE",
+          "belief": {
+            "location": "STATION",
+            "strength": 0.5,
+            "confidence": 0.35,
+            "source": "WIRED_MESSAGE",
+            "updated_minute": 0
+          }
+        }
+      ],
+      "visible_actors": [
+        {
+          "id": "RESIDENT_045",
+          "name": "Makoto Ishikawa",
+          "role": "Encargado del videoclub",
+          "role_label": "Encargado del videoclub",
+          "skills": {
+            "Cine": 5,
+            "Observación": 3
+          },
+          "public_objective": "Recuperar una cinta devuelta en la caja equivocada.",
+          "activity": "Revisa devoluciones",
+          "slot": 0,
+          "patrol_step": 0,
+          "appearance": "apron",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_046",
+          "name": "Satomi Kojima",
+          "role": "Aficionada al cine",
+          "role_label": "Aficionada al cine",
+          "skills": {
+            "Cine": 3,
+            "Observación": 1
+          },
+          "public_objective": "Encontrar una película que vio de pequeña.",
+          "activity": "Recuerda una escena",
+          "slot": 1,
+          "patrol_step": 0,
+          "appearance": "casual",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_047",
+          "name": "Daisuke Morita",
+          "role": "Ayudante del videoclub",
+          "role_label": "Ayudante del videoclub",
+          "skills": {
+            "Archivo": 4,
+            "Observación": 2
+          },
+          "public_objective": "Ordenar la sección de ciencia ficción por número.",
+          "activity": "Comprueba los números",
+          "slot": 2,
+          "patrol_step": 0,
+          "appearance": "worker",
+          "role_assignment": "CITY_PROVISIONAL"
+        }
+      ],
+      "character_sheets": {
+        "player": {
+          "id": "PLAYER_1",
+          "name": "Player",
+          "kind": "PLAYER",
+          "faction": "UNALIGNED",
+          "location": "VIDEO_CLUB",
+          "energy": 1.0,
+          "known_nodes": 1,
+          "case_status": "UNSEEN",
+          "agency": "HUMAN_ONLY"
+        },
+        "visible_npcs": [
+          {
+            "id": "RESIDENT_045",
+            "name": "Makoto Ishikawa",
+            "kind": "NPC",
+            "observed_location": "VIDEO_CLUB",
+            "focus": "Revisa devoluciones",
+            "role": "Encargado del videoclub",
+            "role_label": "Encargado del videoclub",
+            "skills": {
+              "Cine": 5,
+              "Observación": 3
+            },
+            "public_objective": "Recuperar una cinta devuelta en la caja equivocada.",
+            "activity": "Revisa devoluciones",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_046",
+            "name": "Satomi Kojima",
+            "kind": "NPC",
+            "observed_location": "VIDEO_CLUB",
+            "focus": "Recuerda una escena",
+            "role": "Aficionada al cine",
+            "role_label": "Aficionada al cine",
+            "skills": {
+              "Cine": 3,
+              "Observación": 1
+            },
+            "public_objective": "Encontrar una película que vio de pequeña.",
+            "activity": "Recuerda una escena",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "RESIDENT_047",
+            "name": "Daisuke Morita",
+            "kind": "NPC",
+            "observed_location": "VIDEO_CLUB",
+            "focus": "Comprueba los números",
+            "role": "Ayudante del videoclub",
+            "role_label": "Ayudante del videoclub",
+            "skills": {
+              "Archivo": 4,
+              "Observación": 2
+            },
+            "public_objective": "Ordenar la sección de ciencia ficción por número.",
+            "activity": "Comprueba los números",
+            "role_assignment": "CITY_PROVISIONAL"
+          },
+          {
+            "id": "CIVIL_103",
+            "name": "Shin Okabe",
+            "kind": "NPC",
+            "role_label": "Supervisor de mantenimiento",
+            "observed_location": "VIDEO_CLUB",
+            "role_assignment": "OBSERVED_IDENTITY",
+            "focus": "Dice que revisa las líneas y los permisos de conexión de este lugar."
+          }
+        ]
+      },
+      "station_case": {
+        "id": "STATION_ECHO_07",
+        "title": "El pulso ausente",
+        "status": "UNSEEN",
+        "resolution": null,
+        "summary": "Investiga NODE_07 en la estacion para buscar el rastro.",
+        "witness_count": 0,
+        "responses": []
+      },
+      "prologue": {
+        "enabled": false,
+        "stage": "LEGACY",
+        "hint": ""
+      },
+      "chapter_one": {
+        "active": true,
+        "title": "Ya habías estado aquí",
+        "started_minute": 0,
+        "connection_minute": 0,
+        "decision": null,
+        "hypothesis": "",
+        "hypothesis_status": "UNVERIFIED",
+        "evidence": [
+          {
+            "id": "RETURN_MESSAGE",
+            "title": "Has vuelto",
+            "kind": "MESSAGE",
+            "source_id": "UNKNOWN_WIRED",
+            "source_label": "Identidad desconocida · Wired",
+            "text": "Has vuelto.",
+            "acquired_minute": 0,
+            "claimed_time": "Recibido al abrir este capítulo, minuto 0",
+            "event_id": null
+          }
+        ],
+        "links": [],
+        "contradiction_linked": false,
+        "characters": [
+          "RESIDENT_001",
+          "RESIDENT_006",
+          "PROFESSOR",
+          "RYOKO"
+        ],
+        "notification": "Has vuelto"
+      },
+      "network_conflict": {
+        "active": true,
+        "corporation": "Consorcio KAGAMI",
+        "corporate_control": 80.0,
+        "trace": 90,
+        "ready_in": 10,
+        "relays": [
+          {
+            "id": "RELAY_STATION",
+            "name": "Enlace del andén",
+            "location": "STATION",
+            "corporation": 80,
+            "mine": 20,
+            "defense": 0,
+            "suppressed_until": 130,
+            "inspected": true
+          },
+          {
+            "id": "RELAY_SCHOOL",
+            "name": "Enlace del pabellón B",
+            "location": "SCHOOL_LAB",
+            "corporation": 80,
+            "mine": 20,
+            "defense": 0,
+            "suppressed_until": 0,
+            "inspected": true
+          },
+          {
+            "id": "RELAY_VIDEO",
+            "name": "Enlace del videoclub",
+            "location": "VIDEO_CLUB",
+            "corporation": 80,
+            "mine": 20,
+            "defense": 0,
+            "suppressed_until": 0,
+            "inspected": true
+          }
+        ],
+        "rankings": [
+          {
+            "actor_id": "PLAYER_1",
+            "name": "Player",
+            "control": 20.0
+          }
+        ],
+        "pending": [
+          {
+            "relay": "RELAY_SCHOOL",
+            "due_minute": 120,
+            "remaining": 90
+          },
+          {
+            "relay": "RELAY_VIDEO",
+            "due_minute": 130,
+            "remaining": 100
+          }
+        ],
+        "reports": [
+          {
+            "id": 8,
+            "minute": 30,
+            "source": "RELAY_TELEMETRY",
+            "text": "Enlace del videoclub: tráfico de intervención detectado. Tienes 100 minutos del mundo para defenderte, ocultar tu enlace o examinar el tráfico y contrastar la credencial de quien lo mantiene."
+          },
+          {
+            "id": 7,
+            "minute": 30,
+            "source": "RELAY_VIDEO",
+            "text": "CONTRATO DE CESIÓN · El protocolo y sus primeras comunidades son anteriores a KAGAMI. El consorcio adquirió los puntos de acceso y sustituyó las claves de administración; no creó la Wired."
+          },
+          {
+            "id": 6,
+            "minute": 20,
+            "source": "RELAY_TELEMETRY",
+            "text": "Enlace del pabellón B: tráfico de intervención detectado. Tienes 100 minutos del mundo para defenderte, ocultar tu enlace o examinar el tráfico y contrastar la credencial de quien lo mantiene."
+          },
+          {
+            "id": 5,
+            "minute": 20,
+            "source": "RELAY_SCHOOL",
+            "text": "CONTRATO DE CESIÓN · El protocolo y sus primeras comunidades son anteriores a KAGAMI. El consorcio adquirió los puntos de acceso y sustituyó las claves de administración; no creó la Wired."
+          },
+          {
+            "id": 4,
+            "minute": 10,
+            "source": "RELAY_TELEMETRY",
+            "text": "Enlace del andén: intervención suspendida. El enlace queda sin nuevas operaciones corporativas durante 120 minutos del mundo."
+          },
+          {
+            "id": 3,
+            "minute": 10,
+            "source": "RELAY_STATION",
+            "text": "CONTRATO DE CESIÓN · El protocolo y sus primeras comunidades son anteriores a KAGAMI. El consorcio adquirió los puntos de acceso y sustituyó las claves de administración; no creó la Wired.\n\nTRÁFICO ACTUAL · La orden de intervención comparte la credencial del personal de mantenimiento presente. Puedes contrastarla hablando con esa persona."
+          },
+          {
+            "id": 2,
+            "minute": 10,
+            "source": "RELAY_TELEMETRY",
+            "text": "Enlace del andén: tráfico de intervención detectado. Tienes 100 minutos del mundo para defenderte, ocultar tu enlace o examinar el tráfico y contrastar la credencial de quien lo mantiene."
+          },
+          {
+            "id": 1,
+            "minute": 10,
+            "source": "RELAY_STATION",
+            "text": "CONTRATO DE CESIÓN · El protocolo y sus primeras comunidades son anteriores a KAGAMI. El consorcio adquirió los puntos de acceso y sustituyó las claves de administración; no creó la Wired."
+          }
+        ],
+        "visible_personnel": [
+          {
+            "id": "CIVIL_103",
+            "relay": "RELAY_VIDEO",
+            "name": "Shin Okabe",
+            "role": "Supervisor de mantenimiento"
+          }
+        ],
+        "session_mode": "LOCAL"
+      },
+      "situations": [],
+      "interaction": null,
+      "outgoing_interaction": null,
+      "messages": [
+        {
+          "id": "MSG_BOOTSTRAP_001",
+          "sender": "unknown@wired",
+          "subject": "NO SUBJECT",
+          "body": "NO ESTOY MUERTA.\n\nSOLO DEJÉ DE ESTAR AHÍ.",
+          "created_minute": 0,
+          "read": true,
+          "acknowledged": true,
+          "acknowledged_minute": 0
+        }
+      ],
+      "unread_messages": 0,
+      "wired": {
+        "connected": true,
+        "signals": [
+          {
+            "node_id": "NODE_07",
+            "location": "STATION",
+            "strength": 0.5,
+            "confidence": 0.35,
+            "origin_source": "WIRED_MESSAGE",
+            "current_source": "WIRED_MESSAGE",
+            "verified": false,
+            "updated_minute": 0
+          }
+        ],
+        "digital_presences": []
+      }
+    }
+  },
+  {
+    "name": "home-terminal",
+    "mode": "home",
+    "result": null,
+    "state": {
+      "schema_version": "0.1",
+      "minute": 40,
+      "player": {
+        "id": "PLAYER_1",
+        "name": "Player",
+        "faction": "UNALIGNED",
+        "location": "APARTMENT",
+        "goal": "UNKNOWN",
+        "energy": 1.0
+      },
+      "navigation": {
+        "reachable_locations": [
+          "APARTMENT_DISTRICT"
+        ]
+      },
+      "known_nodes": [
+        {
+          "id": "NODE_07",
+          "knowledge_confidence": 0.35,
+          "knowledge_source": "WIRED_MESSAGE",
+          "belief": {
+            "location": "STATION",
+            "strength": 0.5,
+            "confidence": 0.35,
+            "source": "WIRED_MESSAGE",
+            "updated_minute": 0
+          }
+        }
+      ],
+      "visible_actors": [],
+      "character_sheets": {
+        "player": {
+          "id": "PLAYER_1",
+          "name": "Player",
+          "kind": "PLAYER",
+          "faction": "UNALIGNED",
+          "location": "APARTMENT",
+          "energy": 1.0,
+          "known_nodes": 1,
+          "case_status": "UNSEEN",
+          "agency": "HUMAN_ONLY"
+        },
+        "visible_npcs": []
+      },
+      "station_case": {
+        "id": "STATION_ECHO_07",
+        "title": "El pulso ausente",
+        "status": "UNSEEN",
+        "resolution": null,
+        "summary": "Investiga NODE_07 en la estacion para buscar el rastro.",
+        "witness_count": 0,
+        "responses": []
+      },
+      "prologue": {
+        "enabled": false,
+        "stage": "LEGACY",
+        "hint": ""
+      },
+      "chapter_one": {
+        "active": true,
+        "title": "Ya habías estado aquí",
+        "started_minute": 0,
+        "connection_minute": 0,
+        "decision": null,
+        "hypothesis": "",
+        "hypothesis_status": "UNVERIFIED",
+        "evidence": [
+          {
+            "id": "RETURN_MESSAGE",
+            "title": "Has vuelto",
+            "kind": "MESSAGE",
+            "source_id": "UNKNOWN_WIRED",
+            "source_label": "Identidad desconocida · Wired",
+            "text": "Has vuelto.",
+            "acquired_minute": 0,
+            "claimed_time": "Recibido al abrir este capítulo, minuto 0",
+            "event_id": null
+          }
+        ],
+        "links": [],
+        "contradiction_linked": false,
+        "characters": [
+          "RESIDENT_001",
+          "RESIDENT_006",
+          "PROFESSOR",
+          "RYOKO"
+        ],
+        "notification": "Has vuelto"
+      },
+      "network_conflict": {
+        "active": true,
+        "corporation": "Consorcio KAGAMI",
+        "corporate_control": 80.0,
+        "trace": 90,
+        "ready_in": 0,
+        "relays": [
+          {
+            "id": "RELAY_STATION",
+            "name": "Enlace del andén",
+            "location": "STATION",
+            "corporation": 80,
+            "mine": 20,
+            "defense": 0,
+            "suppressed_until": 130,
+            "inspected": true
+          },
+          {
+            "id": "RELAY_SCHOOL",
+            "name": "Enlace del pabellón B",
+            "location": "SCHOOL_LAB",
+            "corporation": 80,
+            "mine": 20,
+            "defense": 0,
+            "suppressed_until": 0,
+            "inspected": true
+          },
+          {
+            "id": "RELAY_VIDEO",
+            "name": "Enlace del videoclub",
+            "location": "VIDEO_CLUB",
+            "corporation": 80,
+            "mine": 20,
+            "defense": 0,
+            "suppressed_until": 0,
+            "inspected": true
+          }
+        ],
+        "rankings": [
+          {
+            "actor_id": "PLAYER_1",
+            "name": "Player",
+            "control": 20.0
+          }
+        ],
+        "pending": [
+          {
+            "relay": "RELAY_SCHOOL",
+            "due_minute": 120,
+            "remaining": 80
+          },
+          {
+            "relay": "RELAY_VIDEO",
+            "due_minute": 130,
+            "remaining": 90
+          }
+        ],
+        "reports": [
+          {
+            "id": 8,
+            "minute": 30,
+            "source": "RELAY_TELEMETRY",
+            "text": "Enlace del videoclub: tráfico de intervención detectado. Tienes 100 minutos del mundo para defenderte, ocultar tu enlace o examinar el tráfico y contrastar la credencial de quien lo mantiene."
+          },
+          {
+            "id": 7,
+            "minute": 30,
+            "source": "RELAY_VIDEO",
+            "text": "CONTRATO DE CESIÓN · El protocolo y sus primeras comunidades son anteriores a KAGAMI. El consorcio adquirió los puntos de acceso y sustituyó las claves de administración; no creó la Wired."
+          },
+          {
+            "id": 6,
+            "minute": 20,
+            "source": "RELAY_TELEMETRY",
+            "text": "Enlace del pabellón B: tráfico de intervención detectado. Tienes 100 minutos del mundo para defenderte, ocultar tu enlace o examinar el tráfico y contrastar la credencial de quien lo mantiene."
+          },
+          {
+            "id": 5,
+            "minute": 20,
+            "source": "RELAY_SCHOOL",
+            "text": "CONTRATO DE CESIÓN · El protocolo y sus primeras comunidades son anteriores a KAGAMI. El consorcio adquirió los puntos de acceso y sustituyó las claves de administración; no creó la Wired."
+          },
+          {
+            "id": 4,
+            "minute": 10,
+            "source": "RELAY_TELEMETRY",
+            "text": "Enlace del andén: intervención suspendida. El enlace queda sin nuevas operaciones corporativas durante 120 minutos del mundo."
+          },
+          {
+            "id": 3,
+            "minute": 10,
+            "source": "RELAY_STATION",
+            "text": "CONTRATO DE CESIÓN · El protocolo y sus primeras comunidades son anteriores a KAGAMI. El consorcio adquirió los puntos de acceso y sustituyó las claves de administración; no creó la Wired.\n\nTRÁFICO ACTUAL · La orden de intervención comparte la credencial del personal de mantenimiento presente. Puedes contrastarla hablando con esa persona."
+          },
+          {
+            "id": 2,
+            "minute": 10,
+            "source": "RELAY_TELEMETRY",
+            "text": "Enlace del andén: tráfico de intervención detectado. Tienes 100 minutos del mundo para defenderte, ocultar tu enlace o examinar el tráfico y contrastar la credencial de quien lo mantiene."
+          },
+          {
+            "id": 1,
+            "minute": 10,
+            "source": "RELAY_STATION",
+            "text": "CONTRATO DE CESIÓN · El protocolo y sus primeras comunidades son anteriores a KAGAMI. El consorcio adquirió los puntos de acceso y sustituyó las claves de administración; no creó la Wired."
+          }
+        ],
+        "visible_personnel": [],
+        "session_mode": "LOCAL"
+      },
+      "situations": [],
+      "interaction": null,
+      "outgoing_interaction": null,
+      "messages": [
+        {
+          "id": "MSG_BOOTSTRAP_001",
+          "sender": "unknown@wired",
+          "subject": "NO SUBJECT",
+          "body": "NO ESTOY MUERTA.\n\nSOLO DEJÉ DE ESTAR AHÍ.",
+          "created_minute": 0,
+          "read": true,
+          "acknowledged": true,
+          "acknowledged_minute": 0
+        }
+      ],
+      "unread_messages": 0,
+      "wired": {
+        "connected": true,
+        "signals": [
+          {
+            "node_id": "NODE_07",
+            "location": "STATION",
+            "strength": 0.5,
+            "confidence": 0.35,
+            "origin_source": "WIRED_MESSAGE",
+            "current_source": "WIRED_MESSAGE",
+            "verified": false,
+            "updated_minute": 0
+          }
+        ],
+        "digital_presences": []
+      }
+    }
+  }
+]

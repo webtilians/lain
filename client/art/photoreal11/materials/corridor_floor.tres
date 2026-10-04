@@ -1,0 +1,6 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[resource]
+resource_name = "PR11_corridor_floor"
+albedo_color = Color(0.16470589, 0.17254902, 0.16862746, 1)
+roughness = 0.3

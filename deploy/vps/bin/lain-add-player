@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# Create a player and their private access file (server address + token).
+#   lain-add-player "Nombre"
+# The world closes for a few seconds: only one process may own the save.
+set -euo pipefail
+[ "$(id -u)" -eq 0 ] || { echo "Ejecuta como root." >&2; exit 1; }
+name=${1:?Uso: lain-add-player NOMBRE}
+host=$(cat /etc/lain/host)
+systemctl stop lain
+trap 'systemctl start lain' EXIT
+cd /opt/lain
+runuser -u lain -- env PYTHONDONTWRITEBYTECODE=1 /opt/lain-venv/bin/python -m tools.online_server \
+  --data-dir /var/lib/lain add-player --name "$name" --url "https://$host"

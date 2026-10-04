@@ -1,0 +1,23 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[ext_resource type="Texture2D" path="res://art/gothic12/textures/dark_brick_wall/dark_brick_wall_diff_2k.jpg" id="1_3txga"]
+[ext_resource type="Texture2D" path="res://art/gothic12/textures/dark_brick_wall/dark_brick_wall_arm_2k.jpg" id="2_yccrm"]
+[ext_resource type="Texture2D" path="res://art/gothic12/textures/dark_brick_wall/dark_brick_wall_nor_gl_2k.jpg" id="3_h0km0"]
+
+[resource]
+resource_name = "PR11_brick_world"
+albedo_color = Color(0.6039216, 0.5686275, 0.54901963, 1)
+albedo_texture = ExtResource("1_3txga")
+roughness = 0.9
+roughness_texture = ExtResource("2_yccrm")
+roughness_texture_channel = 1
+normal_enabled = true
+normal_texture = ExtResource("3_h0km0")
+ao_enabled = true
+ao_light_affect = 0.1
+ao_texture = ExtResource("2_yccrm")
+uv1_scale = Vector3(0.952381, 0.952381, 0.952381)
+uv1_triplanar = true
+uv1_triplanar_sharpness = 8.0
+uv1_world_triplanar = true
+texture_filter = 5

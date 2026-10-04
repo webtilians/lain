@@ -1,3 +1,6 @@
+from .shared_experiences import record_shared_attention
+from .database import get_connection
+from .episodic_memory import initialize_memory_provenance, save_episodic_memory
 from server.agents.agent_k import AgentK
 from server.agents.nora import Nora
 from .dialogue import (
@@ -10,7 +13,7 @@ from .interactions import (
     list_open_interactions,
 )
 from server.situations.engine import (
-    evaluate_world,
+    evaluate_nodes,
     list_open_situations,
     list_situations,
 )
@@ -33,7 +36,6 @@ from .beliefs import (
 from .core import WorldCore
 
 from .database import (
-    add_memory,
     load_or_create_agent,
     load_or_create_node,
     load_simulation_minute,
@@ -51,6 +53,16 @@ from .evidence import (
 from .goal_engine import (
     select_goal,
 )
+from .generated_entities import (
+    GeneratedActor, advance_local_waypoint, belief_driven_goal,
+    list_generated_entities,
+)
+from .character_sheets import actor_role, synchronize_existing_profiles
+from .station_echo import (
+    CASE_ID, initialize_station_case, discover_station_echo,
+    validate_case_choice, resolve_station_echo, has_pending_station_response,
+    record_station_response,
+)
 
 from .interactions import (
     create_or_get_interaction,
@@ -63,6 +75,22 @@ from .knowledge import (
     learn_node,
 )
 
+from .locations import (
+    is_known_location,
+    next_hop,
+    shortest_hops,
+)
+
+from .messages import (
+    ensure_initial_player_message,
+)
+
+from .station_story import (
+    ensure_station_followup,
+)
+from .prologue import initialize_prologue, gate_move
+from .residents import initialize_residents, advance_residents
+
 from .models import (
     ActionIntent,
     Agent,
@@ -72,6 +100,11 @@ from .models import (
 
 from .perception import (
     perceive_node,
+)
+
+from .reports import (
+    evaluate_accepted_reports_against_belief,
+    process_information_reports,
 )
 
 from .situation_beliefs import (
@@ -91,7 +124,7 @@ class Simulation:
 
         self.world = WorldCore()
 
-        self.node = load_or_create_node(
+        node_07 = load_or_create_node(
             WorldNode(
                 id="NODE_07",
                 location="STATION",
@@ -101,6 +134,22 @@ class Simulation:
                 anomaly_strength=0.60,
             )
         )
+
+        node_12 = load_or_create_node(
+            WorldNode(
+                id="NODE_12",
+                location="OLD_DISTRICT",
+                node_type="UNKNOWN_SIGNAL",
+                discovered=False,
+                active=True,
+                anomaly_strength=0.10,
+            )
+        )
+
+        self.nodes = {
+            node_07.id: node_07,
+            node_12.id: node_12,
+        }
 
         self.k = AgentK(
             load_or_create_agent(
@@ -157,6 +206,13 @@ class Simulation:
                 self.player,
         }
 
+        self.refresh_human_players()
+
+        # Rehydrate generated actors on restart; the seeded NPCs and the
+        # player keep their existing identity and controller contracts.
+        self.refresh_generated_actors()
+        initialize_station_case()
+
         self.minute = (
             load_simulation_minute()
         )
@@ -165,6 +221,79 @@ class Simulation:
 
         self.bootstrap_existing_knowledge()
         self.seed_initial_leads()
+
+        ensure_initial_player_message()
+        initialize_prologue()
+        # Seed after the legacy/new-world prologue decision. Civilians keep
+        # independent private memories and do not inherit initial Wired leads.
+        for resident in initialize_residents():
+            self.all_agents[resident.id] = resident
+
+        from .chapter_one import initialize_chapter
+        initialize_chapter()
+        from .network_conflict import initialize_conflict
+        initialize_conflict()
+        from .workshop import initialize_workshop
+        initialize_workshop()
+        from .circles import initialize_circles
+        initialize_circles()
+        from .code_exchange import initialize_exchange
+        initialize_exchange()
+        from .layer_three import initialize_layer
+        initialize_layer()
+        from .layer_one import initialize_layer_one
+        initialize_layer_one()
+        from .layer_two import initialize_layer_two
+        initialize_layer_two()
+        from .layer_four import initialize_layer_four
+        initialize_layer_four()
+        from .layer_five import initialize_layer_five
+        initialize_layer_five()
+        from .layer_six import initialize_layer_six
+        initialize_layer_six()
+        from .layer_seven import initialize_layer_seven
+        initialize_layer_seven()
+        from .journal import initialize_journal
+        initialize_journal()
+
+        for person in self.all_agents.values():
+            if person.controller_type == "HUMAN":
+                ensure_station_followup(player_id=person.id, minute=self.minute)
+
+    def refresh_human_players(self):
+        with get_connection() as conn:
+            people = conn.execute(
+                "SELECT id,name,faction,location,goal FROM agents WHERE controller_type='HUMAN'"
+            ).fetchall()
+        for actor_id, name, faction, location, goal in people:
+            if actor_id not in self.all_agents:
+                self.all_agents[actor_id] = load_or_create_agent(
+                    Agent(
+                        id=actor_id,
+                        name=name,
+                        faction=faction,
+                        location=location,
+                        goal=goal,
+                        controller_type="HUMAN",
+                    )
+                )
+
+    def refresh_generated_actors(self):
+        """Discover persistent NPC-created entities, including mid-session births."""
+        existing = list_generated_entities()
+        synchronize_existing_profiles()
+        for entity_id, creator_id, seed_goal, name, location in existing:
+            if entity_id in self.all_agents:
+                continue
+            agent = load_or_create_agent(
+                Agent(
+                    id=entity_id, name=name, faction="WIRED_ENTITY",
+                    location=location, goal=seed_goal,
+                    controller_type="GENERATED",
+                )
+            )
+            self.all_agents[entity_id] = agent
+            self.ai_actors.append(GeneratedActor(agent, creator_id, seed_goal))
 
     # ==================================================
     # BOOTSTRAP
@@ -178,32 +307,45 @@ class Simulation:
             self.all_agents.values()
         ):
 
-            for memory in agent.memory:
+            for node in (
+                self.nodes.values()
+            ):
+
+                memory_marker = (
+                    "Discovered anomalous "
+                    f"node {node.id} "
+                    f"at {node.location}"
+                )
 
                 if (
-                    "Discovered anomalous "
-                    "node NODE_07"
-                    in memory
+                    memory_marker
+                    not in agent.memory
                 ):
+                    continue
 
-                    learn_node(
-                        agent_id=agent.id,
-                        node_id="NODE_07",
-                        confidence=1.0,
-                        source="EPISODIC_MEMORY",
-                    )
+                learn_node(
+                    agent_id=agent.id,
+                    node_id=node.id,
+                    confidence=1.0,
+                    source="EPISODIC_MEMORY",
+                )
 
     def seed_initial_leads(
         self,
     ):
 
-        for actor in self.ai_actors:
+        node = (
+            self.nodes["NODE_07"]
+        )
+
+        # Newborn entities do not inherit K/Nora's initial signal lead.
+        for actor in (self.k, self.nora):
 
             agent = actor.agent
 
             existing = load_belief(
                 agent.id,
-                self.node.id,
+                node.id,
             )
 
             if existing is not None:
@@ -212,10 +354,10 @@ class Simulation:
             save_belief(
                 NodeBelief(
                     agent_id=agent.id,
-                    node_id=self.node.id,
+                    node_id=node.id,
 
                     believed_location=(
-                        "STATION"
+                        node.location
                     ),
 
                     believed_strength=0.50,
@@ -239,19 +381,19 @@ class Simulation:
         self,
         agent: Agent,
         text: str,
+        source_kind: str = "SELF_REPORTED",
     ):
 
         if text in agent.memory:
             return
 
-        agent.memory.append(
-            text
-        )
-
-        add_memory(
-            agent.id,
-            text,
-        )
+        initialize_memory_provenance()
+        with get_connection() as conn:
+            save_episodic_memory(
+                conn, agent.id, text, source_kind=source_kind,
+                source_actor_id=agent.id, minute=self.minute,
+            )
+        agent.memory.append(text)
 
     # ==================================================
     # NODE PERCEPTION
@@ -264,28 +406,44 @@ class Simulation:
         for agent in (
             self.all_agents.values()
         ):
+            from .online import enabled, is_active
 
-            perception = perceive_node(
-                agent=agent,
-                node=self.node,
-                minute=self.minute,
-            )
-
-            if perception is None:
+            if (
+                enabled()
+                and agent.controller_type == "HUMAN"
+                and not is_active(agent.id)
+            ):
                 continue
 
-            save_belief(
-                perception
-            )
-
-            if not knows_node(
-                agent.id,
-                self.node.id,
+            for node in (
+                self.nodes.values()
             ):
+
+                if not node.active:
+                    continue
+
+                perception = perceive_node(
+                    agent=agent,
+                    node=node,
+                    minute=self.minute,
+                )
+
+                if perception is None:
+                    continue
+
+                save_belief(
+                    perception
+                )
+
+                if knows_node(
+                    agent.id,
+                    node.id,
+                ):
+                    continue
 
                 learn_node(
                     agent_id=agent.id,
-                    node_id=self.node.id,
+                    node_id=node.id,
 
                     confidence=(
                         perception.confidence
@@ -296,19 +454,20 @@ class Simulation:
                     ),
                 )
 
-                self.node.discovered = True
+                node.discovered = True
 
                 save_node(
-                    self.node
+                    node
                 )
 
                 self.remember(
                     agent,
                     (
                         "Discovered anomalous "
-                        f"node {self.node.id} "
-                        f"at {self.node.location}"
+                        f"node {node.id} "
+                        f"at {node.location}"
                     ),
+                    source_kind="DIRECT_PERCEPTION",
                 )
 
     # ==================================================
@@ -326,9 +485,28 @@ class Simulation:
         for agent in (
             self.all_agents.values()
         ):
+            from .online import enabled, is_active
+
+            if (
+                enabled()
+                and agent.controller_type == "HUMAN"
+                and not is_active(agent.id)
+            ):
+                continue
 
             decay_situation_beliefs(
                 agent_id=agent.id,
+                current_minute=self.minute,
+            )
+
+            # Reports arrive first.
+            #
+            # A real channel or direct perception
+            # later in this same tick may overwrite
+            # the report.
+
+            process_information_reports(
+                agent=agent,
                 current_minute=self.minute,
             )
 
@@ -342,6 +520,17 @@ class Simulation:
 
                 if belief is None:
                     continue
+
+                # Before replacing the current belief,
+                # compare authoritative information against
+                # any explicit reports the agent previously
+                # accepted.
+
+                evaluate_accepted_reports_against_belief(
+                    agent=agent,
+                    belief=belief,
+                    current_minute=self.minute,
+                )
 
                 save_situation_belief(
                     belief
@@ -384,6 +573,18 @@ class Simulation:
         for actor in self.ai_actors:
 
             agent = actor.agent
+
+            # A generated entity's own fresh direct perception can override
+            # its seed goal. The regular faction planner still governs K/Nora.
+            if isinstance(actor, GeneratedActor):
+                generated_goal = belief_driven_goal(agent, self.minute)
+                agent.goal = (
+                    generated_goal.goal_type if generated_goal is not None
+                    else actor.seed_goal
+                )
+                self.current_goals[agent.id] = generated_goal
+                save_agent(agent)
+                continue
 
             situation_beliefs = (
                 list_agent_situation_beliefs(
@@ -446,21 +647,34 @@ class Simulation:
     ):
 
         intents = []
+        from .online import busy_npcs
+
+        busy = busy_npcs()
 
         for actor in self.ai_actors:
+            if actor.agent.id in busy:
+                continue
 
             agent = actor.agent
-
-            node_belief = load_belief(
-                agent.id,
-                self.node.id,
-            )
 
             goal = (
                 self.current_goals.get(
                     agent.id
                 )
             )
+
+            node_belief = None
+
+            if (
+                goal is not None
+                and
+                goal.target_id in self.nodes
+            ):
+
+                node_belief = load_belief(
+                    agent.id,
+                    goal.target_id,
+                )
 
             open_interaction = False
 
@@ -546,15 +760,25 @@ class Simulation:
             "AMPLIFY": 0.25,
             "OBSERVE": 0.02,
             "OBSERVE_AREA": 0.01,
+            "WANDER": 0.02,
+            "RESPOND_TO_TRACE": 0.02,
+            "BROADCAST_TRACE": 0.02,
+            "ARCHIVE_TRACE": 0.02,
             "CONTACT": 0.02,
         }
 
-        required_energy = (
-            costs.get(
+        # El movimiento entre localizaciones es gratuito
+        # para el jugador humano.
+        # Los agentes autónomos conservan su coste.
+
+        if agent.controller_type == "HUMAN" and action == "MOVE":
+            required_energy = 0.0
+
+        else:
+            required_energy = costs.get(
                 action,
                 0.0,
             )
-        )
 
         if (
             agent.energy
@@ -567,9 +791,77 @@ class Simulation:
             )
 
         if action == "MOVE":
+            # Only a FRESH opted-in player save is held at the boundary.
+            # Existing saved games and autonomous NPCs retain their routes.
+            if agent.controller_type == "HUMAN":
+                allowed, reason = gate_move(agent.id, intent.target)
+                if not allowed:
+                    return allowed, reason
+            elif intent.target in {"SCHOOL", "SCHOOL_LAB", "NIGHTCLUB"}:
+                return False, "NPC_PROLOGUE_ONLY"
+
+            if not is_known_location(
+                agent.location
+            ):
+
+                return (
+                    False,
+                    "UNKNOWN_ORIGIN",
+                )
+
+            if not is_known_location(
+                intent.target
+            ):
+
+                return (
+                    False,
+                    "UNKNOWN_LOCATION",
+                )
+
+            if (
+                agent.location
+                == intent.target
+            ):
+
+                return (
+                    False,
+                    "ALREADY_THERE",
+                )
+
+            distance = shortest_hops(
+                origin=agent.location,
+                destination=intent.target,
+            )
+
+            if distance is None:
+
+                return (
+                    False,
+                    "UNREACHABLE_LOCATION",
+                )
+
             return True, ""
 
         if action == "OBSERVE_AREA":
+            return True, ""
+
+        if action == "WANDER":
+            # Local physical motion is private to generated agents and must
+            # target their CURRENT semantic location, never a hidden location.
+            if agent.controller_type != "GENERATED" or intent.target != agent.location:
+                return False, "INVALID_WANDER"
+            return True, ""
+
+        if action in {"BROADCAST_TRACE", "ARCHIVE_TRACE"}:
+            if agent.controller_type != "HUMAN":
+                return False, "PLAYER_ONLY_CASE_CHOICE"
+            return validate_case_choice(agent.id, action, agent.location, intent.target)
+
+        if action == "RESPOND_TO_TRACE":
+            if (agent.controller_type != "GENERATED"
+                    or intent.target != CASE_ID
+                    or not has_pending_station_response(agent.id, agent.location)):
+                return False, "CASE_RESPONSE_NOT_AVAILABLE"
             return True, ""
 
         # ==============================================
@@ -626,10 +918,13 @@ class Simulation:
 
         if action in node_actions:
 
-            if (
-                intent.target
-                != self.node.id
-            ):
+            target_node = (
+                self.nodes.get(
+                    intent.target
+                )
+            )
+
+            if target_node is None:
 
                 return (
                     False,
@@ -637,8 +932,17 @@ class Simulation:
                 )
 
             if (
+                not target_node.active
+            ):
+
+                return (
+                    False,
+                    "NODE_INACTIVE",
+                )
+
+            if (
                 agent.location
-                != self.node.location
+                != target_node.location
             ):
 
                 return (
@@ -653,7 +957,7 @@ class Simulation:
 
             if not knows_node(
                 agent.id,
-                self.node.id,
+                intent.target,
             ):
 
                 return (
@@ -672,11 +976,19 @@ class Simulation:
         queued_intents,
     ):
 
-        node_delta = 0.0
+        node_deltas = {
+            node_id: 0.0
+            for node_id in self.nodes
+        }
 
         signal_delta = 0.0
         stability_delta = 0.0
         connection_delta = 0.0
+
+        # Resultados de las acciones procesadas
+        # durante este tick.
+        self.action_results = {}
+        experienced_actions = []
 
         for (
             action_id,
@@ -692,6 +1004,13 @@ class Simulation:
             if agent is None:
 
                 if action_id is not None:
+
+                    self.action_results[action_id] = {
+                        "accepted": False,
+                        "action": intent.action,
+                        "target": intent.target,
+                        "reason": "UNKNOWN_ACTOR",
+                    }
 
                     mark_action_processed(
                         action_id
@@ -733,6 +1052,13 @@ class Simulation:
 
                 if action_id is not None:
 
+                    self.action_results[action_id] = {
+                        "accepted": False,
+                        "action": intent.action,
+                        "target": intent.target,
+                        "reason": reason,
+                    }
+
                     mark_action_processed(
                         action_id
                     )
@@ -742,7 +1068,14 @@ class Simulation:
             action = intent.action
             target = intent.target
 
+            target_node = (
+                self.nodes.get(
+                    target
+                )
+            )
+
             details = ""
+            event_target = target
 
             # ==========================================
             # MOVE
@@ -750,16 +1083,53 @@ class Simulation:
 
             if action == "MOVE":
 
-                agent.location = target
+                origin = (
+                    agent.location
+                )
 
-                agent.energy = max(
-                    0.0,
-                    agent.energy - 0.05,
+                destination = (
+                    target
+                )
+
+                arrival = next_hop(
+                    origin=origin,
+                    destination=destination,
+                )
+
+                if arrival is None:
+
+                    # This should already have been
+                    # rejected by validate_intent().
+                    continue
+
+                agent.location = (
+                    arrival
+                )
+
+                # Solo los agentes autónomos consumen
+                # energía al desplazarse.
+
+                if agent.controller_type != "HUMAN":
+
+                    agent.energy = max(
+                        0.0,
+                        agent.energy - 0.05,
+                    )
+
+                # Important:
+                # movement intelligence must record
+                # the place actually reached,
+                # not the requested final destination.
+
+                event_target = (
+                    arrival
                 )
 
                 details = (
-                    f"{agent.name} "
-                    f"moved to {target}"
+                    f"{agent.name} moved "
+                    f"from {origin} "
+                    f"to {arrival} "
+                    f"toward {destination}"
                 )
 
             # ==========================================
@@ -785,22 +1155,16 @@ class Simulation:
                     else "UNKNOWN"
                 )
 
-                interaction, created = (
-                    create_or_get_interaction(
-                        initiator_id=agent.id,
-                        recipient_id=target,
-
-                        topic=(
-                            "UNAUTHORIZED_SIGNAL_"
-                            "MANIPULATION"
-                        ),
-
-                        source_goal=(
-                            source_goal
-                        ),
-
-                        minute=self.minute,
-                    )
+                interaction, created = create_or_get_interaction(
+                    initiator_id=agent.id,
+                    recipient_id=target,
+                    topic=(
+                        "PLAYER_INITIATED_CONVERSATION"
+                        if agent.controller_type == "HUMAN"
+                        else "UNAUTHORIZED_SIGNAL_MANIPULATION"
+                    ),
+                    source_goal=(source_goal),
+                    minute=self.minute,
                 )
 
                 details = (
@@ -831,14 +1195,14 @@ class Simulation:
 
                 belief = NodeBelief(
                     agent_id=agent.id,
-                    node_id=self.node.id,
+                    node_id=target_node.id,
 
                     believed_location=(
-                        self.node.location
+                        target_node.location
                     ),
 
                     believed_strength=(
-                        self.node.anomaly_strength
+                        target_node.anomaly_strength
                     ),
 
                     confidence=0.95,
@@ -858,7 +1222,7 @@ class Simulation:
 
                 learn_node(
                     agent_id=agent.id,
-                    node_id=self.node.id,
+                    node_id=target_node.id,
                     confidence=0.95,
 
                     source=(
@@ -866,7 +1230,11 @@ class Simulation:
                     ),
                 )
 
-                self.node.discovered = True
+                target_node.discovered = True
+
+                save_node(
+                    target_node
+                )
 
                 agent.energy = max(
                     0.0,
@@ -877,15 +1245,16 @@ class Simulation:
                     agent,
                     (
                         "Investigated anomalous "
-                        f"node {self.node.id} "
-                        f"at {self.node.location}"
+                        f"node {target_node.id} "
+                        f"at {target_node.location}"
                     ),
+                    source_kind="ACTIVE_INVESTIGATION",
                 )
 
                 details = (
                     f"{agent.name} "
                     f"investigated "
-                    f"{self.node.id}"
+                    f"{target_node.id}"
                 )
 
                 current_goal = (
@@ -904,7 +1273,7 @@ class Simulation:
                     evidence = (
                         discover_unauthorized_manipulation_evidence(
                             discoverer_id=agent.id,
-                            node_id=self.node.id,
+                            node_id=target_node.id,
                             current_minute=self.minute,
                         )
                     )
@@ -917,10 +1286,11 @@ class Simulation:
                                 "Recovered signal "
                                 "access trace linking "
                                 f"{evidence.subject_actor_id} "
-                                f"to {self.node.id} "
+                                f"to {target_node.id} "
                                 f"(confidence "
                                 f"{evidence.strength:.2f})"
                             ),
+                            source_kind="ACTIVE_INVESTIGATION",
                         )
 
                         print(
@@ -936,7 +1306,9 @@ class Simulation:
 
             elif action == "STABILIZE":
 
-                node_delta -= 0.10
+                node_deltas[
+                    target_node.id
+                ] -= 0.10
 
                 signal_delta -= 0.01
                 stability_delta += 0.02
@@ -950,7 +1322,7 @@ class Simulation:
                 details = (
                     f"{agent.name} "
                     f"attempted to stabilize "
-                    f"{self.node.id}"
+                    f"{target_node.id}"
                 )
 
             # ==========================================
@@ -959,7 +1331,9 @@ class Simulation:
 
             elif action == "AMPLIFY":
 
-                node_delta += 0.10
+                node_deltas[
+                    target_node.id
+                ] += 0.10
 
                 signal_delta += 0.02
                 stability_delta -= 0.015
@@ -973,7 +1347,7 @@ class Simulation:
                 details = (
                     f"{agent.name} "
                     f"attempted to amplify "
-                    f"{self.node.id}"
+                    f"{target_node.id}"
                 )
 
             # ==========================================
@@ -990,7 +1364,7 @@ class Simulation:
                 details = (
                     f"{agent.name} "
                     f"observes "
-                    f"{self.node.id}"
+                    f"{target_node.id}"
                 )
 
             # ==========================================
@@ -1010,6 +1384,34 @@ class Simulation:
                 )
 
             # ==========================================
+            # LOCAL WANDER (same semantic location)
+            # ==========================================
+
+            elif action == "WANDER":
+                waypoint = advance_local_waypoint(agent.id)
+                agent.energy = max(0.0, agent.energy - 0.02)
+                details = f"Local waypoint {waypoint}"
+
+            # ==========================================
+            # STATION CASE: evidence-based choice / witness response
+            # ==========================================
+
+            elif action in {"BROADCAST_TRACE", "ARCHIVE_TRACE"}:
+                witnesses = resolve_station_echo(agent.id, action, self.minute)
+                agent.energy = max(0.0, agent.energy - 0.02)
+                details = (
+                    f"Shared station echo with {witnesses} present witnesses"
+                    if action == "BROADCAST_TRACE"
+                    else "Archived station echo without sharing it"
+                )
+
+            elif action == "RESPOND_TO_TRACE":
+                details = record_station_response(
+                    agent.id, actor_role(agent.id), self.minute,
+                )
+                agent.energy = max(0.0, agent.energy - 0.02)
+
+            # ==========================================
             # REST
             # ==========================================
 
@@ -1024,43 +1426,82 @@ class Simulation:
                     f"{agent.name} rests"
                 )
 
+            # An accepted direct investigation (not an OBSERVE or rumor)
+            # is the only way to unlock this player's persistent case.
+            if (
+                action == "INVESTIGATE"
+                and agent.controller_type == "HUMAN"
+                and target == "NODE_07"
+            ):
+                if discover_station_echo(agent.id, self.minute):
+                    record_event(
+                        minute=self.minute, actor_id=agent.id,
+                        action="CASE_ECHO_DISCOVERED", target=CASE_ID,
+                        details="A missing beat found in the observed signal",
+                    )
+
             save_agent(
                 agent
             )
 
-            record_event(
+            event_id = record_event(
                 minute=self.minute,
                 actor_id=agent.id,
                 action=action,
-                target=target,
+                target=event_target,
                 details=details,
+                location=agent.location,
             )
+            experienced_actions.append(dict(id=event_id, actor=agent.id,
+                action=action, target=event_target, location=agent.location,
+                minute=self.minute))
 
             print(
                 f"[{self.minute:04}m] "
                 f"{agent.name} "
                 f"{action} -> "
-                f"{target}"
+                f"{event_target}"
             )
 
             if action_id is not None:
+
+                self.action_results[action_id] = {
+                    "accepted": True,
+                    "action": action,
+                    "target": event_target,
+                    "reason": "",
+                }
 
                 mark_action_processed(
                     action_id
                 )
 
-        self.node.anomaly_strength = max(
-            0.0,
-            min(
-                1.0,
-                self.node.anomaly_strength
-                + node_delta,
-            ),
-        )
+        record_shared_attention(experienced_actions)
 
-        save_node(
-            self.node
-        )
+        for (
+            node_id,
+            node_delta,
+        ) in node_deltas.items():
+
+            if node_delta == 0.0:
+                continue
+
+            node = (
+                self.nodes[node_id]
+            )
+
+            node.anomaly_strength = max(
+                0.0,
+                min(
+                    1.0,
+                    node.anomaly_strength
+                    + node_delta,
+                ),
+            )
+
+            save_node(
+                node
+            )
 
         if (
             signal_delta != 0.0
@@ -1076,6 +1517,8 @@ class Simulation:
                 connection_delta=connection_delta,
             )
 
+        return self.action_results
+
     # ==================================================
     # TICK
     # ==================================================
@@ -1084,15 +1527,25 @@ class Simulation:
         self,
     ):
 
+        self.refresh_generated_actors()
         self.minute += 10
 
         save_simulation_minute(
             self.minute
         )
+        advance_residents(self.minute)
+        from .network_conflict import advance_conflict
+        advance_conflict(self.minute)
+        from .cafe_events import advance_events
+        advance_events(self.minute)
 
-        evaluate_world(
+        evaluate_nodes(
             world=self.world.get_state(),
-            node=self.node,
+
+            nodes=list(
+                self.nodes.values()
+            ),
+
             minute=self.minute,
         )
 
@@ -1112,15 +1565,25 @@ class Simulation:
             self.cognition_phase()
         )
 
-        self.resolve_intents(
+        action_results = self.resolve_intents(
             intents
         )
 
-        evaluate_world(
+        for person in self.all_agents.values():
+            if person.controller_type == "HUMAN":
+                ensure_station_followup(player_id=person.id, minute=self.minute)
+
+        evaluate_nodes(
             world=self.world.get_state(),
-            node=self.node,
+
+            nodes=list(
+                self.nodes.values()
+            ),
+
             minute=self.minute,
         )
+
+        return action_results
 
     # ==================================================
     # OUTPUT
@@ -1164,20 +1627,30 @@ class Simulation:
         print()
         print("----- NODE REALITY -----")
 
-        print(
-            f"Node:       "
-            f"{self.node.id}"
-        )
+        for node in (
+            self.nodes.values()
+        ):
 
-        print(
-            f"Location:   "
-            f"{self.node.location}"
-        )
+            print()
+            print(
+                f"Node:       "
+                f"{node.id}"
+            )
 
-        print(
-            f"Anomaly:    "
-            f"{self.node.anomaly_strength:.2f}"
-        )
+            print(
+                f"Location:   "
+                f"{node.location}"
+            )
+
+            print(
+                f"Active:     "
+                f"{node.active}"
+            )
+
+            print(
+                f"Anomaly:    "
+                f"{node.anomaly_strength:.2f}"
+            )
 
         print()
         print("----- REAL SITUATIONS -----")

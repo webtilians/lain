@@ -1,0 +1,61 @@
+"""The owner's server panel: only reachable through the SSH tunnel, read only, no chat contents."""
+from types import SimpleNamespace
+
+import pytest
+from fastapi import HTTPException
+
+from server import api
+from server.world_core import admin, online
+from tests.test_online_world import place, presence, world  # noqa: F401 (fixture)
+
+
+def test_only_a_loopback_request_without_proxy_headers_gets_in():
+    assert admin.local_request("127.0.0.1", {})
+    assert admin.local_request("::1", {})
+    assert not admin.local_request("127.0.0.1", {"x-forwarded-for": "203.0.113.9"})
+    assert not admin.local_request("203.0.113.9", {})
+    assert not admin.local_request(None, {})
+
+
+def tunnel(headers=None):
+    """A request as the SSH tunnel delivers it: loopback, no proxy headers."""
+    return SimpleNamespace(client=SimpleNamespace(host="127.0.0.1"), headers=headers or {})
+
+
+def test_panel_is_hidden_from_public_requests(world):
+    client, *_ = world
+    assert client.get("/admin").status_code == 404
+    assert client.get("/admin/data").status_code == 404
+    with pytest.raises(HTTPException):
+        api.admin_data(tunnel({"x-forwarded-for": "203.0.113.9"}))
+
+
+def test_panel_shows_connections_progress_and_no_chat_text(world):
+    client, runtime, alice, bob, headers = world
+    online._session_seen.clear()
+    for actor in (alice, bob):
+        place(runtime, actor, "APARTMENT_DISTRICT")
+        assert presence(client, headers[actor]).status_code == 200
+    assert client.post("/api/v1/online/chat", headers=headers[alice], json={"text": "secreto"}).status_code == 200
+    assert "panel del servidor" in api.admin_page(tunnel()).body.decode("utf-8")
+    data = api.admin_data(tunnel())
+    assert {item["name"] for item in data["connected"]} == {"Alice", "Bob"}
+    assert {item["location"] for item in data["connected"]} == {"APARTMENT_DISTRICT"}
+    players = {item["name"]: item for item in data["players"]}
+    assert players["Alice"]["sessions"] == 1 and players["Alice"]["fragments"] == 0
+    assert any(session["name"] == "Bob" and session["open"] for session in data["sessions"])
+    assert data["server"]["chat_messages"] == 1 and "secreto" not in str(data)
+    assert all("hash" not in key and "salt" not in key for key in str(data).split())
+
+
+def test_a_long_gap_opens_a_new_session(world, monkeypatch):
+    client, runtime, alice, bob, headers = world
+    online._session_seen.clear()
+    place(runtime, alice, "APARTMENT_DISTRICT")
+    presence(client, headers[alice])
+    later = online.time.time() + online.SESSION_GAP + 30
+    with monkeypatch.context() as clock:
+        clock.setattr(online.time, "time", lambda: later)
+        online._session_seen.clear()
+        presence(client, headers[alice])
+    assert {item["name"]: item for item in admin.overview()["players"]}["Alice"]["sessions"] == 2

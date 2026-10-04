@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="es">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LAIN · Antes y después</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#15181e;color:#dddcd5;font:16px system-ui,sans-serif}main{max-width:1440px;margin:auto;padding:26px}header{display:flex;align-items:end;justify-content:space-between;gap:20px;flex-wrap:wrap}h1{font-size:26px;font-weight:500;margin:8px 0}p{color:#a8b0b4;line-height:1.5}select{background:#252b32;color:#eee;padding:10px;border:1px solid #626c73;border-radius:4px;font:inherit}.frame{position:relative;width:100%;aspect-ratio:16/9;overflow:hidden;border:1px solid #333c44;margin-top:20px}.frame img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}.old{clip-path:inset(0 50% 0 0)}.divider{position:absolute;inset:0 auto 0 50%;width:2px;background:#d0dbc9;pointer-events:none}.badge{position:absolute;top:14px;padding:6px 10px;background:#0c101ae8;font-size:13px;border-radius:4px}.left{left:14px}.right{right:14px}input{width:100%;accent-color:#b0c3ab;margin:20px 0 6px}label{display:block;margin-top:8px}small{color:#a6adb4}a{color:#b5d3db}
+</style>
+<main>
+<header><div><small>L A I N / ESTUDIO VISUAL 0.10</small><h1>La misma ciudad, otra luz</h1></div><label>Lugar <select id="place"><option value="street">Calle residencial</option><option value="park">Parque</option><option value="videoclub">Videoclub</option><option value="apartment">Apartamento</option><option value="station">Estación</option></select></label></header>
+<p>Capturas reales de Godot, con la misma cámara y resolución. Desliza para comparar los materiales, la iluminación y la vegetación.</p>
+<div class="frame"><img id="after" src="images/after-street.png" alt="Renderizado de Visual 0.10"><img id="before" class="old" src="images/before-street.png" alt="Renderizado anterior de City09"><div class="divider" id="line"></div><span class="badge left">ANTES · CITY09</span><span class="badge right">AHORA · VISUAL 0.10 / ALTA</span></div>
+<label for="slider">Posición de la comparación</label><input id="slider" type="range" min="0" max="100" value="50">
+<p><small>Estado de prueba desconectado del servidor, con habitantes del catálogo público. Sin retoque de imágenes. La geometría de algunos edificios y personajes sigue siendo sencilla; este pase mejora su presentación y no reproduce todo el detalle de la ilustración de referencia. <a href="../../REALISM10_README.md">Notas de la entrega</a></small></p>
+</main>
+<script>
+const oldImage=document.getElementById('before'),newImage=document.getElementById('after'),slider=document.getElementById('slider'),line=document.getElementById('line');
+slider.addEventListener('input',()=>{oldImage.style.clipPath=`inset(0 ${100-slider.value}% 0 0)`;line.style.left=slider.value+'%'});
+document.getElementById('place').addEventListener('change',e=>{oldImage.src='images/before-'+e.target.value+'.png';newImage.src='images/after-'+e.target.value+'.png'});
+</script>
+</html>

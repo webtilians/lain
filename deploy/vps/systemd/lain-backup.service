@@ -1,0 +1,6 @@
+[Unit]
+Description=Daily copy of the LAIN online world
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/lain-backup

@@ -1,0 +1,24 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[ext_resource type="Texture2D" path="res://art/gothic12/textures/concrete_wall_006/concrete_wall_006_diff_2k.jpg" id="1_78ocl"]
+[ext_resource type="Texture2D" path="res://art/gothic12/textures/concrete_wall_006/concrete_wall_006_arm_2k.jpg" id="2_sktch"]
+[ext_resource type="Texture2D" path="res://art/gothic12/textures/concrete_wall_006/concrete_wall_006_nor_gl_2k.jpg" id="3_aj8qv"]
+
+[resource]
+resource_name = "PR11_concrete_world"
+albedo_color = Color(0.52156866, 0.5058824, 0.4862745, 1)
+albedo_texture = ExtResource("1_78ocl")
+roughness = 0.85
+roughness_texture = ExtResource("2_sktch")
+roughness_texture_channel = 1
+normal_enabled = true
+normal_scale = 0.8
+normal_texture = ExtResource("3_aj8qv")
+ao_enabled = true
+ao_light_affect = 0.1
+ao_texture = ExtResource("2_sktch")
+uv1_scale = Vector3(0.5, 0.5, 0.5)
+uv1_triplanar = true
+uv1_triplanar_sharpness = 8.0
+uv1_world_triplanar = true
+texture_filter = 5

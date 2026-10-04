@@ -1,0 +1,19 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[ext_resource type="Texture2D" path="res://art/photoreal11/textures/grey_plaster_02/grey_plaster_02_diff_2k.jpg" id="1_y85b3"]
+[ext_resource type="Texture2D" path="res://art/photoreal11/textures/grey_plaster_02/grey_plaster_02_arm_2k.jpg" id="2_ill1h"]
+[ext_resource type="Texture2D" path="res://art/photoreal11/textures/grey_plaster_02/grey_plaster_02_nor_gl_2k.jpg" id="3_pii62"]
+
+[resource]
+resource_name = "PR11_pole_concrete"
+albedo_color = Color(0.45882353, 0.44705883, 0.42745098, 1)
+albedo_texture = ExtResource("1_y85b3")
+roughness_texture = ExtResource("2_ill1h")
+roughness_texture_channel = 1
+normal_enabled = true
+normal_scale = 0.6
+normal_texture = ExtResource("3_pii62")
+ao_enabled = true
+ao_light_affect = 0.1
+ao_texture = ExtResource("2_ill1h")
+texture_filter = 5

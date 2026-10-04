@@ -1,0 +1,3866 @@
+{
+  "unknown": {
+    "schema_version": "0.1",
+    "minute": 0,
+    "player": {
+      "id": "PLAYER_1",
+      "name": "Player",
+      "faction": "UNALIGNED",
+      "location": "APARTMENT",
+      "goal": "UNKNOWN",
+      "energy": 1.0
+    },
+    "navigation": {
+      "reachable_locations": [
+        "APARTMENT_DISTRICT"
+      ]
+    },
+    "known_nodes": [
+      {
+        "id": "NODE_07",
+        "knowledge_confidence": 0.35,
+        "knowledge_source": "WIRED_MESSAGE",
+        "belief": {
+          "location": "STATION",
+          "strength": 0.5,
+          "confidence": 0.35,
+          "source": "WIRED_MESSAGE",
+          "updated_minute": 0
+        }
+      }
+    ],
+    "visible_actors": [],
+    "character_sheets": {
+      "player": {
+        "id": "PLAYER_1",
+        "name": "Player",
+        "kind": "PLAYER",
+        "faction": "UNALIGNED",
+        "location": "APARTMENT",
+        "energy": 1.0,
+        "known_nodes": 1,
+        "case_status": "UNSEEN",
+        "agency": "HUMAN_ONLY"
+      },
+      "visible_npcs": []
+    },
+    "station_case": {
+      "id": "STATION_ECHO_07",
+      "title": "El pulso ausente",
+      "status": "UNSEEN",
+      "resolution": null,
+      "summary": "Investiga NODE_07 en la estacion para buscar el rastro.",
+      "witness_count": 0,
+      "responses": []
+    },
+    "prologue": {
+      "enabled": false,
+      "stage": "LEGACY",
+      "hint": ""
+    },
+    "chapter_one": {
+      "active": true,
+      "title": "Ya habías estado aquí",
+      "started_minute": 0,
+      "connection_minute": 0,
+      "decision": null,
+      "hypothesis": "",
+      "hypothesis_status": "UNVERIFIED",
+      "evidence": [
+        {
+          "id": "RETURN_MESSAGE",
+          "title": "Has vuelto",
+          "kind": "MESSAGE",
+          "source_id": "UNKNOWN_WIRED",
+          "source_label": "Identidad desconocida · Wired",
+          "text": "Has vuelto.",
+          "acquired_minute": 0,
+          "claimed_time": "Recibido al abrir este capítulo, minuto 0",
+          "event_id": null
+        }
+      ],
+      "links": [],
+      "contradiction_linked": false,
+      "characters": [
+        "RESIDENT_001",
+        "RESIDENT_006",
+        "PROFESSOR",
+        "RYOKO"
+      ],
+      "notification": "Has vuelto"
+    },
+    "network_conflict": {
+      "active": true,
+      "multiple_operators": true,
+      "corporation": "Administradores de la Wired",
+      "corporate_control": 100.0,
+      "trace": 0,
+      "ready_in": 0,
+      "relays": [
+        {
+          "id": "RELAY_STATION",
+          "name": "Enlace del andén",
+          "location": "STATION",
+          "corporation": 80,
+          "mine": 0,
+          "defense": 0,
+          "suppressed_until": 0,
+          "inspected": false,
+          "controllers": [
+            {
+              "slot": "LINES",
+              "name": "Administrador de líneas",
+              "control": 80,
+              "suppressed_until": 0
+            },
+            {
+              "slot": "RECORDS",
+              "name": "Administrador de registros",
+              "control": 20,
+              "suppressed_until": 0
+            }
+          ]
+        },
+        {
+          "id": "RELAY_SCHOOL",
+          "name": "Enlace del pabellón B",
+          "location": "SCHOOL_LAB",
+          "corporation": 70,
+          "mine": 0,
+          "defense": 0,
+          "suppressed_until": 0,
+          "inspected": false,
+          "controllers": [
+            {
+              "slot": "LINES",
+              "name": "Administrador de líneas",
+              "control": 70,
+              "suppressed_until": 0
+            },
+            {
+              "slot": "RECORDS",
+              "name": "Administrador de registros",
+              "control": 30,
+              "suppressed_until": 0
+            }
+          ]
+        },
+        {
+          "id": "RELAY_VIDEO",
+          "name": "Enlace del videoclub",
+          "location": "VIDEO_CLUB",
+          "corporation": 55,
+          "mine": 0,
+          "defense": 0,
+          "suppressed_until": 0,
+          "inspected": false,
+          "controllers": [
+            {
+              "slot": "LINES",
+              "name": "Administrador de líneas",
+              "control": 55,
+              "suppressed_until": 0
+            },
+            {
+              "slot": "RECORDS",
+              "name": "Administrador de registros",
+              "control": 45,
+              "suppressed_until": 0
+            }
+          ]
+        }
+      ],
+      "rankings": [
+        {
+          "actor_id": "PLAYER_1",
+          "name": "Player",
+          "control": 0.0
+        }
+      ],
+      "pending": [],
+      "reports": [
+        {
+          "id": 1,
+          "minute": 0,
+          "source": "WORKSHOP",
+          "text": "El PC dispone de un taller de código. En Kissa Café han instalado un terminal: su técnico busca ayuda para comprobar un coprocesador."
+        }
+      ],
+      "visible_personnel": [],
+      "session_mode": "LOCAL"
+    },
+    "workshop": {
+      "active": true,
+      "arcade_catalog": true,
+      "snake_best_score": 0,
+      "shared_modules": [],
+      "lesson": 0,
+      "life_source": "def next_cell(alive, neighbors):\n    # Completa las reglas de nacimiento y supervivencia.\n    return False\n",
+      "draft": "use(\"routing\")\n",
+      "compiled": "use(\"routing\")\n",
+      "modules": [
+        "routing"
+      ],
+      "contract": "INDEPENDENT",
+      "best_score": 0,
+      "capacity": 4,
+      "cost": 2,
+      "assets": [
+        {
+          "id": "first_connection",
+          "kind": "CODE",
+          "model": "routing",
+          "source": "Tu primera conexión a la Wired",
+          "minute": 0,
+          "active": 0,
+          "ownership": "OWNED",
+          "name": "Enrutamiento",
+          "capacity": 0
+        },
+        {
+          "id": "home_navi",
+          "kind": "DEVICE",
+          "model": "navi",
+          "source": "Ordenador de casa",
+          "minute": 0,
+          "active": 1,
+          "ownership": "OWNED",
+          "name": "Navi A",
+          "capacity": 4
+        }
+      ],
+      "library": [
+        {
+          "id": "routing",
+          "name": "Enrutamiento",
+          "cost": 2,
+          "effect": "Conexión del montaje; conserva las acciones básicas del enlace."
+        }
+      ],
+      "offers": {},
+      "life_hint": "",
+      "session_mode": "LOCAL"
+    },
+    "circles": {
+      "active": true,
+      "session_mode": "LOCAL_NPC",
+      "contacts": [
+        {
+          "id": "RYOKO",
+          "name": "Ryoko",
+          "location": "NIGHTCLUB",
+          "condition": "Completa el Juego de la Vida y sigue independiente.",
+          "motive": "Quiere que las identidades puedan circular sin depender de un administrador.",
+          "met": false,
+          "met_minute": null,
+          "ready": false,
+          "available": true,
+          "kind": "NPC"
+        },
+        {
+          "id": "KISSA_TECH",
+          "name": "Técnico de Kissa",
+          "location": "CAFE",
+          "condition": "Gana Bit Courier y sigue independiente.",
+          "motive": "Quiere mantener las máquinas del café fuera del control corporativo.",
+          "met": false,
+          "met_minute": null,
+          "ready": false,
+          "available": true,
+          "kind": "NPC"
+        }
+      ],
+      "independent": true,
+      "group": null
+    },
+    "cafe_events": {
+      "active": true,
+      "minute": 0,
+      "attempts_limit": 3,
+      "events": [
+        {
+          "id": "KISSA_000001",
+          "edition": 1,
+          "opens": 60,
+          "closes": 360,
+          "prize": "Amortiguación",
+          "status": "UPCOMING",
+          "settled": false,
+          "ranking": [],
+          "attempts": 0,
+          "run_id": "",
+          "won": false,
+          "game_id": "bit_courier",
+          "game_name": "Bit Courier",
+          "game_rules": "Recoge al menos 3 paquetes y llega a la salida. Máximo 80 movimientos; los choques también consumen un movimiento.",
+          "catalog_entry": "courier_buffer",
+          "catalog_revision": 1
+        },
+        {
+          "id": "KISSA_000002",
+          "edition": 2,
+          "opens": 660,
+          "closes": 960,
+          "prize": "Memoria de enlace B",
+          "status": "UPCOMING",
+          "settled": false,
+          "ranking": [],
+          "attempts": 0,
+          "run_id": "",
+          "won": false,
+          "game_id": "signal_snake",
+          "game_name": "Serpiente de señal",
+          "game_rules": "La serpiente avanza sola. Gira con las flechas; recoge 6 señales y evita paredes y tu cuerpo. Tres señales bastan para clasificar, incluso si después chocas. Máximo 80 pasos.",
+          "catalog_entry": "snake_cache",
+          "catalog_revision": 1
+        }
+      ],
+      "rules": "Clasificación local con PNJ. Tres intentos por edición; cuenta tu mejor marca válida. Empatar en primer puesto comparte el premio. El cierre usa el reloj del mundo, que no avanza con el servidor apagado."
+    },
+    "code_exchange": {
+      "active": true,
+      "session_mode": "LOCAL_NPC",
+      "offers": [
+        {
+          "id": "ryoko_scan_v1",
+          "peer": "RYOKO",
+          "name": "Ryoko",
+          "location": "NIGHTCLUB",
+          "kind": "NPC",
+          "met": false,
+          "met_minute": null,
+          "completed": false,
+          "ready": false,
+          "reason": "Habla de intercambiar código con esta persona primero.",
+          "wanted": "",
+          "wanted_name": "",
+          "given": "",
+          "given_name": "",
+          "motive": "",
+          "copies": []
+        },
+        {
+          "id": "kissa_shield_v1",
+          "peer": "KISSA_TECH",
+          "name": "Técnico de Kissa",
+          "location": "CAFE",
+          "kind": "NPC",
+          "met": false,
+          "met_minute": null,
+          "completed": false,
+          "ready": false,
+          "reason": "Habla de intercambiar código con esta persona primero.",
+          "wanted": "",
+          "wanted_name": "",
+          "given": "",
+          "given_name": "",
+          "motive": "",
+          "copies": []
+        }
+      ],
+      "history": []
+    },
+    "situations": [],
+    "interaction": null,
+    "outgoing_interaction": null,
+    "messages": [
+      {
+        "id": "MSG_BOOTSTRAP_001",
+        "sender": "unknown@wired",
+        "subject": "NO SUBJECT",
+        "body": "NO ESTOY MUERTA.\n\nSOLO DEJÉ DE ESTAR AHÍ.",
+        "created_minute": 0,
+        "read": true,
+        "acknowledged": true,
+        "acknowledged_minute": 0
+      }
+    ],
+    "unread_messages": 0,
+    "wired": {
+      "connected": true,
+      "signals": [
+        {
+          "node_id": "NODE_07",
+          "location": "STATION",
+          "strength": 0.5,
+          "confidence": 0.35,
+          "origin_source": "WIRED_MESSAGE",
+          "current_source": "WIRED_MESSAGE",
+          "verified": false,
+          "updated_minute": 0
+        }
+      ],
+      "digital_presences": []
+    }
+  },
+  "contact": {
+    "text": "Ryoko: «Necesito amortiguar las interrupciones de mi enlace. A cambio te paso mi módulo de Exploración.»\nLa propuesta está en PC → Intercambios. Compartimos copias; ambos conservamos nuestros originales. Solo mientras sigas independiente."
+  },
+  "club": {
+    "schema_version": "0.1",
+    "minute": 0,
+    "player": {
+      "id": "PLAYER_1",
+      "name": "Player",
+      "faction": "UNALIGNED",
+      "location": "NIGHTCLUB",
+      "goal": "UNKNOWN",
+      "energy": 1.0
+    },
+    "navigation": {
+      "reachable_locations": [
+        "APARTMENT_DISTRICT"
+      ]
+    },
+    "known_nodes": [
+      {
+        "id": "NODE_07",
+        "knowledge_confidence": 0.35,
+        "knowledge_source": "WIRED_MESSAGE",
+        "belief": {
+          "location": "STATION",
+          "strength": 0.5,
+          "confidence": 0.35,
+          "source": "WIRED_MESSAGE",
+          "updated_minute": 0
+        }
+      }
+    ],
+    "visible_actors": [
+      {
+        "id": "RESIDENT_029",
+        "name": "Koji Murata",
+        "role": "Camarero de la discoteca",
+        "role_label": "Camarero de la discoteca",
+        "skills": {
+          "Atención al público": 4,
+          "Observación": 2
+        },
+        "public_objective": "Atender a la sala sin perder los pedidos.",
+        "activity": "Repasa los pedidos",
+        "slot": 0,
+        "patrol_step": 0,
+        "appearance": "apron",
+        "role_assignment": "CITY_PROVISIONAL"
+      },
+      {
+        "id": "RESIDENT_030",
+        "name": "Erika Hoshino",
+        "role": "DJ",
+        "role_label": "DJ",
+        "skills": {
+          "Música": 5,
+          "Observación": 3
+        },
+        "public_objective": "Encontrar la siguiente pista entre sus discos.",
+        "activity": "Escucha la mezcla",
+        "slot": 1,
+        "patrol_step": 0,
+        "appearance": "casual",
+        "role_assignment": "CITY_PROVISIONAL"
+      },
+      {
+        "id": "RESIDENT_031",
+        "name": "Tatsuya Ota",
+        "role": "Técnico de sonido",
+        "role_label": "Técnico de sonido",
+        "skills": {
+          "Sonido": 3,
+          "Observación": 1
+        },
+        "public_objective": "Localizar un zumbido en el equipo de la sala.",
+        "activity": "Escucha los altavoces",
+        "slot": 2,
+        "patrol_step": 0,
+        "appearance": "worker",
+        "role_assignment": "CITY_PROVISIONAL"
+      },
+      {
+        "id": "RESIDENT_032",
+        "name": "Aya Nomura",
+        "role": "Amiga de Ryoko",
+        "role_label": "Amiga de Ryoko",
+        "skills": {
+          "Baile": 4,
+          "Observación": 2
+        },
+        "public_objective": "Esperar a su grupo antes de empezar a bailar.",
+        "activity": "Espera a sus amigos",
+        "slot": 3,
+        "patrol_step": 0,
+        "appearance": "casual",
+        "role_assignment": "CITY_PROVISIONAL"
+      },
+      {
+        "id": "RESIDENT_033",
+        "name": "Shinji Fukuda",
+        "role": "Habitual de la discoteca",
+        "role_label": "Habitual de la discoteca",
+        "skills": {
+          "Música": 5,
+          "Observación": 3
+        },
+        "public_objective": "Conseguir el nombre de la canción que sonó ayer.",
+        "activity": "Escucha la música",
+        "slot": 4,
+        "patrol_step": 0,
+        "appearance": "casual",
+        "role_assignment": "CITY_PROVISIONAL"
+      },
+      {
+        "id": "RESIDENT_034",
+        "name": "Reiko Sakai",
+        "role": "Encargada de sala",
+        "role_label": "Encargada de sala",
+        "skills": {
+          "Organización": 3,
+          "Observación": 1
+        },
+        "public_objective": "Mantener despejadas las salidas durante la sesión.",
+        "activity": "Observa la sala",
+        "slot": 5,
+        "patrol_step": 0,
+        "appearance": "worker",
+        "role_assignment": "CITY_PROVISIONAL"
+      }
+    ],
+    "character_sheets": {
+      "player": {
+        "id": "PLAYER_1",
+        "name": "Player",
+        "kind": "PLAYER",
+        "faction": "UNALIGNED",
+        "location": "NIGHTCLUB",
+        "energy": 1.0,
+        "known_nodes": 1,
+        "case_status": "UNSEEN",
+        "agency": "HUMAN_ONLY"
+      },
+      "visible_npcs": [
+        {
+          "id": "RESIDENT_029",
+          "name": "Koji Murata",
+          "kind": "NPC",
+          "observed_location": "NIGHTCLUB",
+          "focus": "Repasa los pedidos",
+          "role": "Camarero de la discoteca",
+          "role_label": "Camarero de la discoteca",
+          "skills": {
+            "Atención al público": 4,
+            "Observación": 2
+          },
+          "public_objective": "Atender a la sala sin perder los pedidos.",
+          "activity": "Repasa los pedidos",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_030",
+          "name": "Erika Hoshino",
+          "kind": "NPC",
+          "observed_location": "NIGHTCLUB",
+          "focus": "Escucha la mezcla",
+          "role": "DJ",
+          "role_label": "DJ",
+          "skills": {
+            "Música": 5,
+            "Observación": 3
+          },
+          "public_objective": "Encontrar la siguiente pista entre sus discos.",
+          "activity": "Escucha la mezcla",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_031",
+          "name": "Tatsuya Ota",
+          "kind": "NPC",
+          "observed_location": "NIGHTCLUB",
+          "focus": "Escucha los altavoces",
+          "role": "Técnico de sonido",
+          "role_label": "Técnico de sonido",
+          "skills": {
+            "Sonido": 3,
+            "Observación": 1
+          },
+          "public_objective": "Localizar un zumbido en el equipo de la sala.",
+          "activity": "Escucha los altavoces",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_032",
+          "name": "Aya Nomura",
+          "kind": "NPC",
+          "observed_location": "NIGHTCLUB",
+          "focus": "Espera a sus amigos",
+          "role": "Amiga de Ryoko",
+          "role_label": "Amiga de Ryoko",
+          "skills": {
+            "Baile": 4,
+            "Observación": 2
+          },
+          "public_objective": "Esperar a su grupo antes de empezar a bailar.",
+          "activity": "Espera a sus amigos",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_033",
+          "name": "Shinji Fukuda",
+          "kind": "NPC",
+          "observed_location": "NIGHTCLUB",
+          "focus": "Escucha la música",
+          "role": "Habitual de la discoteca",
+          "role_label": "Habitual de la discoteca",
+          "skills": {
+            "Música": 5,
+            "Observación": 3
+          },
+          "public_objective": "Conseguir el nombre de la canción que sonó ayer.",
+          "activity": "Escucha la música",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_034",
+          "name": "Reiko Sakai",
+          "kind": "NPC",
+          "observed_location": "NIGHTCLUB",
+          "focus": "Observa la sala",
+          "role": "Encargada de sala",
+          "role_label": "Encargada de sala",
+          "skills": {
+            "Organización": 3,
+            "Observación": 1
+          },
+          "public_objective": "Mantener despejadas las salidas durante la sesión.",
+          "activity": "Observa la sala",
+          "role_assignment": "CITY_PROVISIONAL"
+        }
+      ]
+    },
+    "station_case": {
+      "id": "STATION_ECHO_07",
+      "title": "El pulso ausente",
+      "status": "UNSEEN",
+      "resolution": null,
+      "summary": "Investiga NODE_07 en la estacion para buscar el rastro.",
+      "witness_count": 0,
+      "responses": []
+    },
+    "prologue": {
+      "enabled": false,
+      "stage": "LEGACY",
+      "hint": ""
+    },
+    "chapter_one": {
+      "active": true,
+      "title": "Ya habías estado aquí",
+      "started_minute": 0,
+      "connection_minute": 0,
+      "decision": null,
+      "hypothesis": "",
+      "hypothesis_status": "UNVERIFIED",
+      "evidence": [
+        {
+          "id": "RETURN_MESSAGE",
+          "title": "Has vuelto",
+          "kind": "MESSAGE",
+          "source_id": "UNKNOWN_WIRED",
+          "source_label": "Identidad desconocida · Wired",
+          "text": "Has vuelto.",
+          "acquired_minute": 0,
+          "claimed_time": "Recibido al abrir este capítulo, minuto 0",
+          "event_id": null
+        }
+      ],
+      "links": [],
+      "contradiction_linked": false,
+      "characters": [
+        "RESIDENT_001",
+        "RESIDENT_006",
+        "PROFESSOR",
+        "RYOKO"
+      ],
+      "notification": "Has vuelto"
+    },
+    "network_conflict": {
+      "active": true,
+      "multiple_operators": true,
+      "corporation": "Administradores de la Wired",
+      "corporate_control": 100.0,
+      "trace": 0,
+      "ready_in": 0,
+      "relays": [
+        {
+          "id": "RELAY_STATION",
+          "name": "Enlace del andén",
+          "location": "STATION",
+          "corporation": 80,
+          "mine": 0,
+          "defense": 0,
+          "suppressed_until": 0,
+          "inspected": false,
+          "controllers": [
+            {
+              "slot": "LINES",
+              "name": "Administrador de líneas",
+              "control": 80,
+              "suppressed_until": 0
+            },
+            {
+              "slot": "RECORDS",
+              "name": "Administrador de registros",
+              "control": 20,
+              "suppressed_until": 0
+            }
+          ]
+        },
+        {
+          "id": "RELAY_SCHOOL",
+          "name": "Enlace del pabellón B",
+          "location": "SCHOOL_LAB",
+          "corporation": 70,
+          "mine": 0,
+          "defense": 0,
+          "suppressed_until": 0,
+          "inspected": false,
+          "controllers": [
+            {
+              "slot": "LINES",
+              "name": "Administrador de líneas",
+              "control": 70,
+              "suppressed_until": 0
+            },
+            {
+              "slot": "RECORDS",
+              "name": "Administrador de registros",
+              "control": 30,
+              "suppressed_until": 0
+            }
+          ]
+        },
+        {
+          "id": "RELAY_VIDEO",
+          "name": "Enlace del videoclub",
+          "location": "VIDEO_CLUB",
+          "corporation": 55,
+          "mine": 0,
+          "defense": 0,
+          "suppressed_until": 0,
+          "inspected": false,
+          "controllers": [
+            {
+              "slot": "LINES",
+              "name": "Administrador de líneas",
+              "control": 55,
+              "suppressed_until": 0
+            },
+            {
+              "slot": "RECORDS",
+              "name": "Administrador de registros",
+              "control": 45,
+              "suppressed_until": 0
+            }
+          ]
+        }
+      ],
+      "rankings": [
+        {
+          "actor_id": "PLAYER_1",
+          "name": "Player",
+          "control": 0.0
+        }
+      ],
+      "pending": [],
+      "reports": [
+        {
+          "id": 1,
+          "minute": 0,
+          "source": "WORKSHOP",
+          "text": "El PC dispone de un taller de código. En Kissa Café han instalado un terminal: su técnico busca ayuda para comprobar un coprocesador."
+        }
+      ],
+      "visible_personnel": [],
+      "session_mode": "LOCAL"
+    },
+    "workshop": {
+      "active": true,
+      "arcade_catalog": true,
+      "snake_best_score": 0,
+      "shared_modules": [],
+      "lesson": 0,
+      "life_source": "def next_cell(alive, neighbors):\n    # Completa las reglas de nacimiento y supervivencia.\n    return False\n",
+      "draft": "use(\"routing\")\n",
+      "compiled": "use(\"routing\")\n",
+      "modules": [
+        "routing"
+      ],
+      "contract": "INDEPENDENT",
+      "best_score": 0,
+      "capacity": 4,
+      "cost": 2,
+      "assets": [
+        {
+          "id": "first_connection",
+          "kind": "CODE",
+          "model": "routing",
+          "source": "Tu primera conexión a la Wired",
+          "minute": 0,
+          "active": 0,
+          "ownership": "OWNED",
+          "name": "Enrutamiento",
+          "capacity": 0
+        },
+        {
+          "id": "home_navi",
+          "kind": "DEVICE",
+          "model": "navi",
+          "source": "Ordenador de casa",
+          "minute": 0,
+          "active": 1,
+          "ownership": "OWNED",
+          "name": "Navi A",
+          "capacity": 4
+        }
+      ],
+      "library": [
+        {
+          "id": "routing",
+          "name": "Enrutamiento",
+          "cost": 2,
+          "effect": "Conexión del montaje; conserva las acciones básicas del enlace."
+        }
+      ],
+      "offers": {},
+      "life_hint": "",
+      "session_mode": "LOCAL"
+    },
+    "circles": {
+      "active": true,
+      "session_mode": "LOCAL_NPC",
+      "contacts": [
+        {
+          "id": "RYOKO",
+          "name": "Ryoko",
+          "location": "NIGHTCLUB",
+          "condition": "Completa el Juego de la Vida y sigue independiente.",
+          "motive": "Quiere que las identidades puedan circular sin depender de un administrador.",
+          "met": false,
+          "met_minute": null,
+          "ready": false,
+          "available": true,
+          "kind": "NPC"
+        },
+        {
+          "id": "KISSA_TECH",
+          "name": "Técnico de Kissa",
+          "location": "CAFE",
+          "condition": "Gana Bit Courier y sigue independiente.",
+          "motive": "Quiere mantener las máquinas del café fuera del control corporativo.",
+          "met": false,
+          "met_minute": null,
+          "ready": false,
+          "available": true,
+          "kind": "NPC"
+        }
+      ],
+      "independent": true,
+      "group": null
+    },
+    "cafe_events": {
+      "active": true,
+      "minute": 0,
+      "attempts_limit": 3,
+      "events": [
+        {
+          "id": "KISSA_000001",
+          "edition": 1,
+          "opens": 60,
+          "closes": 360,
+          "prize": "Amortiguación",
+          "status": "UPCOMING",
+          "settled": false,
+          "ranking": [],
+          "attempts": 0,
+          "run_id": "",
+          "won": false,
+          "game_id": "bit_courier",
+          "game_name": "Bit Courier",
+          "game_rules": "Recoge al menos 3 paquetes y llega a la salida. Máximo 80 movimientos; los choques también consumen un movimiento.",
+          "catalog_entry": "courier_buffer",
+          "catalog_revision": 1
+        },
+        {
+          "id": "KISSA_000002",
+          "edition": 2,
+          "opens": 660,
+          "closes": 960,
+          "prize": "Memoria de enlace B",
+          "status": "UPCOMING",
+          "settled": false,
+          "ranking": [],
+          "attempts": 0,
+          "run_id": "",
+          "won": false,
+          "game_id": "signal_snake",
+          "game_name": "Serpiente de señal",
+          "game_rules": "La serpiente avanza sola. Gira con las flechas; recoge 6 señales y evita paredes y tu cuerpo. Tres señales bastan para clasificar, incluso si después chocas. Máximo 80 pasos.",
+          "catalog_entry": "snake_cache",
+          "catalog_revision": 1
+        }
+      ],
+      "rules": "Clasificación local con PNJ. Tres intentos por edición; cuenta tu mejor marca válida. Empatar en primer puesto comparte el premio. El cierre usa el reloj del mundo, que no avanza con el servidor apagado."
+    },
+    "code_exchange": {
+      "active": true,
+      "session_mode": "LOCAL_NPC",
+      "offers": [
+        {
+          "id": "ryoko_scan_v1",
+          "peer": "RYOKO",
+          "name": "Ryoko",
+          "location": "NIGHTCLUB",
+          "kind": "NPC",
+          "met": true,
+          "met_minute": 0,
+          "completed": false,
+          "ready": false,
+          "reason": "Necesitas una copia propia del fragmento solicitado; préstamos y aportaciones ajenas no sirven.",
+          "wanted": "buffer",
+          "wanted_name": "Amortiguación",
+          "given": "scan",
+          "given_name": "Exploración",
+          "motive": "Necesito amortiguar las interrupciones de mi enlace. A cambio te paso mi módulo de Exploración.",
+          "copies": []
+        },
+        {
+          "id": "kissa_shield_v1",
+          "peer": "KISSA_TECH",
+          "name": "Técnico de Kissa",
+          "location": "CAFE",
+          "kind": "NPC",
+          "met": false,
+          "met_minute": null,
+          "completed": false,
+          "ready": false,
+          "reason": "Habla de intercambiar código con esta persona primero.",
+          "wanted": "",
+          "wanted_name": "",
+          "given": "",
+          "given_name": "",
+          "motive": "",
+          "copies": []
+        }
+      ],
+      "history": []
+    },
+    "situations": [],
+    "interaction": null,
+    "outgoing_interaction": null,
+    "messages": [
+      {
+        "id": "MSG_BOOTSTRAP_001",
+        "sender": "unknown@wired",
+        "subject": "NO SUBJECT",
+        "body": "NO ESTOY MUERTA.\n\nSOLO DEJÉ DE ESTAR AHÍ.",
+        "created_minute": 0,
+        "read": true,
+        "acknowledged": true,
+        "acknowledged_minute": 0
+      }
+    ],
+    "unread_messages": 0,
+    "wired": {
+      "connected": true,
+      "signals": [
+        {
+          "node_id": "NODE_07",
+          "location": "STATION",
+          "strength": 0.5,
+          "confidence": 0.35,
+          "origin_source": "WIRED_MESSAGE",
+          "current_source": "WIRED_MESSAGE",
+          "verified": false,
+          "updated_minute": 0
+        }
+      ],
+      "digital_presences": []
+    }
+  },
+  "cafe": {
+    "schema_version": "0.1",
+    "minute": 0,
+    "player": {
+      "id": "PLAYER_1",
+      "name": "Player",
+      "faction": "UNALIGNED",
+      "location": "CAFE",
+      "goal": "UNKNOWN",
+      "energy": 1.0
+    },
+    "navigation": {
+      "reachable_locations": [
+        "APARTMENT_DISTRICT"
+      ]
+    },
+    "known_nodes": [
+      {
+        "id": "NODE_07",
+        "knowledge_confidence": 0.35,
+        "knowledge_source": "WIRED_MESSAGE",
+        "belief": {
+          "location": "STATION",
+          "strength": 0.5,
+          "confidence": 0.35,
+          "source": "WIRED_MESSAGE",
+          "updated_minute": 0
+        }
+      }
+    ],
+    "visible_actors": [
+      {
+        "id": "RESIDENT_054",
+        "name": "Keiko Oshima",
+        "role": "Dueña del café",
+        "role_label": "Dueña del café",
+        "skills": {
+          "Cocina": 5,
+          "Observación": 3
+        },
+        "public_objective": "Preparar la mesa para la reunión del club de lectura.",
+        "activity": "Revisa las reservas",
+        "slot": 0,
+        "patrol_step": 0,
+        "appearance": "apron",
+        "role_assignment": "CITY_PROVISIONAL"
+      },
+      {
+        "id": "RESIDENT_055",
+        "name": "Yusuke Sano",
+        "role": "Camarero",
+        "role_label": "Camarero",
+        "skills": {
+          "Atención al público": 3,
+          "Observación": 1
+        },
+        "public_objective": "Aprender los pedidos sin tener que mirar la libreta.",
+        "activity": "Repasa su libreta",
+        "slot": 1,
+        "patrol_step": 0,
+        "appearance": "apron",
+        "role_assignment": "CITY_PROVISIONAL"
+      },
+      {
+        "id": "RESIDENT_056",
+        "name": "Natsumi Honda",
+        "role": "Estudiante del café",
+        "role_label": "Estudiante del café",
+        "skills": {
+          "Escritura": 4,
+          "Observación": 2
+        },
+        "public_objective": "Terminar una carta antes de tomar el tren.",
+        "activity": "Relee su carta",
+        "slot": 2,
+        "patrol_step": 0,
+        "appearance": "student",
+        "role_assignment": "CITY_PROVISIONAL"
+      }
+    ],
+    "character_sheets": {
+      "player": {
+        "id": "PLAYER_1",
+        "name": "Player",
+        "kind": "PLAYER",
+        "faction": "UNALIGNED",
+        "location": "CAFE",
+        "energy": 1.0,
+        "known_nodes": 1,
+        "case_status": "UNSEEN",
+        "agency": "HUMAN_ONLY"
+      },
+      "visible_npcs": [
+        {
+          "id": "RESIDENT_054",
+          "name": "Keiko Oshima",
+          "kind": "NPC",
+          "observed_location": "CAFE",
+          "focus": "Revisa las reservas",
+          "role": "Dueña del café",
+          "role_label": "Dueña del café",
+          "skills": {
+            "Cocina": 5,
+            "Observación": 3
+          },
+          "public_objective": "Preparar la mesa para la reunión del club de lectura.",
+          "activity": "Revisa las reservas",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_055",
+          "name": "Yusuke Sano",
+          "kind": "NPC",
+          "observed_location": "CAFE",
+          "focus": "Repasa su libreta",
+          "role": "Camarero",
+          "role_label": "Camarero",
+          "skills": {
+            "Atención al público": 3,
+            "Observación": 1
+          },
+          "public_objective": "Aprender los pedidos sin tener que mirar la libreta.",
+          "activity": "Repasa su libreta",
+          "role_assignment": "CITY_PROVISIONAL"
+        },
+        {
+          "id": "RESIDENT_056",
+          "name": "Natsumi Honda",
+          "kind": "NPC",
+          "observed_location": "CAFE",
+          "focus": "Relee su carta",
+          "role": "Estudiante del café",
+          "role_label": "Estudiante del café",
+          "skills": {
+            "Escritura": 4,
+            "Observación": 2
+          },
+          "public_objective": "Terminar una carta antes de tomar el tren.",
+          "activity": "Relee su carta",
+          "role_assignment": "CITY_PROVISIONAL"
+        }
+      ]
+    },
+    "station_case": {
+      "id": "STATION_ECHO_07",
+      "title": "El pulso ausente",
+      "status": "UNSEEN",
+      "resolution": null,
+      "summary": "Investiga NODE_07 en la estacion para buscar el rastro.",
+      "witness_count": 0,
+      "responses": []
+    },
+    "prologue": {
+      "enabled": false,
+      "stage": "LEGACY",
+      "hint": ""
+    },
+    "chapter_one": {
+      "active": true,
+      "title": "Ya habías estado aquí",
+      "started_minute": 0,
+      "connection_minute": 0,
+      "decision": null,
+      "hypothesis": "",
+      "hypothesis_status": "UNVERIFIED",
+      "evidence": [
+        {
+          "id": "RETURN_MESSAGE",
+          "title": "Has vuelto",
+          "kind": "MESSAGE",
+          "source_id": "UNKNOWN_WIRED",
+          "source_label": "Identidad desconocida · Wired",
+          "text": "Has vuelto.",
+          "acquired_minute": 0,
+          "claimed_time": "Recibido al abrir este capítulo, minuto 0",
+          "event_id": null
+        }
+      ],
+      "links": [],
+      "contradiction_linked": false,
+      "characters": [
+        "RESIDENT_001",
+        "RESIDENT_006",
+        "PROFESSOR",
+        "RYOKO"
+      ],
+      "notification": "Has vuelto"
+    },
+    "network_conflict": {
+      "active": true,
+      "multiple_operators": true,
+      "corporation": "Administradores de la Wired",
+      "corporate_control": 100.0,
+      "trace": 0,
+      "ready_in": 0,
+      "relays": [
+        {
+          "id": "RELAY_STATION",
+          "name": "Enlace del andén",
+          "location": "STATION",
+          "corporation": 80,
+          "mine": 0,
+          "defense": 0,
+          "suppressed_until": 0,
+          "inspected": false,
+          "controllers": [
+            {
+              "slot": "LINES",
+              "name": "Administrador de líneas",
+              "control": 80,
+              "suppressed_until": 0
+            },
+            {
+              "slot": "RECORDS",
+              "name": "Administrador de registros",
+              "control": 20,
+              "suppressed_until": 0
+            }
+          ]
+        },
+        {
+          "id": "RELAY_SCHOOL",
+          "name": "Enlace del pabellón B",
+          "location": "SCHOOL_LAB",
+          "corporation": 70,
+          "mine": 0,
+          "defense": 0,
+          "suppressed_until": 0,
+          "inspected": false,
+          "controllers": [
+            {
+              "slot": "LINES",
+              "name": "Administrador de líneas",
+              "control": 70,
+              "suppressed_until": 0
+            },
+            {
+              "slot": "RECORDS",
+              "name": "Administrador de registros",
+              "control": 30,
+              "suppressed_until": 0
+            }
+          ]
+        },
+        {
+          "id": "RELAY_VIDEO",
+          "name": "Enlace del videoclub",
+          "location": "VIDEO_CLUB",
+          "corporation": 55,
+          "mine": 0,
+          "defense": 0,
+          "suppressed_until": 0,
+          "inspected": false,
+          "controllers": [
+            {
+              "slot": "LINES",
+              "name": "Administrador de líneas",
+              "control": 55,
+              "suppressed_until": 0
+            },
+            {
+              "slot": "RECORDS",
+              "name": "Administrador de registros",
+              "control": 45,
+              "suppressed_until": 0
+            }
+          ]
+        }
+      ],
+      "rankings": [
+        {
+          "actor_id": "PLAYER_1",
+          "name": "Player",
+          "control": 0.0
+        }
+      ],
+      "pending": [],
+      "reports": [
+        {
+          "id": 1,
+          "minute": 0,
+          "source": "WORKSHOP",
+          "text": "El PC dispone de un taller de código. En Kissa Café han instalado un terminal: su técnico busca ayuda para comprobar un coprocesador."
+        }
+      ],
+      "visible_personnel": [],
+      "session_mode": "LOCAL"
+    },
+    "workshop": {
+      "active": true,
+      "arcade_catalog": true,
+      "snake_best_score": 0,
+      "shared_modules": [],
+      "lesson": 0,
+      "life_source": "def next_cell(alive, neighbors):\n    # Completa las reglas de nacimiento y supervivencia.\n    return False\n",
+      "draft": "use(\"routing\")\n",
+      "compiled": "use(\"routing\")\n",
+      "modules": [
+        "routing"
+      ],
+      "contract": "INDEPENDENT",
+      "best_score": 0,
+      "capacity": 4,
+      "cost": 2,
+      "assets": [
+        {
+          "id": "first_connection",
+          "kind": "CODE",
+          "model": "routing",
+          "source": "Tu primera conexión a la Wired",
+          "minute": 0,
+          "active": 0,
+          "ownership": "OWNED",
+          "name": "Enrutamiento",
+          "capacity": 0
+        },
+        {
+          "id": "home_navi",
+          "kind": "DEVICE",
+          "model": "navi",
+          "source": "Ordenador de casa",
+          "minute": 0,
+          "active": 1,
+          "ownership": "OWNED",
+          "name": "Navi A",
+          "capacity": 4
+        }
+      ],
+      "library": [
+        {
+          "id": "routing",
+          "name": "Enrutamiento",
+          "cost": 2,
+          "effect": "Conexión del montaje; conserva las acciones básicas del enlace."
+        }
+      ],
+      "offers": {},
+      "life_hint": "",
+      "session_mode": "LOCAL"
+    },
+    "circles": {
+      "active": true,
+      "session_mode": "LOCAL_NPC",
+      "contacts": [
+        {
+          "id": "RYOKO",
+          "name": "Ryoko",
+          "location": "NIGHTCLUB",
+          "condition": "Completa el Juego de la Vida y sigue independiente.",
+          "motive": "Quiere que las identidades puedan circular sin depender de un administrador.",
+          "met": false,
+          "met_minute": null,
+          "ready": false,
+          "available": true,
+          "kind": "NPC"
+        },
+        {
+          "id": "KISSA_TECH",
+          "name": "Técnico de Kissa",
+          "location": "CAFE",
+          "condition": "Gana Bit Courier y sigue independiente.",
+          "motive": "Quiere mantener las máquinas del café fuera del control corporativo.",
+          "met": false,
+          "met_minute": null,
+          "ready": false,
+          "available": true,
+          "kind": "NPC"
+        }
+      ],
+      "independent": true,
+      "group": null
+    },
+    "cafe_events": {
+      "active": true,
+      "minute": 0,
+      "attempts_limit": 3,
+      "events": [
+        {
+          "id": "KISSA_000001",
+          "edition": 1,
+          "opens": 60,
+          "closes": 360,
+          "prize": "Amortiguación",
+          "status": "UPCOMING",
+          "settled": false,
+          "ranking": [],
+          "attempts": 0,
+          "run_id": "",
+          "won": false,
+          "game_id": "bit_courier",
+          "game_name": "Bit Courier",
+          "game_rules": "Recoge al menos 3 paquetes y llega a la salida. Máximo 80 movimientos; los choques también consumen un movimiento.",
+          "catalog_entry": "courier_buffer",
+          "catalog_revision": 1
+        },
+        {
+          "id": "KISSA_000002",
+          "edition": 2,
+          "opens": 660,
+          "closes": 960,
+          "prize": "Memoria de enlace B",
+          "status": "UPCOMING",
+          "settled": false,
+          "ranking": [],
+          "attempts": 0,
+          "run_id": "",
+          "won": false,
+          "game_id": "signal_snake",
+          "game_name": "Serpiente de señal",
+          "game_rules": "La serpiente avanza sola. Gira con las flechas; recoge 6 señales y evita paredes y tu cuerpo. Tres señales bastan para clasificar, incluso si después chocas. Máximo 80 pasos.",
+          "catalog_entry": "snake_cache",
+          "catalog_revision": 1
+        }
+      ],
+      "rules": "Clasificación local con PNJ. Tres intentos por edición; cuenta tu mejor marca válida. Empatar en primer puesto comparte el premio. El cierre usa el reloj del mundo, que no avanza con el servidor apagado."
+    },
+    "code_exchange": {
+      "active": true,
+      "session_mode": "LOCAL_NPC",
+      "offers": [
+        {
+          "id": "ryoko_scan_v1",
+          "peer": "RYOKO",
+          "name": "Ryoko",
+          "location": "NIGHTCLUB",
+          "kind": "NPC",
+          "met": true,
+          "met_minute": 0,
+          "completed": false,
+          "ready": false,
+          "reason": "Necesitas una copia propia del fragmento solicitado; préstamos y aportaciones ajenas no sirven.",
+          "wanted": "buffer",
+          "wanted_name": "Amortiguación",
+          "given": "scan",
+          "given_name": "Exploración",
+          "motive": "Necesito amortiguar las interrupciones de mi enlace. A cambio te paso mi módulo de Exploración.",
+          "copies": []
+        },
+        {
+          "id": "kissa_shield_v1",
+          "peer": "KISSA_TECH",
+          "name": "Técnico de Kissa",
+          "location": "CAFE",
+          "kind": "NPC",
+          "met": false,
+          "met_minute": null,
+          "completed": false,
+          "ready": false,
+          "reason": "Habla de intercambiar código con esta persona primero.",
+          "wanted": "",
+          "wanted_name": "",
+          "given": "",
+          "given_name": "",
+          "motive": "",
+          "copies": []
+        }
+      ],
+      "history": []
+    },
+    "situations": [],
+    "interaction": null,
+    "outgoing_interaction": null,
+    "messages": [
+      {
+        "id": "MSG_BOOTSTRAP_001",
+        "sender": "unknown@wired",
+        "subject": "NO SUBJECT",
+        "body": "NO ESTOY MUERTA.\n\nSOLO DEJÉ DE ESTAR AHÍ.",
+        "created_minute": 0,
+        "read": true,
+        "acknowledged": true,
+        "acknowledged_minute": 0
+      }
+    ],
+    "unread_messages": 0,
+    "wired": {
+      "connected": true,
+      "signals": [
+        {
+          "node_id": "NODE_07",
+          "location": "STATION",
+          "strength": 0.5,
+          "confidence": 0.35,
+          "origin_source": "WIRED_MESSAGE",
+          "current_source": "WIRED_MESSAGE",
+          "verified": false,
+          "updated_minute": 0
+        }
+      ],
+      "digital_presences": []
+    }
+  },
+  "missing": {
+    "schema_version": "0.1",
+    "minute": 0,
+    "player": {
+      "id": "PLAYER_1",
+      "name": "Player",
+      "faction": "UNALIGNED",
+      "location": "APARTMENT",
+      "goal": "UNKNOWN",
+      "energy": 1.0
+    },
+    "navigation": {
+      "reachable_locations": [
+        "APARTMENT_DISTRICT"
+      ]
+    },
+    "known_nodes": [
+      {
+        "id": "NODE_07",
+        "knowledge_confidence": 0.35,
+        "knowledge_source": "WIRED_MESSAGE",
+        "belief": {
+          "location": "STATION",
+          "strength": 0.5,
+          "confidence": 0.35,
+          "source": "WIRED_MESSAGE",
+          "updated_minute": 0
+        }
+      }
+    ],
+    "visible_actors": [],
+    "character_sheets": {
+      "player": {
+        "id": "PLAYER_1",
+        "name": "Player",
+        "kind": "PLAYER",
+        "faction": "UNALIGNED",
+        "location": "APARTMENT",
+        "energy": 1.0,
+        "known_nodes": 1,
+        "case_status": "UNSEEN",
+        "agency": "HUMAN_ONLY"
+      },
+      "visible_npcs": []
+    },
+    "station_case": {
+      "id": "STATION_ECHO_07",
+      "title": "El pulso ausente",
+      "status": "UNSEEN",
+      "resolution": null,
+      "summary": "Investiga NODE_07 en la estacion para buscar el rastro.",
+      "witness_count": 0,
+      "responses": []
+    },
+    "prologue": {
+      "enabled": false,
+      "stage": "LEGACY",
+      "hint": ""
+    },
+    "chapter_one": {
+      "active": true,
+      "title": "Ya habías estado aquí",
+      "started_minute": 0,
+      "connection_minute": 0,
+      "decision": null,
+      "hypothesis": "",
+      "hypothesis_status": "UNVERIFIED",
+      "evidence": [
+        {
+          "id": "RETURN_MESSAGE",
+          "title": "Has vuelto",
+          "kind": "MESSAGE",
+          "source_id": "UNKNOWN_WIRED",
+          "source_label": "Identidad desconocida · Wired",
+          "text": "Has vuelto.",
+          "acquired_minute": 0,
+          "claimed_time": "Recibido al abrir este capítulo, minuto 0",
+          "event_id": null
+        }
+      ],
+      "links": [],
+      "contradiction_linked": false,
+      "characters": [
+        "RESIDENT_001",
+        "RESIDENT_006",
+        "PROFESSOR",
+        "RYOKO"
+      ],
+      "notification": "Has vuelto"
+    },
+    "network_conflict": {
+      "active": true,
+      "multiple_operators": true,
+      "corporation": "Administradores de la Wired",
+      "corporate_control": 100.0,
+      "trace": 0,
+      "ready_in": 0,
+      "relays": [
+        {
+          "id": "RELAY_STATION",
+          "name": "Enlace del andén",
+          "location": "STATION",
+          "corporation": 80,
+          "mine": 0,
+          "defense": 0,
+          "suppressed_until": 0,
+          "inspected": false,
+          "controllers": [
+            {
+              "slot": "LINES",
+              "name": "Administrador de líneas",
+              "control": 80,
+              "suppressed_until": 0
+            },
+            {
+              "slot": "RECORDS",
+              "name": "Administrador de registros",
+              "control": 20,
+              "suppressed_until": 0
+            }
+          ]
+        },
+        {
+          "id": "RELAY_SCHOOL",
+          "name": "Enlace del pabellón B",
+          "location": "SCHOOL_LAB",
+          "corporation": 70,
+          "mine": 0,
+          "defense": 0,
+          "suppressed_until": 0,
+          "inspected": false,
+          "controllers": [
+            {
+              "slot": "LINES",
+              "name": "Administrador de líneas",
+              "control": 70,
+              "suppressed_until": 0
+            },
+            {
+              "slot": "RECORDS",
+              "name": "Administrador de registros",
+              "control": 30,
+              "suppressed_until": 0
+            }
+          ]
+        },
+        {
+          "id": "RELAY_VIDEO",
+          "name": "Enlace del videoclub",
+          "location": "VIDEO_CLUB",
+          "corporation": 55,
+          "mine": 0,
+          "defense": 0,
+          "suppressed_until": 0,
+          "inspected": false,
+          "controllers": [
+            {
+              "slot": "LINES",
+              "name": "Administrador de líneas",
+              "control": 55,
+              "suppressed_until": 0
+            },
+            {
+              "slot": "RECORDS",
+              "name": "Administrador de registros",
+              "control": 45,
+              "suppressed_until": 0
+            }
+          ]
+        }
+      ],
+      "rankings": [
+        {
+          "actor_id": "PLAYER_1",
+          "name": "Player",
+          "control": 0.0
+        }
+      ],
+      "pending": [],
+      "reports": [
+        {
+          "id": 1,
+          "minute": 0,
+          "source": "WORKSHOP",
+          "text": "El PC dispone de un taller de código. En Kissa Café han instalado un terminal: su técnico busca ayuda para comprobar un coprocesador."
+        }
+      ],
+      "visible_personnel": [],
+      "session_mode": "LOCAL"
+    },
+    "workshop": {
+      "active": true,
+      "arcade_catalog": true,
+      "snake_best_score": 0,
+      "shared_modules": [],
+      "lesson": 0,
+      "life_source": "def next_cell(alive, neighbors):\n    # Completa las reglas de nacimiento y supervivencia.\n    return False\n",
+      "draft": "use(\"routing\")\n",
+      "compiled": "use(\"routing\")\n",
+      "modules": [
+        "routing"
+      ],
+      "contract": "INDEPENDENT",
+      "best_score": 0,
+      "capacity": 4,
+      "cost": 2,
+      "assets": [
+        {
+          "id": "first_connection",
+          "kind": "CODE",
+          "model": "routing",
+          "source": "Tu primera conexión a la Wired",
+          "minute": 0,
+          "active": 0,
+          "ownership": "OWNED",
+          "name": "Enrutamiento",
+          "capacity": 0
+        },
+        {
+          "id": "home_navi",
+          "kind": "DEVICE",
+          "model": "navi",
+          "source": "Ordenador de casa",
+          "minute": 0,
+          "active": 1,
+          "ownership": "OWNED",
+          "name": "Navi A",
+          "capacity": 4
+        }
+      ],
+      "library": [
+        {
+          "id": "routing",
+          "name": "Enrutamiento",
+          "cost": 2,
+          "effect": "Conexión del montaje; conserva las acciones básicas del enlace."
+        }
+      ],
+      "offers": {},
+      "life_hint": "",
+      "session_mode": "LOCAL"
+    },
+    "circles": {
+      "active": true,
+      "session_mode": "LOCAL_NPC",
+      "contacts": [
+        {
+          "id": "RYOKO",
+          "name": "Ryoko",
+          "location": "NIGHTCLUB",
+          "condition": "Completa el Juego de la Vida y sigue independiente.",
+          "motive": "Quiere que las identidades puedan circular sin depender de un administrador.",
+          "met": false,
+          "met_minute": null,
+          "ready": false,
+          "available": true,
+          "kind": "NPC"
+        },
+        {
+          "id": "KISSA_TECH",
+          "name": "Técnico de Kissa",
+          "location": "CAFE",
+          "condition": "Gana Bit Courier y sigue independiente.",
+          "motive": "Quiere mantener las máquinas del café fuera del control corporativo.",
+          "met": false,
+          "met_minute": null,
+          "ready": false,
+          "available": true,
+          "kind": "NPC"
+        }
+      ],
+      "independent": true,
+      "group": null
+    },
+    "cafe_events": {
+      "active": true,
+      "minute": 0,
+      "attempts_limit": 3,
+      "events": [
+        {
+          "id": "KISSA_000001",
+          "edition": 1,
+          "opens": 60,
+          "closes": 360,
+          "prize": "Amortiguación",
+          "status": "UPCOMING",
+          "settled": false,
+          "ranking": [],
+          "attempts": 0,
+          "run_id": "",
+          "won": false,
+          "game_id": "bit_courier",
+          "game_name": "Bit Courier",
+          "game_rules": "Recoge al menos 3 paquetes y llega a la salida. Máximo 80 movimientos; los choques también consumen un movimiento.",
+          "catalog_entry": "courier_buffer",
+          "catalog_revision": 1
+        },
+        {
+          "id": "KISSA_000002",
+          "edition": 2,
+          "opens": 660,
+          "closes": 960,
+          "prize": "Memoria de enlace B",
+          "status": "UPCOMING",
+          "settled": false,
+          "ranking": [],
+          "attempts": 0,
+          "run_id": "",
+          "won": false,
+          "game_id": "signal_snake",
+          "game_name": "Serpiente de señal",
+          "game_rules": "La serpiente avanza sola. Gira con las flechas; recoge 6 señales y evita paredes y tu cuerpo. Tres señales bastan para clasificar, incluso si después chocas. Máximo 80 pasos.",
+          "catalog_entry": "snake_cache",
+          "catalog_revision": 1
+        }
+      ],
+      "rules": "Clasificación local con PNJ. Tres intentos por edición; cuenta tu mejor marca válida. Empatar en primer puesto comparte el premio. El cierre usa el reloj del mundo, que no avanza con el servidor apagado."
+    },
+    "code_exchange": {
+      "active": true,
+      "session_mode": "LOCAL_NPC",
+      "offers": [
+        {
+          "id": "ryoko_scan_v1",
+          "peer": "RYOKO",
+          "name": "Ryoko",
+          "location": "NIGHTCLUB",
+          "kind": "NPC",
+          "met": true,
+          "met_minute": 0,
+          "completed": false,
+          "ready": false,
+          "reason": "Necesitas una copia propia del fragmento solicitado; préstamos y aportaciones ajenas no sirven.",
+          "wanted": "buffer",
+          "wanted_name": "Amortiguación",
+          "given": "scan",
+          "given_name": "Exploración",
+          "motive": "Necesito amortiguar las interrupciones de mi enlace. A cambio te paso mi módulo de Exploración.",
+          "copies": []
+        },
+        {
+          "id": "kissa_shield_v1",
+          "peer": "KISSA_TECH",
+          "name": "Técnico de Kissa",
+          "location": "CAFE",
+          "kind": "NPC",
+          "met": true,
+          "met_minute": 0,
+          "completed": false,
+          "ready": false,
+          "reason": "Necesitas una copia propia del fragmento solicitado; préstamos y aportaciones ajenas no sirven.",
+          "wanted": "scan",
+          "wanted_name": "Exploración",
+          "given": "shield",
+          "given_name": "Protección",
+          "motive": "Quiero detectar intervenciones sobre las máquinas del café. Te cambio Exploración por una copia de Protección.",
+          "copies": []
+        }
+      ],
+      "history": []
+    },
+    "situations": [],
+    "interaction": null,
+    "outgoing_interaction": null,
+    "messages": [
+      {
+        "id": "MSG_BOOTSTRAP_001",
+        "sender": "unknown@wired",
+        "subject": "NO SUBJECT",
+        "body": "NO ESTOY MUERTA.\n\nSOLO DEJÉ DE ESTAR AHÍ.",
+        "created_minute": 0,
+        "read": true,
+        "acknowledged": true,
+        "acknowledged_minute": 0
+      }
+    ],
+    "unread_messages": 0,
+    "wired": {
+      "connected": true,
+      "signals": [
+        {
+          "node_id": "NODE_07",
+          "location": "STATION",
+          "strength": 0.5,
+          "confidence": 0.35,
+          "origin_source": "WIRED_MESSAGE",
+          "current_source": "WIRED_MESSAGE",
+          "verified": false,
+          "updated_minute": 0
+        }
+      ],
+      "digital_presences": []
+    }
+  },
+  "ready": {
+    "schema_version": "0.1",
+    "minute": 1010,
+    "player": {
+      "id": "PLAYER_1",
+      "name": "Player",
+      "faction": "UNALIGNED",
+      "location": "APARTMENT",
+      "goal": "UNKNOWN",
+      "energy": 1.0
+    },
+    "navigation": {
+      "reachable_locations": [
+        "APARTMENT_DISTRICT"
+      ]
+    },
+    "known_nodes": [
+      {
+        "id": "NODE_07",
+        "knowledge_confidence": 0.35,
+        "knowledge_source": "WIRED_MESSAGE",
+        "belief": {
+          "location": "STATION",
+          "strength": 0.5,
+          "confidence": 0.35,
+          "source": "WIRED_MESSAGE",
+          "updated_minute": 0
+        }
+      }
+    ],
+    "visible_actors": [],
+    "character_sheets": {
+      "player": {
+        "id": "PLAYER_1",
+        "name": "Player",
+        "kind": "PLAYER",
+        "faction": "UNALIGNED",
+        "location": "APARTMENT",
+        "energy": 1.0,
+        "known_nodes": 1,
+        "case_status": "UNSEEN",
+        "agency": "HUMAN_ONLY"
+      },
+      "visible_npcs": []
+    },
+    "station_case": {
+      "id": "STATION_ECHO_07",
+      "title": "El pulso ausente",
+      "status": "UNSEEN",
+      "resolution": null,
+      "summary": "Investiga NODE_07 en la estacion para buscar el rastro.",
+      "witness_count": 0,
+      "responses": []
+    },
+    "prologue": {
+      "enabled": false,
+      "stage": "LEGACY",
+      "hint": ""
+    },
+    "chapter_one": {
+      "active": true,
+      "title": "Ya habías estado aquí",
+      "started_minute": 0,
+      "connection_minute": 0,
+      "decision": null,
+      "hypothesis": "",
+      "hypothesis_status": "UNVERIFIED",
+      "evidence": [
+        {
+          "id": "RETURN_MESSAGE",
+          "title": "Has vuelto",
+          "kind": "MESSAGE",
+          "source_id": "UNKNOWN_WIRED",
+          "source_label": "Identidad desconocida · Wired",
+          "text": "Has vuelto.",
+          "acquired_minute": 0,
+          "claimed_time": "Recibido al abrir este capítulo, minuto 0",
+          "event_id": null
+        }
+      ],
+      "links": [],
+      "contradiction_linked": false,
+      "characters": [
+        "RESIDENT_001",
+        "RESIDENT_006",
+        "PROFESSOR",
+        "RYOKO"
+      ],
+      "notification": "Has vuelto"
+    },
+    "network_conflict": {
+      "active": true,
+      "multiple_operators": true,
+      "corporation": "Administradores de la Wired",
+      "corporate_control": 100.0,
+      "trace": 0,
+      "ready_in": 0,
+      "relays": [
+        {
+          "id": "RELAY_STATION",
+          "name": "Enlace del andén",
+          "location": "STATION",
+          "corporation": 80,
+          "mine": 0,
+          "defense": 0,
+          "suppressed_until": 0,
+          "inspected": false,
+          "controllers": [
+            {
+              "slot": "LINES",
+              "name": "Administrador de líneas",
+              "control": 80,
+              "suppressed_until": 0
+            },
+            {
+              "slot": "RECORDS",
+              "name": "Administrador de registros",
+              "control": 20,
+              "suppressed_until": 0
+            }
+          ]
+        },
+        {
+          "id": "RELAY_SCHOOL",
+          "name": "Enlace del pabellón B",
+          "location": "SCHOOL_LAB",
+          "corporation": 70,
+          "mine": 0,
+          "defense": 0,
+          "suppressed_until": 0,
+          "inspected": false,
+          "controllers": [
+            {
+              "slot": "LINES",
+              "name": "Administrador de líneas",
+              "control": 70,
+              "suppressed_until": 0
+            },
+            {
+              "slot": "RECORDS",
+              "name": "Administrador de registros",
+              "control": 30,
+              "suppressed_until": 0
+            }
+          ]
+        },
+        {
+          "id": "RELAY_VIDEO",
+          "name": "Enlace del videoclub",
+          "location": "VIDEO_CLUB",
+          "corporation": 55,
+          "mine": 0,
+          "defense": 0,
+          "suppressed_until": 0,
+          "inspected": false,
+          "controllers": [
+            {
+              "slot": "LINES",
+              "name": "Administrador de líneas",
+              "control": 55,
+              "suppressed_until": 0
+            },
+            {
+              "slot": "RECORDS",
+              "name": "Administrador de registros",
+              "control": 45,
+              "suppressed_until": 0
+            }
+          ]
+        }
+      ],
+      "rankings": [
+        {
+          "actor_id": "PLAYER_1",
+          "name": "Player",
+          "control": 0.0
+        }
+      ],
+      "pending": [],
+      "reports": [
+        {
+          "id": 1,
+          "minute": 0,
+          "source": "WORKSHOP",
+          "text": "El PC dispone de un taller de código. En Kissa Café han instalado un terminal: su técnico busca ayuda para comprobar un coprocesador."
+        }
+      ],
+      "visible_personnel": [],
+      "session_mode": "LOCAL"
+    },
+    "workshop": {
+      "active": true,
+      "arcade_catalog": true,
+      "snake_best_score": 0,
+      "shared_modules": [],
+      "lesson": 0,
+      "life_source": "def next_cell(alive, neighbors):\n    # Completa las reglas de nacimiento y supervivencia.\n    return False\n",
+      "draft": "use(\"routing\")\n",
+      "compiled": "use(\"routing\")\n",
+      "modules": [
+        "routing"
+      ],
+      "contract": "INDEPENDENT",
+      "best_score": 0,
+      "capacity": 4,
+      "cost": 2,
+      "assets": [
+        {
+          "id": "first_connection",
+          "kind": "CODE",
+          "model": "routing",
+          "source": "Tu primera conexión a la Wired",
+          "minute": 0,
+          "active": 0,
+          "ownership": "OWNED",
+          "name": "Enrutamiento",
+          "capacity": 0
+        },
+        {
+          "id": "home_navi",
+          "kind": "DEVICE",
+          "model": "navi",
+          "source": "Ordenador de casa",
+          "minute": 0,
+          "active": 1,
+          "ownership": "OWNED",
+          "name": "Navi A",
+          "capacity": 4
+        },
+        {
+          "id": "event_KISSA_000001",
+          "kind": "CODE",
+          "model": "buffer",
+          "source": "Kissa · torneo 1 · primer puesto",
+          "minute": 1000,
+          "active": 0,
+          "ownership": "OWNED",
+          "name": "Amortiguación",
+          "capacity": 0
+        }
+      ],
+      "library": [
+        {
+          "id": "routing",
+          "name": "Enrutamiento",
+          "cost": 2,
+          "effect": "Conexión del montaje; conserva las acciones básicas del enlace."
+        },
+        {
+          "id": "buffer",
+          "name": "Amortiguación",
+          "cost": 2,
+          "effect": "Absorbe 5 puntos de pérdida en cada intervención corporativa mientras esté compilada. No se acumula con otra copia."
+        }
+      ],
+      "offers": {},
+      "life_hint": "",
+      "session_mode": "LOCAL"
+    },
+    "circles": {
+      "active": true,
+      "session_mode": "LOCAL_NPC",
+      "contacts": [
+        {
+          "id": "RYOKO",
+          "name": "Ryoko",
+          "location": "NIGHTCLUB",
+          "condition": "Completa el Juego de la Vida y sigue independiente.",
+          "motive": "Quiere que las identidades puedan circular sin depender de un administrador.",
+          "met": false,
+          "met_minute": null,
+          "ready": false,
+          "available": true,
+          "kind": "NPC"
+        },
+        {
+          "id": "KISSA_TECH",
+          "name": "Técnico de Kissa",
+          "location": "CAFE",
+          "condition": "Gana Bit Courier y sigue independiente.",
+          "motive": "Quiere mantener las máquinas del café fuera del control corporativo.",
+          "met": false,
+          "met_minute": null,
+          "ready": false,
+          "available": true,
+          "kind": "NPC"
+        }
+      ],
+      "independent": true,
+      "group": null
+    },
+    "cafe_events": {
+      "active": true,
+      "minute": 1010,
+      "attempts_limit": 3,
+      "events": [
+        {
+          "id": "KISSA_000001",
+          "edition": 1,
+          "opens": 60,
+          "closes": 360,
+          "prize": "Amortiguación",
+          "status": "CLOSED",
+          "settled": false,
+          "ranking": [
+            {
+              "name": "Mika",
+              "npc": true,
+              "score": 364,
+              "minute": 180,
+              "rank": 1,
+              "mine": false
+            },
+            {
+              "name": "Aki",
+              "npc": true,
+              "score": 272,
+              "minute": 100,
+              "rank": 2,
+              "mine": false
+            }
+          ],
+          "attempts": 0,
+          "run_id": "",
+          "won": true,
+          "game_id": "bit_courier",
+          "game_name": "Bit Courier",
+          "game_rules": "Recoge al menos 3 paquetes y llega a la salida. Máximo 80 movimientos; los choques también consumen un movimiento.",
+          "catalog_entry": "courier_buffer",
+          "catalog_revision": 1
+        },
+        {
+          "id": "KISSA_000002",
+          "edition": 2,
+          "opens": 660,
+          "closes": 960,
+          "prize": "Memoria de enlace B",
+          "status": "CLOSED",
+          "settled": false,
+          "ranking": [
+            {
+              "name": "Mika",
+              "npc": true,
+              "score": 370,
+              "minute": 780,
+              "rank": 1,
+              "mine": false
+            },
+            {
+              "name": "Aki",
+              "npc": true,
+              "score": 276,
+              "minute": 700,
+              "rank": 2,
+              "mine": false
+            }
+          ],
+          "attempts": 0,
+          "run_id": "",
+          "won": false,
+          "game_id": "signal_snake",
+          "game_name": "Serpiente de señal",
+          "game_rules": "La serpiente avanza sola. Gira con las flechas; recoge 6 señales y evita paredes y tu cuerpo. Tres señales bastan para clasificar, incluso si después chocas. Máximo 80 pasos.",
+          "catalog_entry": "snake_cache",
+          "catalog_revision": 1
+        }
+      ],
+      "rules": "Clasificación local con PNJ. Tres intentos por edición; cuenta tu mejor marca válida. Empatar en primer puesto comparte el premio. El cierre usa el reloj del mundo, que no avanza con el servidor apagado."
+    },
+    "code_exchange": {
+      "active": true,
+      "session_mode": "LOCAL_NPC",
+      "offers": [
+        {
+          "id": "ryoko_scan_v1",
+          "peer": "RYOKO",
+          "name": "Ryoko",
+          "location": "NIGHTCLUB",
+          "kind": "NPC",
+          "met": true,
+          "met_minute": 0,
+          "completed": false,
+          "ready": true,
+          "reason": "",
+          "wanted": "buffer",
+          "wanted_name": "Amortiguación",
+          "given": "scan",
+          "given_name": "Exploración",
+          "motive": "Necesito amortiguar las interrupciones de mi enlace. A cambio te paso mi módulo de Exploración.",
+          "copies": [
+            {
+              "id": "event_KISSA_000001",
+              "source": "Kissa · torneo 1 · primer puesto",
+              "minute": 1000
+            }
+          ]
+        },
+        {
+          "id": "kissa_shield_v1",
+          "peer": "KISSA_TECH",
+          "name": "Técnico de Kissa",
+          "location": "CAFE",
+          "kind": "NPC",
+          "met": true,
+          "met_minute": 0,
+          "completed": false,
+          "ready": false,
+          "reason": "Necesitas una copia propia del fragmento solicitado; préstamos y aportaciones ajenas no sirven.",
+          "wanted": "scan",
+          "wanted_name": "Exploración",
+          "given": "shield",
+          "given_name": "Protección",
+          "motive": "Quiero detectar intervenciones sobre las máquinas del café. Te cambio Exploración por una copia de Protección.",
+          "copies": []
+        }
+      ],
+      "history": []
+    },
+    "situations": [],
+    "interaction": null,
+    "outgoing_interaction": null,
+    "messages": [
+      {
+        "id": "MSG_BOOTSTRAP_001",
+        "sender": "unknown@wired",
+        "subject": "NO SUBJECT",
+        "body": "NO ESTOY MUERTA.\n\nSOLO DEJÉ DE ESTAR AHÍ.",
+        "created_minute": 0,
+        "read": true,
+        "acknowledged": true,
+        "acknowledged_minute": 0
+      }
+    ],
+    "unread_messages": 0,
+    "wired": {
+      "connected": true,
+      "signals": [
+        {
+          "node_id": "NODE_07",
+          "location": "STATION",
+          "strength": 0.5,
+          "confidence": 0.35,
+          "origin_source": "WIRED_MESSAGE",
+          "current_source": "WIRED_MESSAGE",
+          "verified": false,
+          "updated_minute": 0
+        }
+      ],
+      "digital_presences": []
+    }
+  },
+  "blocked": {
+    "schema_version": "0.1",
+    "minute": 1010,
+    "player": {
+      "id": "PLAYER_1",
+      "name": "Player",
+      "faction": "UNALIGNED",
+      "location": "APARTMENT",
+      "goal": "UNKNOWN",
+      "energy": 1.0
+    },
+    "navigation": {
+      "reachable_locations": [
+        "APARTMENT_DISTRICT"
+      ]
+    },
+    "known_nodes": [
+      {
+        "id": "NODE_07",
+        "knowledge_confidence": 0.35,
+        "knowledge_source": "WIRED_MESSAGE",
+        "belief": {
+          "location": "STATION",
+          "strength": 0.5,
+          "confidence": 0.35,
+          "source": "WIRED_MESSAGE",
+          "updated_minute": 0
+        }
+      }
+    ],
+    "visible_actors": [],
+    "character_sheets": {
+      "player": {
+        "id": "PLAYER_1",
+        "name": "Player",
+        "kind": "PLAYER",
+        "faction": "UNALIGNED",
+        "location": "APARTMENT",
+        "energy": 1.0,
+        "known_nodes": 1,
+        "case_status": "UNSEEN",
+        "agency": "HUMAN_ONLY"
+      },
+      "visible_npcs": []
+    },
+    "station_case": {
+      "id": "STATION_ECHO_07",
+      "title": "El pulso ausente",
+      "status": "UNSEEN",
+      "resolution": null,
+      "summary": "Investiga NODE_07 en la estacion para buscar el rastro.",
+      "witness_count": 0,
+      "responses": []
+    },
+    "prologue": {
+      "enabled": false,
+      "stage": "LEGACY",
+      "hint": ""
+    },
+    "chapter_one": {
+      "active": true,
+      "title": "Ya habías estado aquí",
+      "started_minute": 0,
+      "connection_minute": 0,
+      "decision": null,
+      "hypothesis": "",
+      "hypothesis_status": "UNVERIFIED",
+      "evidence": [
+        {
+          "id": "RETURN_MESSAGE",
+          "title": "Has vuelto",
+          "kind": "MESSAGE",
+          "source_id": "UNKNOWN_WIRED",
+          "source_label": "Identidad desconocida · Wired",
+          "text": "Has vuelto.",
+          "acquired_minute": 0,
+          "claimed_time": "Recibido al abrir este capítulo, minuto 0",
+          "event_id": null
+        }
+      ],
+      "links": [],
+      "contradiction_linked": false,
+      "characters": [
+        "RESIDENT_001",
+        "RESIDENT_006",
+        "PROFESSOR",
+        "RYOKO"
+      ],
+      "notification": "Has vuelto"
+    },
+    "network_conflict": {
+      "active": true,
+      "multiple_operators": true,
+      "corporation": "Administradores de la Wired",
+      "corporate_control": 100.0,
+      "trace": 0,
+      "ready_in": 0,
+      "relays": [
+        {
+          "id": "RELAY_STATION",
+          "name": "Enlace del andén",
+          "location": "STATION",
+          "corporation": 80,
+          "mine": 0,
+          "defense": 0,
+          "suppressed_until": 0,
+          "inspected": false,
+          "controllers": [
+            {
+              "slot": "LINES",
+              "name": "Administrador de líneas",
+              "control": 80,
+              "suppressed_until": 0
+            },
+            {
+              "slot": "RECORDS",
+              "name": "Administrador de registros",
+              "control": 20,
+              "suppressed_until": 0
+            }
+          ]
+        },
+        {
+          "id": "RELAY_SCHOOL",
+          "name": "Enlace del pabellón B",
+          "location": "SCHOOL_LAB",
+          "corporation": 70,
+          "mine": 0,
+          "defense": 0,
+          "suppressed_until": 0,
+          "inspected": false,
+          "controllers": [
+            {
+              "slot": "LINES",
+              "name": "Administrador de líneas",
+              "control": 70,
+              "suppressed_until": 0
+            },
+            {
+              "slot": "RECORDS",
+              "name": "Administrador de registros",
+              "control": 30,
+              "suppressed_until": 0
+            }
+          ]
+        },
+        {
+          "id": "RELAY_VIDEO",
+          "name": "Enlace del videoclub",
+          "location": "VIDEO_CLUB",
+          "corporation": 55,
+          "mine": 0,
+          "defense": 0,
+          "suppressed_until": 0,
+          "inspected": false,
+          "controllers": [
+            {
+              "slot": "LINES",
+              "name": "Administrador de líneas",
+              "control": 55,
+              "suppressed_until": 0
+            },
+            {
+              "slot": "RECORDS",
+              "name": "Administrador de registros",
+              "control": 45,
+              "suppressed_until": 0
+            }
+          ]
+        }
+      ],
+      "rankings": [
+        {
+          "actor_id": "PLAYER_1",
+          "name": "Player",
+          "control": 0.0
+        }
+      ],
+      "pending": [],
+      "reports": [
+        {
+          "id": 1,
+          "minute": 0,
+          "source": "WORKSHOP",
+          "text": "El PC dispone de un taller de código. En Kissa Café han instalado un terminal: su técnico busca ayuda para comprobar un coprocesador."
+        }
+      ],
+      "visible_personnel": [],
+      "session_mode": "LOCAL"
+    },
+    "workshop": {
+      "active": true,
+      "arcade_catalog": true,
+      "snake_best_score": 0,
+      "shared_modules": [],
+      "lesson": 0,
+      "life_source": "def next_cell(alive, neighbors):\n    # Completa las reglas de nacimiento y supervivencia.\n    return False\n",
+      "draft": "use(\"routing\")\n",
+      "compiled": "use(\"routing\")\n",
+      "modules": [
+        "routing"
+      ],
+      "contract": "NOEMA",
+      "best_score": 0,
+      "capacity": 3,
+      "cost": 2,
+      "assets": [
+        {
+          "id": "first_connection",
+          "kind": "CODE",
+          "model": "routing",
+          "source": "Tu primera conexión a la Wired",
+          "minute": 0,
+          "active": 0,
+          "ownership": "OWNED",
+          "name": "Enrutamiento",
+          "capacity": 0
+        },
+        {
+          "id": "home_navi",
+          "kind": "DEVICE",
+          "model": "navi",
+          "source": "Ordenador de casa",
+          "minute": 0,
+          "active": 1,
+          "ownership": "OWNED",
+          "name": "Navi A",
+          "capacity": 4
+        },
+        {
+          "id": "event_KISSA_000001",
+          "kind": "CODE",
+          "model": "buffer",
+          "source": "Kissa · torneo 1 · primer puesto",
+          "minute": 1000,
+          "active": 0,
+          "ownership": "OWNED",
+          "name": "Amortiguación",
+          "capacity": 0
+        }
+      ],
+      "library": [
+        {
+          "id": "routing",
+          "name": "Enrutamiento",
+          "cost": 2,
+          "effect": "Conexión del montaje; conserva las acciones básicas del enlace."
+        },
+        {
+          "id": "scan",
+          "name": "Exploración",
+          "cost": 3,
+          "effect": "Desde casa, leer la actividad de un enlace previamente examinado."
+        },
+        {
+          "id": "buffer",
+          "name": "Amortiguación",
+          "cost": 2,
+          "effect": "Absorbe 5 puntos de pérdida en cada intervención corporativa mientras esté compilada. No se acumula con otra copia."
+        }
+      ],
+      "offers": {},
+      "life_hint": "",
+      "session_mode": "LOCAL"
+    },
+    "circles": {
+      "active": true,
+      "session_mode": "LOCAL_NPC",
+      "contacts": [
+        {
+          "id": "RYOKO",
+          "name": "Ryoko",
+          "location": "NIGHTCLUB",
+          "condition": "Completa el Juego de la Vida y sigue independiente.",
+          "motive": "Quiere que las identidades puedan circular sin depender de un administrador.",
+          "met": false,
+          "met_minute": null,
+          "ready": false,
+          "available": true,
+          "kind": "NPC"
+        },
+        {
+          "id": "KISSA_TECH",
+          "name": "Técnico de Kissa",
+          "location": "CAFE",
+          "condition": "Gana Bit Courier y sigue independiente.",
+          "motive": "Quiere mantener las máquinas del café fuera del control corporativo.",
+          "met": false,
+          "met_minute": null,
+          "ready": false,
+          "available": true,
+          "kind": "NPC"
+        }
+      ],
+      "independent": false,
+      "group": null
+    },
+    "cafe_events": {
+      "active": true,
+      "minute": 1010,
+      "attempts_limit": 3,
+      "events": [
+        {
+          "id": "KISSA_000001",
+          "edition": 1,
+          "opens": 60,
+          "closes": 360,
+          "prize": "Amortiguación",
+          "status": "CLOSED",
+          "settled": false,
+          "ranking": [
+            {
+              "name": "Mika",
+              "npc": true,
+              "score": 364,
+              "minute": 180,
+              "rank": 1,
+              "mine": false
+            },
+            {
+              "name": "Aki",
+              "npc": true,
+              "score": 272,
+              "minute": 100,
+              "rank": 2,
+              "mine": false
+            }
+          ],
+          "attempts": 0,
+          "run_id": "",
+          "won": true,
+          "game_id": "bit_courier",
+          "game_name": "Bit Courier",
+          "game_rules": "Recoge al menos 3 paquetes y llega a la salida. Máximo 80 movimientos; los choques también consumen un movimiento.",
+          "catalog_entry": "courier_buffer",
+          "catalog_revision": 1
+        },
+        {
+          "id": "KISSA_000002",
+          "edition": 2,
+          "opens": 660,
+          "closes": 960,
+          "prize": "Memoria de enlace B",
+          "status": "CLOSED",
+          "settled": false,
+          "ranking": [
+            {
+              "name": "Mika",
+              "npc": true,
+              "score": 370,
+              "minute": 780,
+              "rank": 1,
+              "mine": false
+            },
+            {
+              "name": "Aki",
+              "npc": true,
+              "score": 276,
+              "minute": 700,
+              "rank": 2,
+              "mine": false
+            }
+          ],
+          "attempts": 0,
+          "run_id": "",
+          "won": false,
+          "game_id": "signal_snake",
+          "game_name": "Serpiente de señal",
+          "game_rules": "La serpiente avanza sola. Gira con las flechas; recoge 6 señales y evita paredes y tu cuerpo. Tres señales bastan para clasificar, incluso si después chocas. Máximo 80 pasos.",
+          "catalog_entry": "snake_cache",
+          "catalog_revision": 1
+        }
+      ],
+      "rules": "Clasificación local con PNJ. Tres intentos por edición; cuenta tu mejor marca válida. Empatar en primer puesto comparte el premio. El cierre usa el reloj del mundo, que no avanza con el servidor apagado."
+    },
+    "code_exchange": {
+      "active": true,
+      "session_mode": "LOCAL_NPC",
+      "offers": [
+        {
+          "id": "ryoko_scan_v1",
+          "peer": "RYOKO",
+          "name": "Ryoko",
+          "location": "NIGHTCLUB",
+          "kind": "NPC",
+          "met": true,
+          "met_minute": 0,
+          "completed": false,
+          "ready": false,
+          "reason": "Termina tu contrato corporativo para intercambiar.",
+          "wanted": "buffer",
+          "wanted_name": "Amortiguación",
+          "given": "scan",
+          "given_name": "Exploración",
+          "motive": "Necesito amortiguar las interrupciones de mi enlace. A cambio te paso mi módulo de Exploración.",
+          "copies": [
+            {
+              "id": "event_KISSA_000001",
+              "source": "Kissa · torneo 1 · primer puesto",
+              "minute": 1000
+            }
+          ]
+        },
+        {
+          "id": "kissa_shield_v1",
+          "peer": "KISSA_TECH",
+          "name": "Técnico de Kissa",
+          "location": "CAFE",
+          "kind": "NPC",
+          "met": true,
+          "met_minute": 0,
+          "completed": false,
+          "ready": false,
+          "reason": "Termina tu contrato corporativo para intercambiar.",
+          "wanted": "scan",
+          "wanted_name": "Exploración",
+          "given": "shield",
+          "given_name": "Protección",
+          "motive": "Quiero detectar intervenciones sobre las máquinas del café. Te cambio Exploración por una copia de Protección.",
+          "copies": []
+        }
+      ],
+      "history": []
+    },
+    "situations": [],
+    "interaction": null,
+    "outgoing_interaction": null,
+    "messages": [
+      {
+        "id": "MSG_BOOTSTRAP_001",
+        "sender": "unknown@wired",
+        "subject": "NO SUBJECT",
+        "body": "NO ESTOY MUERTA.\n\nSOLO DEJÉ DE ESTAR AHÍ.",
+        "created_minute": 0,
+        "read": true,
+        "acknowledged": true,
+        "acknowledged_minute": 0
+      }
+    ],
+    "unread_messages": 0,
+    "wired": {
+      "connected": true,
+      "signals": [
+        {
+          "node_id": "NODE_07",
+          "location": "STATION",
+          "strength": 0.5,
+          "confidence": 0.35,
+          "origin_source": "WIRED_MESSAGE",
+          "current_source": "WIRED_MESSAGE",
+          "verified": false,
+          "updated_minute": 0
+        }
+      ],
+      "digital_presences": []
+    }
+  },
+  "first": {
+    "text": "Ryoko recibió tu copia de Amortiguación. Recibiste Exploración. Ambos conserváis los originales. Insértalo y compílalo en Código; no se activa solo.",
+    "offer": "ryoko_scan_v1",
+    "peer": "RYOKO",
+    "peer_name": "Ryoko",
+    "minute": 1010,
+    "sent": {
+      "owner": "PLAYER_1",
+      "asset": "event_KISSA_000001",
+      "model": "buffer",
+      "name": "Amortiguación",
+      "source": "Kissa · torneo 1 · primer puesto",
+      "acquired_minute": 1000
+    },
+    "received": {
+      "owner": "PLAYER_1",
+      "asset": "exchange_ryoko_scan_v1",
+      "model": "scan",
+      "name": "Exploración",
+      "source": "Copia compartida por Ryoko · Exploración",
+      "acquired_minute": 1010,
+      "from": "RYOKO",
+      "original_acquired_minute": null
+    }
+  },
+  "received": {
+    "schema_version": "0.1",
+    "minute": 1010,
+    "player": {
+      "id": "PLAYER_1",
+      "name": "Player",
+      "faction": "UNALIGNED",
+      "location": "APARTMENT",
+      "goal": "UNKNOWN",
+      "energy": 1.0
+    },
+    "navigation": {
+      "reachable_locations": [
+        "APARTMENT_DISTRICT"
+      ]
+    },
+    "known_nodes": [
+      {
+        "id": "NODE_07",
+        "knowledge_confidence": 0.35,
+        "knowledge_source": "WIRED_MESSAGE",
+        "belief": {
+          "location": "STATION",
+          "strength": 0.5,
+          "confidence": 0.35,
+          "source": "WIRED_MESSAGE",
+          "updated_minute": 0
+        }
+      }
+    ],
+    "visible_actors": [],
+    "character_sheets": {
+      "player": {
+        "id": "PLAYER_1",
+        "name": "Player",
+        "kind": "PLAYER",
+        "faction": "UNALIGNED",
+        "location": "APARTMENT",
+        "energy": 1.0,
+        "known_nodes": 1,
+        "case_status": "UNSEEN",
+        "agency": "HUMAN_ONLY"
+      },
+      "visible_npcs": []
+    },
+    "station_case": {
+      "id": "STATION_ECHO_07",
+      "title": "El pulso ausente",
+      "status": "UNSEEN",
+      "resolution": null,
+      "summary": "Investiga NODE_07 en la estacion para buscar el rastro.",
+      "witness_count": 0,
+      "responses": []
+    },
+    "prologue": {
+      "enabled": false,
+      "stage": "LEGACY",
+      "hint": ""
+    },
+    "chapter_one": {
+      "active": true,
+      "title": "Ya habías estado aquí",
+      "started_minute": 0,
+      "connection_minute": 0,
+      "decision": null,
+      "hypothesis": "",
+      "hypothesis_status": "UNVERIFIED",
+      "evidence": [
+        {
+          "id": "RETURN_MESSAGE",
+          "title": "Has vuelto",
+          "kind": "MESSAGE",
+          "source_id": "UNKNOWN_WIRED",
+          "source_label": "Identidad desconocida · Wired",
+          "text": "Has vuelto.",
+          "acquired_minute": 0,
+          "claimed_time": "Recibido al abrir este capítulo, minuto 0",
+          "event_id": null
+        }
+      ],
+      "links": [],
+      "contradiction_linked": false,
+      "characters": [
+        "RESIDENT_001",
+        "RESIDENT_006",
+        "PROFESSOR",
+        "RYOKO"
+      ],
+      "notification": "Has vuelto"
+    },
+    "network_conflict": {
+      "active": true,
+      "multiple_operators": true,
+      "corporation": "Administradores de la Wired",
+      "corporate_control": 100.0,
+      "trace": 0,
+      "ready_in": 0,
+      "relays": [
+        {
+          "id": "RELAY_STATION",
+          "name": "Enlace del andén",
+          "location": "STATION",
+          "corporation": 80,
+          "mine": 0,
+          "defense": 0,
+          "suppressed_until": 0,
+          "inspected": false,
+          "controllers": [
+            {
+              "slot": "LINES",
+              "name": "Administrador de líneas",
+              "control": 80,
+              "suppressed_until": 0
+            },
+            {
+              "slot": "RECORDS",
+              "name": "Administrador de registros",
+              "control": 20,
+              "suppressed_until": 0
+            }
+          ]
+        },
+        {
+          "id": "RELAY_SCHOOL",
+          "name": "Enlace del pabellón B",
+          "location": "SCHOOL_LAB",
+          "corporation": 70,
+          "mine": 0,
+          "defense": 0,
+          "suppressed_until": 0,
+          "inspected": false,
+          "controllers": [
+            {
+              "slot": "LINES",
+              "name": "Administrador de líneas",
+              "control": 70,
+              "suppressed_until": 0
+            },
+            {
+              "slot": "RECORDS",
+              "name": "Administrador de registros",
+              "control": 30,
+              "suppressed_until": 0
+            }
+          ]
+        },
+        {
+          "id": "RELAY_VIDEO",
+          "name": "Enlace del videoclub",
+          "location": "VIDEO_CLUB",
+          "corporation": 55,
+          "mine": 0,
+          "defense": 0,
+          "suppressed_until": 0,
+          "inspected": false,
+          "controllers": [
+            {
+              "slot": "LINES",
+              "name": "Administrador de líneas",
+              "control": 55,
+              "suppressed_until": 0
+            },
+            {
+              "slot": "RECORDS",
+              "name": "Administrador de registros",
+              "control": 45,
+              "suppressed_until": 0
+            }
+          ]
+        }
+      ],
+      "rankings": [
+        {
+          "actor_id": "PLAYER_1",
+          "name": "Player",
+          "control": 0.0
+        }
+      ],
+      "pending": [],
+      "reports": [
+        {
+          "id": 2,
+          "minute": 1010,
+          "source": "CODE_EXCHANGE",
+          "text": "Ryoko recibió tu copia de Amortiguación. Recibiste Exploración. Ambos conserváis los originales. Insértalo y compílalo en Código; no se activa solo."
+        },
+        {
+          "id": 1,
+          "minute": 0,
+          "source": "WORKSHOP",
+          "text": "El PC dispone de un taller de código. En Kissa Café han instalado un terminal: su técnico busca ayuda para comprobar un coprocesador."
+        }
+      ],
+      "visible_personnel": [],
+      "session_mode": "LOCAL"
+    },
+    "workshop": {
+      "active": true,
+      "arcade_catalog": true,
+      "snake_best_score": 0,
+      "shared_modules": [],
+      "lesson": 0,
+      "life_source": "def next_cell(alive, neighbors):\n    # Completa las reglas de nacimiento y supervivencia.\n    return False\n",
+      "draft": "use(\"routing\")\n",
+      "compiled": "use(\"routing\")\n",
+      "modules": [
+        "routing"
+      ],
+      "contract": "INDEPENDENT",
+      "best_score": 0,
+      "capacity": 4,
+      "cost": 2,
+      "assets": [
+        {
+          "id": "first_connection",
+          "kind": "CODE",
+          "model": "routing",
+          "source": "Tu primera conexión a la Wired",
+          "minute": 0,
+          "active": 0,
+          "ownership": "OWNED",
+          "name": "Enrutamiento",
+          "capacity": 0
+        },
+        {
+          "id": "home_navi",
+          "kind": "DEVICE",
+          "model": "navi",
+          "source": "Ordenador de casa",
+          "minute": 0,
+          "active": 1,
+          "ownership": "OWNED",
+          "name": "Navi A",
+          "capacity": 4
+        },
+        {
+          "id": "event_KISSA_000001",
+          "kind": "CODE",
+          "model": "buffer",
+          "source": "Kissa · torneo 1 · primer puesto",
+          "minute": 1000,
+          "active": 0,
+          "ownership": "OWNED",
+          "name": "Amortiguación",
+          "capacity": 0
+        },
+        {
+          "id": "exchange_ryoko_scan_v1",
+          "kind": "CODE",
+          "model": "scan",
+          "source": "Copia compartida por Ryoko · Exploración",
+          "minute": 1010,
+          "active": 0,
+          "ownership": "OWNED",
+          "name": "Exploración",
+          "capacity": 0
+        }
+      ],
+      "library": [
+        {
+          "id": "routing",
+          "name": "Enrutamiento",
+          "cost": 2,
+          "effect": "Conexión del montaje; conserva las acciones básicas del enlace."
+        },
+        {
+          "id": "scan",
+          "name": "Exploración",
+          "cost": 3,
+          "effect": "Desde casa, leer la actividad de un enlace previamente examinado."
+        },
+        {
+          "id": "buffer",
+          "name": "Amortiguación",
+          "cost": 2,
+          "effect": "Absorbe 5 puntos de pérdida en cada intervención corporativa mientras esté compilada. No se acumula con otra copia."
+        }
+      ],
+      "offers": {},
+      "life_hint": "",
+      "session_mode": "LOCAL"
+    },
+    "circles": {
+      "active": true,
+      "session_mode": "LOCAL_NPC",
+      "contacts": [
+        {
+          "id": "RYOKO",
+          "name": "Ryoko",
+          "location": "NIGHTCLUB",
+          "condition": "Completa el Juego de la Vida y sigue independiente.",
+          "motive": "Quiere que las identidades puedan circular sin depender de un administrador.",
+          "met": false,
+          "met_minute": null,
+          "ready": false,
+          "available": true,
+          "kind": "NPC"
+        },
+        {
+          "id": "KISSA_TECH",
+          "name": "Técnico de Kissa",
+          "location": "CAFE",
+          "condition": "Gana Bit Courier y sigue independiente.",
+          "motive": "Quiere mantener las máquinas del café fuera del control corporativo.",
+          "met": false,
+          "met_minute": null,
+          "ready": false,
+          "available": true,
+          "kind": "NPC"
+        }
+      ],
+      "independent": true,
+      "group": null
+    },
+    "cafe_events": {
+      "active": true,
+      "minute": 1010,
+      "attempts_limit": 3,
+      "events": [
+        {
+          "id": "KISSA_000001",
+          "edition": 1,
+          "opens": 60,
+          "closes": 360,
+          "prize": "Amortiguación",
+          "status": "CLOSED",
+          "settled": false,
+          "ranking": [
+            {
+              "name": "Mika",
+              "npc": true,
+              "score": 364,
+              "minute": 180,
+              "rank": 1,
+              "mine": false
+            },
+            {
+              "name": "Aki",
+              "npc": true,
+              "score": 272,
+              "minute": 100,
+              "rank": 2,
+              "mine": false
+            }
+          ],
+          "attempts": 0,
+          "run_id": "",
+          "won": true,
+          "game_id": "bit_courier",
+          "game_name": "Bit Courier",
+          "game_rules": "Recoge al menos 3 paquetes y llega a la salida. Máximo 80 movimientos; los choques también consumen un movimiento.",
+          "catalog_entry": "courier_buffer",
+          "catalog_revision": 1
+        },
+        {
+          "id": "KISSA_000002",
+          "edition": 2,
+          "opens": 660,
+          "closes": 960,
+          "prize": "Memoria de enlace B",
+          "status": "CLOSED",
+          "settled": false,
+          "ranking": [
+            {
+              "name": "Mika",
+              "npc": true,
+              "score": 370,
+              "minute": 780,
+              "rank": 1,
+              "mine": false
+            },
+            {
+              "name": "Aki",
+              "npc": true,
+              "score": 276,
+              "minute": 700,
+              "rank": 2,
+              "mine": false
+            }
+          ],
+          "attempts": 0,
+          "run_id": "",
+          "won": false,
+          "game_id": "signal_snake",
+          "game_name": "Serpiente de señal",
+          "game_rules": "La serpiente avanza sola. Gira con las flechas; recoge 6 señales y evita paredes y tu cuerpo. Tres señales bastan para clasificar, incluso si después chocas. Máximo 80 pasos.",
+          "catalog_entry": "snake_cache",
+          "catalog_revision": 1
+        }
+      ],
+      "rules": "Clasificación local con PNJ. Tres intentos por edición; cuenta tu mejor marca válida. Empatar en primer puesto comparte el premio. El cierre usa el reloj del mundo, que no avanza con el servidor apagado."
+    },
+    "code_exchange": {
+      "active": true,
+      "session_mode": "LOCAL_NPC",
+      "offers": [
+        {
+          "id": "ryoko_scan_v1",
+          "peer": "RYOKO",
+          "name": "Ryoko",
+          "location": "NIGHTCLUB",
+          "kind": "NPC",
+          "met": true,
+          "met_minute": 0,
+          "completed": true,
+          "ready": false,
+          "reason": "Intercambio completado.",
+          "wanted": "buffer",
+          "wanted_name": "Amortiguación",
+          "given": "scan",
+          "given_name": "Exploración",
+          "motive": "Necesito amortiguar las interrupciones de mi enlace. A cambio te paso mi módulo de Exploración.",
+          "copies": [
+            {
+              "id": "event_KISSA_000001",
+              "source": "Kissa · torneo 1 · primer puesto",
+              "minute": 1000
+            }
+          ]
+        },
+        {
+          "id": "kissa_shield_v1",
+          "peer": "KISSA_TECH",
+          "name": "Técnico de Kissa",
+          "location": "CAFE",
+          "kind": "NPC",
+          "met": true,
+          "met_minute": 0,
+          "completed": false,
+          "ready": true,
+          "reason": "",
+          "wanted": "scan",
+          "wanted_name": "Exploración",
+          "given": "shield",
+          "given_name": "Protección",
+          "motive": "Quiero detectar intervenciones sobre las máquinas del café. Te cambio Exploración por una copia de Protección.",
+          "copies": [
+            {
+              "id": "exchange_ryoko_scan_v1",
+              "source": "Copia compartida por Ryoko · Exploración",
+              "minute": 1010
+            }
+          ]
+        }
+      ],
+      "history": [
+        {
+          "text": "Ryoko recibió tu copia de Amortiguación. Recibiste Exploración. Ambos conserváis los originales. Insértalo y compílalo en Código; no se activa solo.",
+          "offer": "ryoko_scan_v1",
+          "peer": "RYOKO",
+          "peer_name": "Ryoko",
+          "minute": 1010,
+          "sent": {
+            "owner": "PLAYER_1",
+            "asset": "event_KISSA_000001",
+            "model": "buffer",
+            "name": "Amortiguación",
+            "source": "Kissa · torneo 1 · primer puesto",
+            "acquired_minute": 1000
+          },
+          "received": {
+            "owner": "PLAYER_1",
+            "asset": "exchange_ryoko_scan_v1",
+            "model": "scan",
+            "name": "Exploración",
+            "source": "Copia compartida por Ryoko · Exploración",
+            "acquired_minute": 1010,
+            "from": "RYOKO",
+            "original_acquired_minute": null
+          }
+        }
+      ]
+    },
+    "situations": [],
+    "interaction": null,
+    "outgoing_interaction": null,
+    "messages": [
+      {
+        "id": "MSG_BOOTSTRAP_001",
+        "sender": "unknown@wired",
+        "subject": "NO SUBJECT",
+        "body": "NO ESTOY MUERTA.\n\nSOLO DEJÉ DE ESTAR AHÍ.",
+        "created_minute": 0,
+        "read": true,
+        "acknowledged": true,
+        "acknowledged_minute": 0
+      }
+    ],
+    "unread_messages": 0,
+    "wired": {
+      "connected": true,
+      "signals": [
+        {
+          "node_id": "NODE_07",
+          "location": "STATION",
+          "strength": 0.5,
+          "confidence": 0.35,
+          "origin_source": "WIRED_MESSAGE",
+          "current_source": "WIRED_MESSAGE",
+          "verified": false,
+          "updated_minute": 0
+        }
+      ],
+      "digital_presences": []
+    }
+  },
+  "history": {
+    "schema_version": "0.1",
+    "minute": 1030,
+    "player": {
+      "id": "PLAYER_1",
+      "name": "Player",
+      "faction": "UNALIGNED",
+      "location": "APARTMENT",
+      "goal": "UNKNOWN",
+      "energy": 1.0
+    },
+    "navigation": {
+      "reachable_locations": [
+        "APARTMENT_DISTRICT"
+      ]
+    },
+    "known_nodes": [
+      {
+        "id": "NODE_07",
+        "knowledge_confidence": 0.35,
+        "knowledge_source": "WIRED_MESSAGE",
+        "belief": {
+          "location": "STATION",
+          "strength": 0.5,
+          "confidence": 0.35,
+          "source": "WIRED_MESSAGE",
+          "updated_minute": 0
+        }
+      }
+    ],
+    "visible_actors": [],
+    "character_sheets": {
+      "player": {
+        "id": "PLAYER_1",
+        "name": "Player",
+        "kind": "PLAYER",
+        "faction": "UNALIGNED",
+        "location": "APARTMENT",
+        "energy": 1.0,
+        "known_nodes": 1,
+        "case_status": "UNSEEN",
+        "agency": "HUMAN_ONLY"
+      },
+      "visible_npcs": []
+    },
+    "station_case": {
+      "id": "STATION_ECHO_07",
+      "title": "El pulso ausente",
+      "status": "UNSEEN",
+      "resolution": null,
+      "summary": "Investiga NODE_07 en la estacion para buscar el rastro.",
+      "witness_count": 0,
+      "responses": []
+    },
+    "prologue": {
+      "enabled": false,
+      "stage": "LEGACY",
+      "hint": ""
+    },
+    "chapter_one": {
+      "active": true,
+      "title": "Ya habías estado aquí",
+      "started_minute": 0,
+      "connection_minute": 0,
+      "decision": null,
+      "hypothesis": "",
+      "hypothesis_status": "UNVERIFIED",
+      "evidence": [
+        {
+          "id": "RETURN_MESSAGE",
+          "title": "Has vuelto",
+          "kind": "MESSAGE",
+          "source_id": "UNKNOWN_WIRED",
+          "source_label": "Identidad desconocida · Wired",
+          "text": "Has vuelto.",
+          "acquired_minute": 0,
+          "claimed_time": "Recibido al abrir este capítulo, minuto 0",
+          "event_id": null
+        }
+      ],
+      "links": [],
+      "contradiction_linked": false,
+      "characters": [
+        "RESIDENT_001",
+        "RESIDENT_006",
+        "PROFESSOR",
+        "RYOKO"
+      ],
+      "notification": "Has vuelto"
+    },
+    "network_conflict": {
+      "active": true,
+      "multiple_operators": true,
+      "corporation": "Administradores de la Wired",
+      "corporate_control": 100.0,
+      "trace": 0,
+      "ready_in": 0,
+      "relays": [
+        {
+          "id": "RELAY_STATION",
+          "name": "Enlace del andén",
+          "location": "STATION",
+          "corporation": 80,
+          "mine": 0,
+          "defense": 0,
+          "suppressed_until": 0,
+          "inspected": false,
+          "controllers": [
+            {
+              "slot": "LINES",
+              "name": "Administrador de líneas",
+              "control": 80,
+              "suppressed_until": 0
+            },
+            {
+              "slot": "RECORDS",
+              "name": "Administrador de registros",
+              "control": 20,
+              "suppressed_until": 0
+            }
+          ]
+        },
+        {
+          "id": "RELAY_SCHOOL",
+          "name": "Enlace del pabellón B",
+          "location": "SCHOOL_LAB",
+          "corporation": 70,
+          "mine": 0,
+          "defense": 0,
+          "suppressed_until": 0,
+          "inspected": false,
+          "controllers": [
+            {
+              "slot": "LINES",
+              "name": "Administrador de líneas",
+              "control": 70,
+              "suppressed_until": 0
+            },
+            {
+              "slot": "RECORDS",
+              "name": "Administrador de registros",
+              "control": 30,
+              "suppressed_until": 0
+            }
+          ]
+        },
+        {
+          "id": "RELAY_VIDEO",
+          "name": "Enlace del videoclub",
+          "location": "VIDEO_CLUB",
+          "corporation": 55,
+          "mine": 0,
+          "defense": 0,
+          "suppressed_until": 0,
+          "inspected": false,
+          "controllers": [
+            {
+              "slot": "LINES",
+              "name": "Administrador de líneas",
+              "control": 55,
+              "suppressed_until": 0
+            },
+            {
+              "slot": "RECORDS",
+              "name": "Administrador de registros",
+              "control": 45,
+              "suppressed_until": 0
+            }
+          ]
+        }
+      ],
+      "rankings": [
+        {
+          "actor_id": "PLAYER_1",
+          "name": "Player",
+          "control": 0.0
+        }
+      ],
+      "pending": [],
+      "reports": [
+        {
+          "id": 3,
+          "minute": 1030,
+          "source": "CODE_EXCHANGE",
+          "text": "Técnico de Kissa recibió tu copia de Exploración. Recibiste Protección. Ambos conserváis los originales. Insértalo y compílalo en Código; no se activa solo."
+        },
+        {
+          "id": 2,
+          "minute": 1010,
+          "source": "CODE_EXCHANGE",
+          "text": "Ryoko recibió tu copia de Amortiguación. Recibiste Exploración. Ambos conserváis los originales. Insértalo y compílalo en Código; no se activa solo."
+        },
+        {
+          "id": 1,
+          "minute": 0,
+          "source": "WORKSHOP",
+          "text": "El PC dispone de un taller de código. En Kissa Café han instalado un terminal: su técnico busca ayuda para comprobar un coprocesador."
+        }
+      ],
+      "visible_personnel": [],
+      "session_mode": "LOCAL"
+    },
+    "workshop": {
+      "active": true,
+      "arcade_catalog": true,
+      "snake_best_score": 0,
+      "shared_modules": [],
+      "lesson": 0,
+      "life_source": "def next_cell(alive, neighbors):\n    # Completa las reglas de nacimiento y supervivencia.\n    return False\n",
+      "draft": "use(\"routing\")\n",
+      "compiled": "use(\"routing\")\n",
+      "modules": [
+        "routing"
+      ],
+      "contract": "INDEPENDENT",
+      "best_score": 0,
+      "capacity": 4,
+      "cost": 2,
+      "assets": [
+        {
+          "id": "first_connection",
+          "kind": "CODE",
+          "model": "routing",
+          "source": "Tu primera conexión a la Wired",
+          "minute": 0,
+          "active": 0,
+          "ownership": "OWNED",
+          "name": "Enrutamiento",
+          "capacity": 0
+        },
+        {
+          "id": "home_navi",
+          "kind": "DEVICE",
+          "model": "navi",
+          "source": "Ordenador de casa",
+          "minute": 0,
+          "active": 1,
+          "ownership": "OWNED",
+          "name": "Navi A",
+          "capacity": 4
+        },
+        {
+          "id": "event_KISSA_000001",
+          "kind": "CODE",
+          "model": "buffer",
+          "source": "Kissa · torneo 1 · primer puesto",
+          "minute": 1000,
+          "active": 0,
+          "ownership": "OWNED",
+          "name": "Amortiguación",
+          "capacity": 0
+        },
+        {
+          "id": "exchange_ryoko_scan_v1",
+          "kind": "CODE",
+          "model": "scan",
+          "source": "Copia compartida por Ryoko · Exploración",
+          "minute": 1010,
+          "active": 0,
+          "ownership": "OWNED",
+          "name": "Exploración",
+          "capacity": 0
+        },
+        {
+          "id": "exchange_kissa_shield_v1",
+          "kind": "CODE",
+          "model": "shield",
+          "source": "Copia compartida por Técnico de Kissa · Protección",
+          "minute": 1030,
+          "active": 0,
+          "ownership": "OWNED",
+          "name": "Protección",
+          "capacity": 0
+        }
+      ],
+      "library": [
+        {
+          "id": "routing",
+          "name": "Enrutamiento",
+          "cost": 2,
+          "effect": "Conexión del montaje; conserva las acciones básicas del enlace."
+        },
+        {
+          "id": "shield",
+          "name": "Protección",
+          "cost": 4,
+          "effect": "Preparar las dos defensas de un enlace propio con una operación local."
+        },
+        {
+          "id": "scan",
+          "name": "Exploración",
+          "cost": 3,
+          "effect": "Desde casa, leer la actividad de un enlace previamente examinado."
+        },
+        {
+          "id": "buffer",
+          "name": "Amortiguación",
+          "cost": 2,
+          "effect": "Absorbe 5 puntos de pérdida en cada intervención corporativa mientras esté compilada. No se acumula con otra copia."
+        }
+      ],
+      "offers": {},
+      "life_hint": "",
+      "session_mode": "LOCAL"
+    },
+    "circles": {
+      "active": true,
+      "session_mode": "LOCAL_NPC",
+      "contacts": [
+        {
+          "id": "RYOKO",
+          "name": "Ryoko",
+          "location": "NIGHTCLUB",
+          "condition": "Completa el Juego de la Vida y sigue independiente.",
+          "motive": "Quiere que las identidades puedan circular sin depender de un administrador.",
+          "met": false,
+          "met_minute": null,
+          "ready": false,
+          "available": true,
+          "kind": "NPC"
+        },
+        {
+          "id": "KISSA_TECH",
+          "name": "Técnico de Kissa",
+          "location": "CAFE",
+          "condition": "Gana Bit Courier y sigue independiente.",
+          "motive": "Quiere mantener las máquinas del café fuera del control corporativo.",
+          "met": false,
+          "met_minute": null,
+          "ready": false,
+          "available": true,
+          "kind": "NPC"
+        }
+      ],
+      "independent": true,
+      "group": null
+    },
+    "cafe_events": {
+      "active": true,
+      "minute": 1030,
+      "attempts_limit": 3,
+      "events": [
+        {
+          "id": "KISSA_000001",
+          "edition": 1,
+          "opens": 60,
+          "closes": 360,
+          "prize": "Amortiguación",
+          "status": "CLOSED",
+          "settled": false,
+          "ranking": [
+            {
+              "name": "Mika",
+              "npc": true,
+              "score": 364,
+              "minute": 180,
+              "rank": 1,
+              "mine": false
+            },
+            {
+              "name": "Aki",
+              "npc": true,
+              "score": 272,
+              "minute": 100,
+              "rank": 2,
+              "mine": false
+            }
+          ],
+          "attempts": 0,
+          "run_id": "",
+          "won": true,
+          "game_id": "bit_courier",
+          "game_name": "Bit Courier",
+          "game_rules": "Recoge al menos 3 paquetes y llega a la salida. Máximo 80 movimientos; los choques también consumen un movimiento.",
+          "catalog_entry": "courier_buffer",
+          "catalog_revision": 1
+        },
+        {
+          "id": "KISSA_000002",
+          "edition": 2,
+          "opens": 660,
+          "closes": 960,
+          "prize": "Memoria de enlace B",
+          "status": "CLOSED",
+          "settled": false,
+          "ranking": [
+            {
+              "name": "Mika",
+              "npc": true,
+              "score": 370,
+              "minute": 780,
+              "rank": 1,
+              "mine": false
+            },
+            {
+              "name": "Aki",
+              "npc": true,
+              "score": 276,
+              "minute": 700,
+              "rank": 2,
+              "mine": false
+            }
+          ],
+          "attempts": 0,
+          "run_id": "",
+          "won": false,
+          "game_id": "signal_snake",
+          "game_name": "Serpiente de señal",
+          "game_rules": "La serpiente avanza sola. Gira con las flechas; recoge 6 señales y evita paredes y tu cuerpo. Tres señales bastan para clasificar, incluso si después chocas. Máximo 80 pasos.",
+          "catalog_entry": "snake_cache",
+          "catalog_revision": 1
+        }
+      ],
+      "rules": "Clasificación local con PNJ. Tres intentos por edición; cuenta tu mejor marca válida. Empatar en primer puesto comparte el premio. El cierre usa el reloj del mundo, que no avanza con el servidor apagado."
+    },
+    "code_exchange": {
+      "active": true,
+      "session_mode": "LOCAL_NPC",
+      "offers": [
+        {
+          "id": "ryoko_scan_v1",
+          "peer": "RYOKO",
+          "name": "Ryoko",
+          "location": "NIGHTCLUB",
+          "kind": "NPC",
+          "met": true,
+          "met_minute": 0,
+          "completed": true,
+          "ready": false,
+          "reason": "Intercambio completado.",
+          "wanted": "buffer",
+          "wanted_name": "Amortiguación",
+          "given": "scan",
+          "given_name": "Exploración",
+          "motive": "Necesito amortiguar las interrupciones de mi enlace. A cambio te paso mi módulo de Exploración.",
+          "copies": [
+            {
+              "id": "event_KISSA_000001",
+              "source": "Kissa · torneo 1 · primer puesto",
+              "minute": 1000
+            }
+          ]
+        },
+        {
+          "id": "kissa_shield_v1",
+          "peer": "KISSA_TECH",
+          "name": "Técnico de Kissa",
+          "location": "CAFE",
+          "kind": "NPC",
+          "met": true,
+          "met_minute": 0,
+          "completed": true,
+          "ready": false,
+          "reason": "Intercambio completado.",
+          "wanted": "scan",
+          "wanted_name": "Exploración",
+          "given": "shield",
+          "given_name": "Protección",
+          "motive": "Quiero detectar intervenciones sobre las máquinas del café. Te cambio Exploración por una copia de Protección.",
+          "copies": [
+            {
+              "id": "exchange_ryoko_scan_v1",
+              "source": "Copia compartida por Ryoko · Exploración",
+              "minute": 1010
+            }
+          ]
+        }
+      ],
+      "history": [
+        {
+          "text": "Técnico de Kissa recibió tu copia de Exploración. Recibiste Protección. Ambos conserváis los originales. Insértalo y compílalo en Código; no se activa solo.",
+          "offer": "kissa_shield_v1",
+          "peer": "KISSA_TECH",
+          "peer_name": "Técnico de Kissa",
+          "minute": 1030,
+          "sent": {
+            "owner": "PLAYER_1",
+            "asset": "exchange_ryoko_scan_v1",
+            "model": "scan",
+            "name": "Exploración",
+            "source": "Copia compartida por Ryoko · Exploración",
+            "acquired_minute": 1010
+          },
+          "received": {
+            "owner": "PLAYER_1",
+            "asset": "exchange_kissa_shield_v1",
+            "model": "shield",
+            "name": "Protección",
+            "source": "Copia compartida por Técnico de Kissa · Protección",
+            "acquired_minute": 1030,
+            "from": "KISSA_TECH",
+            "original_acquired_minute": null
+          }
+        },
+        {
+          "text": "Ryoko recibió tu copia de Amortiguación. Recibiste Exploración. Ambos conserváis los originales. Insértalo y compílalo en Código; no se activa solo.",
+          "offer": "ryoko_scan_v1",
+          "peer": "RYOKO",
+          "peer_name": "Ryoko",
+          "minute": 1010,
+          "sent": {
+            "owner": "PLAYER_1",
+            "asset": "event_KISSA_000001",
+            "model": "buffer",
+            "name": "Amortiguación",
+            "source": "Kissa · torneo 1 · primer puesto",
+            "acquired_minute": 1000
+          },
+          "received": {
+            "owner": "PLAYER_1",
+            "asset": "exchange_ryoko_scan_v1",
+            "model": "scan",
+            "name": "Exploración",
+            "source": "Copia compartida por Ryoko · Exploración",
+            "acquired_minute": 1010,
+            "from": "RYOKO",
+            "original_acquired_minute": null
+          }
+        }
+      ]
+    },
+    "situations": [],
+    "interaction": null,
+    "outgoing_interaction": null,
+    "messages": [
+      {
+        "id": "MSG_BOOTSTRAP_001",
+        "sender": "unknown@wired",
+        "subject": "NO SUBJECT",
+        "body": "NO ESTOY MUERTA.\n\nSOLO DEJÉ DE ESTAR AHÍ.",
+        "created_minute": 0,
+        "read": true,
+        "acknowledged": true,
+        "acknowledged_minute": 0
+      }
+    ],
+    "unread_messages": 0,
+    "wired": {
+      "connected": true,
+      "signals": [
+        {
+          "node_id": "NODE_07",
+          "location": "STATION",
+          "strength": 0.5,
+          "confidence": 0.35,
+          "origin_source": "WIRED_MESSAGE",
+          "current_source": "WIRED_MESSAGE",
+          "verified": false,
+          "updated_minute": 0
+        }
+      ],
+      "digital_presences": []
+    }
+  }
+}

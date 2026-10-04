@@ -1,0 +1,1121 @@
+[
+  {
+    "id": "RESIDENT_001",
+    "name": "Haruto Senda",
+    "role": "Cartero",
+    "location": "APARTMENT_DISTRICT",
+    "slot": 0,
+    "objective": "Entregar la última carta antes de volver a correos.",
+    "skills": {
+      "Orientación": 3,
+      "Observación": 1
+    },
+    "activities": [
+      "Entrega cartas",
+      "Comprueba los números de las casas",
+      "Reordena la bolsa postal",
+      "Busca el siguiente portal"
+    ],
+    "cadence": 3,
+    "appearance": "worker"
+  },
+  {
+    "id": "RESIDENT_002",
+    "name": "Emi Ogawa",
+    "role": "Florista ambulante",
+    "location": "APARTMENT_DISTRICT",
+    "slot": 1,
+    "objective": "Preparar ramos para los vecinos que vuelven del trabajo.",
+    "skills": {
+      "Jardinería": 4,
+      "Observación": 2
+    },
+    "activities": [
+      "Ordena los ramos",
+      "Revisa las macetas",
+      "Retira hojas secas",
+      "Prepara un ramo"
+    ],
+    "cadence": 5,
+    "appearance": "apron"
+  },
+  {
+    "id": "RESIDENT_003",
+    "name": "Kenta Mizuno",
+    "role": "Repartidor",
+    "location": "APARTMENT_DISTRICT",
+    "slot": 2,
+    "objective": "Localizar al vecino que espera una pieza de radio.",
+    "skills": {
+      "Mecánica": 5,
+      "Observación": 3
+    },
+    "activities": [
+      "Consulta una dirección en papel",
+      "Revisa su paquete",
+      "Busca el número del portal",
+      "Espera al destinatario"
+    ],
+    "cadence": 5,
+    "appearance": "worker"
+  },
+  {
+    "id": "RESIDENT_004",
+    "name": "Yui Sawada",
+    "role": "Amiga del barrio",
+    "location": "APARTMENT_DISTRICT",
+    "slot": 3,
+    "objective": "Encontrar a alguien con quien repasar el examen de mañana.",
+    "skills": {
+      "Matemáticas": 3,
+      "Observación": 1
+    },
+    "activities": [
+      "Repasa sus apuntes",
+      "Busca a sus compañeros",
+      "Compara ejercicios",
+      "Espera a una amiga"
+    ],
+    "cadence": 3,
+    "appearance": "student"
+  },
+  {
+    "id": "RESIDENT_005",
+    "name": "Daichi Fujita",
+    "role": "Empleado de limpieza",
+    "location": "APARTMENT_DISTRICT",
+    "slot": 4,
+    "objective": "Dejar limpio el paseo antes de que salgan los alumnos.",
+    "skills": {
+      "Mantenimiento": 4,
+      "Observación": 2
+    },
+    "activities": [
+      "Recoge papeles",
+      "Revisa una papelera",
+      "Barre el paseo",
+      "Se toma un descanso"
+    ],
+    "cadence": 4,
+    "appearance": "worker"
+  },
+  {
+    "id": "RESIDENT_006",
+    "name": "Aiko Mori",
+    "role": "Vecina jubilada",
+    "location": "APARTMENT_DISTRICT",
+    "slot": 5,
+    "objective": "Volver a caminar una vuelta completa al parque cada tarde.",
+    "skills": {
+      "Botánica": 5,
+      "Observación": 3
+    },
+    "activities": [
+      "Descansa junto al paseo",
+      "Camina hacia la sombra",
+      "Observa los árboles",
+      "Continúa su paseo"
+    ],
+    "cadence": 5,
+    "appearance": "elder"
+  },
+  {
+    "id": "RESIDENT_007",
+    "name": "Sota Hasegawa",
+    "role": "Fotógrafo aficionado",
+    "location": "APARTMENT_DISTRICT",
+    "slot": 6,
+    "objective": "Terminar un carrete sobre los cables y tejados del barrio.",
+    "skills": {
+      "Fotografía": 3,
+      "Observación": 1
+    },
+    "activities": [
+      "Encuadra los tejados",
+      "Busca otra perspectiva",
+      "Anota la exposición",
+      "Revisa el contador del carrete"
+    ],
+    "cadence": 3,
+    "appearance": "casual"
+  },
+  {
+    "id": "RESIDENT_008",
+    "name": "Mika Ueno",
+    "role": "Estudiante de dibujo",
+    "location": "APARTMENT_DISTRICT",
+    "slot": 7,
+    "objective": "Dibujar el parque para el mural de la escuela.",
+    "skills": {
+      "Dibujo": 4,
+      "Observación": 2
+    },
+    "activities": [
+      "Dibuja en su cuaderno",
+      "Observa las ramas",
+      "Busca otro ángulo",
+      "Compara su boceto"
+    ],
+    "cadence": 4,
+    "appearance": "student"
+  },
+  {
+    "id": "RESIDENT_009",
+    "name": "Toru Nakahara",
+    "role": "Jardinero",
+    "location": "APARTMENT_DISTRICT",
+    "slot": 8,
+    "objective": "Recuperar los arbustos dañados junto al camino.",
+    "skills": {
+      "Jardinería": 5,
+      "Observación": 3
+    },
+    "activities": [
+      "Examina las hojas",
+      "Retira ramas secas",
+      "Revisa la tierra",
+      "Anota lo que falta regar"
+    ],
+    "cadence": 5,
+    "appearance": "worker"
+  },
+  {
+    "id": "RESIDENT_010",
+    "name": "Chie Hayashi",
+    "role": "Cuidadora",
+    "location": "APARTMENT_DISTRICT",
+    "slot": 9,
+    "objective": "Acompañar a los mayores durante el paseo de la tarde.",
+    "skills": {
+      "Primeros auxilios": 3,
+      "Observación": 1
+    },
+    "activities": [
+      "Espera junto al paseo",
+      "Observa si alguien necesita ayuda",
+      "Acompaña el recorrido",
+      "Descansa unos minutos"
+    ],
+    "cadence": 3,
+    "appearance": "casual"
+  },
+  {
+    "id": "RESIDENT_011",
+    "name": "Riku Abe",
+    "role": "Amigo del colegio",
+    "location": "APARTMENT_DISTRICT",
+    "slot": 10,
+    "objective": "Reunir compañeros para un partido después de clase.",
+    "skills": {
+      "Deporte": 4,
+      "Observación": 2
+    },
+    "activities": [
+      "Espera a sus amigos",
+      "Busca un lugar para reunirse",
+      "Estira las piernas",
+      "Comprueba quién ha llegado"
+    ],
+    "cadence": 4,
+    "appearance": "student"
+  },
+  {
+    "id": "RESIDENT_012",
+    "name": "Naoko Ishida",
+    "role": "Vecina lectora",
+    "location": "APARTMENT_DISTRICT",
+    "slot": 11,
+    "objective": "Acabar un capítulo antes de que anochezca.",
+    "skills": {
+      "Literatura": 5,
+      "Observación": 3
+    },
+    "activities": [
+      "Lee junto al parque",
+      "Busca un rincón tranquilo",
+      "Marca una página",
+      "Retoma su lectura"
+    ],
+    "cadence": 5,
+    "appearance": "elder"
+  },
+  {
+    "id": "RESIDENT_013",
+    "name": "Shun Okada",
+    "role": "Músico callejero",
+    "location": "APARTMENT_DISTRICT",
+    "slot": 12,
+    "objective": "Ensayar una canción antes de tocar en el bar.",
+    "skills": {
+      "Música": 3,
+      "Observación": 1
+    },
+    "activities": [
+      "Repasa los acordes",
+      "Escucha el ruido de la calle",
+      "Marca el ritmo con el pie",
+      "Ensaya el estribillo"
+    ],
+    "cadence": 3,
+    "appearance": "casual"
+  },
+  {
+    "id": "RESIDENT_014",
+    "name": "Fumiko Endo",
+    "role": "Tenderita jubilada",
+    "location": "APARTMENT_DISTRICT",
+    "slot": 13,
+    "objective": "Recoger ideas para la fiesta de la asociación vecinal.",
+    "skills": {
+      "Organización": 4,
+      "Observación": 2
+    },
+    "activities": [
+      "Revisa una lista de vecinos",
+      "Espera a un conocido",
+      "Ordena sus notas",
+      "Piensa qué puestos faltan"
+    ],
+    "cadence": 4,
+    "appearance": "elder"
+  },
+  {
+    "id": "RESIDENT_015",
+    "name": "Ren Takeda",
+    "role": "Ayudante de mantenimiento",
+    "location": "APARTMENT_DISTRICT",
+    "slot": 14,
+    "objective": "Anotar las farolas averiadas para el turno de mañana.",
+    "skills": {
+      "Electricidad": 5,
+      "Observación": 3
+    },
+    "activities": [
+      "Mira una farola",
+      "Comprueba su cuaderno",
+      "Recorre la acera",
+      "Anota una reparación"
+    ],
+    "cadence": 5,
+    "appearance": "worker"
+  },
+  {
+    "id": "RESIDENT_016",
+    "name": "Mayu Kondo",
+    "role": "Vecina que pasea",
+    "location": "APARTMENT_DISTRICT",
+    "slot": 15,
+    "objective": "Completar un paseo para despejarse tras estudiar.",
+    "skills": {
+      "Observación": 1
+    },
+    "activities": [
+      "Respira junto al paseo",
+      "Camina despacio",
+      "Mira los escaparates",
+      "Hace una pausa"
+    ],
+    "cadence": 3,
+    "appearance": "casual"
+  },
+  {
+    "id": "RESIDENT_017",
+    "name": "Masao Kuroda",
+    "role": "Profesor de matemáticas",
+    "location": "SCHOOL",
+    "slot": 0,
+    "objective": "Preparar problemas para el examen de recuperación.",
+    "skills": {
+      "Matemáticas": 4,
+      "Observación": 2
+    },
+    "activities": [
+      "Revisa ejercicios",
+      "Consulta el tablón",
+      "Busca un aula libre",
+      "Corrige sus notas"
+    ],
+    "cadence": 4,
+    "appearance": "teacher"
+  },
+  {
+    "id": "RESIDENT_018",
+    "name": "Sachiko Arai",
+    "role": "Profesora de literatura",
+    "location": "SCHOOL",
+    "slot": 1,
+    "objective": "Elegir textos para la revista del colegio.",
+    "skills": {
+      "Literatura": 5,
+      "Observación": 3
+    },
+    "activities": [
+      "Lee un borrador",
+      "Revisa anuncios",
+      "Ordena trabajos",
+      "Anota una corrección"
+    ],
+    "cadence": 5,
+    "appearance": "teacher"
+  },
+  {
+    "id": "RESIDENT_019",
+    "name": "Hideo Sakamoto",
+    "role": "Profesor de ciencias",
+    "location": "SCHOOL",
+    "slot": 2,
+    "objective": "Conseguir material para la práctica de electricidad.",
+    "skills": {
+      "Ciencias": 3,
+      "Observación": 1
+    },
+    "activities": [
+      "Revisa el inventario",
+      "Comprueba una lista",
+      "Busca al encargado",
+      "Anota material pendiente"
+    ],
+    "cadence": 3,
+    "appearance": "teacher"
+  },
+  {
+    "id": "RESIDENT_020",
+    "name": "Yoko Matsuda",
+    "role": "Orientadora",
+    "location": "SCHOOL",
+    "slot": 3,
+    "objective": "Encontrar una actividad para alumnos que se sienten aislados.",
+    "skills": {
+      "Escucha": 4,
+      "Observación": 2
+    },
+    "activities": [
+      "Prepara una reunión",
+      "Revisa el tablón",
+      "Espera a los alumnos",
+      "Ordena sus fichas"
+    ],
+    "cadence": 4,
+    "appearance": "teacher"
+  },
+  {
+    "id": "RESIDENT_021",
+    "name": "Akira Shimizu",
+    "role": "Conserje",
+    "location": "SCHOOL",
+    "slot": 4,
+    "objective": "Revisar las aulas antes del cierre.",
+    "skills": {
+      "Mantenimiento": 5,
+      "Observación": 3
+    },
+    "activities": [
+      "Mira el reloj",
+      "Revisa el pasillo",
+      "Anota una avería",
+      "Comprueba sus llaves"
+    ],
+    "cadence": 5,
+    "appearance": "worker"
+  },
+  {
+    "id": "RESIDENT_022",
+    "name": "Nana Sugimoto",
+    "role": "Amiga de clase",
+    "location": "SCHOOL",
+    "slot": 5,
+    "objective": "Entregar a tiempo el trabajo de literatura.",
+    "skills": {
+      "Literatura": 3,
+      "Observación": 1
+    },
+    "activities": [
+      "Lee sus apuntes",
+      "Busca a la profesora",
+      "Repasa una cita",
+      "Ordena las páginas"
+    ],
+    "cadence": 3,
+    "appearance": "student"
+  },
+  {
+    "id": "RESIDENT_023",
+    "name": "Yuji Tanaka",
+    "role": "Alumno del club de radio",
+    "location": "SCHOOL",
+    "slot": 6,
+    "objective": "Convencer a alguien para reparar la radio del club.",
+    "skills": {
+      "Electrónica": 4,
+      "Observación": 2
+    },
+    "activities": [
+      "Revisa un esquema",
+      "Busca a un compañero",
+      "Anota componentes",
+      "Compara conexiones"
+    ],
+    "cadence": 4,
+    "appearance": "student"
+  },
+  {
+    "id": "RESIDENT_024",
+    "name": "Kaori Nishida",
+    "role": "Delegada de clase",
+    "location": "SCHOOL",
+    "slot": 7,
+    "objective": "Reunir propuestas para la excursión escolar.",
+    "skills": {
+      "Organización": 5,
+      "Observación": 3
+    },
+    "activities": [
+      "Revisa la lista de clase",
+      "Busca compañeros",
+      "Anota una propuesta",
+      "Cuenta las respuestas"
+    ],
+    "cadence": 5,
+    "appearance": "student"
+  },
+  {
+    "id": "RESIDENT_025",
+    "name": "Takeshi Uno",
+    "role": "Ayudante de informática",
+    "location": "SCHOOL_LAB",
+    "slot": 0,
+    "objective": "Recuperar un disquete con ejercicios del aula.",
+    "skills": {
+      "Informática": 3,
+      "Observación": 1
+    },
+    "activities": [
+      "Comprueba una etiqueta",
+      "Revisa sus apuntes",
+      "Busca el disquete",
+      "Ordena la lista de equipos"
+    ],
+    "cadence": 3,
+    "appearance": "teacher"
+  },
+  {
+    "id": "RESIDENT_026",
+    "name": "Misaki Ito",
+    "role": "Alumna de informática",
+    "location": "SCHOOL_LAB",
+    "slot": 1,
+    "objective": "Entender por qué su primer programa no termina.",
+    "skills": {
+      "Programación": 4,
+      "Observación": 2
+    },
+    "activities": [
+      "Lee su código en papel",
+      "Busca un error",
+      "Anota una hipótesis",
+      "Repasa el bucle"
+    ],
+    "cadence": 4,
+    "appearance": "student"
+  },
+  {
+    "id": "RESIDENT_027",
+    "name": "Jun Saito",
+    "role": "Alumno del taller",
+    "location": "SCHOOL_LAB",
+    "slot": 2,
+    "objective": "Preparar un pequeño catálogo de componentes usados.",
+    "skills": {
+      "Electrónica": 5,
+      "Observación": 3
+    },
+    "activities": [
+      "Clasifica componentes",
+      "Consulta sus notas",
+      "Cuenta piezas",
+      "Revisa el catálogo"
+    ],
+    "cadence": 5,
+    "appearance": "student"
+  },
+  {
+    "id": "RESIDENT_028",
+    "name": "Rina Watanabe",
+    "role": "Amiga del aula",
+    "location": "SCHOOL_LAB",
+    "slot": 3,
+    "objective": "Guardar una copia del trabajo antes de salir.",
+    "skills": {
+      "Informática": 3,
+      "Observación": 1
+    },
+    "activities": [
+      "Revisa su disquete",
+      "Espera un ordenador",
+      "Comprueba el listado",
+      "Anota lo que falta guardar"
+    ],
+    "cadence": 3,
+    "appearance": "student"
+  },
+  {
+    "id": "RESIDENT_029",
+    "name": "Koji Murata",
+    "role": "Camarero de la discoteca",
+    "location": "NIGHTCLUB",
+    "slot": 0,
+    "objective": "Atender a la sala sin perder los pedidos.",
+    "skills": {
+      "Atención al público": 4,
+      "Observación": 2
+    },
+    "activities": [
+      "Repasa los pedidos",
+      "Revisa la sala",
+      "Busca vasos vacíos",
+      "Vuelve a comprobar la barra"
+    ],
+    "cadence": 5,
+    "appearance": "apron"
+  },
+  {
+    "id": "RESIDENT_030",
+    "name": "Erika Hoshino",
+    "role": "DJ",
+    "location": "NIGHTCLUB",
+    "slot": 1,
+    "objective": "Encontrar la siguiente pista entre sus discos.",
+    "skills": {
+      "Música": 5,
+      "Observación": 3
+    },
+    "activities": [
+      "Escucha la mezcla",
+      "Revisa su lista",
+      "Observa la pista",
+      "Cuenta los compases"
+    ],
+    "cadence": 5,
+    "appearance": "casual"
+  },
+  {
+    "id": "RESIDENT_031",
+    "name": "Tatsuya Ota",
+    "role": "Técnico de sonido",
+    "location": "NIGHTCLUB",
+    "slot": 2,
+    "objective": "Localizar un zumbido en el equipo de la sala.",
+    "skills": {
+      "Sonido": 3,
+      "Observación": 1
+    },
+    "activities": [
+      "Escucha los altavoces",
+      "Revisa sus notas",
+      "Comprueba el sonido ambiente",
+      "Ajusta su plan de revisión"
+    ],
+    "cadence": 3,
+    "appearance": "worker"
+  },
+  {
+    "id": "RESIDENT_032",
+    "name": "Aya Nomura",
+    "role": "Amiga de Ryoko",
+    "location": "NIGHTCLUB",
+    "slot": 3,
+    "objective": "Esperar a su grupo antes de empezar a bailar.",
+    "skills": {
+      "Baile": 4,
+      "Observación": 2
+    },
+    "activities": [
+      "Espera a sus amigos",
+      "Mira hacia la entrada",
+      "Sigue el ritmo",
+      "Busca a su grupo"
+    ],
+    "cadence": 4,
+    "appearance": "casual"
+  },
+  {
+    "id": "RESIDENT_033",
+    "name": "Shinji Fukuda",
+    "role": "Habitual de la discoteca",
+    "location": "NIGHTCLUB",
+    "slot": 4,
+    "objective": "Conseguir el nombre de la canción que sonó ayer.",
+    "skills": {
+      "Música": 5,
+      "Observación": 3
+    },
+    "activities": [
+      "Escucha la música",
+      "Revisa una nota",
+      "Busca al DJ",
+      "Espera entre canciones"
+    ],
+    "cadence": 5,
+    "appearance": "casual"
+  },
+  {
+    "id": "RESIDENT_034",
+    "name": "Reiko Sakai",
+    "role": "Encargada de sala",
+    "location": "NIGHTCLUB",
+    "slot": 5,
+    "objective": "Mantener despejadas las salidas durante la sesión.",
+    "skills": {
+      "Organización": 3,
+      "Observación": 1
+    },
+    "activities": [
+      "Observa la sala",
+      "Comprueba el paso",
+      "Revisa el aforo",
+      "Espera nuevas llegadas"
+    ],
+    "cadence": 3,
+    "appearance": "worker"
+  },
+  {
+    "id": "RESIDENT_035",
+    "name": "Osamu Kaneko",
+    "role": "Empleado de estación",
+    "location": "STATION",
+    "slot": 0,
+    "objective": "Ayudar a viajeros que no encuentran el andén.",
+    "skills": {
+      "Orientación": 4,
+      "Observación": 2
+    },
+    "activities": [
+      "Revisa el andén",
+      "Espera consultas",
+      "Comprueba el reloj",
+      "Mira hacia los accesos"
+    ],
+    "cadence": 4,
+    "appearance": "worker"
+  },
+  {
+    "id": "RESIDENT_036",
+    "name": "Etsuko Miura",
+    "role": "Oficinista",
+    "location": "STATION",
+    "slot": 1,
+    "objective": "Llegar a casa después de entregar el informe del día.",
+    "skills": {
+      "Contabilidad": 5,
+      "Observación": 3
+    },
+    "activities": [
+      "Consulta el horario",
+      "Espera el tren",
+      "Revisa su cartera",
+      "Vuelve a mirar el reloj"
+    ],
+    "cadence": 5,
+    "appearance": "suit"
+  },
+  {
+    "id": "RESIDENT_037",
+    "name": "Takumi Imai",
+    "role": "Estudiante viajero",
+    "location": "STATION",
+    "slot": 2,
+    "objective": "Repasar unas tarjetas antes de que llegue su tren.",
+    "skills": {
+      "Idiomas": 3,
+      "Observación": 1
+    },
+    "activities": [
+      "Lee una tarjeta",
+      "Mira el horario",
+      "Repasa una palabra",
+      "Espera su tren"
+    ],
+    "cadence": 3,
+    "appearance": "student"
+  },
+  {
+    "id": "RESIDENT_038",
+    "name": "Miyako Hara",
+    "role": "Vendedora de billetes",
+    "location": "STATION",
+    "slot": 3,
+    "objective": "Comprobar las indicaciones del último servicio.",
+    "skills": {
+      "Atención al público": 4,
+      "Observación": 2
+    },
+    "activities": [
+      "Revisa un aviso",
+      "Observa el andén",
+      "Ordena sus notas",
+      "Espera el siguiente servicio"
+    ],
+    "cadence": 4,
+    "appearance": "worker"
+  },
+  {
+    "id": "RESIDENT_039",
+    "name": "Isamu Yoshida",
+    "role": "Dueño del izakaya",
+    "location": "IZAKAYA",
+    "slot": 0,
+    "objective": "Preparar el local para los clientes de la noche.",
+    "skills": {
+      "Cocina": 5,
+      "Observación": 3
+    },
+    "activities": [
+      "Revisa los pedidos",
+      "Comprueba las mesas",
+      "Cuenta las raciones",
+      "Espera a los clientes"
+    ],
+    "cadence": 5,
+    "appearance": "apron"
+  },
+  {
+    "id": "RESIDENT_040",
+    "name": "Tomoko Nishi",
+    "role": "Camarera",
+    "location": "IZAKAYA",
+    "slot": 1,
+    "objective": "Recordar el pedido habitual de cada vecino.",
+    "skills": {
+      "Atención al público": 3,
+      "Observación": 1
+    },
+    "activities": [
+      "Revisa una comanda",
+      "Observa las mesas",
+      "Ordena los pedidos",
+      "Busca a quien espera"
+    ],
+    "cadence": 5,
+    "appearance": "apron"
+  },
+  {
+    "id": "RESIDENT_041",
+    "name": "Kenji Aoki",
+    "role": "Cliente del bar",
+    "location": "IZAKAYA",
+    "slot": 2,
+    "objective": "Encontrar compañía para hablar tras el trabajo.",
+    "skills": {
+      "Escucha": 4,
+      "Observación": 2
+    },
+    "activities": [
+      "Espera a un conocido",
+      "Mira el menú",
+      "Descansa del turno",
+      "Observa el local"
+    ],
+    "cadence": 4,
+    "appearance": "suit"
+  },
+  {
+    "id": "RESIDENT_042",
+    "name": "Midori Inoue",
+    "role": "Dueña de la tienda",
+    "location": "GROCERY",
+    "slot": 0,
+    "objective": "Vender los productos frescos antes del cierre.",
+    "skills": {
+      "Comercio": 5,
+      "Observación": 3
+    },
+    "activities": [
+      "Revisa el inventario",
+      "Comprueba los precios",
+      "Busca lo que falta",
+      "Atiende el pasillo"
+    ],
+    "cadence": 5,
+    "appearance": "apron"
+  },
+  {
+    "id": "RESIDENT_043",
+    "name": "Hiroshi Kato",
+    "role": "Ayudante de tienda",
+    "location": "GROCERY",
+    "slot": 1,
+    "objective": "Preparar los encargos de los vecinos mayores.",
+    "skills": {
+      "Organización": 3,
+      "Observación": 1
+    },
+    "activities": [
+      "Lee un encargo",
+      "Revisa la lista de productos",
+      "Cuenta paquetes",
+      "Espera al cliente"
+    ],
+    "cadence": 3,
+    "appearance": "worker"
+  },
+  {
+    "id": "RESIDENT_044",
+    "name": "Yuna Shibata",
+    "role": "Vecina de compras",
+    "location": "GROCERY",
+    "slot": 2,
+    "objective": "Encontrar los ingredientes para la cena familiar.",
+    "skills": {
+      "Cocina": 4,
+      "Observación": 2
+    },
+    "activities": [
+      "Consulta su lista",
+      "Compara productos",
+      "Cuenta las monedas",
+      "Revisa lo que falta"
+    ],
+    "cadence": 4,
+    "appearance": "casual"
+  },
+  {
+    "id": "RESIDENT_045",
+    "name": "Makoto Ishikawa",
+    "role": "Encargado del videoclub",
+    "location": "VIDEO_CLUB",
+    "slot": 0,
+    "objective": "Recuperar una cinta devuelta en la caja equivocada.",
+    "skills": {
+      "Cine": 5,
+      "Observación": 3
+    },
+    "activities": [
+      "Revisa devoluciones",
+      "Consulta el catálogo",
+      "Compara etiquetas",
+      "Ordena las reservas"
+    ],
+    "cadence": 5,
+    "appearance": "apron"
+  },
+  {
+    "id": "RESIDENT_046",
+    "name": "Satomi Kojima",
+    "role": "Aficionada al cine",
+    "location": "VIDEO_CLUB",
+    "slot": 1,
+    "objective": "Encontrar una película que vio de pequeña.",
+    "skills": {
+      "Cine": 3,
+      "Observación": 1
+    },
+    "activities": [
+      "Recuerda una escena",
+      "Consulta sus notas",
+      "Mira las novedades",
+      "Espera una recomendación"
+    ],
+    "cadence": 3,
+    "appearance": "casual"
+  },
+  {
+    "id": "RESIDENT_047",
+    "name": "Daisuke Morita",
+    "role": "Ayudante del videoclub",
+    "location": "VIDEO_CLUB",
+    "slot": 2,
+    "objective": "Ordenar la sección de ciencia ficción por número.",
+    "skills": {
+      "Archivo": 4,
+      "Observación": 2
+    },
+    "activities": [
+      "Comprueba los números",
+      "Revisa la lista",
+      "Busca una caja fuera de sitio",
+      "Marca la sección terminada"
+    ],
+    "cadence": 4,
+    "appearance": "worker"
+  },
+  {
+    "id": "RESIDENT_048",
+    "name": "Chihiro Matsuoka",
+    "role": "Librera",
+    "location": "BOOKSHOP",
+    "slot": 0,
+    "objective": "Localizar una edición usada solicitada por un profesor.",
+    "skills": {
+      "Literatura": 5,
+      "Observación": 3
+    },
+    "activities": [
+      "Consulta el catálogo",
+      "Revisa una referencia",
+      "Anota un encargo",
+      "Busca entre sus apuntes"
+    ],
+    "cadence": 5,
+    "appearance": "apron"
+  },
+  {
+    "id": "RESIDENT_049",
+    "name": "Yasuo Ueda",
+    "role": "Coleccionista",
+    "location": "BOOKSHOP",
+    "slot": 1,
+    "objective": "Completar una colección de revistas de radio.",
+    "skills": {
+      "Electrónica": 3,
+      "Observación": 1
+    },
+    "activities": [
+      "Compara una lista",
+      "Revisa los números que faltan",
+      "Anota una referencia",
+      "Espera a la librera"
+    ],
+    "cadence": 3,
+    "appearance": "elder"
+  },
+  {
+    "id": "RESIDENT_050",
+    "name": "Mei Tsuda",
+    "role": "Amiga lectora",
+    "location": "BOOKSHOP",
+    "slot": 2,
+    "objective": "Elegir un regalo con el dinero que ha ahorrado.",
+    "skills": {
+      "Literatura": 4,
+      "Observación": 2
+    },
+    "activities": [
+      "Cuenta sus monedas",
+      "Compara títulos",
+      "Revisa su lista",
+      "Decide qué regalar"
+    ],
+    "cadence": 4,
+    "appearance": "student"
+  },
+  {
+    "id": "RESIDENT_051",
+    "name": "Noboru Maeda",
+    "role": "Encargado del salón",
+    "location": "ARCADE",
+    "slot": 0,
+    "objective": "Reparar un botón que se queda atascado.",
+    "skills": {
+      "Mecánica": 5,
+      "Observación": 3
+    },
+    "activities": [
+      "Observa las máquinas",
+      "Anota la avería",
+      "Revisa su lista de piezas",
+      "Espera a que termine la partida"
+    ],
+    "cadence": 5,
+    "appearance": "worker"
+  },
+  {
+    "id": "RESIDENT_052",
+    "name": "Hana Fujimoto",
+    "role": "Jugadora habitual",
+    "location": "ARCADE",
+    "slot": 1,
+    "objective": "Superar su mejor puntuación sin gastar otra moneda.",
+    "skills": {
+      "Reflejos": 3,
+      "Observación": 1
+    },
+    "activities": [
+      "Recuerda la secuencia",
+      "Observa una partida",
+      "Ensaya un movimiento",
+      "Espera su turno"
+    ],
+    "cadence": 3,
+    "appearance": "student"
+  },
+  {
+    "id": "RESIDENT_053",
+    "name": "Shohei Ando",
+    "role": "Amigo del salón",
+    "location": "ARCADE",
+    "slot": 2,
+    "objective": "Encontrar un compañero para una partida cooperativa.",
+    "skills": {
+      "Cooperación": 4,
+      "Observación": 2
+    },
+    "activities": [
+      "Busca otro jugador",
+      "Observa la sala",
+      "Revisa sus monedas",
+      "Espera junto al pasillo"
+    ],
+    "cadence": 4,
+    "appearance": "casual"
+  },
+  {
+    "id": "RESIDENT_054",
+    "name": "Keiko Oshima",
+    "role": "Dueña del café",
+    "location": "CAFE",
+    "slot": 0,
+    "objective": "Preparar la mesa para la reunión del club de lectura.",
+    "skills": {
+      "Cocina": 5,
+      "Observación": 3
+    },
+    "activities": [
+      "Revisa las reservas",
+      "Cuenta las mesas",
+      "Prepara la lista del día",
+      "Espera al grupo"
+    ],
+    "cadence": 5,
+    "appearance": "apron"
+  },
+  {
+    "id": "RESIDENT_055",
+    "name": "Yusuke Sano",
+    "role": "Camarero",
+    "location": "CAFE",
+    "slot": 1,
+    "objective": "Aprender los pedidos sin tener que mirar la libreta.",
+    "skills": {
+      "Atención al público": 3,
+      "Observación": 1
+    },
+    "activities": [
+      "Repasa su libreta",
+      "Observa las mesas",
+      "Recuerda una comanda",
+      "Comprueba lo que falta"
+    ],
+    "cadence": 5,
+    "appearance": "apron"
+  },
+  {
+    "id": "RESIDENT_056",
+    "name": "Natsumi Honda",
+    "role": "Estudiante del café",
+    "location": "CAFE",
+    "slot": 2,
+    "objective": "Terminar una carta antes de tomar el tren.",
+    "skills": {
+      "Escritura": 4,
+      "Observación": 2
+    },
+    "activities": [
+      "Relee su carta",
+      "Piensa en la última frase",
+      "Mira el reloj",
+      "Corrige una línea"
+    ],
+    "cadence": 4,
+    "appearance": "student"
+  }
+]

@@ -1,3 +1,7 @@
+from .locations import (
+    spatial_priority_factor,
+)
+
 from .models import (
     ActorBelief,
     ActorLocationBelief,
@@ -80,16 +84,42 @@ def build_situation_goal_candidate(
     if response is None:
         return None
 
-    priority = (
+    # ==============================================
+    # COGNITIVE RELEVANCE
+    # ==============================================
+
+    base_priority = (
         belief.believed_severity
         * belief.confidence
         * response["interest"]
     )
 
+    # ==============================================
+    # SPATIAL RELEVANCE
+    # ==============================================
+
+    spatial_factor = (
+        spatial_priority_factor(
+            origin=agent.location,
+            destination=(
+                belief.believed_location
+            ),
+        )
+    )
+
+    priority = (
+        base_priority
+        * spatial_factor
+    )
+
+    # Being physically inside the crisis
+    # gives it extra salience.
+
     if (
         agent.location
         == belief.believed_location
     ):
+
         priority += 0.10
 
     priority = clamp(
@@ -171,11 +201,7 @@ def build_actor_goal_candidate(
     ):
         return None
 
-    # ==============================================
-    # DIRECT CONFIRMATION
-    # ==============================================
-
-    if (
+    current_direct_perception = (
         location_belief.source
         == "DIRECT_ACTOR_PERCEPTION"
 
@@ -183,14 +209,18 @@ def build_actor_goal_candidate(
 
         location_belief.confidence
         >= 0.95
-    ):
+
+        and
+
+        location_belief.updated_minute
+        == minute
+    )
+
+    if current_direct_perception:
 
         goal_type = (
             "CONTACT_SUSPECT"
         )
-
-        # Confirmar físicamente al sospechoso
-        # hace esta tarea ligeramente más urgente.
 
         multiplier = 1.45
 
@@ -201,6 +231,12 @@ def build_actor_goal_candidate(
         )
 
         multiplier = 1.35
+
+    # Actor pursuit intentionally keeps
+    # the 0.9 behaviour for now.
+    #
+    # We will spatialize pursuit separately
+    # once physical travel has multiple steps.
 
     priority = (
         actor_belief.confidence
@@ -297,7 +333,10 @@ def select_goal(
         return None
 
     candidates.sort(
-        key=lambda item: item.priority,
+        key=lambda item: (
+            item.priority,
+            item.target_id,
+        ),
         reverse=True,
     )
 

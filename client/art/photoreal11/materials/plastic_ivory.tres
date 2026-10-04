@@ -1,0 +1,6 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[resource]
+resource_name = "PR11_plastic_ivory"
+albedo_color = Color(0.49803922, 0.47843137, 0.42745098, 1)
+roughness = 0.5

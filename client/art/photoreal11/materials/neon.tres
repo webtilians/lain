@@ -1,0 +1,9 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[resource]
+resource_name = "PR11_neon"
+albedo_color = Color(0.49803922, 0.8627451, 1, 1)
+roughness = 0.3
+emission_enabled = true
+emission = Color(0.27450982, 0.827451, 1, 1)
+emission_energy_multiplier = 3.6

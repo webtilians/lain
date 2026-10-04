@@ -1,0 +1,7 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[resource]
+resource_name = "PR11_galvanized"
+albedo_color = Color(0.3137255, 0.3254902, 0.34509805, 1)
+metallic = 0.85
+roughness = 0.4

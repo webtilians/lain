@@ -1,0 +1,7 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[resource]
+resource_name = "PR11_alu_dark"
+albedo_color = Color(0.101960786, 0.09803922, 0.09411765, 1)
+metallic = 0.85
+roughness = 0.38

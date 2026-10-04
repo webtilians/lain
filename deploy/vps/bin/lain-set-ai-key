@@ -1,0 +1,72 @@
+#!/usr/bin/env bash
+# Give the characters their AI. The key is typed here, on the server, never
+# echoed, and stored only in /etc/lain/lain.env (root, 600).
+#
+#   lain-set-ai-key gemini     Google AI Studio key (aistudio.google.com/apikey)
+#   lain-set-ai-key groq       Groq key (console.groq.com/keys)
+#   lain-set-ai-key --off      back to scripted dialogue (the key is deleted)
+set -euo pipefail
+umask 077
+[ "$(id -u)" -eq 0 ] || { echo "Ejecuta como root." >&2; exit 1; }
+env_file=/etc/lain/lain.env
+provider=${1:-}
+
+if [ "$provider" = "--off" ]; then
+  echo "LAIN_LLM_ENABLED=0" > "$env_file.new"
+  mv "$env_file.new" "$env_file"
+  systemctl restart lain
+  echo "IA desactivada: los personajes usan diálogos predefinidos."
+  exit 0
+fi
+case "$provider" in
+  gemini) label="Google (Gemini)" ;;
+  groq) label="Groq" ;;
+  *) echo "Uso: lain-set-ai-key gemini|groq|--off" >&2; exit 2 ;;
+esac
+
+if [ -t 0 ]; then
+  read -rsp "Pega tu clave de $label y pulsa Enter (no se verá en pantalla): " key
+  echo
+else
+  # vps.ps1 asks on the PC (masked) and sends the key through SSH's stdin.
+  read -r key || true
+fi
+# Terminals may wrap a paste in ESC[200~...ESC[201~ or send ^V; drop them.
+# Windows PowerShell may prefix piped text with UTF-8 byte order marks (seen twice).
+key=${key//$'\xef\xbb\xbf'/}
+key=${key//$'\e[200~'/}
+key=${key//$'\e[201~'/}
+key=$(printf '%s' "$key" | tr -d '[:space:][:cntrl:]')
+if ! [[ $key =~ ^[A-Za-z0-9._-]{20,200}$ ]]; then
+  # Enough to diagnose a bad paste without revealing the key.
+  odd=$(printf '%s' "$key" | tr -d 'A-Za-z0-9._-' | wc -c)
+  echo "Eso no parece una clave de $label (${#key} caracteres, $odd no válidos). No he cambiado nada." >&2
+  exit 1
+fi
+
+echo "Probando la clave y buscando un modelo que funcione..."
+result=$(LAIN_TEST_KEY="$key" /opt/lain-venv/bin/python /opt/lain/deploy/vps/ai_probe.py "$provider")
+read -r status model extra <<< "$result"
+case "$status $model" in
+  "OK "*) ;;
+  "ERROR KEY") echo "$label dice que la clave no es válida. No he cambiado nada." >&2; exit 1 ;;
+  "ERROR LIMIT") echo "$label está limitando las peticiones ahora mismo. Prueba otra vez en unos minutos." >&2; exit 1 ;;
+  "ERROR NETWORK") echo "No pude conectar con $label. No he cambiado nada." >&2; exit 1 ;;
+  *) echo "Ningún modelo de $label respondió con esta clave. No he cambiado nada." >&2; exit 1 ;;
+esac
+endpoint=$(/opt/lain-venv/bin/python -c 'import sys; sys.path.insert(0, "/opt/lain/deploy/vps"); import ai_probe; print(ai_probe.endpoint(sys.argv[1]))' "$provider")
+
+{
+  echo "LAIN_LLM_ENABLED=1"
+  echo "LAIN_LLM_MODEL=$model"
+  echo "LAIN_LLM_ENDPOINT=$endpoint"
+  echo "LAIN_LLM_ALLOW_REMOTE=1"
+  echo "LAIN_LLM_API_KEY=$key"
+  [ "$extra" != "-" ] && echo "LAIN_LLM_EXTRA_BODY='$extra'"
+  echo "LAIN_LLM_TIMEOUT=15"
+  echo "LAIN_REALITY_TIMEOUT=20"
+} > "$env_file.new"
+mv "$env_file.new" "$env_file"
+unset key
+systemctl restart lain
+echo "IA activada con $label ($model). Los jugadores conectados se reconectan solos."
