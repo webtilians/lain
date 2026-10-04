@@ -17,6 +17,7 @@ const SUN_ELEVATION := 34.0
 const RAIN_DROPS := [1200, 2800, 5200]
 var materials = MATERIALS.new()
 var soft_edges = preload("res://scripts/art/SoftEdges.gd").new()
+var dresser = preload("res://scripts/art/InteriorDresser.gd").new(materials)
 var quality := 2
 var current_id := 0
 var environments: Array[Environment] = []
@@ -59,6 +60,8 @@ func apply_scene(scene: Node3D) -> void:
 	environments.clear()
 	exterior = scene.scene_file_path.contains("apartment_district")
 	visit(scene, false)
+	if not exterior:
+		dresser.dress(scene, location_of(scene))
 	if environments.is_empty():
 		var environment := WorldEnvironment.new()
 		environment.name = "RealismEnvironment"
@@ -92,6 +95,13 @@ func apply_scene(scene: Node3D) -> void:
 	quality_label.add_theme_constant_override("shadow_offset_y",1)
 	hud.add_child(quality_label)
 	apply_quality(quality, false)
+
+func location_of(scene: Node) -> String:
+	var paths: Dictionary = load("res://scripts/core/SceneRouter.gd").LOCATION_SCENES
+	for location in paths:
+		if paths[location] == scene.scene_file_path:
+			return location
+	return ""
 
 func visit(node: Node, dynamic: bool) -> void:
 	dynamic = dynamic or node.name in ["Player","Actors","PROFESSOR","RYOKO"]
@@ -139,18 +149,12 @@ func visit(node: Node, dynamic: bool) -> void:
 	elif node is OmniLight3D:
 		node.light_indirect_energy = .65
 		if not exterior:
-			# Interior lamps become warm, flickering candle and bulb light.
-			node.light_color = node.light_color.lerp(Color("ffa65a"), .6)
-			node.light_energy *= 2.4
+			# Visual 0.22: the room's own fill lamps stay steady and slightly warm;
+			# the fixtures added by InteriorDresser do the real lighting.
+			node.light_color = node.light_color.lerp(Color("ffd2a0"), .25)
+			node.light_energy *= 1.1
 			node.light_size = .45
-			node.shadow_enabled = true
-			node.shadow_bias = .06
-			node.shadow_normal_bias = .7
-			if not node.has_node("CandleFlicker"):
-				var flicker := Node.new()
-				flicker.name = "CandleFlicker"
-				flicker.set_script(load("res://scripts/art/CandleFlicker.gd"))
-				node.add_child(flicker)
+			node.shadow_enabled = false
 	for child in node.get_children():
 		visit(child,dynamic)
 
@@ -228,6 +232,7 @@ func apply_quality(level: int, persist: bool = false) -> void:
 		for light in scene_ref.find_children("*", "Light3D", true, false):
 			if light.has_meta("detail_light"):
 				light.visible = quality > 0
+	dresser.apply_quality(quality)
 	if is_instance_valid(quality_label):
 		quality_label.text = "F6  ·  GRÁFICOS: " + QUALITY_NAMES[quality] + ("  ·  Compatibilidad" if not forward_plus else "")
 	if persist:
@@ -306,10 +311,13 @@ func lighting(e: Environment) -> void:
 		# player. Depth fog above provides the haze instead.
 		e.volumetric_fog_enabled = false
 	else:
-		# Interiors: dim violet ambient under warm candle and bulb light.
+		# Visual 0.22 interiors: a neutral bounce under real fixtures, so walls and
+		# floors keep their colour instead of sinking into violet.
 		e.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
-		e.ambient_light_color = Color("4a3d5a")
-		e.ambient_light_energy = .7
+		e.ambient_light_color = Color("5a554e")
+		e.ambient_light_energy = .5
 		e.ambient_light_sky_contribution = 0
-		e.tonemap_exposure = 1.4
+		e.tonemap_exposure = 1.2
+		e.glow_intensity = .55
+		e.glow_hdr_threshold = 1.0
 		e.fog_enabled = false

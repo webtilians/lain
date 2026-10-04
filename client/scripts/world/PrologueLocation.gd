@@ -77,7 +77,7 @@ func _solid(label: String, pos: Vector3, size: Vector3, shade: Color) -> void:
 	shape.size = size
 	collider.shape = shape
 	body.add_child(collider)
-	add_child(body)
+	add_child(body, true)
 
 
 func _sign(title: String, pos: Vector3, shade: Color) -> void:
@@ -154,7 +154,7 @@ func _detail(label: String, pos: Vector3, size: Vector3,
 	mesh.size = size
 	instance.mesh = mesh
 	instance.material_override = _mat(shade, luminous)
-	add_child(instance)
+	add_child(instance, true)
 
 
 func _build_world() -> void:

@@ -227,6 +227,16 @@ jobs:
             exit 1
           fi
 
+      - name: Visual 0.22 interiors dressed without touching collisions
+        shell: bash
+        run: |
+          set -euo pipefail
+          /tmp/lain-godot --headless --path client --script res://tools/test_interiors22.gd 2>&1 | tee /tmp/lain-interiors22.log
+          grep -q 'INTERIORS22_OK' /tmp/lain-interiors22.log
+          if grep -E '^(SCRIPT ERROR:|ERROR:)' /tmp/lain-interiors22.log; then
+            exit 1
+          fi
+
       - name: Physical code contacts, copy review, receipts and stable retries
         shell: bash
         run: |
