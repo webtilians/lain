@@ -75,6 +75,7 @@ func _ready() -> void:
 	input.add_theme_font_override("font", mono)
 	input.add_theme_font_size_override("font_size", 16)
 	input.text_submitted.connect(_submit)
+	input.text_changed.connect(func(_text: String) -> void: pass)
 	line.add_child(input)
 	surface.hide()
 
@@ -133,6 +134,7 @@ func _submit(text: String) -> void:
 	if history.is_empty() or history[-1] != command:
 		history.append(command)
 	history_index = history.size()
+	pass
 	_send(command, true)
 
 func _send(command: String, echo: bool) -> void:
@@ -171,6 +173,7 @@ func _done(text: String) -> void:
 	input.editable = true
 	if not text.is_empty():
 		_print(text)
+		pass
 	_update_prompt()
 	if is_open():
 		input.grab_focus()
