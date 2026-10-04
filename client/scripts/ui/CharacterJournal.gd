@@ -7,6 +7,7 @@ const JOURNAL_KEY := KEY_J
 var backdrop: ColorRect
 var details: RichTextLabel
 var navigation: VBoxContainer
+var cinema_controls: VBoxContainer
 var active_player: Node = null
 var current_view := "PLAYER"
 var selected_actor_id := ""
@@ -80,6 +81,9 @@ func _ready() -> void:
 	body.add_child(reading)
 	reading.add_child(details)
 	_build_chapter_controls(reading)
+	cinema_controls = VBoxContainer.new()
+	cinema_controls.add_theme_constant_override("separation", 6)
+	reading.add_child(cinema_controls)
 	backdrop.visible = false
 	WorldApi.snapshot_updated.connect(_on_snapshot_updated)
 	call_deferred("_connect_chapter")
@@ -167,6 +171,7 @@ func _refresh_navigation() -> void:
 		_add_navigation("ARCHIVO // YA HABÍAS ESTADO AQUÍ", "CHAPTER")
 	if bool(WorldApi.snapshot.get("network_conflict",{}).get("active",false)):
 		_add_navigation("RED // CONTROL DE ENLACES", "NETWORK")
+	_add_navigation("CINEMÁTICAS // VOLVER A VER", "CINEMATICS")
 	var sheets: Dictionary = WorldApi.snapshot.get("character_sheets", {})
 	var actors: Array = sheets.get("visible_npcs", [])
 	for item in actors:
@@ -189,7 +194,10 @@ func _choose_view(view: String, actor_id: String) -> void:
 
 func _render_view() -> void:
 	chapter_controls.visible=current_view=="CHAPTER"
+	cinema_controls.visible = current_view == "CINEMATICS"
 	match current_view:
+		"CINEMATICS":
+			_render_cinematics()
 		"NETWORK":
 			_render_network()
 		"CHAPTER":
@@ -202,6 +210,26 @@ func _render_view() -> void:
 			_render_npc()
 		_:
 			_render_player()
+
+
+func _render_cinematics() -> void:
+	details.text = "CINEMÁTICAS
+
+Vuelve a ver las escenas que ya has desbloqueado. Esc las salta."
+	for child in cinema_controls.get_children():
+		cinema_controls.remove_child(child)
+		child.queue_free()
+	for entry in Cinematic.available():
+		var button := Button.new()
+		button.text = entry.label
+		button.alignment = HORIZONTAL_ALIGNMENT_LEFT
+		button.pressed.connect(_replay.bind(entry.item))
+		cinema_controls.add_child(button)
+
+
+func _replay(item: Dictionary) -> void:
+	close_journal()
+	Cinematic.replay(item)
 
 
 func _render_player() -> void:

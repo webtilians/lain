@@ -70,6 +70,16 @@ func capture() -> void:
 	cinematic.skipping = true
 	while cinematic.is_playing():
 		await process_frame
+	# The diary's list of scenes to watch again.
+	api.snapshot.prologue.stage = "CONNECTED"
+	for key in ["layer_one", "layer_two", "layer_three"]:
+		api.snapshot[key] = {"active": true, "decision": "X", "fragments": 3}
+	var journal := root.get_node("CharacterJournal")
+	journal.open_journal()
+	journal._choose_view("CINEMATICS", "")
+	await create_timer(0.5).timeout
+	await shot("diary")
+	journal.close_journal()
 	for file in ["user://guide_capture.cfg", "user://cinematics_capture.cfg"]:
 		DirAccess.remove_absolute(ProjectSettings.globalize_path(file))
 	quit()

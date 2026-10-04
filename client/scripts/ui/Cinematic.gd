@@ -175,11 +175,10 @@ func _on_snapshot(snapshot: Dictionary) -> void:
 			queue.append({"id": "wired"})
 		for key in LAYERS:
 			if now.decisions.has(key) and not known.decisions.has(key):
-				var count: int = maxi(now.fragments, known.fragments + 1)
 				if key == "layer_seven":
-					queue.append({"id": "ending", "decision": now.decisions[key], "count": count})
+					queue.append({"id": "ending", "decision": now.decisions[key], "count": now.decisions.size()})
 				else:
-					queue.append({"id": "fragment", "layer": key, "count": count})
+					queue.append({"id": "fragment", "layer": key})
 	known = now
 
 func can_play() -> bool:
@@ -201,7 +200,7 @@ func _process(_delta: float) -> void:
 		play(queue.pop_front())
 
 func _input(event: InputEvent) -> void:
-	if not is_playing():
+	if not is_playing() or playing == "intro":
 		return
 	if event is InputEventKey or event is InputEventMouseButton:
 		get_viewport().set_input_as_handled()
@@ -209,6 +208,42 @@ func _input(event: InputEvent) -> void:
 			and event.keycode in [KEY_ESCAPE, KEY_ENTER, KEY_KP_ENTER, KEY_SPACE]
 		if skip_key or (event is InputEventMouseButton and event.pressed):
 			skipping = true
+
+# ------------------------------------------------------------------ replays
+
+func available() -> Array:
+	# What the diary offers to watch again: only what this player has reached.
+	var snapshot: Dictionary = WorldApi.snapshot
+	var stage := str(snapshot.get("prologue", {}).get("stage", "LEGACY"))
+	var items: Array = [{"label": "ARRANQUE // LA TERMINAL", "item": {"id": "intro"}},
+		{"label": "APERTURA // HAS VUELTO", "item": {"id": "opening"}}]
+	if stage in ["CONNECTED", "LEGACY"]:
+		items.append({"label": "THE WIRED // SESIÓN UNO", "item": {"id": "wired"}})
+	var decided := 0
+	for key in LAYERS:
+		var entry = snapshot.get(key, {})
+		if typeof(entry) != TYPE_DICTIONARY or entry.get("decision") == null:
+			continue
+		decided += 1
+		if key != "layer_seven":
+			items.append({"label": "FRAGMENTO %d/7 // %s" % [LAYERS.find(key) + 1, Language.text(FRAGMENTS[key][0])],
+				"item": {"id": "fragment", "layer": key}})
+	var last = snapshot.get("layer_seven", {})
+	if typeof(last) == TYPE_DICTIONARY and last.get("decision") != null:
+		items.append({"label": "FINAL // GRACIAS POR RECIBIRLA",
+			"item": {"id": "ending", "decision": str(last.decision), "count": decided}})
+	return items
+
+func replay(item: Dictionary) -> void:
+	# Plays as soon as nothing is open (the diary closes itself first).
+	if not is_playing():
+		queue.push_front(item)
+
+func _intro() -> void:
+	var intro: Node = load("res://scripts/ui/Intro.gd").new()
+	add_child(intro)
+	await intro.finished
+	await get_tree().create_timer(0.6).timeout
 
 # ------------------------------------------------------------------ playback
 
@@ -230,7 +265,8 @@ func play(item: Dictionary) -> void:
 			hidden_huds.append(hud)
 	match item.id:
 		"opening":
-			seen.append("opening")
+			if not "opening" in seen:
+				seen.append("opening")
 			var config := ConfigFile.new()
 			config.set_value("cinematics", "seen", seen)
 			config.save(config_path)
@@ -238,9 +274,12 @@ func play(item: Dictionary) -> void:
 		"wired":
 			await _wired()
 		"fragment":
-			await _fragment(item.layer, item.count)
+			await _fragment(item.layer)
 		"ending":
 			await _ending(item.decision, item.count)
+		"intro":
+			root.hide()
+			await _intro()
 	_finish()
 
 func _restore_camera() -> void:
@@ -395,11 +434,11 @@ func _wired() -> void:
 	bars(false)
 	await tween_to(shade, "modulate:a", 0.0, 0.8)
 
-func _fragment(layer_key: String, count: int) -> void:
+func _fragment(layer_key: String) -> void:
 	await burst(0.85, 0.18, 0.6)
 	shade.modulate.a = 0.86
 	bars(true)
-	caption.text = "FRAGMENTO %d/7 · SESIÓN CERO" % count
+	caption.text = "FRAGMENTO %d/7 · SESIÓN CERO" % (LAYERS.find(layer_key) + 1)
 	await wait(0.7)
 	await say(FRAGMENTS[layer_key][0], DIM, true)
 	await wait(1.3)
@@ -412,7 +451,7 @@ func _fragment(layer_key: String, count: int) -> void:
 func _ending(decision: String, count: int) -> void:
 	await tween_to(shade, "modulate:a", 1.0, 1.6)
 	bars(true)
-	caption.text = "FRAGMENTO %d/7 · SESIÓN CERO" % count
+	caption.text = "FRAGMENTO 7/7 · SESIÓN CERO"
 	await say(FRAGMENTS.layer_seven[0], DIM, true)
 	await wait(1.2)
 	await say(ENDINGS.get(decision, ""), INK)
