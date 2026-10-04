@@ -1,9 +1,13 @@
 """Hints: `pista` in any terminal, for the step the player is on.
 
-Each step has three hints that get clearer every time the player asks again:
-the idea, the method, and finally the concrete values of their own game. The
-level starts over when the player reaches a new step. Nora gives them, and
-she remembers who asked for help.
+Each step has three hints: the idea, the method, and finally the concrete
+values of the player's own game. The level starts over on every new step.
+
+`pista` gives the first one (Nora's) and says who knows more: a neighbour whose
+trade fits the layer, and the real players who already finished it. Talking
+to that neighbour and asking ("Me han dicho que sabes de esto…") gives the
+second hint, and asking again the third. Everyone who helped remembers it.
+Without residents in the world, `pista` climbs the three levels itself.
 """
 import os
 
@@ -16,6 +20,20 @@ LAYERS = ("layer_one", "layer_two", "layer_three", "layer_four", "layer_five", "
 TITLES = {"layer_one": "Capa 01 · Física", "layer_two": "Capa 02 · Enlace", "layer_three": "Capa 03 · TTL",
           "layer_four": "Capa 04 · Transporte", "layer_five": "Capa 05 · Sesión",
           "layer_six": "Capa 06 · Presentación", "layer_seven": "Capa 07 · Aplicación"}
+
+
+# Who in the neighbourhood knows about each layer, and why (their trade).
+EXPERTS = {
+    "layer_one": ("RESIDENT_027", "el aula de informática", "sabe de electrónica: cables, señales y osciloscopios"),
+    "layer_two": ("RESIDENT_049", "la librería", "colecciona conmutadores y tarjetas de red antiguas"),
+    "layer_three": ("RESIDENT_035", "la estación", "se sabe todas las rutas y cuántos saltos tiene cada una"),
+    "layer_four": ("RESIDENT_001", "el barrio", "sabe lo que es esperar un acuse de recibo"),
+    "layer_five": ("RESIDENT_045", "el videoclub", "lleva préstamos que caducan y copias que se pisan"),
+    "layer_six": ("RESIDENT_056", "Kissa Café", "escribe en clave y le encantan los cifrados"),
+    "layer_seven": ("RESIDENT_025", "el aula de informática", "mantiene los servidores del aula: nombres, direcciones y páginas"),
+}
+EXPERT_OPENERS = {2: "«Algo sé de esto. Te explico cómo lo haría yo:»",
+                  3: "«Vale, con tus datos. Escúchame bien:»"}
 
 
 def enabled() -> bool:
@@ -246,6 +264,41 @@ def files(c, player: str, relay, story3) -> dict:
     return {}
 
 
+def expert(c, layer: str):
+    """(actor_id, name, role, place, why) of the neighbour who knows the layer, if they live in this world."""
+    actor, place, why = EXPERTS[layer]
+    row = c.execute("SELECT name FROM agents WHERE id=?", (actor,)).fetchone()
+    if row is None:
+        return None
+    from .residents import load_catalog
+    role = next((item["role"] for item in load_catalog() if item["id"] == actor), "")
+    return actor, row[0], role, place, why
+
+
+def finished_by(c, player: str, layer: str) -> list[str]:
+    """Real players who already finished this layer: they can be asked in the chat."""
+    if c.execute("SELECT 1 FROM sqlite_master WHERE name=?", (layer,)).fetchone() is None:
+        return []
+    return [name for (name,) in c.execute(
+        f"SELECT a.name FROM {layer} l JOIN agents a ON a.id=l.player_id WHERE l.decision IS NOT NULL "
+        "AND l.player_id<>? AND a.controller_type='HUMAN' ORDER BY a.name LIMIT 3", (player,)).fetchall()]
+
+
+def _level(c, player: str, layer: str, step: str) -> int:
+    row = c.execute("SELECT step, level FROM hint_progress WHERE player_id=? AND layer=?", (player, layer)).fetchone()
+    return row[1] if row and row[0] == step else 0
+
+
+def _save(c, player: str, layer: str, step: str, level: int) -> None:
+    c.execute("INSERT INTO hint_progress(player_id, layer, step, level, asked) VALUES(?,?,?,?,1) "
+              "ON CONFLICT(player_id, layer) DO UPDATE SET step=excluded.step, level=excluded.level, asked=asked+1",
+              (player, layer, step, level))
+
+
+def _header(level: int, layer: str) -> str:
+    return i18n.t(f"PISTA {level}/3 · {i18n.t(TITLES[layer])}")
+
+
 def dispatch(c, player, story3, relay, result, name, args, minute):
     runs = _runs(c, player)
     if args and args[0].isdigit() and 1 <= int(args[0]) <= 7:
@@ -259,27 +312,78 @@ def dispatch(c, player, story3, relay, result, name, args, minute):
     if layer is None:
         return i18n.t("Has completado todas las capas que tienes abiertas. No hay nada en lo que pueda ayudarte.")
     step, texts = _plan(c, player, layer, runs[layer])
-    row = c.execute("SELECT step, level FROM hint_progress WHERE player_id=? AND layer=?", (player, layer)).fetchone()
-    level = min(row[1] + 1, 3) if row and row[0] == step else 1
-    c.execute("INSERT INTO hint_progress(player_id, layer, step, level, asked) VALUES(?,?,?,?,1) "
-              "ON CONFLICT(player_id, layer) DO UPDATE SET step=excluded.step, level=excluded.level, asked=asked+1",
-              (player, layer, step, level))
+    known = _level(c, player, layer, step)
+    who = expert(c, layer)
     memory = f"El jugador me pidió ayuda con la {TITLES[layer]}. Le di pistas sin resolverle nada que no quisiera."
     c.execute("INSERT OR REPLACE INTO hint_knowledge VALUES(?,?,?,?)", (player, NORA, memory, minute))
     result["changed"] = True
-    lines = [i18n.t(f"PISTA {level}/3 · {i18n.t(TITLES[layer])}"), "Nora: " + i18n.t(texts[level - 1])]
-    if level < 3:
-        lines.append(i18n.t("(Escribe pista otra vez y te daré una más clara.)"))
+    if who is None:
+        # No neighbours to ask: Nora climbs the three levels herself.
+        level = min(known + 1, 3)
+        _save(c, player, layer, step, level)
+        lines = [_header(level, layer), "Nora: " + i18n.t(texts[level - 1])]
+        if level < 3:
+            lines.append(i18n.t("(Escribe pista otra vez y te daré una más clara.)"))
+        return "\n".join(lines)
+    _save(c, player, layer, step, max(known, 1))
+    actor, person, role, place, why = who
+    lines = [_header(1, layer), "Nora: " + i18n.t(texts[0]),
+             i18n.t(f"Quien sabe de esto es {person} ({i18n.t(role)}), en {i18n.t(place)}: {i18n.t(why)}. "
+                    "Ve a buscarle y pregúntale.")]
+    players = finished_by(c, player, layer)
+    if players:
+        lines.append(i18n.t(f"También la han superado: {', '.join(players)}. Pregúntales por el chat."))
+    # What the neighbour already said, to read it again.
+    for level in range(2, known + 1):
+        lines += ["", _header(level, layer), f"{person}: " + i18n.t(texts[level - 1])]
     return "\n".join(lines)
 
 
+def expert_layer(c, player: str, actor: str):
+    """The layer this neighbour can help the player with now: they were sent here and have more to learn."""
+    if not enabled() or not _exists(c):
+        return None
+    runs = _runs(c, player)
+    layer = current(runs)
+    if layer is None or EXPERTS[layer][0] != actor:
+        return None
+    step, _ = _plan(c, player, layer, runs[layer])
+    return layer if _level(c, player, layer, step) >= 1 else None
+
+
+def consult(c, player: str, actor: str, minute: int) -> str:
+    """The neighbour's answer: the next hint for the player's step, the method first and then their values."""
+    layer = expert_layer(c, player, actor)
+    if layer is None:
+        raise ValueError("NO_HINT_HERE")
+    runs = _runs(c, player)
+    step, texts = _plan(c, player, layer, runs[layer])
+    level = min(max(_level(c, player, layer, step), 1) + 1, 3)
+    _save(c, player, layer, step, level)
+    memory = (f"El jugador vino a preguntarme por la {TITLES[layer]} porque le dijeron que yo sabía de eso. "
+              "Le ayudé con lo que sé.")
+    c.execute("INSERT OR REPLACE INTO hint_knowledge VALUES(?,?,?,?)", (player, actor, memory, minute))
+    # Saved in Spanish like every conversation turn; it is translated line by line when shown.
+    reply = [f"PISTA {level}/3 · {TITLES[layer]}", EXPERT_OPENERS[level], texts[level - 1]]
+    if level < 3:
+        reply.append("(Si con esto no te basta, vuelve a preguntarme.)")
+    return "\n".join(reply)
+
+
+def ask_line(layer: str) -> str:
+    return f"Me han dicho que sabes de esto. ¿Me ayudas con la {TITLES[layer]}?"
+
+
 HELP = """Ayuda:
-  pista [capa]            una pista para lo que estás haciendo (cada vez más clara)"""
+  pista [capa]            una pista para lo que estás haciendo y quién sabe más"""
 MAN = {"pista": """pista [capa]
 
-Nora te da una pista para el paso en el que estás. Si vuelves a pedirla, la
-siguiente es más clara: primero la idea, luego el método y al final los valores
-de tu propia partida. Con un número (pista 3) pides ayuda con esa capa."""}
+Nora te da la primera pista para el paso en el que estás (la idea) y te dice
+quién sabe más: alguien del barrio cuyo oficio tiene que ver con esa capa, y
+los jugadores que ya la superaron. Ve a hablar con esa persona y pregúntale:
+te explicará el método y, si vuelves a preguntar, los valores de tu propia
+partida. pista te recuerda después lo que te contó. Con un número (pista 3)
+pides ayuda con esa capa."""}
 MAN_ALIASES = {"hint": "pista", "hints": "pista", "pistas": "pista", "ayuda": "pista"}
 # The hint is translated here, sentence by sentence, so the shell must not translate it again.
 RAW_COMMANDS = {"pista", "hint"}

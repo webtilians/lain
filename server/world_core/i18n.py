@@ -67,6 +67,9 @@ def _catalog(lang: str):
 GAME_TERMS = frozenset({
     "Enrutamiento", "Exploración", "Protección", "Amortiguación", "Coprocesador M",
     "Interfaz R", "Técnico de Kissa", "Profesor",
+    # Layer titles, captured inside hint lines.
+    "Capa 01 · Física", "Capa 02 · Enlace", "Capa 03 · TTL", "Capa 04 · Transporte", "Capa 05 · Sesión",
+    "Capa 06 · Presentación", "Capa 07 · Aplicación",
 })
 
 

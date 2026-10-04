@@ -113,8 +113,18 @@ def player_observed_signal(
     )
 
 
+def hint_layer(player_id: str, actor_id: str):
+    """The layer this character can help with, if `pista` sent the player to them."""
+    from . import hints
+    if not actor_id:
+        return None
+    with get_connection() as conn:
+        return hints.expert_layer(conn, player_id, actor_id)
+
+
 def available_choices(
     player_id: str = "PLAYER_1",
+    actor_id: str = "",
 ) -> list[dict]:
     result = [
         {
@@ -144,6 +154,10 @@ def available_choices(
     # Stored turns and game logic stay in Spanish; only what is shown changes.
     for choice in result:
         choice["text"] = t(choice["text"])
+    layer = hint_layer(player_id, actor_id)
+    if layer is not None:
+        from . import hints
+        result.insert(len(result) - 1, {"id": "ASK_HINT", "text": f'{len(result)}. "{t(hints.ask_line(layer))}"'})
     return result
 
 
@@ -179,7 +193,7 @@ def conversation_payload(
         "turn_id": row[0],
         "line": t(row[2]),
         "response_source": row[3],
-        "choices": available_choices(player_id=player_id),
+        "choices": available_choices(player_id=player_id, actor_id=actor_id),
     }
 
 
@@ -291,6 +305,8 @@ def reply_to_player_conversation(
     player_id: str = "PLAYER_1",
 ) -> dict:
     interaction, actor_name = require_conversation(actor_id, player_id=player_id)
+    if choice_id == "ASK_HINT":
+        return ask_for_hint(actor_id, actor_name, interaction.id, after_turn_id, minute, player_id)
     if choice_id not in CHOICES:
         raise ValueError("UNKNOWN_DIALOGUE_CHOICE")
     if choice_id == "TELL_OBSERVED" and not player_observed_signal(player_id=player_id):
@@ -412,6 +428,49 @@ def reply_to_player_conversation(
     return conversation_payload(
         interaction.id, actor_id, actor_name, player_id=player_id
     )
+
+
+def ask_for_hint(actor_id: str, actor_name: str, interaction_id: str, after_turn_id: int,
+                 minute: int, player_id: str) -> dict:
+    """The expert `pista` sent the player to answers with the next hint, word for word (no model)."""
+    from . import hints
+    initialize_conversation_turns()
+    initialize_memory_provenance()
+    with get_connection() as conn:
+        conn.execute("BEGIN IMMEDIATE")
+        current = conn.execute("SELECT status FROM interactions WHERE id = ?", (interaction_id,)).fetchone()
+        if current is None or current[0] != "OPEN":
+            raise ValueError("NO_OPEN_CONVERSATION")
+        locations = dict(conn.execute("SELECT id, location FROM agents WHERE id IN (?, ?)",
+                                      (player_id, actor_id)).fetchall())
+        if player_id not in locations or locations.get(actor_id) != locations[player_id]:
+            raise ValueError("ACTOR_NOT_PRESENT")
+        latest = conn.execute("SELECT id, speaker_id FROM player_conversation_turns WHERE interaction_id = ? "
+                              "ORDER BY id DESC LIMIT 1", (interaction_id,)).fetchone()
+        if latest is None:
+            raise ValueError("CONVERSATION_NOT_STARTED")
+        if latest[0] == after_turn_id:
+            if latest[1] != actor_id:
+                raise ValueError("NOT_PLAYER_TURN")
+            layer = hints.expert_layer(conn, player_id, actor_id)
+            if layer is None:
+                raise ValueError("NO_HINT_HERE")
+            question = hints.ask_line(layer)
+            answer = hints.consult(conn, player_id, actor_id, minute)
+            player_turn = conn.execute(
+                "INSERT INTO player_conversation_turns (interaction_id, speaker_id, text, source, minute) "
+                "VALUES (?, ?, ?, ?, ?)", (interaction_id, player_id, question, "PLAYER_CHOICE", minute))
+            conn.execute(
+                "INSERT INTO player_conversation_turns (interaction_id, speaker_id, text, source, minute) "
+                "VALUES (?, ?, ?, ?, ?)", (interaction_id, actor_id, answer, "EXPERT_HINT", minute))
+            save_episodic_memory(conn, actor_id, f"During conversation {interaction_id}, {player_id} asked me for help "
+                                 f"with {hints.TITLES[layer]}.", source_kind="PLAYER_TESTIMONY",
+                                 source_actor_id=player_id, origin_turn_id=player_turn.lastrowid, minute=minute,
+                                 shareable=False)
+            conn.execute("INSERT INTO events (minute, actor_id, action, target, details) VALUES (?, ?, ?, ?, ?)",
+                         (minute, player_id, "HINT_FROM_EXPERT", actor_id, layer))
+        # Otherwise a retry: the answer already saved is returned.
+    return conversation_payload(interaction_id, actor_id, actor_name, player_id=player_id)
 
 
 def pause_player_conversation(
