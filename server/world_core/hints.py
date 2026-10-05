@@ -32,6 +32,7 @@ EXPERTS = {
     "layer_six": ("RESIDENT_056", "Kissa Café", "escribe en clave y le encantan los cifrados"),
     "layer_seven": ("RESIDENT_025", "el aula de informática", "mantiene los servidores del aula: nombres, direcciones y páginas"),
 }
+EXPERT_ACTORS = {actor for actor, _place, _why in EXPERTS.values()}
 EXPERT_OPENERS = {2: "«Algo sé de esto. Te explico cómo lo haría yo:»",
                   3: "«Vale, con tus datos. Escúchame bien:»"}
 
@@ -341,7 +342,8 @@ def dispatch(c, player, story3, relay, result, name, args, minute):
 
 def expert_layer(c, player: str, actor: str):
     """The layer this neighbour can help the player with now: they were sent here and have more to learn."""
-    if not enabled() or not _exists(c):
+    # Every conversation asks this: anyone who is nobody's expert is answered before any layer is read.
+    if actor not in EXPERT_ACTORS or not enabled() or not _exists(c):
         return None
     runs = _runs(c, player)
     layer = current(runs)

@@ -61,7 +61,9 @@ def sync(c, minute: int) -> list[tuple[str, str, str]]:
         echo, label, place = PREFIX + player, f"Eco de {name}", place_at(c, player, minute)
         c.execute("INSERT OR IGNORE INTO agents (id,name,faction,location,goal,energy,controller_type) "
                   "VALUES (?,?,'ECHO',?,'REMEMBER',1.0,'ECHO')", (echo, label, place))
-        c.execute("UPDATE agents SET location=?, name=? WHERE id=?", (place, label, echo))
+        # Written only when it actually moves (or its player was renamed), not on every tick.
+        c.execute("UPDATE agents SET location=?, name=? WHERE id=? AND (location<>? OR name<>?)",
+                  (place, label, echo, place, label))
         echoes.append((echo, label, place))
     return echoes
 
