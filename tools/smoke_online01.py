@@ -238,12 +238,19 @@ def main():
                     code = child.wait(timeout=95)
                     output.flush()
                     contents = log_path.read_text(encoding="utf-8", errors="replace")
+                    # The headless renderer on macOS reports a couple of shader handles still
+                    # held when the game quits; that is engine shutdown, not the game failing.
+                    errors = [
+                        line
+                        for line in contents.splitlines()
+                        if line.startswith("ERROR:") and "were leaked at exit" not in line
+                    ]
                     if (
                         code != 0
                         or not args.exported
                         and "ONLINE01_CLIENT_OK" not in contents
                         or "SCRIPT ERROR:" in contents
-                        or "\nERROR:" in contents
+                        or errors
                     ):
                         raise RuntimeError(f"Godot {name} failed; see {log_path}")
                 print(

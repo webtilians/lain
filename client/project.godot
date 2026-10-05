@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="LAIN"
-config/name.macos="Sesión Cero"
+config/name.macos="Sesion Cero"
 run/main_scene="res://scenes/boot/Boot.tscn"
 config/features=PackedStringArray("4.7")
 

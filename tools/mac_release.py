@@ -21,7 +21,9 @@ from pathlib import Path
 import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
-APP = "Sesión Cero.app"
+# No accent in file names inside the bundle: Godot's ad-hoc seal of «Sesión Cero» does not verify
+# on a Mac. The window still says «Sesión Cero» (the game sets its title).
+APP = "Sesion Cero.app"
 BUNDLE_ID = "io.github.webtilians.sesioncero"
 ZIP_NAME = "SesionCero-Mac.zip"
 

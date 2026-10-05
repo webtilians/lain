@@ -136,6 +136,6 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           $tag = "v$env:LAIN_VERSION"
-          $notes = "Sesión Cero $env:LAIN_VERSION. Windows: descarga LAIN-Windows.zip, extráelo y abre LAIN.exe; si ya lo tienes, se actualiza solo al abrirlo. Mac: descarga SesionCero-Mac.zip y arrastra Sesión Cero a Aplicaciones (la primera vez hay que permitirla en Ajustes del Sistema)."
+          $notes = "Sesión Cero $env:LAIN_VERSION. Windows: descarga LAIN-Windows.zip, extráelo y abre LAIN.exe; si ya lo tienes, se actualiza solo al abrirlo. Mac: descarga SesionCero-Mac.zip y arrastra Sesion Cero a Aplicaciones (la primera vez hay que permitirla en Ajustes del Sistema)."
           gh release create $tag LAIN-Windows.zip SesionCero-Mac.zip manifest.json parts.json.gz LAIN.exe LAIN-Game.exe LAIN-Game.pck LEEME.txt --title "Sesión Cero $env:LAIN_VERSION" --notes $notes --target $env:GITHUB_SHA --latest
           if ($LASTEXITCODE -ne 0) { throw "Release publication failed" }

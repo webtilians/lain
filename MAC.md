@@ -10,12 +10,12 @@ Enlace permanente: https://github.com/webtilians/lain/releases/latest/download/S
 ## Para quien juega
 
 1. Descarga el ZIP. Safari lo descomprime solo; si no, haz doble clic.
-2. Arrastra **Sesión Cero** a **Aplicaciones**.
+2. Arrastra **Sesion Cero** a **Aplicaciones**.
 3. La primera vez macOS no la abre, porque el juego no está firmado por Apple
    (ver más abajo). Hay que permitirla una vez:
    1. Ábrela y cierra el aviso.
    2. Ve a **Ajustes del Sistema → Privacidad y seguridad**.
-   3. Abajo aparece *Sesión Cero*: pulsa **Abrir igualmente** y confirma con tu
+   3. Abajo aparece *Sesion Cero*: pulsa **Abrir igualmente** y confirma con tu
       contraseña o Touch ID.
 4. En el menú, crea tu cuenta con el código de invitación, o entra con tu nombre y tu
    contraseña si ya juegas en Windows.
@@ -24,7 +24,7 @@ Si macOS dice que la app «está dañada», es la cuarentena de las descargas. D
 Terminal se quita con:
 
 ```bash
-xattr -dr com.apple.quarantine "/Applications/Sesión Cero.app"
+xattr -dr com.apple.quarantine "/Applications/Sesion Cero.app"
 ```
 
 **Actualizaciones.** En Windows, `LAIN.exe` se actualiza solo. En Mac no hay
@@ -34,7 +34,7 @@ que volver a permitirla. Las partidas y las cuentas están en el servidor, así 
 pierde nada.
 
 Los ajustes del Mac (idioma, gráficos, sonido, sesión) se guardan en
-`~/Library/Application Support/Godot/app_userdata/Sesión Cero`.
+`~/Library/Application Support/Godot/app_userdata/Sesion Cero`.
 
 ## Sin firma de Apple
 
@@ -62,8 +62,9 @@ Si algún día compensa, solo hay que:
   - arquitectura universal;
   - firma ad hoc integrada en Godot, así que se exporta desde el mismo Windows de
     GitHub que la versión de Windows;
-  - nombre «Sesión Cero» (`config/name.macos`) e identificador
-    `io.github.webtilians.sesioncero`.
+  - nombre «Sesion Cero» (`config/name.macos`), sin acento porque la firma ad hoc de Godot
+    no se puede verificar en un Mac si los archivos de dentro lo llevan (la ventana sí dice
+    «Sesión Cero»), e identificador `io.github.webtilians.sesioncero`.
   - Las texturas también se importan en ETC2/ASTC (`import_etc2_astc`), que piden los
     Mac con chip Apple. Por eso pesa más que la de Windows: lleva los dos formatos.
 - **GitHub Actions:**

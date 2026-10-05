@@ -17,14 +17,14 @@ def entry(archive, name, data=b"", mode=0o644):
     archive.writestr(info, data)
 
 
-def mac_zip(path, *, executable=True, name="Sesión Cero", signed=True, version="0.28.0", pck=True):
-    plist = plistlib.dumps({"CFBundleExecutable": "Sesión Cero", "CFBundleName": name, "CFBundleShortVersionString": version,
+def mac_zip(path, *, executable=True, name="Sesion Cero", signed=True, version="0.28.0", pck=True):
+    plist = plistlib.dumps({"CFBundleExecutable": "Sesion Cero", "CFBundleName": name, "CFBundleShortVersionString": version,
                             "CFBundleIdentifier": mac_release.BUNDLE_ID})
     with zipfile.ZipFile(path, "w") as archive:
         entry(archive, f"{APP}/Contents/Info.plist", plist)
-        entry(archive, f"{APP}/Contents/MacOS/Sesión Cero", b"\xcf\xfa\xed\xfe", 0o755 if executable else 0o644)
+        entry(archive, f"{APP}/Contents/MacOS/Sesion Cero", b"\xcf\xfa\xed\xfe", 0o755 if executable else 0o644)
         if pck:
-            entry(archive, f"{APP}/Contents/Resources/Sesión Cero.pck", b"GDPC" * 1000)
+            entry(archive, f"{APP}/Contents/Resources/Sesion Cero.pck", b"GDPC" * 1000)
         if signed:
             entry(archive, f"{APP}/Contents/_CodeSignature/CodeResources", b"<plist/>")
     return path
@@ -44,8 +44,8 @@ def test_release_json_carries_the_shared_server_and_the_downloads(tmp_path):
 
 def test_a_whole_app_passes(tmp_path):
     found = mac_release.check(mac_zip(tmp_path / "ok.zip"), "0.28.0")
-    assert found["name"] == "Sesión Cero" and found["version"] == "0.28.0"
-    assert found["program"] == f"{APP}/Contents/MacOS/Sesión Cero"
+    assert found["name"] == "Sesion Cero" and found["version"] == "0.28.0"
+    assert found["program"] == f"{APP}/Contents/MacOS/Sesion Cero"
 
 
 @pytest.mark.parametrize("broken, reason", [

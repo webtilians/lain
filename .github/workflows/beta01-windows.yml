@@ -232,6 +232,8 @@ jobs:
           names="$(cd "$app/Contents" && find . -type f | LC_ALL=C od -c | head -20 | tr -s ' ' | tr '\n' ' ' | cut -c1-1500)"
           echo "::notice title=Mac signature detail::$detail"
           echo "::notice title=Mac file names::$names"
+          sealed="$(plutil -p "$app/Contents/_CodeSignature/CodeResources" | grep -v '^ *[0-9a-f<]\{20,\}' | head -40 | tr -s ' ' | tr '\n' ' ' | cut -c1-1500)" || true
+          echo "::notice title=Mac sealed files::$sealed"
           # Apple silicon refuses to run code without a valid signature, ad-hoc or not.
           codesign --verify "$app" || echo "LAIN_MAC_SEAL_BROKEN=1" >> "$GITHUB_ENV"
 
