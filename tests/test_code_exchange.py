@@ -185,7 +185,7 @@ def test_received_code_can_be_relayed_compiled_and_contributed(game):
     assert second["sent"]["acquired_minute"] == first["minute"]
     source = 'use("routing")\nuse("shield")\n'
     call = lambda a,**d:ws.perform_workshop_action(P,a,d,uuid.uuid4().hex)
-    assert not call("COMPILE",source=source)["passed"] # Navi alone is insufficient.
+    assert not call("COMPILE",source=source)["passed"] # Kumo alone is insufficient.
     grant("test_cache","cache",kind="DEVICE")
     call("DEVICE",id="test_cache",active=True)
     assert call("COMPILE",source=source)["passed"]

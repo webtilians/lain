@@ -40,13 +40,13 @@ func _process(_delta: float) -> void:
 	if not reports.is_empty():
 		var latest:=int(reports[0].get("id",0))
 		if observed_report>=0 and latest!=observed_report and reports[0].source=="RELAY_TELEMETRY":
-			notice="WIRED · NUEVO INFORME\n"+str(reports[0].text)
+			notice="MALLA · NUEVO INFORME\n"+str(reports[0].text)
 			notice_until=Time.get_ticks_msec()+10000
 		observed_report=latest
 	var threats: Array=network.get("pending",[])
 	warning.visible=(not threats.is_empty() or Time.get_ticks_msec()<notice_until) and not CharacterJournal.backdrop.visible
 	if not threats.is_empty():
-		warning.text="WIRED · "+str(threats.size())+" ORDEN/ÓRDENES PENDIENTES\n"+str(threats[0].get("operator","Intervención"))+" · "+str(int(threats[0].remaining))+" min del mundo  ·  J: revisar enlaces"
+		warning.text="MALLA · "+str(threats.size())+" ORDEN/ÓRDENES PENDIENTES\n"+str(threats[0].get("operator","Intervención"))+" · "+str(int(threats[0].remaining))+" min del mundo  ·  J: revisar enlaces"
 	else:
 		warning.text=notice
 	var scene:=get_tree().current_scene as Node3D
@@ -73,7 +73,7 @@ func _send(action: String, relay: String, rival: String, faction: String="KAGAMI
 func _dispatch() -> void:
 	busy=true
 	WorldApi.begin_external_mutation()
-	EventDialog.show_choices(OWNER,"WIRED","Estableciendo enlace...",[])
+	EventDialog.show_choices(OWNER,"MALLA","Estableciendo enlace...",[])
 	var error:=request.request(ServerConnection.base_url() + "/api/v1/network/action",
 		ServerConnection.headers(),HTTPClient.METHOD_POST,JSON.stringify(pending))
 	if error!=OK:
@@ -113,7 +113,7 @@ func _present(event: Dictionary) -> void:
 		buttons.append({"id":id,"text":str(option.text)})
 	buttons.append({"id":"ARCHIVE","text":"Abrir el archivo de enlaces."})
 	buttons.append({"id":"CLOSE","text":"Cerrar y volver al barrio."})
-	EventDialog.show_choices(OWNER,str(event.get("speaker","WIRED")),str(event.get("text","")),buttons)
+	EventDialog.show_choices(OWNER,str(event.get("speaker","MALLA")),str(event.get("text","")),buttons)
 
 func _failure(text: String) -> void:
 	if EventDialog.visible and EventDialog.current_owner_id==OWNER:
@@ -154,4 +154,4 @@ func open_terminal() -> void:
 		if int(relay.mine)>0:
 			choices.append({"text":"Ocultar: "+str(relay.name)+" · ceder hasta 5 puntos.","action":"GO_DARK","relay":str(relay.id)})
 	text+="\nPara disputar un enlace debes encontrar su armario en la ciudad. Desde casa puedes ocultar una conexión tuya."
-	_present({"speaker":"WIRED · ENLACES","text":text,"choices":choices})
+	_present({"speaker":"MALLA · ENLACES","text":text,"choices":choices})

@@ -154,7 +154,7 @@ func _run() -> void:
 	api.snapshot["prologue"] = {"enabled": true, "stage": "FIND_TERMINAL"}
 	terminal.open_terminal()
 	check(terminal.surface.visible, "DOS terminal does not open")
-	check("LAIN-DOS" in terminal.transcript.text, "DOS prompt is missing")
+	check("CERO-DOS" in terminal.transcript.text, "DOS prompt is missing")
 	terminal._on_command("help")
 	check("telnet" not in terminal.transcript.text.to_lower(),
 		"Terminal must not spoil the connection protocol")

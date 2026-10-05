@@ -90,7 +90,7 @@ def test_terminals_need_the_player_beside_them(game):
 
 def test_virtual_file_system_cannot_escape(game):
     assert "no existe" in out(game, "cat ../../../../etc/passwd")
-    assert "NAVI" in out(game, "cat /etc/motd", cwd="/home")
+    assert "CASA" in out(game, "cat /etc/motd", cwd="/home")
     assert sh(game, "cd ~")["cwd"].startswith("/home/")
     assert "orden desconocida" in out(game, "rm -rf /")
     assert out(game, "cat 'sin cerrar") == "Comillas sin cerrar."
@@ -129,16 +129,16 @@ def test_full_layer_is_solvable_from_in_game_information(game):
 
     move(game, "APARTMENT")
     assert "NODO_07" in out(game, "cat ~/sesion0.txt")
-    lines = out(game, "cat /var/log/wired/diario").splitlines()
+    lines = out(game, "cat /var/log/malla/diario").splitlines()
     breaks = [n for n in range(1, len(lines)) if lines[n].split(" | ")[2] != "prev " + h8(lines[n - 1])]
     assert len(breaks) == 1
     forged_entry = breaks[0]   # 0-based index of the entry after the break == 1-based number of the forged one
-    assert h8(lines[forged_entry - 1]) == out(game, f"sha256 /var/log/wired/diario {forged_entry}").split()[0]
+    assert h8(lines[forged_entry - 1]) == out(game, f"sha256 /var/log/malla/diario {forged_entry}").split()[0]
     assert "infundada" in out(game, f"denunciar {forged_entry + 1}")
     assert "no existe" in out(game, "cat /mnt/kagami/diario.espejo")
     assert "aceptada" in out(game, f"denunciar {forged_entry}")
     mirror = out(game, "cat /mnt/kagami/diario.espejo")
-    assert "terminada por NOEMA" in mirror and "cerrada por su usuario" in out(game, "cat /var/log/wired/diario")
+    assert "terminada por NOEMA" in mirror and "cerrada por su usuario" in out(game, "cat /var/log/malla/diario")
     assert "terminada" in out(game, "last")
 
     ending = out(game, f"reenviar {packet}")
@@ -161,7 +161,7 @@ def test_decisions_wait_for_the_truth_and_drop_tells_nobody(game):
 
 
 def test_three_unfounded_reports_seal_the_diary(game):
-    lines = out(game, "cat /var/log/wired/diario").splitlines()
+    lines = out(game, "cat /var/log/malla/diario").splitlines()
     forged = next(n for n in range(1, len(lines)) if lines[n].split(" | ")[2] != "prev " + h8(lines[n - 1]))
     for attempt in (1, 2):
         assert "tomado nota" in out(game, "denunciar 1")

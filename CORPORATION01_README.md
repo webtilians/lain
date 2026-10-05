@@ -3,7 +3,7 @@
 Rama experimental `experiment/wired-0.1-corporation`, desde el capítulo 1
 (`81ff1f4`), sin fusionar ninguna rama anterior.
 
-La Wired existía antes de **Consorcio KAGAMI** (nombre provisional). La empresa
+La Malla existía antes de **Consorcio KAGAMI** (nombre provisional). La empresa
 adquirió puntos de acceso, sustituyó claves y convirtió infraestructura común
 en un sistema que administra para su propio beneficio. Tras sus contratas de
 mantenimiento opera una organización que neutraliza a quienes intentan
@@ -20,7 +20,7 @@ Capturas del juego: [intervención en la estación](docs/corporation01/station-i
 Tres enlaces físicos: **estación, aula de informática y Video Hoshi**. Cada uno
 reparte exactamente 100 puntos entre el consorcio y las cuentas de jugadores.
 Los porcentajes generales son el promedio de estos tres enlaces, no una medida
-de toda la Wired ficticia. K y Nora mantienen sus facciones, memorias y acciones
+de toda la Malla ficticia. K y Nora mantienen sus facciones, memorias y acciones
 anteriores: no se los convierte en agentes de KAGAMI.
 
 1. Encuentra el armario de enlace y pulsa **E**. Examinarlo descubre los contratos
@@ -46,7 +46,7 @@ Investigar y hablar no gastan ese intervalo. La exposición refleja actividad
 detectable en el enlace, no pensamientos o recuerdos privados del jugador.
 
 En casa, el ordenador ofrece **Consultar el control de los enlaces** dentro del
-menú de la Wired. Desde allí puedes consultar el archivo u ocultar enlaces
+menú de la Malla. Desde allí puedes consultar el archivo u ocultar enlaces
 propios. Para conquistarlos, defenderlos o descubrir al agente debes ir al lugar.
 La historia del capítulo 1, el prólogo, los 56 residentes y los gráficos siguen
 disponibles. Los tres agentes nuevos usan diálogos escritos para este encuentro.
@@ -71,7 +71,7 @@ No debe exponerse la API actual a Internet como si ya fuera un servicio multijug
 
 El lanzador usa `corporation01.db` y activa `LAIN_CORPORATION=1`. Para continuar
 una partida, utiliza una copia SQLite consistente de su base y conserva el
-original. El consorcio se habilita después de la primera conexión a la Wired;
+original. El consorcio se habilita después de la primera conexión a la Malla;
 no permite saltarse el prólogo. Se guardan cuotas, defensas, intervenciones,
 descubrimientos individuales, informes y protección temporal al reiniciar.
 

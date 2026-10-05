@@ -98,7 +98,7 @@ def ensure_initial_player_message(player_id: str = "PLAYER_1"):
                 initial_message_id(player_id),
                 player_id,
                 None,
-                "unknown@wired",
+                "unknown@malla",
                 "NO SUBJECT",
                 ("NO ESTOY MUERTA.\n\n" "SOLO DEJÉ DE ESTAR AHÍ."),
                 0,

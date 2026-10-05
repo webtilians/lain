@@ -7,6 +7,9 @@ var catalog: Dictionary = {}
 var translation = preload("res://scripts/core/PlayerTranslation.gd").new()
 
 func _ready() -> void:
+	# The window carries the game's name; the project keeps its old internal name
+	# so every player's saved settings and session stay where they are.
+	get_tree().root.title = "Sesión Cero"
 	var parsed = JSON.parse_string(FileAccess.get_file_as_string("res://translations/en.json"))
 	if parsed is Dictionary:
 		catalog = parsed

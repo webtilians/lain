@@ -47,7 +47,7 @@ func _ready() -> void:
 	var header := HBoxContainer.new()
 	root_box.add_child(header)
 	var title := Label.new()
-	title.text = "LAIN // ARCHIVO DE PERSONAJES Y SEÑALES    [J]"
+	title.text = "SESIÓN CERO // ARCHIVO DE PERSONAJES Y SEÑALES    [J]"
 	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	header.add_child(title)
 	var close_button := Button.new()
@@ -164,7 +164,7 @@ func _refresh_navigation() -> void:
 		and str(prologue.get("stage", "")) != "CONNECTED"
 	)
 	if bool(prologue.get("enabled", false)):
-		_add_navigation("PRÓLOGO // ANTES DE LA WIRED", "PROLOGUE")
+		_add_navigation("PRÓLOGO // ANTES DE LA MALLA", "PROLOGUE")
 	if not offline:
 		_add_navigation("CASO // EL PULSO AUSENTE", "CASE")
 	if bool(WorldApi.snapshot.get("chapter_one",{}).get("active",false)):
@@ -245,7 +245,7 @@ func _render_player() -> void:
 		+ "ENERGÍA  %.2f\n" % float(data.get("energy", 0.0))
 		+ "NODOS CONOCIDOS  %d\n" % int(data.get("known_nodes", 0))
 		+ (
-			"CONEXIÓN A LA WIRED  PENDIENTE"
+			"CONEXIÓN A LA MALLA  PENDIENTE"
 			if str(data.get("case_status", "")) == "LOCKED"
 			else "INVESTIGACIÓN NODE_07  " + str(data.get("case_status", "UNSEEN"))
 		)
@@ -309,11 +309,11 @@ func _render_network() -> void:
 func _render_prologue() -> void:
 	var story: Dictionary = WorldApi.snapshot.get("prologue", {})
 	details.text = (
-		"PRÓLOGO // ANTES DE LA WIRED\n\n"
+		"PRÓLOGO // ANTES DE LA MALLA\n\n"
 		+ "ESTADO  " + str(story.get("stage", "LEGACY"))
 		+ "\n\nOBJETIVO\n" + str(story.get("hint", ""))
 		+ "\n\nLos personajes solo pueden contarte lo que saben. "
-		+ "La conexión a la Wired deberá descubrirse, no se activará "
+		+ "La conexión a la Malla deberá descubrirse, no se activará "
 		+ "por el mero hecho de pulsar un botón."
 	)
 

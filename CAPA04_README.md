@@ -11,7 +11,7 @@ servidor online.
 ## Qué hay que hacer (sin destripar)
 
 1. En el PC de casa llega el correo **«SYN»**: alguien llama a tu puerto 4004
-   desde NODO_07 y nadie contesta. El Navi no tiene pila TCP, así que **el saludo
+   desde NODO_07 y nadie contesta. El Kumo no tiene pila TCP, así que **el saludo
    de tres pasos lo escribes tú** con `send`. `netstat`, `tcpdump` y `man tcp`
    tienen lo que necesitas.
 2. Llega un mensaje partido en segmentos y uno se ha perdido. Confirma con

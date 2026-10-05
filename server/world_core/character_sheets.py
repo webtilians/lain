@@ -10,7 +10,7 @@ from .prologue import stage_for
 
 # Label and observable inclination; NOT a claim about hidden psychology.
 ROLE_RULES = {
-    "ARCHIVIST": ("Archivista de la Wired", "Contrasta señales y registros.", 4),
+    "ARCHIVIST": ("Archivista de la Malla", "Contrasta señales y registros.", 4),
     "SIGNAL_KEEPER": ("Vigilante de señal", "Permanece atento a las variaciones de NODE_07.", 3),
     "ORIGIN_SEEKER": ("Buscador de origen", "Explora vínculos con su aparición.", 2),
     "MONITOR": ("Observador de entidades", "Registra la conducta observable de otras presencias.", 5),
@@ -31,7 +31,7 @@ ORIGIN_NAME_ROLES = {
 }
 NPC_RULES = {
     "AGENT_K": ("Agente del Protocolo", "Investiga alteraciones de la red."),
-    "AGENT_NORA": ("Habitante de la Wired", "Interpreta señales desde su propia experiencia."),
+    "AGENT_NORA": ("Habitante de la Malla", "Interpreta señales desde su propia experiencia."),
 }
 
 
@@ -154,6 +154,13 @@ def visible_npc_sheets(player_id: str, location: str) -> list[dict]:
                 "observed_location": location, "focus": data["activity"],
                 **{k: data[k] for k in ("role", "role_label", "skills",
                     "public_objective", "activity", "role_assignment")},
+            })
+            continue
+        if controller == "ECHO":
+            result.append({
+                "id": actor_id, "name": name, "kind": "NPC", "role": "ECHO", "role_label": "Eco",
+                "focus": "Lo que queda de una sesión que se cerró en NODO_07.",
+                "role_assignment": "ECHO", "observed_location": location,
             })
             continue
         if controller == "GENERATED":

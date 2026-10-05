@@ -90,11 +90,15 @@ class AgentContextBuilder:
         from .layer_two import layer_actor_context as layer_two_context
         from .journal import layer_actor_context as journal_context
         from .hints import layer_actor_context as hints_context
+        from .echoes import layer_actor_context as echo_context
+        from .duo import layer_actor_context as duo_context
+        from .research import layer_actor_context as research_context
         received = (layer_one_context(agent_id, player_id) + layer_two_context(agent_id, player_id)
                     + layer_actor_context(agent_id, player_id) + layer_four_context(agent_id, player_id)
                     + layer_five_context(agent_id, player_id) + layer_six_context(agent_id, player_id)
                     + layer_seven_context(agent_id, player_id) + journal_context(agent_id, player_id)
-                    + hints_context(agent_id, player_id))
+                    + hints_context(agent_id, player_id) + echo_context(agent_id, player_id)
+                    + duo_context(agent_id, player_id) + research_context(agent_id, player_id))
         if received:
             chapter = chapter or {"memories": [], "relationship": None,
                                   "limits": "These are my recollections and received reports, not verified world facts."}

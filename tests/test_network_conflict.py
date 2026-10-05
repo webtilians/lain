@@ -94,7 +94,7 @@ def test_ownership_and_agent_affiliation_are_not_revealed_before_inspection(game
     act("INSPECT")
     assert net.network_snapshot()["corporation"]==net.CORPORATION
     assert "KAGAMI" not in net.network_snapshot()["visible_personnel"][0]["role"]
-    assert "no creó la Wired" in net.network_snapshot()["reports"][0]["text"]
+    assert "no creó la Malla" in net.network_snapshot()["reports"][0]["text"]
 
 
 @pytest.mark.parametrize("action",["CLAIM","FORTIFY","CONTEST","EXPOSE"])

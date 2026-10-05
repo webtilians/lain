@@ -63,6 +63,7 @@ func _sync_actors(
 	# Dynamic identities have no pre-authored marker; stable ordering gives
 	# them reproducible slots without altering K/Nora's existing scenes.
 	var generated_index := 0
+	var echo_index := 0
 	for actor_data in actors:
 		if typeof(actor_data) != TYPE_DICTIONARY:
 			continue
@@ -84,6 +85,10 @@ func _sync_actors(
 		var next_patrol_step := int(actor_data.get("patrol_step", 0)) % 4
 		if actor_id.begins_with("RESIDENT_"):
 			spawn_position = RESIDENT_LAYOUT.at(location_id, int(actor_data.get("slot", 0)), next_patrol_step)
+		elif actor_id.begins_with("ECHO_"):
+			# Beside one of the residents' places, a different one for each echo.
+			spawn_position = RESIDENT_LAYOUT.at(location_id, echo_index % 3, 0) + Vector3(1.1, 0, 0.8)
+			echo_index += 1
 		elif actor_id.begins_with("ENTITY_"):
 			var anchor := spawns.get_node_or_null("ENTITY_ANCHOR") as Node3D
 			if anchor == null or generated_index >= 8:
@@ -137,7 +142,7 @@ func _sync_actors(
 		elif not actor_id.begins_with("ENTITY_") and not actor_id.begins_with("RESIDENT_"):
 			representation.global_position = spawn_position
 		var activity_label := representation.get_node_or_null("Activity") as Label3D
-		if activity_label != null:
+		if activity_label != null and not representation.has_meta("echo"):
 			activity_label.text = str(actor_data.get("activity", ""))
 
 	for actor_id in rendered_actors.keys():
@@ -158,6 +163,15 @@ func _sync_actors(
 			if previous.is_running():
 				previous.kill()
 			movement_tweens.erase(actor_id)
+
+func _process(_delta: float) -> void:
+	# Echoes flicker now and then, like a signal that keeps dropping.
+	for actor in rendered_actors.values():
+		if is_instance_valid(actor) and actor.has_meta("echo_meshes"):
+			var amount := 0.85 if randf() < 0.03 else 0.55
+			for mesh in actor.get_meta("echo_meshes"):
+				if is_instance_valid(mesh):
+					mesh.transparency = amount
 
 func _create_actor(
 	actor_id: String,
@@ -185,6 +199,32 @@ func _create_actor(
 		activity.modulate = Color("b8b7ac")
 		activity.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 		actor.add_child(activity)
+	elif actor_id.begins_with("ECHO_"):
+		# What is left of a closed session: a citizen's shape, translucent and cold.
+		var model: Node3D = load("res://art/characters/LainSlender.tscn").instantiate()
+		model.set_script(load("res://scripts/art/CitizenAvatar.gd"))
+		model.configure("casual", absi(actor_id.hash()) % 50)
+		actor.add_child(model)
+		var meshes: Array = model.find_children("*", "GeometryInstance3D", true, false)
+		for mesh in meshes:
+			mesh.transparency = 0.55
+		actor.set_meta("echo_meshes", meshes)
+		var tint := OmniLight3D.new()
+		tint.light_color = Color("7fd6e0")
+		tint.light_energy = 0.6
+		tint.omni_range = 1.8
+		tint.position.y = 1.2
+		actor.add_child(tint)
+		var echo_label := Label3D.new()
+		echo_label.name = "Activity"
+		echo_label.text = "eco · lo que queda de una sesión"
+		echo_label.position.y = 2.24
+		echo_label.font_size = 24
+		echo_label.pixel_size = 0.007
+		echo_label.modulate = Color("8fe3ec")
+		echo_label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+		actor.add_child(echo_label)
+		actor.set_meta("echo", true)
 	elif actor_id.begins_with("ENTITY_"):
 		var digital_body := MeshInstance3D.new()
 		digital_body.name = "DigitalBody"

@@ -335,7 +335,7 @@ def apply_updates(root: Path, releases: str) -> bool:
         ))
     except Exception as error:  # noqa: BLE001
         message(
-            "LAIN · Actualización",
+            "Sesión Cero · Actualización",
             "No se pudo instalar la versión %s. Se abre la que ya tienes.\n\n%s"
             % (manifest["version"], error),
         )
@@ -366,7 +366,7 @@ def universal_main(root: Path, config: dict) -> int:
     data.mkdir(parents=True, exist_ok=True)
     lock = acquire_lock(data)
     if lock is None:
-        message("LAIN", "LAIN ya está abierto.")
+        message("Sesión Cero", "Sesión Cero ya está abierto.")
         return 1
     relaunch = False
     try:
@@ -375,7 +375,7 @@ def universal_main(root: Path, config: dict) -> int:
             return 0
         game_exe = root / "Game" / "LAIN-Game.exe"
         if not game_exe.is_file():
-            message("LAIN", "Faltan archivos del juego. Descomprime TODO el ZIP antes de abrir LAIN.exe.")
+            message("Sesión Cero", "Faltan archivos del juego. Descomprime TODO el ZIP antes de abrir LAIN.exe.")
             return 1
         game = subprocess.Popen(
             [str(game_exe)], cwd=str(game_exe.parent), env=universal_environment(config, root)
@@ -384,7 +384,7 @@ def universal_main(root: Path, config: dict) -> int:
     except Exception as error:  # noqa: BLE001
         with (data / "launcher.log").open("a", encoding="utf-8") as handle:
             handle.write(time.strftime("%Y-%m-%d %H:%M:%S") + "\n" + traceback.format_exc() + "\n")
-        message("LAIN · Error", "%s\n\nDiagnóstico: %s" % (error, data / "launcher.log"))
+        message("Sesión Cero · Error", "%s\n\nDiagnóstico: %s" % (error, data / "launcher.log"))
         return 1
     finally:
         release_lock(lock)
@@ -400,7 +400,7 @@ def main() -> int:
     try:
         universal = universal_configuration(root)
     except ValueError as error:
-        message("LAIN", str(error))
+        message("Sesión Cero", str(error))
         return 1
     if universal:
         return universal_main(root, universal)

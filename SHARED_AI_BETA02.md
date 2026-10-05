@@ -16,7 +16,7 @@ ya contratado o publicado. Sin configuración conserva el modo local/Ollama.
 
 Esto comparte acceso a IA, no partidas. Cada equipo ejecuta su propio World
 Core y conserva su propio SQLite. No sincroniza jugadores, inventarios ni
-control de la Wired entre equipos.
+control de la Malla entre equipos.
 
 ## Activarlo una vez como autor
 

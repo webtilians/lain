@@ -68,10 +68,17 @@ func run() -> void:
 	await frames()
 	check(guide.title_label.text == "5/5 · HABLAR", "reaching the school does not advance the guide")
 
-	dialog.visible = true
+	# A plain notice (only «Continuar») is not talking to someone.
+	dialog.show_event("AVISO", "Un aviso cualquiera.")
+	await frames()
+	check(not "talk" in guide.done, "a plain notice counts as talking")
+	dialog.close_event()
+	await frames()
+	var greeting: Array[Dictionary] = [{"id": "INTRO", "text": "Hola"}]
+	dialog.show_choices("guide-test", "Profesor", "«¿Has venido a por algún libro?»", greeting)
 	await frames()
 	check("talk" in guide.done, "talking does not finish the guide")
-	dialog.visible = false
+	dialog.close_event()
 	await frames()
 	check(guide.title_label.text == "GUÍA COMPLETADA" and guide.panel.visible, "the end of the guide is not shown")
 	guide.finished_left = 0.0

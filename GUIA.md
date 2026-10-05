@@ -13,7 +13,7 @@ acompaña los primeros minutos y avanza solo cuando el jugador hace cada cosa:
 | 5/5 · Hablar | E junto a alguien | empieza una conversación |
 
 Después, mientras dura el prólogo, el recuadro muestra el **objetivo** actual,
-el mismo que trae el diario. Cuando el jugador conecta con la Wired, el
+el mismo que trae el diario. Cuando el jugador conecta con la Malla, el
 recuadro desaparece; las capas ya enseñan su objetivo arriba a la derecha.
 
 La primera vez que se abre cada terminal aparece una línea de ayuda:

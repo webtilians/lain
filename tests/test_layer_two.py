@@ -72,7 +72,7 @@ def test_heartbeats_and_fcs_tell_the_ports_apart_then_shut_the_copy(link):
     assert max(beats[copy]) < last_beat
     _, kept = intact_frames(sim, copy)
     assert any("kagami-04" in payload for payload in kept)
-    assert "tu Navi" in out(sim, f"shutdown {mine}", host=SWITCH)
+    assert "tu Kumo" in out(sim, f"shutdown {mine}", host=SWITCH)
     ending = out(sim, f"shutdown {copy}", host=SWITCH)
     assert "CAPA 02 COMPLETADA" in ending and "réplica tuya" in ending
     assert layer_two.layer_snapshot(PLAYER)["decision"] == "SHUT" and layer_two.layer_snapshot(PLAYER)["fragments"] == 2
@@ -97,9 +97,9 @@ def test_a_new_address_must_be_unicast_and_locally_administered(link):
 
 def test_sharing_the_address_and_console_rules(link):
     sim = link
-    assert "andén" in out(sim, "capture 3") and "Navi" not in out(sim, "ip link")
+    assert "andén" in out(sim, "capture 3") and "Kumo" not in out(sim, "ip link")
     move(sim, "STATION")
-    assert "no es tu Navi" in out(sim, "ip link", host=SWITCH)
+    assert "no es tu Kumo" in out(sim, "ip link", host=SWITCH)
     assert "Uso" in out(sim, "capture 99", host=SWITCH) and "Uso" in out(sim, "show nada", host=SWITCH)
     assert "Uso" in out(sim, "fcs 3", host=SWITCH)
     story = layer_two.story_for(PLAYER)

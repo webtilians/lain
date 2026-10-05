@@ -135,7 +135,7 @@ def files(c, player: str, relay, story3) -> dict:
 
 def _mail() -> str:
     return "\n".join([
-        "De: profesor <partes@escuela.wired>",
+        "De: profesor <partes@escuela.malla>",
         "Asunto: Parte de incidencia · enlace del pabellón B",
         "",
         "El enlace del pabellón B lleva días mudo. Alguien cortó el cable de su armario, en el aula de informática.",
@@ -214,7 +214,7 @@ ENDINGS = {
               "K puede ver otra vez el tráfico. Quien la seguía, también.",
     "LEAVE": "Dejas el cable como lo dejó ella. El pabellón B se queda a oscuras, y su rastro también.\n"
              "Un cuerpo cortado no lleva a ningún sitio.",
-    "BRIDGE": "Llevas los dos extremos a tu Navi. Ahora la señal pasa por ti: eres el medio.\n"
+    "BRIDGE": "Llevas los dos extremos a tu Kumo. Ahora la señal pasa por ti: eres el medio.\n"
               "Si te desconectas, el pabellón B se queda mudo.",
 }
 
@@ -313,7 +313,7 @@ def layer_snapshot(player: str) -> dict:
         goal = "Alguien cortó el cable del armario del aula de informática. Lee en el osciloscopio lo último que llevaba."
     return {
         "active": True, "title": TITLE, "goal": goal, "decision": run["decision"], "fragments": count,
-        "mail": {"subject": "Parte de incidencia · enlace del pabellón B", "from": "partes@escuela.wired",
+        "mail": {"subject": "Parte de incidencia · enlace del pabellón B", "from": "partes@escuela.malla",
                  "body": "El enlace del pabellón B lleva días mudo. Lee ~/correo/cable.eml en el Terminal."},
     }
 

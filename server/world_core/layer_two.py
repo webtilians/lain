@@ -145,12 +145,12 @@ def files(c, player: str, relay, story3) -> dict:
 
 def _mail() -> str:
     return "\n".join([
-        "De: k <k@estacion.wired>",
+        "De: k <k@estacion.malla>",
         "Asunto: Tu dirección, dos veces",
         "",
         "La tabla del conmutador de la estación no se está quieta: tu dirección aparece en dos puertos a la vez.",
         "Uno es el tuyo. El otro no debería existir.",
-        "Mira tu dirección en tu Navi (ip link) y luego la consola del armario del andén: show mac, show log, capture.",
+        "Mira tu dirección en tu Kumo (ip link) y luego la consola del armario del andén: show mac, show log, capture.",
         "",
         "  man mac   man trama   man fcs   man conmutador",
     ])
@@ -158,7 +158,7 @@ def _mail() -> str:
 
 def _ip(c, player, story, run, result, relay, args, minute):
     if relay:
-        return "ip: esta consola no es tu Navi."
+        return "ip: esta consola no es tu Kumo."
     if args[:3] == ["link", "set", "address"] and len(args) == 4:
         return _rename(c, player, story, run, result, args[3].lower(), minute)
     if args[:1] in (["link"], ["-s"], ["addr"]) or not args:
@@ -291,14 +291,14 @@ def dispatch(c, player, story3, relay, result, name, args, minute):
             return "Uso: shutdown <puerto>"
         port = int(args[0])
         if port == story.port and run["seen"] and not run["decision"]:
-            return "Ese es el puerto de tu Navi: te desconectarías a ti."
+            return "Ese es el puerto de tu Kumo: te desconectarías a ti."
         if port not in (story.port, story.replica_port) and run["seen"] and not run["decision"]:
             return "En ese puerto no hay nadie con tu dirección."
         return _decide(c, player, run, result, "SHUT", minute)
     return _decide(c, player, run, result, "SHARE", minute)
 
 
-HELP = """Capa 02 (tu Navi y la consola del andén):
+HELP = """Capa 02 (tu Kumo y la consola del andén):
   ip link                 tu dirección y lo que has enviado
   show mac · show log     la tabla del conmutador y sus avisos
   capture <puerto>        las tramas de un puerto     fcs <puerto> <n>   comprobar una trama
@@ -352,7 +352,7 @@ def layer_snapshot(player: str) -> dict:
         goal = "Tu dirección aparece en dos puertos del conmutador de la estación. Averigua cuál es el tuyo."
     return {
         "active": True, "title": TITLE, "goal": goal, "decision": run["decision"], "fragments": count,
-        "mail": {"subject": "Tu dirección, dos veces", "from": "k@estacion.wired",
+        "mail": {"subject": "Tu dirección, dos veces", "from": "k@estacion.malla",
                  "body": "Tu dirección aparece en dos sitios a la vez. Lee ~/correo/direccion.eml en el Terminal."},
     }
 

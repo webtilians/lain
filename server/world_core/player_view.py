@@ -27,6 +27,7 @@ from .layer_six import layer_snapshot as layer_six_snapshot
 from .layer_seven import layer_snapshot as layer_seven_snapshot
 from .layer_one import layer_snapshot as layer_one_snapshot
 from .layer_two import layer_snapshot as layer_two_snapshot
+from .research import research_snapshot
 from .protocol import current_layer
 from .network_conflict import network_snapshot
 from .workshop import workshop_snapshot
@@ -283,6 +284,7 @@ def list_visible_actors(
             **residents.get(row[0], {}),
             **({"patrol_step": row[2]}
                if row[3] == "GENERATED" and row[2] != 0 else {}),
+            **({"kind": "echo"} if row[3] == "ECHO" else {}),
         }
         for row in rows
     ]
@@ -410,6 +412,7 @@ def build_player_snapshot(
         "layer_five": layer_five_snapshot(player_id),
         "layer_six": layer_six_snapshot(player_id),
         "layer_seven": layer_seven_snapshot(player_id),
+        "research": research_snapshot(player_id),
         "network_conflict": conflict,
         "workshop": workshop_snapshot(player_id),
         "circles": circle_snapshot(player_id),

@@ -21,12 +21,17 @@ Se hacen con el propio motor, sin vídeos: barras de cine, estática, cámara y
 texto tecleado. Esperan a que no haya ningún terminal ni ventana abierta y se
 saltan con **Esc**, **Enter**, **Espacio** o un clic.
 
+Desde la conexión en adelante, cada escena es un **plano de cámara de otro sitio**:
+el barrio de noche, la estación, todo el distrito desde el aire. Ese sitio se
+carga aparte, en su propio mundo y con su lluvia, sus neones y sus materiales,
+mientras la partida sigue igual detrás. Las frases salen como subtítulos.
+
 | Cuándo | Qué se ve |
 |---|---|
 | La primera vez que entras (en casa, al empezar) | «Antes de tu primera conexión ya había una sesión con tu nombre. La Sesión Cero…» → **«Has vuelto.»** → la cámara se aleja despacio del ordenador encendido hasta ti. |
-| Al conectar con la Wired | Estática, THE WIRED: «Tú eres la Sesión Uno. Nadie sabe si eres la misma persona.» |
-| Al completar cada capa | FRAGMENTO N/7 · SESIÓN CERO: la pregunta de la capa y lo que dice la Sesión Cero. |
-| Al terminar la Capa 07 | Tu elección, «NODO_07 está lleno de sesiones que nadie recuerda», «Sesión Cero completa» si tienes los siete, y el título: «Gracias por recibirla.» |
+| Al conectar con la Malla | Una grúa baja por la calle mojada del Pasaje Azul: «Tú eres la Sesión Uno. Nadie sabe si eres la misma persona.» |
+| Al completar cada capa | FRAGMENTO N/7 · SESIÓN CERO sobre un plano ligado a la capa: el colegio (01), el andén de la estación (02), el distrito desde arriba (03), la calle de casa (04), el Pasaje Azul (05 y 06). La pregunta de la capa y lo que dice la Sesión Cero. |
+| Al terminar la Capa 07 | El barrio entero de noche, desde el aire, alejándose: tu elección, «NODO_07 está lleno de sesiones que nadie recuerda», «Sesión Cero completa» si tienes los siete, y el título: «Gracias por recibirla.» |
 
 Las frases salen de la biblia narrativa (sección 6: la pregunta y la revelación
 de cada capa) y de textos que ya estaban en el juego. La Sesión Cero habla en
@@ -37,7 +42,7 @@ que dice el Terminal («fragmento 3/7» es siempre la Capa 03).
 
 En el diario (**J**), el apartado **CINEMÁTICAS // VOLVER A VER** tiene un botón
 por cada escena que ya has alcanzado: la terminal de arranque, la apertura, la
-conexión a la Wired si ya conectaste, el fragmento de cada capa completada y el
+conexión a la Malla si ya conectaste, el fragmento de cada capa completada y el
 final si llegaste a él. Lo que todavía no has vivido no aparece.
 
 ![Volver a verlas desde el diario](docs/cinematics/diary.png)
@@ -45,9 +50,10 @@ final si llegaste a él. Lo que todavía no has vivido no aparece.
 ![Has vuelto](docs/cinematics/opening-returned.png)
 ![El plano del ordenador](docs/cinematics/opening-camera.png)
 ![El final del plano](docs/cinematics/opening-camera-end.png)
-![Conexión a la Wired](docs/cinematics/wired.png)
-![Un fragmento](docs/cinematics/fragment.png)
-![El final](docs/cinematics/ending.png)
+![Conexión a la Malla: el Pasaje Azul](docs/cinematics/wired.png)
+![Un fragmento: el andén de la estación](docs/cinematics/fragment.png)
+![El final: el distrito desde el aire](docs/cinematics/ending-overview.png)
+![El título](docs/cinematics/ending.png)
 
 ## Cómo está hecho
 

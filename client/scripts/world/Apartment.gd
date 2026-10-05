@@ -45,8 +45,8 @@ func _on_snapshot_updated(
 		and str(origin.get("stage", "")) != "CONNECTED"
 	)
 	connection_label.text = (
-		"LAIN  /  SIN CONEXIÓN A LA WIRED"
-		if offline else "LAIN  /  CONECTADO"
+		"SESIÓN CERO  /  SIN CONEXIÓN A LA MALLA"
+		if offline else "SESIÓN CERO  /  CONECTADO"
 	)
 
 	var player: Dictionary = snapshot.get(

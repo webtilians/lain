@@ -12,7 +12,7 @@ con `LAIN_JOURNAL=1` y `LAIN_SHADOW=1`, que ya ponen el lanzador,
 - Cada capa que decide se convierte en una entrada de su diario. Lo puede leer
   en dos sitios:
   - la ficha J (sección DIARIO);
-  - el Terminal de su Navi: `cat ~/diario`.
+  - el Terminal de su Kumo: `cat ~/diario`.
 - Cada entrada guarda el hash de la anterior y la última línea, `cabeza`, el de
   la más reciente.
 - **NOEMA lo reescribe.** Cuando el diario llega a 3, 5 y 7 entradas, NOEMA
@@ -49,7 +49,7 @@ sobre entradas antiguas. Solo se guardan las restauraciones
   tus rutas.
   - Si vuelves a conectarte, desaparece.
   - No cuenta como persona presente en el marcador «X más aquí».
-- En tu Navi, `cat ~/sombra` dice por qué sitios anda tu sombra.
+- En tu Kumo, `cat ~/sombra` dice por qué sitios anda tu sombra.
 
 **Cómo está hecho**
 

@@ -1,6 +1,7 @@
 extends SceneTree
 ## Cinematics: the opening plays once for a new player, the Wired connection,
-## each Sesión Cero fragment and the ending play on live changes only, they wait
+## each Sesión Cero fragment, the ending and each finished research call play on
+## live changes only, a technology entering the Malla plays once per PC, they wait
 ## for open terminals, freeze and give back the player and camera, Esc skips,
 ## and the snapshot never changes.
 var failures: Array[String] = []
@@ -106,7 +107,7 @@ func run() -> void:
 	check(cinematic.playing == "wired", "connecting to the Wired has no cinematic")
 	seen = {}
 	await watch(seen)
-	check(shown(seen, "THE WIRED") and shown(seen, "Tú eres la Sesión Uno."), "the Wired cinematic is incomplete")
+	check(shown(seen, "LA MALLA") and shown(seen, "Tú eres la Sesión Uno."), "the Wired cinematic is incomplete")
 
 	# A fragment waits until the terminal closes.
 	shell.surface.show()
@@ -118,8 +119,15 @@ func run() -> void:
 	shell.surface.hide()
 	await frames(2)
 	check(cinematic.playing == "fragment", "the fragment does not play once the terminal closes")
+	for i in range(200):
+		if is_instance_valid(cinematic.stage_view):
+			break
+		await process_frame
+	check(is_instance_valid(cinematic.stage_view), "the fragment has no camera shot of another place")
+	check(root.get_viewport().get_camera_3d() == own_camera, "the shot took over the game's own camera")
 	seen = {}
 	await watch(seen)
+	check(not is_instance_valid(cinematic.stage_view), "the shot is left behind after the cinematic")
 	check(shown(seen, "FRAGMENTO 2/7 · SESIÓN CERO") and shown(seen, "Hay otra máquina con nuestra dirección"),
 		"the fragment shows the wrong layer")
 
@@ -147,10 +155,41 @@ func run() -> void:
 	await frames(2)
 	seen = {}
 	await watch(seen)
-	for line in ["Escribí mi nombre en el registro de NODO_07.", "Sesión Cero completa.", "L A I N", "Gracias por recibirla."]:
+	for line in ["Escribí mi nombre en el registro de NODO_07.", "Sesión Cero completa.", "SESIÓN CERO", "Gracias por recibirla."]:
 		check(shown(seen, line), "the ending does not show: " + line)
 	check(not cinematic.root.visible, "the cinematic layer stays on screen")
 	check(api.snapshot.prologue == before.prologue and api.snapshot.minute == before.minute, "a cinematic changed the snapshot")
+
+	# Research: a finished call plays live; a technology entering the Malla plays once, even on a first snapshot.
+	state = state.duplicate(true)
+	state["research"] = {"active": true, "unlocked": [], "completed": [{"id": "QB-01",
+		"name": "El qubit y la clave que delata al espía", "centre": "Instituto de Física del Puerto"}]}
+	api.snapshot_updated.emit(state)
+	await frames(2)
+	check(cinematic.playing == "research", "finishing a research call has no cinematic")
+	seen = {}
+	await watch(seen)
+	check(shown(seen, "INSTITUTO DE FÍSICA DEL PUERTO · REGISTRO") and shown(seen, "El qubit y la clave que delata al espía")
+		and shown(seen, "La Malla aprende."), "the research cinematic is incomplete")
+	cinematic.known = {}
+	state = state.duplicate(true)
+	state.research.unlocked = [{"id": "qkd", "name": "QKD",
+		"about": "La Malla reparte claves con fotones: si alguien escucha, se nota.",
+		"next": "Desde hoy, cualquiera puede usar qkd en el terminal."}]
+	api.snapshot_updated.emit(state)
+	await frames(2)
+	check(cinematic.playing == "evolve" and cinematic.queue.is_empty(),
+		"a technology entering the Malla does not play once (or an old call replays)")
+	seen = {}
+	await watch(seen)
+	check(shown(seen, "LA MALLA EVOLUCIONA") and shown(seen, "QKD") and shown(seen, "cualquiera puede usar qkd"),
+		"the Malla's evolution cinematic is incomplete")
+	saved = ConfigFile.new()
+	check(saved.load(path) == OK and "malla:qkd" in Array(saved.get_value("cinematics", "seen", [])),
+		"the technology's cinematic is not remembered")
+	api.snapshot_updated.emit(state)
+	await frames(3)
+	check(not cinematic.is_playing() and cinematic.queue.is_empty(), "a technology's cinematic plays twice")
 
 	# Watching again from the diary: only what this player has reached.
 	var journal := root.get_node("CharacterJournal")
@@ -159,7 +198,9 @@ func run() -> void:
 	journal._choose_view("CINEMATICS", "")
 	await frames(2)
 	var labels: Array = journal.cinema_controls.get_children().map(func(button): return button.text)
-	check(journal.cinema_controls.visible and labels.size() == 10, "the diary does not list every scene reached: " + str(labels))
+	check(journal.cinema_controls.visible and labels.size() == 12, "the diary does not list every scene reached: " + str(labels))
+	check("INVESTIGACIÓN // El qubit y la clave que delata al espía" in labels and "LA MALLA EVOLUCIONA // QKD" in labels,
+		"research scenes missing from the diary")
 	check("ARRANQUE // LA TERMINAL" in labels and "FINAL // GRACIAS POR RECIBIRLA" in labels, "start-up or ending missing from the diary")
 	var third: Button = journal.cinema_controls.get_children().filter(func(button): return button.text.begins_with("FRAGMENTO 3/7")).front()
 	third.pressed.emit()

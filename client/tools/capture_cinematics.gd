@@ -57,12 +57,14 @@ func capture() -> void:
 	await shot("wired")
 	while cinematic.is_playing():
 		await process_frame
-	cinematic.play({"id": "fragment", "layer": "layer_three", "count": 3})
+	cinematic.play({"id": "fragment", "layer": "layer_two"})
 	await create_timer(4.8).timeout
 	await shot("fragment")
 	while cinematic.is_playing():
 		await process_frame
 	cinematic.play({"id": "ending", "decision": "DISCONNECT", "count": 7})
+	await create_timer(6.0).timeout
+	await shot("ending-overview")
 	while cinematic.title.text.is_empty():
 		await process_frame
 	await create_timer(2.5).timeout

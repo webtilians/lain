@@ -31,7 +31,7 @@ def make_entity(seed_goal="OBSERVE_WORLD"):
         entity_id = create_entity_from_turn(
             conn, creator_id="AGENT_NORA", origin_turn_id=turn_id,
             proposal=EntityProposal(
-                "Eco", "Una voz que despierta en la Wired", seed_goal,
+                "Eco", "Una voz que despierta en la Malla", seed_goal,
             ), minute=0,
         )
     return sim, entity_id

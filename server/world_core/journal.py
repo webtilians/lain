@@ -1,7 +1,7 @@
 """El diario poco fiable (BIBLIA_NARRATIVA.md, section 7).
 
 Every layer the player decides becomes an entry of their diary, ~/diario on
-their Navi, and each entry stores the hash of the one before. NOEMA rewrites
+their Kumo, and each entry stores the hash of the one before. NOEMA rewrites
 an older entry now and then with its consensus version, where Sesión Cero
 never existed. The rewritten text is what the J sheet shows, but NOEMA cannot
 fix the chain: the following entry still carries the hash of what the player
@@ -159,7 +159,7 @@ def files(c, player: str, relay, story3) -> dict:
 
 def _mail() -> str:
     return "\n".join([
-        "De: nora <nora@wired>",
+        "De: nora <nora@malla>",
         "Asunto: ¿Has leído tu diario?",
         "",
         "NOEMA corrige lo que no le gusta, también en los diarios. Lo hace con buena letra: no se nota.",
@@ -171,7 +171,7 @@ def _mail() -> str:
 
 def dispatch(c, player, story3, relay, result, name, args, minute):
     if relay:
-        return "Tu diario está en tu Navi."
+        return "Tu diario está en tu Kumo."
     if len(args) != 1 or not args[0].isdigit():
         return "Uso: restaurar <número de entrada>"
     number = int(args[0])
@@ -190,7 +190,7 @@ def dispatch(c, player, story3, relay, result, name, args, minute):
     return f"Entrada {number} restaurada: su hash vuelve a coincidir con el que guarda la siguiente.\n{original}"
 
 
-HELP = """Diario (tu Navi):
+HELP = """Diario (tu Kumo):
   cat ~/diario · sha256 ~/diario <línea> · restaurar <n>      comprobar y restaurar tu diario"""
 
 MAN = {

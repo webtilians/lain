@@ -100,7 +100,7 @@ def test_layer_three_terminal_is_english_for_a_new_english_player(english):
     assert not leaks(state["layer_three"], "layer_three"), leaks(state["layer_three"], "layer_three")
     packet = state["layer_three"]["packet"]
     for command in ("help", "man ttl", "man cadena", "man chain", "cat ~/correo/ttl1.eml", f"traceroute {packet}",
-                    "cat /net/hosts", "cat /etc/motd", "whoami", "uptime", "last", "ping k", "cat /var/log/wired/diario",
+                    "cat /net/hosts", "cat /etc/motd", "whoami", "uptime", "last", "ping k", "cat /var/log/malla/diario",
                     "report 1", "frobnicate"):
         reply = client.post("/api/v1/layer-three/shell", json={"host": "navi", "cwd": "/", "command": command})
         assert reply.status_code == 200, reply.text

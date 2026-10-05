@@ -8,6 +8,7 @@ from server.world_core import hints, i18n, layer_four, layer_one
 from server.world_core.agent_context import AgentContextBuilder
 from tests.test_layer_five import archive, plan, states  # noqa: F401 (fixture)
 from tests.test_layer_four import PLAYER, connected, layer_three_game, out  # noqa: F401 (fixtures)
+from tests.test_chapter_one import move
 from tests.test_layer_one import CABINET, flags, game, physical  # noqa: F401 (fixtures)
 from tests.test_layer_seven import node  # noqa: F401 (fixture)
 from tests.test_layer_six import VIDEO, club  # noqa: F401 (fixture)
@@ -223,3 +224,15 @@ def test_the_expert_in_english(residents_on, physical):
         assert not lines, lines[:3]
     finally:
         i18n.reset(token)
+
+
+def test_pista_for_another_layer_sends_to_that_layers_expert(residents_on, physical):
+    sim = physical
+    move(sim, "STATION")
+    third = ask(sim, "3", host="RELAY_STATION")
+    assert "Osamu Kaneko" in third and "estación" in third
+    conversation = talk(sim, "RESIDENT_035")
+    offer = next(choice for choice in conversation["choices"] if choice["id"] == "ASK_HINT")
+    assert "Capa 03 · TTL" in offer["text"]
+    reply = choose(sim, "RESIDENT_035", conversation, "ASK_HINT")
+    assert reply["line"].startswith("PISTA 2/3 · Capa 03 · TTL")

@@ -228,6 +228,10 @@ class Simulation:
         # independent private memories and do not inherit initial Wired leads.
         for resident in initialize_residents():
             self.all_agents[resident.id] = resident
+        # Whoever closed their session in NODO_07 left an echo; it is passive like the residents.
+        from .echoes import initialize_echoes
+        for echo in initialize_echoes(self.minute):
+            self.all_agents[echo.id] = echo
 
         from .chapter_one import initialize_chapter
         initialize_chapter()
@@ -243,6 +247,10 @@ class Simulation:
         initialize_layer()
         from .layer_one import initialize_layer_one
         initialize_layer_one()
+        from .duo import initialize_duo
+        initialize_duo()
+        from .research import initialize_research
+        initialize_research()
         from .layer_two import initialize_layer_two
         initialize_layer_two()
         from .layer_four import initialize_layer_four
@@ -1536,6 +1544,8 @@ class Simulation:
             self.minute
         )
         advance_residents(self.minute)
+        from .echoes import advance_echoes
+        advance_echoes(self)
         from .network_conflict import advance_conflict
         advance_conflict(self.minute)
         from .cafe_events import advance_events

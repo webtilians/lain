@@ -18,7 +18,7 @@ func _ready() -> void:
 		label.add_theme_constant_override("shadow_offset_x",1)
 		label.add_theme_constant_override("shadow_offset_y",2)
 	var caption := Label.new()
-	caption.text = "L A I N   /   DISTRITO 03"
+	caption.text = "SESIÓN CERO   /   DISTRITO 03"
 	caption.position = Vector2(29,12)
 	caption.add_theme_font_size_override("font_size",10)
 	caption.modulate = Color("bac3bd")

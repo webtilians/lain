@@ -13,7 +13,9 @@ from .messages import INITIAL_MESSAGE_ID
 PLAYER = "PLAYER_1"
 STAGES = ("FIND_TEACHER", "FIND_RYOKO", "FIND_TERMINAL", "CONNECTED")
 PROTOCOL = "telnet"
-HOST = "wired"
+HOST = "malla"
+# The English clue says MESH; players who learnt the old name may still type it.
+HOSTS = {HOST, "mesh", "wired"}
 PORT = "23"
 
 
@@ -171,7 +173,7 @@ def talk_to_prologue_npc(
                     next_stage = "FIND_TERMINAL"
                 line = (
                     "«Había dos datos escritos en una hoja: "
-                    "WIRED y 23. El segundo era el puerto. "
+                    "MALLA y 23. El segundo era el puerto. "
                     "No conservo la hoja. Lo demás tendrás que averiguarlo tú.»"
                 )
         else:
@@ -218,7 +220,7 @@ def submit_terminal_command(player_id: str, line: str, minute: int) -> dict:
     if stage != "FIND_TERMINAL":
         return {"accepted": False, "reason": "MISSING_CONNECTION_KNOWLEDGE"}
     words = line.strip().casefold().split()
-    if words != [PROTOCOL, HOST, PORT]:
+    if len(words) != 3 or words[0] != PROTOCOL or words[1] not in HOSTS or words[2] != PORT:
         return {"accepted": False, "reason": "COMMAND_NOT_RECOGNIZED"}
     with get_connection() as conn:
         changed = conn.execute(
@@ -250,7 +252,7 @@ def prologue_projection(player_id: str = PLAYER) -> dict:
             "No sabe dónde está. El barrio parece tener otra vida al caer la noche."
         ),
         "FIND_TERMINAL": (
-            "WIRED. Puerto 23. Dos datos que Ryoko no quiso explicar. "
+            "MALLA. Puerto 23. Dos datos que Ryoko no quiso explicar. "
             "El ordenador de tu apartamento sigue esperando."
         ),
         "CONNECTED": "La conexión cambió algo. Quizá ahora puedas descubrir qué.",

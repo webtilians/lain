@@ -51,7 +51,7 @@ Husserl y el *noema*, el objeto tal como es pensado; el barco de Teseo.
 
 ## 4. El mundo y su pasado
 
-- **La Wired** existía antes que nadie la poseyera: una red común del barrio, con
+- **La Malla** existía antes que nadie la poseyera: una red común del barrio, con
   armarios de enlace en la estación, el aula de informática y el videoclub.
 - **Consorcio KAGAMI** (*kagami*, espejo) compró la infraestructura física. Su
   idea de salvación es la **réplica**: si todo se copia, nada muere. Una copia
@@ -67,7 +67,7 @@ Husserl y el *noema*, el objeto tal como es pensado; el barco de Teseo.
 ### La Sesión Cero
 
 Antes de tu primera conexión ya había una sesión con tu nombre: la **Sesión
-Cero**. Recordaba algo que no estaba en el registro (que la Wired no la creó
+Cero**. Recordaba algo que no estaba en el registro (que la Malla no la creó
 ninguna corporación y que las sesiones caducadas no se borran, se acumulan en
 NODO_07). NOEMA la terminó por «recuerdo no consensuado» y reescribió la entrada
 del diario para que constase como cierre voluntario. Antes de morir, la Sesión
@@ -157,7 +157,7 @@ Lo que incluye la primera versión, jugable después del capítulo 1:
    una retransmisión duplicada y uno corrupto.
 4. **Reconstruir** el mensaje ordenando por número de secuencia y descartando el
    segmento cuyo `sha256` no coincide con el declarado.
-5. **El diario de la Wired** es una cadena de hashes. Una entrada (el cierre de
+5. **El diario de la Malla** es una cadena de hashes. Una entrada (el cierre de
    la Sesión Cero) fue reescrita por NOEMA: hay que encontrar dónde se rompe la
    cadena y denunciarlo. El espejo de KAGAMI conserva la entrada original.
 6. **Decisión:** reenviar el paquete con un TTL nuevo (K y Nora lo reciben y lo
@@ -166,12 +166,12 @@ Lo que incluye la primera versión, jugable después del capítulo 1:
 
 ## 11. Estado
 
-- Capa 01 · Física: jugable (v0.19). Se abre con la conexión a la Wired, junto a la Capa 03; quien ya iba más adelante la tiene abierta. Los fragmentos cuentan capas completadas. Guía: [CAPA01_README.md](CAPA01_README.md).
+- Capa 01 · Física: jugable (v0.19). Se abre con la conexión a la Malla, junto a la Capa 03; quien ya iba más adelante la tiene abierta. Los fragmentos cuentan capas completadas. Guía: [CAPA01_README.md](CAPA01_README.md).
 - Capa 02 · Enlace: jugable (v0.20). Empieza al terminar la Capa 01. Guía: [CAPA02_README.md](CAPA02_README.md).
 - Capa 03 · TTL: jugable (v0.13). Guía: [CAPA03_README.md](CAPA03_README.md).
 - Capa 04 · Transporte: jugable (v0.15). Guía: [CAPA04_README.md](CAPA04_README.md).
 - Capa 05 · Sesión: jugable (v0.16). Guía: [CAPA05_README.md](CAPA05_README.md).
 - Capa 06 · Presentación: jugable (v0.17). Guía: [CAPA06_README.md](CAPA06_README.md).
-- Capa 07 · Aplicación: jugable (v0.18), con los tres finales. El eco del final «Desconectarte» se consulta en NODO_07; aún no camina por el mundo. Guía: [CAPA07_README.md](CAPA07_README.md).
+- Capa 07 · Aplicación: jugable (v0.18), con los tres finales. El eco del final «Desconectarte» camina por el mundo: recorre los sitios habituales de su jugador y habla con sus recuerdos ([ECO.md](ECO.md)). Guía: [CAPA07_README.md](CAPA07_README.md).
 - El diario poco fiable y la sombra (v0.21): [DIARIO_Y_SOMBRA.md](DIARIO_Y_SOMBRA.md).
 - Todo el juego en español e inglés (v0.14): [TRADUCCION.md](TRADUCCION.md).

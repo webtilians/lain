@@ -143,7 +143,8 @@ func _met(id: String, player: Node3D) -> bool:
 		"school":
 			return location() in ["SCHOOL", "SCHOOL_LAB"] or stage() not in ["FIND_TEACHER", "LEGACY"]
 		"talk":
-			return EventDialog.visible
+			# A conversation offers choices or the message box; a plain notice only has «Continuar».
+			return EventDialog.visible and (EventDialog.choices_box.visible or EventDialog.message_row.visible)
 	return false
 
 func _process(delta: float) -> void:

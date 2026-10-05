@@ -135,7 +135,7 @@ func _terminal_page() -> void:
 	var info := layer_data()
 	label(box, str(info.get("title", "")) + "   ·   fragmentos de la Sesión Cero: " + str(int(info.get("fragments", 0))) + "/7")
 	label(box, str(info.get("goal", "")))
-	label(box, "El terminal habla con la Wired. Escribe help para ver las órdenes y man <tema> para aprender lo que necesites. Nadie te dará la respuesta: solo las herramientas.")
+	label(box, "El terminal habla con la Malla. Escribe help para ver las órdenes y man <tema> para aprender lo que necesites. Nadie te dará la respuesta: solo las herramientas.")
 	button(box, "Abrir el terminal", func(): ShellTerminal.open_shell("navi"))
 
 func open_exchange_contact(peer: String) -> void:
@@ -256,7 +256,7 @@ func _render() -> void:
 	clear(content)
 	var state := data()
 	var contract := str(state.get("contract", "INDEPENDENT"))
-	heading.text = "NAVI // TALLER   ·   " + str(int(state.get("cost", 0))) + "/" + str(int(state.get("capacity", 0))) + " unidades   ·   " + ("Independiente" if contract == "INDEPENDENT" else contract)
+	heading.text = "CASA // TALLER   ·   " + str(int(state.get("cost", 0))) + "/" + str(int(state.get("capacity", 0))) + " unidades   ·   " + ("Independiente" if contract == "INDEPENDENT" else contract)
 	footer.text = "Esperando respuesta…" if busy else status
 	if mode == "LESSON":
 		label(content, "AULA DE INFORMÁTICA // UNA MÁQUINA QUE SUEÑA")
@@ -346,7 +346,7 @@ func _code(life: bool) -> void:
 	if life and int(data().get("lesson", 0)) == 0:
 		label(content, "Todavía no tienes la plantilla. Habla con el profesor en el aula de informática y pregunta por el Juego de la Vida.")
 		return
-	label(content, "next_cell.py · Python acotado: if, return, comparaciones, and/or/not. Sin llamadas ni bucles." if life else "wired.py · Añade una línea use(\"modulo\") por función. Compilar valida y empaqueta el montaje.")
+	label(content, "next_cell.py · Python acotado: if, return, comparaciones, and/or/not. Sin llamadas ni bucles." if life else "malla.py · Añade una línea use(\"modulo\") por función. Compilar valida y empaqueta el montaje.")
 	var row := HBoxContainer.new()
 	row.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	row.add_theme_constant_override("separation", 18)
@@ -393,7 +393,7 @@ func _code(life: bool) -> void:
 
 func _devices() -> void:
 	var box := scrolling(content)
-	label(box, "Una aportación por modelo funcional. Dos Navi A no duplican capacidad. Conecta tus equipos antes de compilar.")
+	label(box, "Una aportación por modelo funcional. Dos Kumo A no duplican capacidad. Conecta tus equipos antes de compilar.")
 	for item in data().get("assets", []):
 		label(box, str(item.name) + " · " + ("Dispositivo" if item.kind == "DEVICE" else "Fragmento") + " · " + ("Prestado" if item.ownership == "LOAN" else "Tuyo") + "\nProcedencia: " + str(item.source) + " · minuto " + str(int(item.minute)))
 		if item.kind == "DEVICE":
@@ -414,7 +414,7 @@ func _wired() -> void:
 		if bool(relay.inspected):
 			var b := button(box, "Ejecutar Exploración", _send.bind("SCAN", {"relay":relay.id}))
 			b.disabled = not ("scan" in data().get("modules", []) or "scan" in data().get("shared_modules",[]))
-	button(box, "Abrir la investigación de la Wired", func():
+	button(box, "Abrir la investigación de la Malla", func():
 		close_pc()
 		ChapterOne.open_terminal())
 	button(box, "Consultar y ocultar enlaces", func():
@@ -587,7 +587,7 @@ func _completed(result: int, code: int, _headers: PackedStringArray, body: Packe
 	var payload: Dictionary = decoder.data
 	if code < 200 or code >= 300:
 		var exchange_errors := {"EXCHANGE_PC_REQUIRED":"Confirma el intercambio en el PC de casa.","MEET_EXCHANGE_PEER_FIRST":"Habla de intercambiar código con esa persona primero.","EXCHANGE_OWNED_CODE_REQUIRED":"Necesitas esa copia propia. Un préstamo o una aportación de otra persona no sirve.","EXCHANGE_DISABLED":"Los intercambios no están activos en este servidor.","INDEPENDENT_REQUIRED":"Termina tu contrato corporativo en Correo para intercambiar."}
-		exchange_errors.merge({"PARTNER_NOT_PRESENT":"Debes hablar con esa persona en su localización.","WIRED_CONNECTION_REQUIRED":"Completa primero tu conexión a la Wired."})
+		exchange_errors.merge({"PARTNER_NOT_PRESENT":"Debes hablar con esa persona en su localización.","WIRED_CONNECTION_REQUIRED":"Completa primero tu conexión a la Malla."})
 		if pending_endpoint == "code-exchange":
 			_failure(str(exchange_errors.get(str(payload.get("detail","")),payload.get("detail","No se pudo completar el intercambio."))),code >= 500)
 			return
