@@ -41,6 +41,20 @@ void fragment() {
 	COLOR = vec4(vec3(n * scan * band), amount);
 }
 """
+# Camera shots of other places, rendered apart in their own world while the game goes on:
+# [scene, from, look at, to, look at]. Vectors are world positions, or offsets from the
+# scene's own player spawn when the shot says "relative".
+const DISTRICT := "res://scenes/apartment_district/ApartmentDistrict.tscn"
+const STATION := "res://scenes/station/Station.tscn"
+const SHOTS := {
+	"street": [DISTRICT, Vector3(36, 10, -51), Vector3(27, 1.5, -66), Vector3(31.5, 3.0, -57.5), Vector3(26, 1.6, -67), false],
+	"home_street": [DISTRICT, Vector3(6, 8, 7), Vector3(-3, 1.2, -6), Vector3(2, 2.6, 2.5), Vector3(-4, 1.4, -8), false],
+	"school": [DISTRICT, Vector3(-8, 9, -6), Vector3(-19, 1.5, -19), Vector3(-12, 3.0, -11), Vector3(-20, 2.0, -21), false],
+	"overview": [DISTRICT, Vector3(70, 80, 30), Vector3(0, 0, -48), Vector3(110, 135, 62), Vector3(0, 0, -50), false],
+	"station": [STATION, Vector3(6, 3.5, 7), Vector3(0, 1, 0), Vector3(3, 1.8, 3.5), Vector3(-1, 1.3, -3), true],
+}
+const FRAGMENT_SHOTS := {"layer_one": "school", "layer_two": "station", "layer_three": "overview",
+	"layer_four": "home_street", "layer_five": "street", "layer_six": "street"}
 const INK := "e9e2ea"
 const DIM := "9a8f9e"
 const RED := "e0465f"
@@ -68,6 +82,8 @@ var title: Label
 var lines_label: RichTextLabel
 var skip_label: Label
 var shown: Array[String] = []
+var stage_view: SubViewportContainer
+var subtitles := false
 
 func _ready() -> void:
 	layer = 115
@@ -294,6 +310,8 @@ func _restore_camera() -> void:
 
 func _finish() -> void:
 	_restore_camera()
+	unstage()
+	set_subtitles(false)
 	for hud in hidden_huds:
 		if is_instance_valid(hud):
 			hud.show()
@@ -352,6 +370,96 @@ func say(text: String, color: String = INK, italic := false) -> void:
 func _styled(text: String, color: String, italic: bool) -> String:
 	var body := "[color=#%s]%s[/color]" % [color, text]
 	return "[i]" + body + "[/i]" if italic else body
+
+func set_subtitles(on: bool) -> void:
+	subtitles = on
+	lines_label.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE if on else Control.PRESET_HCENTER_WIDE)
+	lines_label.offset_left = 140
+	lines_label.offset_right = -140
+	lines_label.offset_top = -BAR - 150 if on else -40
+	lines_label.offset_bottom = -BAR - 12 if on else 0
+	lines_label.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.9))
+	lines_label.add_theme_constant_override("shadow_offset_x", 2)
+	lines_label.add_theme_constant_override("shadow_offset_y", 2)
+
+func stage(shot_id: String) -> Camera3D:
+	# Another place, in its own world, behind the bars and the lines; the real game keeps running.
+	unstage()
+	var shot: Array = SHOTS[shot_id]
+	var container := SubViewportContainer.new()
+	container.name = "Shot"
+	container.stretch = true
+	container.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	container.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	root.add_child(container)
+	root.move_child(container, 0)
+	var view := SubViewport.new()
+	view.own_world_3d = true
+	view.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+	container.add_child(view)
+	var place: Node3D = load(shot[0]).instantiate()
+	var actors := place.get_node_or_null("Actors")
+	if actors != null:
+		place.remove_child(actors)
+		actors.free()
+	view.add_child(place)
+	var anchor := Vector3.ZERO
+	var stand_in := place.get_node_or_null("Player") as Node3D
+	if stand_in != null:
+		# The scene's own player stays, still and unseen, so the place's scripts keep working.
+		stand_in.remove_from_group("player")
+		stand_in.set_physics_process(false)
+		stand_in.set_process(false)
+		stand_in.set_process_unhandled_input(false)
+		stand_in.visible = false
+		anchor = stand_in.global_position
+	var director: Node = load("res://scripts/art/GraphicsDirector.gd").new()
+	director.name = "ShotDirector"
+	place.add_child(director)
+	director.baseline = true
+	director.apply_scene(place)
+	for hud_name in ["HUD", "GraphicsHUD"]:
+		var hud := place.get_node_or_null(hud_name) as CanvasLayer
+		if hud != null:
+			hud.hide()
+	# Door prompts ("[E] …") belong to playing, not to the shot.
+	for label in place.find_children("*", "Label3D", true, false):
+		if "[E]" in label.text:
+			label.hide()
+	var camera := Camera3D.new()
+	camera.name = "ShotCamera"
+	camera.fov = 52.0
+	camera.far = 600.0
+	place.add_child(camera)
+	camera.make_current()
+	var offset := anchor if shot[5] else Vector3.ZERO
+	camera.set_meta("start", Transform3D(Basis(), shot[1] + offset).looking_at(shot[2] + offset, Vector3.UP))
+	camera.set_meta("end", Transform3D(Basis(), shot[3] + offset).looking_at(shot[4] + offset, Vector3.UP))
+	camera.global_transform = camera.get_meta("start")
+	stage_view = container
+	return camera
+
+func move_camera(camera: Camera3D, seconds: float) -> void:
+	var start: Transform3D = camera.get_meta("start")
+	var end: Transform3D = camera.get_meta("end")
+	var elapsed := 0.0
+	var span := maxf(seconds / pace, 0.001)
+	while elapsed < span and not skipping and is_instance_valid(camera):
+		await get_tree().process_frame
+		elapsed += get_process_delta_time()
+		var t := clampf(elapsed / span, 0.0, 1.0)
+		camera.global_transform = start.interpolate_with(end, t * t * (3.0 - 2.0 * t))
+	if is_instance_valid(camera):
+		camera.set_meta("done", true)
+
+func camera_done(camera: Camera3D) -> void:
+	while is_instance_valid(camera) and not camera.get_meta("done", false) and not skipping:
+		await get_tree().process_frame
+
+func unstage() -> void:
+	if is_instance_valid(stage_view):
+		stage_view.queue_free()
+	stage_view = null
 
 func _compose(partial: String, color: String, italic: bool) -> String:
 	var all: Array[String] = shown.duplicate()
@@ -422,36 +530,52 @@ func _opening_camera() -> Camera3D:
 
 func _wired() -> void:
 	await burst(0.9, 0.25, 0.7)
-	shade.modulate.a = 0.78
+	shade.modulate.a = 1.0
 	bars(true)
+	var camera := stage("street")
+	set_subtitles(true)
 	caption.text = "LA MALLA"
-	await wait(0.6)
+	set_static(0.0)
+	await tween_to(shade, "modulate:a", 0.0, 0.9)
+	move_camera(camera, 9.0)
 	for line in WIRED:
 		await say(line, INK if line != WIRED[1] else AMBER)
-		await wait(1.0)
-	await wait(1.6)
-	await tween_to(self, "_static_amount", 0.0, 0.8)
+		await wait(1.2)
+	await camera_done(camera)
+	await burst(0.7, 0.0, 0.3)
+	await tween_to(shade, "modulate:a", 1.0, 0.4)
+	unstage()
 	bars(false)
 	await tween_to(shade, "modulate:a", 0.0, 0.8)
 
 func _fragment(layer_key: String) -> void:
 	await burst(0.85, 0.18, 0.6)
-	shade.modulate.a = 0.86
+	shade.modulate.a = 1.0
 	bars(true)
+	var camera := stage(FRAGMENT_SHOTS.get(layer_key, "street"))
+	set_subtitles(true)
 	caption.text = "FRAGMENTO %d/7 · SESIÓN CERO" % (LAYERS.find(layer_key) + 1)
-	await wait(0.7)
+	set_static(0.06)
+	await tween_to(shade, "modulate:a", 0.0, 0.8)
+	move_camera(camera, 8.0)
 	await say(FRAGMENTS[layer_key][0], DIM, true)
 	await wait(1.3)
 	await say("«" + Language.text(FRAGMENTS[layer_key][1]) + "»", RED)
-	await wait(2.8)
+	await camera_done(camera)
 	await burst(0.6, 0.0, 0.25)
+	await tween_to(shade, "modulate:a", 1.0, 0.4)
+	unstage()
 	bars(false)
 	await tween_to(shade, "modulate:a", 0.0, 0.7)
 
 func _ending(decision: String, count: int) -> void:
 	await tween_to(shade, "modulate:a", 1.0, 1.6)
 	bars(true)
+	var camera := stage("overview")
+	set_subtitles(true)
 	caption.text = "FRAGMENTO 7/7 · SESIÓN CERO"
+	await tween_to(shade, "modulate:a", 0.0, 1.2)
+	move_camera(camera, 12.0)
 	await say(FRAGMENTS.layer_seven[0], DIM, true)
 	await wait(1.2)
 	await say(ENDINGS.get(decision, ""), INK)
@@ -461,6 +585,10 @@ func _ending(decision: String, count: int) -> void:
 	if count >= 7:
 		await say(COMPLETE, AMBER)
 		await wait(1.8)
+	await camera_done(camera)
+	await tween_to(shade, "modulate:a", 1.0, 1.2)
+	unstage()
+	set_subtitles(false)
 	clear_lines()
 	caption.text = ""
 	await wait(0.8)

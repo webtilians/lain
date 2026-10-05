@@ -118,8 +118,15 @@ func run() -> void:
 	shell.surface.hide()
 	await frames(2)
 	check(cinematic.playing == "fragment", "the fragment does not play once the terminal closes")
+	for i in range(200):
+		if is_instance_valid(cinematic.stage_view):
+			break
+		await process_frame
+	check(is_instance_valid(cinematic.stage_view), "the fragment has no camera shot of another place")
+	check(root.get_viewport().get_camera_3d() == own_camera, "the shot took over the game's own camera")
 	seen = {}
 	await watch(seen)
+	check(not is_instance_valid(cinematic.stage_view), "the shot is left behind after the cinematic")
 	check(shown(seen, "FRAGMENTO 2/7 · SESIÓN CERO") and shown(seen, "Hay otra máquina con nuestra dirección"),
 		"the fragment shows the wrong layer")
 
