@@ -46,7 +46,9 @@ _routes: dict = {}
 
 def route(c, player: str) -> list[str]:
     """The player's usual public places, most visited first. Read from their history every ROUTE_TTL."""
-    cached = _routes.get(player)
+    # Keyed by database too: a world restored or swapped in the same process has other histories.
+    key = (str(c.execute("PRAGMA database_list").fetchone()[2]), player)
+    cached = _routes.get(key)
     if cached and cached[0] > time.monotonic():
         return cached[1]
     places = [place for (place,) in c.execute(
@@ -54,7 +56,7 @@ def route(c, player: str) -> list[str]:
         "ORDER BY COUNT(*) DESC, target", (player,)).fetchall()
         if place in LOCATION_GRAPH and place not in PRIVATE]
     places = places[:ROUTE] or [FALLBACK]
-    _routes[player] = (time.monotonic() + ROUTE_TTL, places)
+    _routes[key] = (time.monotonic() + ROUTE_TTL, places)
     return places
 
 
