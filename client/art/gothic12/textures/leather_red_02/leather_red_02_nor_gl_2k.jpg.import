@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://e83wj8troef1"
 path.s3tc="res://.godot/imported/leather_red_02_nor_gl_2k.jpg-7f0fe141d08d05e505001d7ee3707338.s3tc.ctex"
+path.etc2="res://.godot/imported/leather_red_02_nor_gl_2k.jpg-7f0fe141d08d05e505001d7ee3707338.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://art/gothic12/textures/leather_red_02/leather_red_02_nor_gl_2k.jpg"
-dest_files=["res://.godot/imported/leather_red_02_nor_gl_2k.jpg-7f0fe141d08d05e505001d7ee3707338.s3tc.ctex"]
+dest_files=["res://.godot/imported/leather_red_02_nor_gl_2k.jpg-7f0fe141d08d05e505001d7ee3707338.s3tc.ctex", "res://.godot/imported/leather_red_02_nor_gl_2k.jpg-7f0fe141d08d05e505001d7ee3707338.etc2.ctex"]
 
 [params]
 

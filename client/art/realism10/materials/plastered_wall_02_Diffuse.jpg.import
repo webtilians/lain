@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://b644vvhesriuv"
 path.s3tc="res://.godot/imported/plastered_wall_02_Diffuse.jpg-ed7afa6e12e67175cbc948d03d52012f.s3tc.ctex"
+path.etc2="res://.godot/imported/plastered_wall_02_Diffuse.jpg-ed7afa6e12e67175cbc948d03d52012f.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://art/realism10/materials/plastered_wall_02_Diffuse.jpg"
-dest_files=["res://.godot/imported/plastered_wall_02_Diffuse.jpg-ed7afa6e12e67175cbc948d03d52012f.s3tc.ctex"]
+dest_files=["res://.godot/imported/plastered_wall_02_Diffuse.jpg-ed7afa6e12e67175cbc948d03d52012f.s3tc.ctex", "res://.godot/imported/plastered_wall_02_Diffuse.jpg-ed7afa6e12e67175cbc948d03d52012f.etc2.ctex"]
 
 [params]
 

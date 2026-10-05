@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://gawiduoaijtg"
 path.s3tc="res://.godot/imported/concrete_floor_02_Diffuse.jpg-cb2725475f127a87a84cc3f5e1662af9.s3tc.ctex"
+path.etc2="res://.godot/imported/concrete_floor_02_Diffuse.jpg-cb2725475f127a87a84cc3f5e1662af9.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://art/realism10/materials/concrete_floor_02_Diffuse.jpg"
-dest_files=["res://.godot/imported/concrete_floor_02_Diffuse.jpg-cb2725475f127a87a84cc3f5e1662af9.s3tc.ctex"]
+dest_files=["res://.godot/imported/concrete_floor_02_Diffuse.jpg-cb2725475f127a87a84cc3f5e1662af9.s3tc.ctex", "res://.godot/imported/concrete_floor_02_Diffuse.jpg-cb2725475f127a87a84cc3f5e1662af9.etc2.ctex"]
 
 [params]
 

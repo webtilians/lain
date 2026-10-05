@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://bftohwdmiq4p5"
 path.s3tc="res://.godot/imported/castle_wall_slates_nor_gl_2k.jpg-4eaad631fd5f1e6bec7eaf03c0003c3b.s3tc.ctex"
+path.etc2="res://.godot/imported/castle_wall_slates_nor_gl_2k.jpg-4eaad631fd5f1e6bec7eaf03c0003c3b.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://art/gothic12/textures/castle_wall_slates/castle_wall_slates_nor_gl_2k.jpg"
-dest_files=["res://.godot/imported/castle_wall_slates_nor_gl_2k.jpg-4eaad631fd5f1e6bec7eaf03c0003c3b.s3tc.ctex"]
+dest_files=["res://.godot/imported/castle_wall_slates_nor_gl_2k.jpg-4eaad631fd5f1e6bec7eaf03c0003c3b.s3tc.ctex", "res://.godot/imported/castle_wall_slates_nor_gl_2k.jpg-4eaad631fd5f1e6bec7eaf03c0003c3b.etc2.ctex"]
 
 [params]
 

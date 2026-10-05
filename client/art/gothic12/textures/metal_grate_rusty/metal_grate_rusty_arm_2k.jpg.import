@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://btpjrvn3amu8k"
 path.s3tc="res://.godot/imported/metal_grate_rusty_arm_2k.jpg-0b1f57ce782e03e1d73bc750cb34fdbf.s3tc.ctex"
+path.etc2="res://.godot/imported/metal_grate_rusty_arm_2k.jpg-0b1f57ce782e03e1d73bc750cb34fdbf.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://art/gothic12/textures/metal_grate_rusty/metal_grate_rusty_arm_2k.jpg"
-dest_files=["res://.godot/imported/metal_grate_rusty_arm_2k.jpg-0b1f57ce782e03e1d73bc750cb34fdbf.s3tc.ctex"]
+dest_files=["res://.godot/imported/metal_grate_rusty_arm_2k.jpg-0b1f57ce782e03e1d73bc750cb34fdbf.s3tc.ctex", "res://.godot/imported/metal_grate_rusty_arm_2k.jpg-0b1f57ce782e03e1d73bc750cb34fdbf.etc2.ctex"]
 
 [params]
 

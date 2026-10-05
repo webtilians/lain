@@ -56,3 +56,6 @@ online-world.db*
 /online-data/
 *.host.lock
 /LAIN-Online-*.zip
+
+# Written by the release workflow for builds without the Windows launcher (the Mac app).
+client/release.json

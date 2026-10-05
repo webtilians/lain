@@ -23,6 +23,8 @@
               color: #fff; font-weight: 700; font-size: 19px; text-decoration: none; letter-spacing: .04em;
               box-shadow: 0 0 0 1px #ff5a74 inset, 0 8px 30px rgba(194, 37, 63, .35); }
   .download:hover { background: #d9304c; }
+  .download.second { background: transparent; color: var(--ink); box-shadow: 0 0 0 1px var(--line) inset; margin-left: 10px; }
+  .download.second:hover { background: rgba(255, 255, 255, .06); }
   .small { color: var(--dim); font-size: 14px; }
   figure { margin: 0; }
   figure img { display: block; width: 100%; height: auto; border-radius: 8px; border: 1px solid var(--line); background: #000; }
@@ -34,6 +36,7 @@
   section { margin-top: 44px; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 22px 26px; }
   section.plain { background: none; border: 0; padding: 0; }
   h2 { font-size: 15px; letter-spacing: .2em; text-transform: uppercase; color: var(--dim); margin: 0 0 12px; }
+  h3 { font-size: 16px; color: var(--ink); margin: 22px 0 8px; }
   ol { margin: 0; padding-left: 22px; } li { margin: 8px 0; }
   ul.keys { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 6px 22px; }
   kbd, code { background: #1d1722; padding: 1px 6px; border-radius: 4px; font: 15px/1.4 Consolas, "Cascadia Mono", monospace; }
@@ -54,7 +57,9 @@
       entender cómo funciona la red que te contiene. Hace falta algo de informática; el juego te da las herramientas,
       nunca la respuesta.</p>
     <a class="download" href="https://github.com/webtilians/lain/releases/latest/download/LAIN-Windows.zip">Descargar Sesión Cero para Windows</a>
-    <p class="small">Windows 10 u 11 de 64 bits · unos 300 MB la primera vez · se actualiza solo al abrirlo y solo baja lo que cambia.</p>
+    <a class="download second" href="https://github.com/webtilians/lain/releases/latest/download/SesionCero-Mac.zip">Para Mac</a>
+    <p class="small">Windows 10 u 11 de 64 bits · unos 300 MB la primera vez · se actualiza solo al abrirlo y solo baja lo que cambia.<br>
+      Mac con chip Apple o Intel, macOS 11 o posterior · unos 500 MB · avisa cuando hay versión nueva.</p>
   </div>
 
   <figure class="hero">
@@ -104,6 +109,18 @@
         <strong>código de invitación</strong> que te pasó quien te invitó.</li>
       <li>La próxima vez solo tendrás que pulsar <em>Continuar</em>. Desde otro PC, entra con tu nombre y tu contraseña.</li>
     </ol>
+    <h3>En Mac</h3>
+    <ol>
+      <li><a href="https://github.com/webtilians/lain/releases/latest/download/SesionCero-Mac.zip">Descarga la versión para Mac</a>, ábrela si no se descomprime sola y arrastra
+        <em>Sesión Cero</em> a <em>Aplicaciones</em>.</li>
+      <li>La primera vez, macOS no la deja abrir porque el juego no está firmado por Apple. Ábrela una vez, cierra el
+        aviso y ve a <em>Ajustes del Sistema → Privacidad y seguridad</em>: abajo aparece <em>Sesión Cero</em> con el
+        botón <em>Abrir igualmente</em>. Púlsalo y confirma. Solo hay que hacerlo una vez (y otra con cada versión
+        nueva).</li>
+      <li>Lo demás es igual: crea tu cuenta con el código de invitación, o entra con tu nombre y tu contraseña si ya
+        juegas en Windows. Cuando salga una versión nueva, el menú de inicio te lo dirá con un botón para
+        descargarla.</li>
+    </ol>
   </section>
 
   <section>
@@ -132,6 +149,10 @@
         (Windows 10/11, 64-bit, about 300 MB the first time) and extract the whole ZIP.</li>
       <li>Open <code>LAIN.exe</code>. If Windows says “Windows protected your PC”, choose <em>More info</em> →
         <em>Run anyway</em> (the game is not signed). It updates itself when you open it, downloading only what changed.</li>
+      <li>On a Mac (Apple silicon or Intel, macOS 11 or later): <a href="https://github.com/webtilians/lain/releases/latest/download/SesionCero-Mac.zip">download the Mac version</a> and drag
+        <em>Sesión Cero</em> to <em>Applications</em>. The first time, macOS blocks it because it is not signed by Apple:
+        open it once, close the warning, then go to <em>System Settings → Privacy &amp; Security</em> and choose
+        <em>Open Anyway</em>. The start menu tells you when a new version is out.</li>
       <li>In the start menu pick <strong>English</strong>, then <em>Create a new account</em> with a name, a password and
         the <strong>invite code</strong> your friend gave you.</li>
     </ol>

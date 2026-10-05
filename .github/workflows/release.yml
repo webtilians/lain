@@ -1,9 +1,10 @@
-name: Sesión Cero — publicar versión online (Windows)
+name: Sesión Cero — publicar versión online (Windows y Mac)
 
 # Pushing a tag like v0.13.0 builds the online client and publishes it as the
 # latest GitHub release. Every installed LAIN.exe updates itself from there and
 # https://github.com/webtilians/lain/releases/latest/download/LAIN-Windows.zip
-# is the permanent download link for new players.
+# is the permanent download link for new players. The Mac app is
+# .../latest/download/SesionCero-Mac.zip; it tells its player when a newer one exists.
 on:
   push:
     tags: ["v*"]
@@ -53,7 +54,7 @@ jobs:
           python -m PyInstaller --noconfirm --clean --onefile --windowed --name LAIN --paths packaging --hidden-import updater --hidden-import update_window packaging/launcher.py
           if ($LASTEXITCODE -ne 0 -or !(Test-Path "dist/LAIN.exe")) { throw "Launcher packaging failed" }
 
-      - name: Download official Godot 4.7.2 editor and Windows export template
+      - name: Download official Godot 4.7.2 editor and the Windows and macOS export templates
         shell: pwsh
         run: |
           $base = "https://github.com/godotengine/godot-builds/releases/download/4.7.2-stable"
@@ -70,9 +71,12 @@ jobs:
           Expand-Archive -Path $templateZip -DestinationPath (Join-Path $env:RUNNER_TEMP "godot-export") -Force
           $template = Get-ChildItem (Join-Path $env:RUNNER_TEMP "godot-export") -Filter "windows_release_x86_64.exe" -Recurse | Select-Object -First 1
           if ($null -eq $template) { throw "Windows release template missing" }
+          $mac = Get-ChildItem (Join-Path $env:RUNNER_TEMP "godot-export") -Filter "macos.zip" -Recurse | Select-Object -First 1
+          if ($null -eq $mac) { throw "macOS template missing" }
           $target = Join-Path $env:APPDATA "Godot/export_templates/4.7.2.stable"
           New-Item -ItemType Directory -Force $target | Out-Null
           Copy-Item $template.FullName (Join-Path $target "windows_release_x86_64.exe") -Force
+          Copy-Item $mac.FullName (Join-Path $target "macos.zip") -Force
           $version = Join-Path $template.DirectoryName "version.txt"
           if (Test-Path $version) { Copy-Item $version $target -Force }
 
@@ -93,6 +97,23 @@ jobs:
           python tools/smoke_online01.py --godot (Resolve-Path "release/Game/LAIN-Game.exe").Path --exported
           if ($LASTEXITCODE -ne 0) { throw "Exported online client test failed" }
 
+      # The Mac app is the game alone (no launcher): it carries its server and version in
+      # release.json, is universal (Apple silicon and Intel) and ad-hoc signed by Godot itself.
+      - name: Export the Mac app
+        shell: pwsh
+        run: |
+          $godot = (Get-Content (Join-Path $env:RUNNER_TEMP "godot-editor-path.txt") -Raw).Trim()
+          $version = $env:LAIN_VERSION
+          python tools/mac_release.py info --version $version
+          if ($LASTEXITCODE -ne 0) { throw "release.json failed" }
+          $presets = (Get-Content client/export_presets.cfg -Raw).Replace('application/short_version=""', "application/short_version=""$version""").Replace('application/version=""', "application/version=""$version""")
+          Set-Content client/export_presets.cfg $presets -NoNewline -Encoding utf8
+          $out = Join-Path (Get-Location) "SesionCero-Mac.zip"
+          & $godot --headless --path client --export-release "macOS" $out
+          if ($LASTEXITCODE -ne 0 -or !(Test-Path $out)) { throw "Mac export failed" }
+          python tools/mac_release.py check SesionCero-Mac.zip --version $version
+          if ($LASTEXITCODE -ne 0) { throw "The Mac app is incomplete" }
+
       # parts.json.gz lets installed launchers download only what changed.
       - name: Assemble the shared download and its update manifest
         shell: pwsh
@@ -107,7 +128,7 @@ jobs:
           if ($names -match '\.db|lain-online\.json|lain-ai\.json|Server[\\/]') { throw "Unexpected file in the online client" }
           Compress-Archive -Path "release/*" -DestinationPath "LAIN-Windows.zip" -CompressionLevel Optimal
           Copy-Item "release/Game/LAIN-Game.exe", "release/Game/LAIN-Game.pck", "release/LAIN.exe", "release/LEEME.txt" -Destination .
-          Get-FileHash LAIN-Windows.zip, manifest.json, parts.json.gz -Algorithm SHA256
+          Get-FileHash LAIN-Windows.zip, SesionCero-Mac.zip, manifest.json, parts.json.gz -Algorithm SHA256
 
       - name: Publish as the latest release
         shell: pwsh
@@ -115,6 +136,6 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           $tag = "v$env:LAIN_VERSION"
-          $notes = "Sesión Cero $env:LAIN_VERSION. Descarga LAIN-Windows.zip, extráelo y abre LAIN.exe. Si ya lo tienes, se actualiza solo al abrirlo."
-          gh release create $tag LAIN-Windows.zip manifest.json parts.json.gz LAIN.exe LAIN-Game.exe LAIN-Game.pck LEEME.txt --title "Sesión Cero $env:LAIN_VERSION" --notes $notes --target $env:GITHUB_SHA --latest
+          $notes = "Sesión Cero $env:LAIN_VERSION. Windows: descarga LAIN-Windows.zip, extráelo y abre LAIN.exe; si ya lo tienes, se actualiza solo al abrirlo. Mac: descarga SesionCero-Mac.zip y arrastra Sesión Cero a Aplicaciones (la primera vez hay que permitirla en Ajustes del Sistema)."
+          gh release create $tag LAIN-Windows.zip SesionCero-Mac.zip manifest.json parts.json.gz LAIN.exe LAIN-Game.exe LAIN-Game.pck LEEME.txt --title "Sesión Cero $env:LAIN_VERSION" --notes $notes --target $env:GITHUB_SHA --latest
           if ($LASTEXITCODE -ne 0) { throw "Release publication failed" }

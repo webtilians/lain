@@ -11,11 +11,19 @@ var configuration_error := ""
 var awaiting_login := false
 var account_name := ""
 var client_version := ""
+## A build without the Windows launcher (the Mac app) brings its server, version and download
+## links in res://release.json, written by the release workflow; a checkout has none.
+const RELEASE_PATH := "res://release.json"
+var release: Dictionary = {}
 
 func _ready() -> void:
+	release = load_release(RELEASE_PATH)
 	var configured := OS.get_environment("LAIN_SERVER_URL").strip_edges().trim_suffix("/")
 	_token = OS.get_environment("LAIN_PLAYER_TOKEN").strip_edges()
 	client_version = OS.get_environment("LAIN_CLIENT_VERSION").strip_edges()
+	if configured.is_empty() and not release.is_empty():
+		configured = str(release.server_url).strip_edges().trim_suffix("/")
+		client_version = str(release.get("version", ""))
 	instance_id = "%s-%s" % [Time.get_ticks_usec(), randi()]
 	if not configured.is_empty():
 		_configured = true
@@ -76,6 +84,37 @@ func clear_session() -> void:
 
 func finish_login() -> void:
 	awaiting_login = false
+
+static func load_release(path: String) -> Dictionary:
+	if not FileAccess.file_exists(path):
+		return {}
+	var data = JSON.parse_string(FileAccess.get_file_as_string(path))
+	if typeof(data) != TYPE_DICTIONARY or not str(data.get("server_url", "")).begins_with("https://"):
+		return {}
+	return data
+
+func updates_itself() -> bool:
+	## The Windows launcher updates the game before opening it (and says which version it is);
+	## a game opened on its own looks for a newer version from the start menu.
+	return not release.is_empty() and OS.get_environment("LAIN_CLIENT_VERSION").is_empty()
+
+func download_url() -> String:
+	var links = release.get("downloads", {})
+	var url := str(links.get(OS.get_name(), release.get("page", ""))) if typeof(links) == TYPE_DICTIONARY else ""
+	return url if url.begins_with("https://") else ""
+
+static func newer(candidate: String, current: String) -> bool:
+	## Dotted versions compared number by number: 0.28.0 is newer than 0.27.3, and 0.27.10 than 0.27.9.
+	var a := candidate.split(".")
+	var b := current.split(".")
+	if candidate.is_empty() or current.is_empty():
+		return false
+	for i in range(maxi(a.size(), b.size())):
+		var x := int(a[i]) if i < a.size() else 0
+		var y := int(b[i]) if i < b.size() else 0
+		if x != y:
+			return x > y
+	return false
 
 func _load_session() -> String:
 	if not FileAccess.file_exists(session_path):

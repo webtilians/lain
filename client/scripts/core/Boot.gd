@@ -25,6 +25,8 @@ var notice: Label
 var fields: Dictionary = {}
 var pending := ""
 var me: Dictionary = {}
+var update_request: HTTPRequest
+var update_box: VBoxContainer
 
 func _ready() -> void:
 	if INTRO.should_play():
@@ -86,6 +88,43 @@ func _build() -> void:
 	version.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_LEFT)
 	version.position = Vector2(18, -30)
 	add_child(version)
+	if ServerConnection.updates_itself():
+		_check_update()
+
+# ------------------------------------------------------------------ updates (no launcher)
+
+func _check_update() -> void:
+	var manifest := str(ServerConnection.release.get("manifest", ""))
+	if not manifest.begins_with("https://"):
+		return
+	update_request = HTTPRequest.new()
+	update_request.timeout = 10
+	add_child(update_request)
+	update_request.request_completed.connect(_on_update_checked)
+	update_request.request(manifest)
+
+func _on_update_checked(result: int, code: int, _headers: PackedStringArray, body: PackedByteArray) -> void:
+	if result != HTTPRequest.RESULT_SUCCESS or code != 200:
+		return  # offline or GitHub down: play the version you have
+	var data = JSON.parse_string(body.get_string_from_utf8())
+	if typeof(data) == TYPE_DICTIONARY:
+		offer_update(str(data.get("version", "")))
+
+func offer_update(latest: String) -> void:
+	var url := ServerConnection.download_url()
+	if url.is_empty() or not ServerConnection.newer(latest, ServerConnection.client_version) or is_instance_valid(update_box):
+		return
+	update_box = VBoxContainer.new()
+	update_box.add_theme_constant_override("separation", 6)
+	menu.add_child(update_box)
+	menu.move_child(update_box, notice.get_index())
+	var line := _label(update_box, "Hay una versión nueva: %s. Descárgala para jugar con lo último." % latest, 14, Color("e0b45a"))
+	line.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	var button := Button.new()
+	button.text = "Descargar la versión %s" % latest
+	button.custom_minimum_size.y = 36
+	button.pressed.connect(func(): OS.shell_open(url))
+	update_box.add_child(button)
 
 func _label(parent: Node, text: String, size: int, colour: Color) -> Label:
 	var node := Label.new()

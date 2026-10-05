@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://ckmkddopoi4jg"
 path.s3tc="res://.godot/imported/painted_metal_shutter_nor_gl_2k.jpg-ca59414ce8c8deea28d0298e7efab75e.s3tc.ctex"
+path.etc2="res://.godot/imported/painted_metal_shutter_nor_gl_2k.jpg-ca59414ce8c8deea28d0298e7efab75e.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://art/photoreal11/textures/painted_metal_shutter/painted_metal_shutter_nor_gl_2k.jpg"
-dest_files=["res://.godot/imported/painted_metal_shutter_nor_gl_2k.jpg-ca59414ce8c8deea28d0298e7efab75e.s3tc.ctex"]
+dest_files=["res://.godot/imported/painted_metal_shutter_nor_gl_2k.jpg-ca59414ce8c8deea28d0298e7efab75e.s3tc.ctex", "res://.godot/imported/painted_metal_shutter_nor_gl_2k.jpg-ca59414ce8c8deea28d0298e7efab75e.etc2.ctex"]
 
 [params]
 

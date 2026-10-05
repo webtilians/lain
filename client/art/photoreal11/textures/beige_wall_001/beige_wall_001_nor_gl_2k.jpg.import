@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://dqd5xnbhlvnqp"
 path.s3tc="res://.godot/imported/beige_wall_001_nor_gl_2k.jpg-bf46ac48f92001b99871cb5960bd974a.s3tc.ctex"
+path.etc2="res://.godot/imported/beige_wall_001_nor_gl_2k.jpg-bf46ac48f92001b99871cb5960bd974a.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://art/photoreal11/textures/beige_wall_001/beige_wall_001_nor_gl_2k.jpg"
-dest_files=["res://.godot/imported/beige_wall_001_nor_gl_2k.jpg-bf46ac48f92001b99871cb5960bd974a.s3tc.ctex"]
+dest_files=["res://.godot/imported/beige_wall_001_nor_gl_2k.jpg-bf46ac48f92001b99871cb5960bd974a.s3tc.ctex", "res://.godot/imported/beige_wall_001_nor_gl_2k.jpg-bf46ac48f92001b99871cb5960bd974a.etc2.ctex"]
 
 [params]
 

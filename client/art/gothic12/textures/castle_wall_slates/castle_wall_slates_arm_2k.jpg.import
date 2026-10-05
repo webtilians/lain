@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://ccjtjsyaukcej"
 path.s3tc="res://.godot/imported/castle_wall_slates_arm_2k.jpg-731a9d80a8877c2dd89d51a6e7f9ee18.s3tc.ctex"
+path.etc2="res://.godot/imported/castle_wall_slates_arm_2k.jpg-731a9d80a8877c2dd89d51a6e7f9ee18.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://art/gothic12/textures/castle_wall_slates/castle_wall_slates_arm_2k.jpg"
-dest_files=["res://.godot/imported/castle_wall_slates_arm_2k.jpg-731a9d80a8877c2dd89d51a6e7f9ee18.s3tc.ctex"]
+dest_files=["res://.godot/imported/castle_wall_slates_arm_2k.jpg-731a9d80a8877c2dd89d51a6e7f9ee18.s3tc.ctex", "res://.godot/imported/castle_wall_slates_arm_2k.jpg-731a9d80a8877c2dd89d51a6e7f9ee18.etc2.ctex"]
 
 [params]
 

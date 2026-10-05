@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://byur8wdb3rqw0"
 path.s3tc="res://.godot/imported/asphalt_02_arm_2k.jpg-98e38c8bc969dab260001d2e64ab42ab.s3tc.ctex"
+path.etc2="res://.godot/imported/asphalt_02_arm_2k.jpg-98e38c8bc969dab260001d2e64ab42ab.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://art/photoreal11/textures/asphalt_02/asphalt_02_arm_2k.jpg"
-dest_files=["res://.godot/imported/asphalt_02_arm_2k.jpg-98e38c8bc969dab260001d2e64ab42ab.s3tc.ctex"]
+dest_files=["res://.godot/imported/asphalt_02_arm_2k.jpg-98e38c8bc969dab260001d2e64ab42ab.s3tc.ctex", "res://.godot/imported/asphalt_02_arm_2k.jpg-98e38c8bc969dab260001d2e64ab42ab.etc2.ctex"]
 
 [params]
 

@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://dev8lmvetynfm"
 path.s3tc="res://.godot/imported/leather_red_02_diff_2k.jpg-a4a6e64ed044495f38482745f3e62684.s3tc.ctex"
+path.etc2="res://.godot/imported/leather_red_02_diff_2k.jpg-a4a6e64ed044495f38482745f3e62684.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://art/gothic12/textures/leather_red_02/leather_red_02_diff_2k.jpg"
-dest_files=["res://.godot/imported/leather_red_02_diff_2k.jpg-a4a6e64ed044495f38482745f3e62684.s3tc.ctex"]
+dest_files=["res://.godot/imported/leather_red_02_diff_2k.jpg-a4a6e64ed044495f38482745f3e62684.s3tc.ctex", "res://.godot/imported/leather_red_02_diff_2k.jpg-a4a6e64ed044495f38482745f3e62684.etc2.ctex"]
 
 [params]
 

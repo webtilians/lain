@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://2kiunr7k5nty"
 path.s3tc="res://.godot/imported/concrete_floor_02_nor_gl.png-e4d93ef7491ee2780b2e0249e440ec69.s3tc.ctex"
+path.etc2="res://.godot/imported/concrete_floor_02_nor_gl.png-e4d93ef7491ee2780b2e0249e440ec69.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://art/realism10/materials/concrete_floor_02_nor_gl.png"
-dest_files=["res://.godot/imported/concrete_floor_02_nor_gl.png-e4d93ef7491ee2780b2e0249e440ec69.s3tc.ctex"]
+dest_files=["res://.godot/imported/concrete_floor_02_nor_gl.png-e4d93ef7491ee2780b2e0249e440ec69.s3tc.ctex", "res://.godot/imported/concrete_floor_02_nor_gl.png-e4d93ef7491ee2780b2e0249e440ec69.etc2.ctex"]
 
 [params]
 
