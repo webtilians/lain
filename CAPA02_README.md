@@ -12,7 +12,7 @@ online.
 
 1. En el PC de casa llega un correo de K. La tabla del conmutador de la estación
    no se está quieta: tu dirección MAC aparece en dos puertos a la vez.
-2. En tu Navi, `ip link` enseña tu dirección y el número de tu último latido.
+2. En tu Kumo, `ip link` enseña tu dirección y el número de tu último latido.
 3. En la consola del armario del andén:
    - `show mac` y `show log` enseñan la tabla y los avisos `MAC_FLAP` entre
      los dos puertos (`man conmutador`);
@@ -23,7 +23,7 @@ online.
    tiempo.
 5. Decide qué hacer con tu copia:
    - **apagar su puerto** (`shutdown <puerto>`);
-   - **cambiar tu propia dirección** (`ip link set address <mac>`, en tu Navi).
+   - **cambiar tu propia dirección** (`ip link set address <mac>`, en tu Kumo).
      Tiene que ser unicast y administrada localmente (`man mac`); la copia se
      queda con la tuya de fábrica;
    - **compartirla** (`compartir`): para la red sois la misma persona en dos

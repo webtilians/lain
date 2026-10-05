@@ -60,7 +60,7 @@ func _build() -> void:
 	menu.custom_minimum_size = Vector2(440, 0)
 	menu.add_theme_constant_override("separation", 10)
 	$Center.add_child(menu)
-	var title := _label(menu, "L  A  I  N", 72, Color("e9e2ea"))
+	var title := _label(menu, "SESIÓN CERO", 60, Color("e9e2ea"))
 	title.add_theme_color_override("font_shadow_color", Color(0.76, 0.15, 0.25, 0.55))
 	title.add_theme_constant_override("shadow_offset_x", 0)
 	title.add_theme_constant_override("shadow_offset_y", 0)
@@ -266,7 +266,7 @@ func _completed(result: int, code: int, _headers: PackedStringArray, body: Packe
 			ServerConnection.set_session(str(payload.get("token", "")), str(payload.get("name", "")))
 			me = {"name": payload.get("name", ""), "has_password": true}
 			if kind == "register":
-				show_menu("Cuenta creada. Bienvenido a la Wired, " + str(payload.get("name", "")) + ".")
+				show_menu("Cuenta creada. Bienvenido a la Malla, " + str(payload.get("name", "")) + ".")
 			else:
 				_enter()
 		"password":
@@ -284,7 +284,7 @@ func _enter() -> void:
 func _on_snapshot_updated(snapshot: Dictionary) -> void:
 	var origin: Dictionary = snapshot.get("prologue", {})
 	if bool(origin.get("enabled", false)) and str(origin.get("stage", "")) != "CONNECTED":
-		status.text = "SISTEMA LOCAL DISPONIBLE // SIN CONEXIÓN A LA WIRED"
+		status.text = "SISTEMA LOCAL DISPONIBLE // SIN CONEXIÓN A LA MALLA"
 	else:
 		status.text = "WORLD CORE SYNCHRONIZED"
 

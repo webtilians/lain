@@ -9,7 +9,7 @@ territorial de NOEMA y el guardado noema01.db.
 
 ## Primera versión jugable
 
-El PC de casa abre un taller después de la primera conexión a la Wired.
+El PC de casa abre un taller después de la primera conexión a la Malla.
 Incluye correo, editor con líneas numeradas, ejercicio del Juego de la Vida,
 biblioteca, dispositivos y acceso a la investigación y a los enlaces anteriores.
 
@@ -42,7 +42,7 @@ biblioteca, dispositivos y acceso a la investigación y a los enlaces anteriores
 
 ## Montajes y copias
 
-Navi A aporta 4 unidades, Coprocesador M aporta 4 e Interfaz R aporta 3.
+Kumo A aporta 4 unidades, Coprocesador M aporta 4 e Interfaz R aporta 3.
 Enrutamiento consume 2, Protección 4 y Exploración 3. Un modelo funcional y
 un módulo se cuentan una sola vez, aunque existan copias con distinta procedencia.
 
@@ -70,7 +70,7 @@ pero se pierden al cerrar el juego.
 
 Después del ejercicio aparecen dos contratos locales y una opción independiente:
 
-- **KAGAMI:** segundo Navi A prestado, sin acumular capacidad; cobertura de 15
+- **KAGAMI:** segundo Kumo A prestado, sin acumular capacidad; cobertura de 15
   puntos contra cada intervención, a cambio de reservar 1 unidad de cálculo.
 - **NOEMA:** permiso prestado para Exploración, a cambio de reservar 1 unidad.
   Cada escaneo durante el contrato registra únicamente enlace, minuto y número

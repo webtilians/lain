@@ -284,10 +284,10 @@ func wire(tool: SurfaceTool, a: Vector3, b: Vector3, sag: float, radius: float) 
 
 ## Visual 0.12 street layer: graffiti and layered posters on side walls, and
 ## steam rising from manholes. Tags hang off each building's cutaway shell.
-const TAGS := ["NO FUTURE", "WIRED", "LAYER:07", "PRESENT DAY", "CLOSE THE WORLD", "KNIGHTS", "PROTOCOL 7",
-	"NADA ES REAL", "SIN DIOS", "DEUS", "NAVI", "あなたは誰", "夜は終わらない", "TXEN EHT NEPO"]
+const TAGS := ["NO FUTURE", "LA MALLA", "CAPA 07", "TTL 8", "¿QUIÉN TE RECIBE?", "NOEMA MIENTE", "NODO 07",
+	"NADA ES REAL", "SIN DIOS", "SIN ACK", "KAGAMI TE VE", "あなたは誰", "夜は終わらない", "OREC NÓISES"]
 const SPRAY := ["ff2fa0", "46d3ff", "f2e14a", "ececec", "ff3030", "9dff4a", "b27cff"]
-const POSTER_WORDS := ["LIVE", "CYBERIA", "NO SLEEP", "RAVE 23:00", "SE BUSCA", "WIRED 5.0", "ÚLTIMA NOCHE", "CLUB AZUL"]
+const POSTER_WORDS := ["LIVE", "AZUL", "NO SLEEP", "RAVE 23:00", "SE BUSCA", "MALLA 5.0", "ÚLTIMA NOCHE", "CLUB AZUL"]
 const STEAM_VENTS := [Vector3(0.7, 0.08, -2.7), Vector3(1.4, 0.05, -41.0), Vector3(-1.2, 0.05, -76.0),
 	Vector3(29.5, 0.05, -20.0), Vector3(-29.0, 0.05, -60.0), Vector3(0.5, 0.05, -100.0)]
 

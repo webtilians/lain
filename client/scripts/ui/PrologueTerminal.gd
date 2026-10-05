@@ -26,7 +26,7 @@ func _ready() -> void:
 	layout.add_theme_constant_override("separation", 12)
 	margin.add_child(layout)
 	var header := Label.new()
-	header.text = "LAIN-DOS  VERSION 1.0      (C) 1998     [ESC] SALIR"
+	header.text = "CERO-DOS  VERSION 1.0      (C) 1998     [ESC] SALIR"
 	header.add_theme_color_override("font_color", Color(0.75, 0.78, 0.90))
 	layout.add_child(header)
 	var divider := HSeparator.new()
@@ -50,7 +50,7 @@ func _ready() -> void:
 	command_line.text_submitted.connect(_on_command)
 	row.add_child(command_line)
 	enter_wired = Button.new()
-	enter_wired.text = "ENTRAR EN LA WIRED"
+	enter_wired.text = "ENTRAR EN LA MALLA"
 	enter_wired.visible = false
 	enter_wired.pressed.connect(_enter_wired)
 	layout.add_child(enter_wired)
@@ -64,7 +64,7 @@ func open_terminal() -> void:
 	surface.visible = true
 	var stage := str(WorldApi.snapshot.get("prologue", {}).get("stage", "LEGACY"))
 	var text := (
-		"LAIN-DOS [Version 1.0]\n"
+		"CERO-DOS [Version 1.0]\n"
 		+ "C:\\> _\n\n"
 		+ "Unidad C: / Directorio personal\n"
 		+ "La consola esta lista.\n"
@@ -77,7 +77,7 @@ func open_terminal() -> void:
 	elif stage == "CONNECTED":
 		text += (
 			"\nLa orden fue aceptada, pero el enlace se interrumpio "
-			+ "antes de abrir la Wired. Repite el comando para recuperar "
+			+ "antes de abrir la Malla. Repite el comando para recuperar "
 			+ "la conexion guardada.\n"
 		)
 	else:
@@ -119,9 +119,9 @@ func _on_command(line: String) -> void:
 	transcript.text += "\nC:\\> " + command + "\n"
 	match command.to_lower():
 		"cls":
-			transcript.text = "LAIN-DOS\n"
+			transcript.text = "CERO-DOS\n"
 		"ver":
-			transcript.text += "LAIN-DOS 1.0 // TERMINAL LOCAL\n"
+			transcript.text += "CERO-DOS 1.0 // TERMINAL LOCAL\n"
 		"dir":
 			transcript.text += "C:\\USUARIO\\  <DIR>    BOOT.LOG\n"
 		"help":
@@ -139,7 +139,7 @@ func _on_server_result(result: Dictionary) -> void:
 		connected = true
 		transcript.text += (
 			"Abriendo enlace remoto...\n"
-			+ "WIRED:23 // ENLACE ESTABLECIDO\n\n"
+			+ "MALLA:23 // ENLACE ESTABLECIDO\n\n"
 			+ "NO ESTOY MUERTA. SOLO DEJE DE ESTAR AHI.\n"
 			+ "El silencio del mundo ha cambiado.\n"
 		)

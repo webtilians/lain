@@ -162,7 +162,7 @@ def files(c, player: str, relay, story3) -> dict:
 
 def _mail() -> str:
     return "\n".join([
-        "De: video-hoshi <relay-video@wired>",
+        "De: video-hoshi <relay-video@malla>",
         "Asunto: Tres caras",
         "",
         "El último paquete de la Sesión Cero ha llegado tres veces al enlace del videoclub, cada vez con una cara distinta.",
@@ -387,7 +387,7 @@ def layer_snapshot(player: str) -> dict:
     return {
         "active": True, "title": TITLE, "goal": goal, "decision": run["decision"],
         "fragments": count,
-        "mail": {"subject": "Tres caras", "from": "relay-video@wired",
+        "mail": {"subject": "Tres caras", "from": "relay-video@malla",
                  "body": "El último paquete de la Sesión Cero ha llegado tres veces. Lee ~/correo/caras.eml en el Terminal."},
     }
 

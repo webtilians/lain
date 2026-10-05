@@ -106,7 +106,7 @@ func run() -> void:
 	check(cinematic.playing == "wired", "connecting to the Wired has no cinematic")
 	seen = {}
 	await watch(seen)
-	check(shown(seen, "THE WIRED") and shown(seen, "Tú eres la Sesión Uno."), "the Wired cinematic is incomplete")
+	check(shown(seen, "LA MALLA") and shown(seen, "Tú eres la Sesión Uno."), "the Wired cinematic is incomplete")
 
 	# A fragment waits until the terminal closes.
 	shell.surface.show()
@@ -147,7 +147,7 @@ func run() -> void:
 	await frames(2)
 	seen = {}
 	await watch(seen)
-	for line in ["Escribí mi nombre en el registro de NODO_07.", "Sesión Cero completa.", "L A I N", "Gracias por recibirla."]:
+	for line in ["Escribí mi nombre en el registro de NODO_07.", "Sesión Cero completa.", "SESIÓN CERO", "Gracias por recibirla."]:
 		check(shown(seen, line), "the ending does not show: " + line)
 	check(not cinematic.root.visible, "the cinematic layer stays on screen")
 	check(api.snapshot.prologue == before.prologue and api.snapshot.minute == before.minute, "a cinematic changed the snapshot")

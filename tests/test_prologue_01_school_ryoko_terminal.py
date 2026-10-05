@@ -106,7 +106,7 @@ def test_teacher_ryoko_order_and_colocation(monkeypatch):
         "PLAYER_1", "RYOKO", sim.minute, "ASK_ADDRESS",
     )
     assert result["stage"] == "FIND_TERMINAL"
-    assert "WIRED" in result["text"]
+    assert "MALLA" in result["text"]
     assert "23" in result["text"]
     assert "TELNET" not in result["text"].upper()
     assert "INTERNET" not in result["text"].upper()
@@ -280,11 +280,11 @@ def test_questions_drive_inference_without_automatic_reveal(monkeypatch):
         "PLAYER_1", "RYOKO", sim.minute, "ASK_ADDRESS",
     )
     assert result["stage"] == "FIND_TERMINAL"
-    assert "WIRED" in result["text"] and "23" in result["text"]
+    assert "MALLA" in result["text"] and "23" in result["text"]
     for spoiler in ("telnet", "Internet", "comando", "programa", "sintaxis"):
         assert spoiler not in result["text"].casefold()
     hint = build_player_snapshot()["prologue"]["hint"].casefold()
-    assert "23" in hint and "wired" in hint
+    assert "23" in hint and "malla" in hint
     for spoiler in ("telnet", "internet", "chatgpt", "sintaxis"):
         assert spoiler not in hint
     with get_connection() as conn:
@@ -308,3 +308,17 @@ def test_wrong_question_and_remote_spoiler_never_unlock_terminal(monkeypatch):
     assert submit_terminal_command(
         "PLAYER_1", "telnet wired 23", sim.minute,
     ) == {"accepted": False, "reason": "MISSING_CONNECTION_KNOWLEDGE"}
+
+
+@pytest.mark.parametrize("host", ["malla", "MESH", "wired"])
+def test_the_renamed_network_and_the_old_name_both_connect(monkeypatch, host):
+    # The clue says MALLA (MESH in English); players who learnt the old name are not stuck.
+    sim = fresh_game(monkeypatch)
+    relocate(sim, "SCHOOL_LAB")
+    talk_to_prologue_npc("PLAYER_1", "PROFESSOR", sim.minute, "ASK_STUDENT")
+    relocate(sim, "NIGHTCLUB")
+    clue = talk_to_prologue_npc("PLAYER_1", "RYOKO", sim.minute, "ASK_ADDRESS")
+    assert "MALLA y 23" in clue["text"]
+    relocate(sim, "APARTMENT")
+    assert submit_terminal_command("PLAYER_1", f"telnet {host} 23", sim.minute)["accepted"]
+    assert stage_for() == "CONNECTED"

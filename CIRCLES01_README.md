@@ -12,7 +12,7 @@ torneos locales del café con calendario, clasificación y premios de código.
 
 ## Primer recorrido
 
-1. Completa la primera conexión a la Wired y sigue como **Independiente**.
+1. Completa la primera conexión a la Malla y sigue como **Independiente**.
    Si tienes un contrato, puedes terminarlo desde **PC → Correo**.
 2. Completa el **Juego de la Vida** en el PC, después de pedir las reglas al
    profesor. Recibirás Coprocesador M y Protección.
@@ -20,10 +20,10 @@ torneos locales del café con calendario, clasificación y premios de código.
    Quiere demostrar que puedes mantener código propio. Si ya completaste el
    ejercicio, aceptará la invitación posterior.
 4. En casa, abre **Círculo**, escribe un nombre y pulsa **Crear círculo**.
-   En **Grupo**, invita a Ryoko. Ella aporta Navi A, Interfaz R y Exploración;
+   En **Grupo**, invita a Ryoko. Ella aporta Kumo A, Interfaz R y Exploración;
    esos recursos siguen siendo suyos.
 5. Conecta tu Coprocesador M en **Dispositivos**. En **Círculo → Aportaciones**,
-   aporta tu Navi A, Enrutamiento, Coprocesador M y Protección.
+   aporta tu Kumo A, Enrutamiento, Coprocesador M y Protección.
 6. Abre **Programa**. Inserta los tres módulos o escribe:
 
 ~~~python
@@ -33,7 +33,7 @@ use("scan")
 ~~~
 
 7. Pulsa **Guardar, compilar y activar círculo**. El programa consume **9 de
-   11 unidades**. Los dos Navi A cuentan como un solo modelo funcional.
+   11 unidades**. Los dos Kumo A cuentan como un solo modelo funcional.
 8. En un armario de enlace examinado, disputa control y usa **Ejecutar
    Protección** cuando termine el reajuste. Desde casa puedes ejecutar
    **Exploración**, en Wired, aunque tu programa personal solo tenga Enrutamiento.
@@ -51,7 +51,7 @@ Puedes formar una red con él, con Ryoko o con ambos. El técnico quiere conserv
 las máquinas del café fuera del control de las corporaciones; Ryoko busca una
 red donde las identidades no dependan de un administrador.
 
-Con tu Navi y Enrutamiento más las aportaciones del técnico, puedes compilar
+Con tu Kumo y Enrutamiento más las aportaciones del técnico, puedes compilar
 Enrutamiento y Protección por **6/8 unidades**, sin completar antes el ejercicio
 del Juego de la Vida. Conocer a una persona no basta: el servidor comprueba su
 condición al invitarla.

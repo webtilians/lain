@@ -35,7 +35,7 @@ func run() -> void:
 	state["layer_three"] = {"active": true, "title": "Capa 03 · TTL", "packet": "p-f6a2", "hostname": "navi-enrique",
 		"assembled": false, "exposed": false, "decision": null, "fragments": 0,
 		"goal": "Encuentra en qué armario de enlace murió p-f6a2 y reconstrúyelo.",
-		"mail": {"subject": "TTL=1", "from": "desconocido@wired", "body": "Si lees esto, me queda un salto."}}
+		"mail": {"subject": "TTL=1", "from": "desconocido@malla", "body": "Si lees esto, me queda un salto."}}
 	api.snapshot = state
 	var paths: Dictionary = load("res://scripts/core/SceneRouter.gd").LOCATION_SCENES
 	var scene: Node3D = load(paths[state.player.location]).instantiate()
@@ -60,8 +60,8 @@ func run() -> void:
 	for b in ws.content.find_children("*", "Button", true, false):
 		if b.text == "Abrir el terminal": b.pressed.emit()
 	check(shell.is_open() and shell.host == "navi", "PC button does not open the home shell")
-	reply(shell, "NAVI · terminal doméstico conectado a la Wired.", "/home/enrique")
-	check("NAVI" in shell.output.text, "Banner not printed")
+	reply(shell, "CASA · terminal doméstico conectado a la Malla.", "/home/enrique")
+	check("CASA" in shell.output.text, "Banner not printed")
 	check(shell.prompt.text.ends_with("navi-enrique:/home/enrique$"), "Prompt does not follow cwd: " + shell.prompt.text)
 	shell._submit("cat ~/correo/ttl1.eml")
 	check(shell.busy, "Command was not sent")
@@ -116,7 +116,7 @@ func run() -> void:
 	# Capa 04 takes over the corner HUD and adds its mail to the PC.
 	state["layer_four"] = {"active": true, "title": "Capa 04 · Transporte", "decision": null, "fragments": 1,
 		"goal": "Alguien llama a tu puerto 4004 desde NODO_07. Contesta a su SYN a mano.",
-		"mail": {"subject": "SYN", "from": "syn@wired", "body": "Alguien llama a tu puerto 4004 desde NODO_07 y nadie contesta."}}
+		"mail": {"subject": "SYN", "from": "syn@malla", "body": "Alguien llama a tu puerto 4004 desde NODO_07 y nadie contesta."}}
 	api.snapshot = state
 	await process_frame
 	await process_frame
@@ -137,7 +137,7 @@ func run() -> void:
 	# Capa 05 follows the same way, newest mail first.
 	state["layer_five"] = {"active": true, "title": "Capa 05 · Sesión", "decision": null, "fragments": 2,
 		"goal": "Tu cuenta solo admite una sesión. En la consola del andén, fusiona tu estado con el de la Sesión Cero.",
-		"mail": {"subject": "Dos sesiones, una cuenta", "from": "sesiones@wired",
+		"mail": {"subject": "Dos sesiones, una cuenta", "from": "sesiones@malla",
 			"body": "NODO_07 ha encontrado una sesión caducada con tu nombre. Lee ~/correo/sesion.eml en el Terminal."}}
 	api.snapshot = state
 	await process_frame
@@ -159,7 +159,7 @@ func run() -> void:
 	# And Capa 06 after it.
 	state["layer_six"] = {"active": true, "title": "Capa 06 · Presentación", "decision": null, "fragments": 3,
 		"goal": "El último paquete de la Sesión Cero llegó con tres caras. En la consola del videoclub, descubre cuál es la suya.",
-		"mail": {"subject": "Tres caras", "from": "relay-video@wired",
+		"mail": {"subject": "Tres caras", "from": "relay-video@malla",
 			"body": "El último paquete de la Sesión Cero ha llegado tres veces. Lee ~/correo/caras.eml en el Terminal."}}
 	api.snapshot = state
 	await process_frame
@@ -181,7 +181,7 @@ func run() -> void:
 	# And the last layer, Capa 07.
 	state["layer_seven"] = {"active": true, "title": "Capa 07 · Aplicación", "decision": null, "fragments": 4,
 		"goal": "Llega a NODO_07. No tiene armario: se llega desde cualquier terminal, hablando su protocolo.",
-		"mail": {"subject": "NODO_07", "from": "nora@wired",
+		"mail": {"subject": "NODO_07", "from": "nora@malla",
 			"body": "Nora nunca ha podido entrar en NODO_07. Lee ~/correo/nodo07.eml en el Terminal."}}
 	api.snapshot = state
 	await process_frame
@@ -203,7 +203,7 @@ func run() -> void:
 	# The server can point the HUD at an open lower layer.
 	state["layer_one"] = {"active": true, "title": "Capa 01 · Física", "decision": null, "fragments": 4,
 		"goal": "Alguien cortó el cable del armario del aula de informática. Lee en el osciloscopio lo último que llevaba.",
-		"mail": {"subject": "Parte de incidencia · enlace del pabellón B", "from": "partes@escuela.wired",
+		"mail": {"subject": "Parte de incidencia · enlace del pabellón B", "from": "partes@escuela.malla",
 			"body": "El enlace del pabellón B lleva días mudo. Lee ~/correo/cable.eml en el Terminal."}}
 	state["current_layer"] = "layer_one"
 	api.snapshot = state

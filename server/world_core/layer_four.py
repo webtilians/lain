@@ -1,6 +1,6 @@
 """Capa 04 · Transporte (BIBLIA_NARRATIVA.md, section 6).
 
-The Navi has no TCP stack: the player completes a three-way handshake by hand,
+The Kumo has no TCP stack: the player completes a three-way handshake by hand,
 recovers a lost segment with cumulative ACKs (three duplicates trigger a fast
 retransmit), reads the TTL of the packets to see that the sender is two hops
 away, captures that cabinet's traffic and finds Nora sending keepalives on
@@ -153,13 +153,13 @@ def _story(c, player, run):
 
 def _mail(story: Story) -> str:
     return "\n".join([
-        "De: nodo07 <syn@wired>",
+        "De: nodo07 <syn@malla>",
         "Asunto: SYN",
         "",
         f"Alguien llama a tu puerto {PORT} desde NODO_07 y nadie contesta.",
         "Ha repetido su SYN cinco veces, esperando cada vez el doble: 3, 6, 12, 24 segundos.",
         "",
-        "Tu Navi no tiene pila TCP. Si quieres responder, el saludo lo haces tú, a mano.",
+        "Tu Kumo no tiene pila TCP. Si quieres responder, el saludo lo haces tú, a mano.",
         "",
         "  netstat          <- qué conexiones hay",
         "  tcpdump          <- qué paquetes han llegado",
@@ -408,7 +408,7 @@ ENDINGS = {
            "NODO_07 deja de esperar a la Sesión Cero. Nadie tiene que fingir que sigue ahí.",
     "RST": "RST. La conexión deja de existir sin despedida.\n"
            "NODO_07 olvida a la Sesión Cero en un instante. Nora lo verá en su pantalla.",
-    "KEEPALIVE": f"A partir de ahora tu Navi manda un ACK cada {KEEPALIVE} segundos en nombre de la Sesión Cero.\n"
+    "KEEPALIVE": f"A partir de ahora tu Kumo manda un ACK cada {KEEPALIVE} segundos en nombre de la Sesión Cero.\n"
                  "Mientras tú la recibas, no caducará. Nora puede descansar. Tú ya no.",
 }
 
@@ -457,7 +457,7 @@ MAN = {
 
 Un SYN ocupa un número de secuencia aunque no lleve datos. Si nadie contesta,
 el SYN se retransmite con el mismo seq y la espera se duplica cada vez.
-Una pila TCP normal contesta sola; la del Navi no: send nodo07 SYN+ACK ...""",
+Una pila TCP normal contesta sola; la del Kumo no: send nodo07 SYN+ACK ...""",
     "ack": """ACK acumulativo
 
 ack=n significa «he recibido bien todo hasta el byte n-1; espero el n».
@@ -522,7 +522,7 @@ def layer_snapshot(player: str) -> dict:
     return {
         "active": True, "title": TITLE, "goal": goal, "decision": run["decision"],
         "fragments": count,
-        "mail": {"subject": "SYN", "from": "syn@wired",
+        "mail": {"subject": "SYN", "from": "syn@malla",
                  "body": "Alguien llama a tu puerto 4004 desde NODO_07 y nadie contesta. Lee ~/correo/syn.eml en el Terminal."},
     }
 

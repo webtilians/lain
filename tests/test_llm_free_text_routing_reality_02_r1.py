@@ -17,7 +17,7 @@ def context():
 
 
 @pytest.mark.parametrize("utterance", [
-    "¿Qué piensas de esa nueva presencia en la Wired?",
+    "¿Qué piensas de esa nueva presencia en la Malla?",
     "Quizá alguien esté despertando entre los cables.",
 ])
 def test_enabled_free_text_reaches_model_even_with_generic_memories(

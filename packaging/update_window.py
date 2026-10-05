@@ -16,12 +16,12 @@ def run(task):
     events: queue.Queue = queue.Queue()
     outcome: dict = {}
     window = tk.Tk()
-    window.title("LAIN")
+    window.title("Sesión Cero")
     window.configure(bg="#07060a")
     window.resizable(False, False)
     window.geometry("440x130")
     window.protocol("WM_DELETE_WINDOW", lambda: None)  # downloads must not be cut halfway
-    tk.Label(window, text="L A I N", fg="#e9e2ea", bg="#07060a", font=("Segoe UI", 16, "bold")).pack(pady=(14, 2))
+    tk.Label(window, text="SESIÓN CERO", fg="#e9e2ea", bg="#07060a", font=("Segoe UI", 16, "bold")).pack(pady=(14, 2))
     label = tk.Label(window, text="Buscando actualizaciones…", fg="#c9bfcc", bg="#07060a", font=("Segoe UI", 10))
     label.pack()
     bar = ttk.Progressbar(window, length=380, mode="determinate", maximum=1000)

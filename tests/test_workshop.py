@@ -184,7 +184,7 @@ def test_ownership_device_dedup_and_contract_withdrawal(game):
     with pytest.raises(ValueError,match="DEVICE_NOT_OWNED"): act("DEVICE",id="invented",active=True)
     with pytest.raises(ValueError,match="BASE_DEVICE_REQUIRED"): act("DEVICE",id="home_navi",active=False)
     act("CONTRACT",faction="KAGAMI")
-    assert ws.workshop_snapshot()["capacity"]==7  # second Navi never stacks; one reserved unit.
+    assert ws.workshop_snapshot()["capacity"]==7  # second Kumo never stacks; one reserved unit.
     assert any(a["ownership"]=="LOAN" for a in ws.workshop_snapshot()["assets"])
     act("CONTRACT",faction="NOEMA")
     assert act("COMPILE",source='use("routing")\nuse("scan")')["passed"]

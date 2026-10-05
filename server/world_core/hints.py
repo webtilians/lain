@@ -117,7 +117,7 @@ def _layer_two(c, player, run, story3):
     story = layer_two._story(c, player, run, story3.navi)
     if run["seen"]:
         return _decide("qué haces con tu copia", "shutdown <puerto> en el andén, una dirección nueva con ip link set address "
-                       "<mac> en tu Navi, o compartir", f"shutdown {story.replica_port} (en la consola del andén)")
+                       "<mac> en tu Kumo, o compartir", f"shutdown {story.replica_port} (en la consola del andén)")
     first, second = sorted((story.port, story.replica_port))
     return ("puertos", [
         "Mira tu dirección en el Terminal de casa (ip link) y luego conéctate a la consola del armario del andén: "
@@ -136,9 +136,9 @@ def _layer_three(c, player, run, story3):
                        f"reenviar {story3.packet}")
     if run["assembled"]:
         return ("diario", [
-            "Ya tienes el mensaje. Ahora comprueba el diario de la Wired, en el Terminal de casa: "
-            "cat /var/log/wired/diario.",
-            "Cada entrada guarda el hash (prev) de la anterior. sha256 /var/log/wired/diario <línea> calcula el de "
+            "Ya tienes el mensaje. Ahora comprueba el diario de la Malla, en el Terminal de casa: "
+            "cat /var/log/malla/diario.",
+            "Cada entrada guarda el hash (prev) de la anterior. sha256 /var/log/malla/diario <línea> calcula el de "
             "una línea: compáralo con el prev de la siguiente. Donde no coincida, alguien la reescribió (man cadena).",
             f"La entrada reescrita es la {story3.forged_number:04d}. Escribe denunciar {story3.forged_number}.",
         ])
@@ -233,17 +233,17 @@ def _layer_six(c, player, run):
 def _layer_seven(c, player, run):
     from . import layer_seven
     story = layer_seven._story(c, player)
-    auth = f'--resolve nodo07.wired:80:{story.node_ip} -u "{story.name}:{story.word}"'
+    auth = f'--resolve nodo07.malla:80:{story.node_ip} -u "{story.name}:{story.word}"'
     if run["inside"]:
         return _decide("cómo termina tu historia", "persistir (PUT), replicarte (POST al espejo de KAGAMI) o desconectarte (DELETE)",
-                       f"curl -X PUT {auth} http://nodo07.wired/registro/{story.name}")
+                       f"curl -X PUT {auth} http://nodo07.malla/registro/{story.name}")
     return ("nodo07", [
-        "NODO_07 se alcanza desde cualquier terminal. dig nodo07.wired dice que no existe… según NOEMA. "
+        "NODO_07 se alcanza desde cualquier terminal. dig nodo07.malla dice que no existe… según NOEMA. "
         "dig NS wired lista los otros servidores de nombres.",
-        "Pregúntale a otro: dig @ns.circulos.wired nodo07.wired. Después habla HTTP con curl: el servidor atiende "
+        "Pregúntale a otro: dig @ns.circulos.malla nodo07.malla. Después habla HTTP con curl: el servidor atiende "
         "por nombre (cabecera Host) y pide autenticación Basic con tu nombre y la palabra de la Sesión Cero "
         "(man host, man auth).",
-        f"Escribe curl {auth} http://nodo07.wired/sesiones",
+        f"Escribe curl {auth} http://nodo07.malla/sesiones",
     ])
 
 

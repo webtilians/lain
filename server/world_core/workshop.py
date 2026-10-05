@@ -17,12 +17,12 @@ MODULES = {
     "scan": {"name": "Exploración", "cost": 3, "effect": "Desde casa, leer la actividad de un enlace previamente examinado."},
     "buffer": {"name": "Amortiguación", "cost": 2, "effect": "Absorbe 5 puntos de pérdida en cada intervención corporativa mientras esté compilada. No se acumula con otra copia."},
 }
-DEVICES = {"navi": ("Navi A", 4), "matrix": ("Coprocesador M", 4), "interface": ("Interfaz R", 3), "cache": ("Memoria de enlace B", 2)}
+DEVICES = {"navi": ("Kumo A", 4), "matrix": ("Coprocesador M", 4), "interface": ("Interfaz R", 3), "cache": ("Memoria de enlace B", 2)}
 ARCADE = {"size": 8, "start": [0, 0], "exit": [7, 7],
           "walls": [[2,0],[2,1],[2,2],[4,2],[5,2],[6,2],[1,4],[2,4],[3,4],[5,4],[5,5],[5,6]],
           "chips": [[1,2],[3,1],[6,3],[2,6],[6,6]], "max_moves": 80, "version": 1}
 OFFERS = {
-    "KAGAMI": "Contrato local KAGAMI: préstamo de un segundo Navi A y cobertura que absorbe 15 puntos de cada intervención. La copia no duplica capacidad. Reservas 1 unidad de cálculo mientras dure el acuerdo. Puedes terminarlo desde este PC; se retiran préstamo y cobertura. No se envían conversaciones ni recuerdos.",
+    "KAGAMI": "Contrato local KAGAMI: préstamo de un segundo Kumo A y cobertura que absorbe 15 puntos de cada intervención. La copia no duplica capacidad. Reservas 1 unidad de cálculo mientras dure el acuerdo. Puedes terminarlo desde este PC; se retiran préstamo y cobertura. No se envían conversaciones ni recuerdos.",
     "NOEMA": "Contrato local NOEMA: acceso prestado al módulo Exploración. Reserva 1 unidad de cálculo. Los escaneos posteriores entregan a NOEMA únicamente relay, minuto y número de intervenciones sobre tu cuenta. Puedes terminarlo; se retira el permiso, no tus fragmentos propios. No incluye testimonios ni memorias privadas.",
 }
 
@@ -76,7 +76,7 @@ def enroll_workshop():
                 (actor,LIFE_TEMPLATE,'use("routing")\n','use("routing")\n','["routing"]')).rowcount
             if created:
                 _grant(c,actor,"home_navi","DEVICE","navi","Ordenador de casa",now,1)
-                _grant(c,actor,"first_connection","CODE","routing","Tu primera conexión a la Wired",now)
+                _grant(c,actor,"first_connection","CODE","routing","Tu primera conexión a la Malla",now)
                 report(c,actor,now,"WORKSHOP","El PC dispone de un taller de código. En Kissa Café han instalado un terminal: su técnico busca ayuda para comprobar un coprocesador.")
     from .cafe_events import initialize_events
     initialize_events()

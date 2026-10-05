@@ -218,7 +218,7 @@ func available() -> Array:
 	var items: Array = [{"label": "ARRANQUE // LA TERMINAL", "item": {"id": "intro"}},
 		{"label": "APERTURA // HAS VUELTO", "item": {"id": "opening"}}]
 	if stage in ["CONNECTED", "LEGACY"]:
-		items.append({"label": "THE WIRED // SESIÓN UNO", "item": {"id": "wired"}})
+		items.append({"label": "LA MALLA // SESIÓN UNO", "item": {"id": "wired"}})
 	var decided := 0
 	for key in LAYERS:
 		var entry = snapshot.get(key, {})
@@ -424,7 +424,7 @@ func _wired() -> void:
 	await burst(0.9, 0.25, 0.7)
 	shade.modulate.a = 0.78
 	bars(true)
-	caption.text = "THE WIRED"
+	caption.text = "LA MALLA"
 	await wait(0.6)
 	for line in WIRED:
 		await say(line, INK if line != WIRED[1] else AMBER)
@@ -464,7 +464,7 @@ func _ending(decision: String, count: int) -> void:
 	clear_lines()
 	caption.text = ""
 	await wait(0.8)
-	title.text = "L A I N"
+	title.text = "SESIÓN CERO"
 	await wait(0.8)
 	caption.text = "PROTOCOLO DE PRESENCIA"
 	await say(THANKS, INK)

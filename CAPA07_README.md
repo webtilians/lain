@@ -13,7 +13,7 @@ lanzador, `serve-city.ps1` y el servidor online.
 1. En el PC de casa llega un correo de Nora: **«NODO_07»**. Nunca ha podido
    entrar. NODO_07 no tiene armario: se llega desde cualquier terminal, hablando
    su protocolo.
-2. **DNS.** `dig nodo07.wired` devuelve NXDOMAIN: NOEMA borró el nombre de su
+2. **DNS.** `dig nodo07.malla` devuelve NXDOMAIN: NOEMA borró el nombre de su
    servidor. Pero la zona `wired` tiene más servidores de nombres (`man dns`,
    `man dig`). Uno guarda la dirección real; otro responde con una copia.
 3. **HTTP.** Conectar por dirección no basta. El servidor atiende varios nombres

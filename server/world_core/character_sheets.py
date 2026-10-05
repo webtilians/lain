@@ -10,7 +10,7 @@ from .prologue import stage_for
 
 # Label and observable inclination; NOT a claim about hidden psychology.
 ROLE_RULES = {
-    "ARCHIVIST": ("Archivista de la Wired", "Contrasta señales y registros.", 4),
+    "ARCHIVIST": ("Archivista de la Malla", "Contrasta señales y registros.", 4),
     "SIGNAL_KEEPER": ("Vigilante de señal", "Permanece atento a las variaciones de NODE_07.", 3),
     "ORIGIN_SEEKER": ("Buscador de origen", "Explora vínculos con su aparición.", 2),
     "MONITOR": ("Observador de entidades", "Registra la conducta observable de otras presencias.", 5),
@@ -31,7 +31,7 @@ ORIGIN_NAME_ROLES = {
 }
 NPC_RULES = {
     "AGENT_K": ("Agente del Protocolo", "Investiga alteraciones de la red."),
-    "AGENT_NORA": ("Habitante de la Wired", "Interpreta señales desde su propia experiencia."),
+    "AGENT_NORA": ("Habitante de la Malla", "Interpreta señales desde su propia experiencia."),
 }
 
 

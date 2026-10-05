@@ -44,7 +44,7 @@ func _ready() -> void:
 	var bar := HBoxContainer.new()
 	column.add_child(bar)
 	var title := Label.new()
-	title.text = "THE WIRED · TERMINAL   ·   Esc para salir   ·   help · man <tema>"
+	title.text = "LA MALLA · TERMINAL   ·   Esc para salir   ·   help · man <tema>"
 	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	title.add_theme_color_override("font_color", Color("5f8f73"))
 	bar.add_child(title)

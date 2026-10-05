@@ -1,4 +1,4 @@
-LAIN - PROTOCOLO DE PRESENCIA
+SESION CERO - PROTOCOLO DE PRESENCIA
 =============================
 
 EMPEZAR
@@ -28,7 +28,7 @@ Si cierras el juego, espera unos 12 segundos antes de volver a entrar.
 F8 cambia el idioma (espanol / ingles).
 
 
-LAIN - PRESENCE PROTOCOL (ENGLISH)
+SESSION ZERO - PRESENCE PROTOCOL (ENGLISH)
 ==================================
 
 1. Extract this whole ZIP into a folder and open LAIN.exe.

@@ -24,7 +24,7 @@ saltan con **Esc**, **Enter**, **Espacio** o un clic.
 | Cuándo | Qué se ve |
 |---|---|
 | La primera vez que entras (en casa, al empezar) | «Antes de tu primera conexión ya había una sesión con tu nombre. La Sesión Cero…» → **«Has vuelto.»** → la cámara se aleja despacio del ordenador encendido hasta ti. |
-| Al conectar con la Wired | Estática, THE WIRED: «Tú eres la Sesión Uno. Nadie sabe si eres la misma persona.» |
+| Al conectar con la Malla | Estática, LA MALLA: «Tú eres la Sesión Uno. Nadie sabe si eres la misma persona.» |
 | Al completar cada capa | FRAGMENTO N/7 · SESIÓN CERO: la pregunta de la capa y lo que dice la Sesión Cero. |
 | Al terminar la Capa 07 | Tu elección, «NODO_07 está lleno de sesiones que nadie recuerda», «Sesión Cero completa» si tienes los siete, y el título: «Gracias por recibirla.» |
 
@@ -37,7 +37,7 @@ que dice el Terminal («fragmento 3/7» es siempre la Capa 03).
 
 En el diario (**J**), el apartado **CINEMÁTICAS // VOLVER A VER** tiene un botón
 por cada escena que ya has alcanzado: la terminal de arranque, la apertura, la
-conexión a la Wired si ya conectaste, el fragmento de cada capa completada y el
+conexión a la Malla si ya conectaste, el fragmento de cada capa completada y el
 final si llegaste a él. Lo que todavía no has vivido no aparece.
 
 ![Volver a verlas desde el diario](docs/cinematics/diary.png)
@@ -45,7 +45,7 @@ final si llegaste a él. Lo que todavía no has vivido no aparece.
 ![Has vuelto](docs/cinematics/opening-returned.png)
 ![El plano del ordenador](docs/cinematics/opening-camera.png)
 ![El final del plano](docs/cinematics/opening-camera-end.png)
-![Conexión a la Wired](docs/cinematics/wired.png)
+![Conexión a la Malla](docs/cinematics/wired.png)
 ![Un fragmento](docs/cinematics/fragment.png)
 ![El final](docs/cinematics/ending.png)
 

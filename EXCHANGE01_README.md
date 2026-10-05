@@ -9,7 +9,7 @@ Las propuestas son de PNJ locales; esta fase todavía no conecta jugadores reale
 
 ## Recorrido para probarlo
 
-1. Completa la primera conexión a la Wired. En **PC → Intercambios** aparecen
+1. Completa la primera conexión a la Malla. En **PC → Intercambios** aparecen
    los dos contactos y dónde encontrarlos. Sus propuestas se descubren hablando.
 2. Visita a **Ryoko en AZUL** y elige **Hablar de intercambiar código**. Está
    disponible tanto en la conversación del capítulo como en la del prólogo.
@@ -26,7 +26,7 @@ Las propuestas son de PNJ locales; esta fase todavía no conecta jugadores reale
 6. Consulta **Recibos y procedencia**. Conservas el original y recibes una copia
    propia. El PNJ obtiene únicamente el fragmento elegido y su procedencia.
 7. En **Código**, inserta lo recibido y compila. Exploración con Enrutamiento
-   requiere **5 unidades**; Protección con Enrutamiento requiere **6**. Tu Navi
+   requiere **5 unidades**; Protección con Enrutamiento requiere **6**. Tu Kumo
    inicial aporta 4: conecta, por ejemplo, la Interfaz R ganada en Bit Courier,
    el Coprocesador M del Juego de la Vida o una Memoria de enlace B de un torneo.
 8. También puedes aportar la nueva copia a un círculo. Solo se cuenta una vez
