@@ -283,6 +283,7 @@ def list_visible_actors(
             **residents.get(row[0], {}),
             **({"patrol_step": row[2]}
                if row[3] == "GENERATED" and row[2] != 0 else {}),
+            **({"kind": "echo"} if row[3] == "ECHO" else {}),
         }
         for row in rows
     ]

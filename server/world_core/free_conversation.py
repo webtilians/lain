@@ -122,6 +122,9 @@ def say_to_player_conversation(
     )
     # Keep each actor's role and testimony inside ITS own context. These
     # metadata are provisional inclinations, never proof of a world event.
+    from .echoes import is_echo
+    if is_echo(actor_id):
+        context["echo"] = actor_id
     role = generated_role_context(actor_id)
     if role is not None:
         context["role"] = role

@@ -500,6 +500,9 @@ def generate_dialogue_reply(
         _trace_dialogue("DISABLED")
     if choice_id == "FREE_TEXT":
         # No fake generative response if the model is offline.
+        if context.get("echo"):
+            from .echoes import reply as echo_reply
+            return DialogueReply(text=echo_reply(context["echo"], choice_text), source="ECHO_MEMORY")
         resident = context.get("resident")
         question = _clean(choice_text)
         if resident and any(term in question for term in (

@@ -172,6 +172,6 @@ Lo que incluye la primera versión, jugable después del capítulo 1:
 - Capa 04 · Transporte: jugable (v0.15). Guía: [CAPA04_README.md](CAPA04_README.md).
 - Capa 05 · Sesión: jugable (v0.16). Guía: [CAPA05_README.md](CAPA05_README.md).
 - Capa 06 · Presentación: jugable (v0.17). Guía: [CAPA06_README.md](CAPA06_README.md).
-- Capa 07 · Aplicación: jugable (v0.18), con los tres finales. El eco del final «Desconectarte» se consulta en NODO_07; aún no camina por el mundo. Guía: [CAPA07_README.md](CAPA07_README.md).
+- Capa 07 · Aplicación: jugable (v0.18), con los tres finales. El eco del final «Desconectarte» camina por el mundo: recorre los sitios habituales de su jugador y habla con sus recuerdos ([ECO.md](ECO.md)). Guía: [CAPA07_README.md](CAPA07_README.md).
 - El diario poco fiable y la sombra (v0.21): [DIARIO_Y_SOMBRA.md](DIARIO_Y_SOMBRA.md).
 - Todo el juego en español e inglés (v0.14): [TRADUCCION.md](TRADUCCION.md).

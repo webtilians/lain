@@ -1809,5 +1809,10 @@
   "MALLA · REMITENTE DESCONOCIDO": "MESH · UNKNOWN SENDER",
   "MALLA · NUEVO INFORME": "MESH · NEW REPORT",
   "ENLACE A LA MALLA // ACTIVO": "MESH LINK // ACTIVE",
-  "CORREO DE LA MALLA // 1.0": "MESH MAIL // 1.0"
+  "CORREO DE LA MALLA // 1.0": "MESH MAIL // 1.0",
+  "Eco de {v0}": "Echo of {v0}",
+  "Soy lo que queda de {v0}. Pregúntame qué viví.": "I am what is left of {v0}. Ask me what I lived.",
+  "Eco": "Echo",
+  "Lo que queda de una sesión que se cerró en NODO_07.": "What is left of a session that closed in NODO_07.",
+  "eco · lo que queda de una sesión": "echo · what is left of a session"
 }

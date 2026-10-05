@@ -249,6 +249,16 @@ jobs:
             exit 1
           fi
 
+      - name: Echoes walk the world, translucent and conversable
+        shell: bash
+        run: |
+          set -euo pipefail
+          /tmp/lain-godot --headless --path client --script res://tools/test_echo.gd 2>&1 | tee /tmp/lain-echo.log
+          grep -q 'ECHO_OK' /tmp/lain-echo.log
+          if grep -E '^(SCRIPT ERROR:|ERROR:)' /tmp/lain-echo.log; then
+            exit 1
+          fi
+
       - name: Visual 0.22 interiors dressed without touching collisions
         shell: bash
         run: |

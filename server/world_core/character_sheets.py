@@ -156,6 +156,13 @@ def visible_npc_sheets(player_id: str, location: str) -> list[dict]:
                     "public_objective", "activity", "role_assignment")},
             })
             continue
+        if controller == "ECHO":
+            result.append({
+                "id": actor_id, "name": name, "kind": "NPC", "role": "ECHO", "role_label": "Eco",
+                "focus": "Lo que queda de una sesión que se cerró en NODO_07.",
+                "role_assignment": "ECHO", "observed_location": location,
+            })
+            continue
         if controller == "GENERATED":
             role = stored_role if stored_role in ROLE_RULES else "OBSERVER"
             label, focus, _cadence = ROLE_RULES[role]

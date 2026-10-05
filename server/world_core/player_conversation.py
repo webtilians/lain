@@ -257,6 +257,9 @@ def start_player_conversation(
             )
             if actor_id.startswith("RESIDENT_"):
                 greeting = resident_greeting(actor_id, actor_name, conn=conn) or greeting
+            from .echoes import is_echo, greeting as echo_greeting
+            if is_echo(actor_id):
+                greeting = echo_greeting(actor_name)
             greeting_turn = conn.execute(
                 """
                 INSERT INTO player_conversation_turns (
@@ -300,6 +303,11 @@ def build_agent_reply(
     interaction_id: str,
 ):
     """Return text AND provenance from the agent's bounded context."""
+    from .echoes import is_echo, reply as echo_reply
+    from .llm_dialogue import DialogueReply
+    if is_echo(actor_id):
+        # An echo has nothing but what its player lived: it answers with one of those memories.
+        return DialogueReply(text=echo_reply(actor_id, CHOICES[choice_id]), source="ECHO_MEMORY")
     context = AgentContextBuilder().build(
         agent_id=actor_id,
         interaction_id=interaction_id,
