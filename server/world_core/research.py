@@ -535,6 +535,23 @@ def say_es(value) -> str:
     return value.get("es", "") if isinstance(value, dict) else str(value)
 
 
+def open_counts() -> dict:
+    """How many calls each centre has open (hand-written ones included)."""
+    _tables()
+    with get_connection() as c:
+        counts = {key: 0 for key in CENTRES}
+        for call in calls(c).values():
+            counts[call["centre"]] += 1
+    return counts
+
+
+def recent_kinds(count: int = 2) -> list:
+    """The exercise types of the watcher's latest calls, so the next one can be different."""
+    _tables()
+    with get_connection() as c:
+        return [call["kind"] for call in list(calls(c, every=True).values())[::-1] if call["generated"]][:count]
+
+
 def last_generated() -> float | None:
     _tables()
     with get_connection() as c:

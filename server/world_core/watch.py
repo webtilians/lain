@@ -119,27 +119,42 @@ def headlines(fetch=_get) -> list:
 
 # --- the AI ---------------------------------------------------------------------
 
-def prompt(items: list, existing: list) -> list:
+def target_centre() -> str:
+    """The centre with the fewest open calls (in CENTRES order on a tie): every centre gets its turn."""
     from . import research
-    centres = {key: research.centre_focus(key) for key in research.CENTRES}
+    counts = research.open_counts()
+    return min(research.CENTRES, key=lambda key: (counts.get(key, 0), list(research.CENTRES).index(key)))
+
+
+def prompt(items: list, existing: list, centre: str, recent_kinds: list | None = None) -> list:
+    from . import research
     kinds = {key: generator.ABOUT for key, generator in research.GENERATORS.items()}
+    director = research.CENTRES[centre]["who"].removeprefix("Dirige: ").rstrip(".")
     system = (
         "Eres el vigía de la Malla, la red de un videojuego de misterio llamado Sesión Cero. Cada pocos días eliges "
-        "UNA noticia tecnológica real de la lista y la conviertes en una convocatoria de estudio para uno de los "
-        "tres centros de investigación del juego. Escribes para jugadores curiosos, sin dar nada por sabido. "
-        "No inventes datos técnicos: explica solo lo que es cierto y general sobre el tema, y si la noticia es "
-        "muy concreta, explica la idea de fondo. El ejercicio NO lo escribes tú: eliges uno de los tipos de "
-        "ejercicio (kind) que mejor encaje con el tema y escribes una frase (framing) que lo relacione con él. "
+        "UNA noticia real de la lista y la conviertes en una convocatoria de estudio para un centro de "
+        f"investigación del juego. Esta vez es para {research.centre_focus(centre)}. Elige la noticia que mejor "
+        "encaje con ese centro. Prefiere avances de ciencia, tecnología o estándares; evita sucesos (filtraciones "
+        "de datos, muertes, juicios, despidos, polémicas de empresas o de personas concretas). "
+        "Escribes para jugadores curiosos, sin dar nada por sabido. No inventes datos técnicos: explica solo lo "
+        "que es cierto y general sobre el tema, y si la noticia es muy concreta, explica la idea de fondo. "
+        f"El artículo lo firma el director del centro, {director}: escríbelo en primera persona, con su voz, sin "
+        "saludos ni fórmulas como «Saludos, operador». En español, los títulos llevan mayúscula solo al principio "
+        "y en los nombres propios. "
+        "El ejercicio NO lo escribes tú: eliges uno de los tipos de ejercicio (kind) y escribes una frase (framing) "
+        "que lo presente. Sé honesto: si la tecnología no usa esa operación, no digas que la usa; di qué idea de "
+        "fondo comparte con ella (integridad, errores, claves, conteo…). Si puedes, no repitas los tipos de "
+        "recent_kinds. "
         "Responde solo con un objeto JSON, sin texto alrededor, con estas claves: "
-        '"headline" (el número de la noticia), "centre" (una de las claves de centres), "kind" (una de las '
-        'claves de kinds), "title_es", "title_en" (máx. 70 caracteres), "summary_es", "summary_en" (dos frases), '
-        '"article_es", "article_en" (artículo de estudio de 120 a 220 palabras, con saltos de línea, en la voz del '
-        'centro), "framing_es", "framing_en" (una frase), "tech" (nombre corto de la tecnología, máx. 30 '
-        'caracteres), "tech_text_es", "tech_text_en" (una frase: qué aprende la Malla), "tech_line_es", '
-        '"tech_line_en" (una frase: qué cambia para quien juega), "memory_es" (lo que el director del centro '
-        "recordará de ello, en una frase). No repitas temas ya estudiados.")
+        '"headline" (el número de la noticia), "kind" (una de las claves de kinds), "title_es", "title_en" '
+        '(máx. 70 caracteres), "summary_es", "summary_en" (dos frases), "article_es", "article_en" (artículo de '
+        'estudio de 120 a 220 palabras, con saltos de línea), "framing_es", "framing_en" (una frase), "tech" '
+        '(nombre corto de la tecnología, máx. 30 caracteres), "tech_text_es", "tech_text_en" (una frase: qué '
+        'aprende la Malla), "tech_line_es", "tech_line_en" (una frase: qué cambia para quien juega), "memory_es" '
+        "(lo que el director recordará de ello, en primera persona y en una frase). No repitas temas ya estudiados.")
     user = json.dumps({
-        "centres": centres, "kinds": kinds, "already_studied": existing,
+        "centre": research.centre_focus(centre), "kinds": kinds, "recent_kinds": recent_kinds or [],
+        "already_studied": existing,
         "headlines": [{"n": index, "source": item["source"], "title": item["title"]} for index, item in enumerate(items)],
     }, ensure_ascii=False)
     return [{"role": "system", "content": system}, {"role": "user", "content": user}]
@@ -168,14 +183,14 @@ def _text(value, limit: int) -> str:
     return text[:limit].rstrip()
 
 
-def proposal(reply: str, items: list) -> dict:
-    """Validate the AI's answer into a call; the source always comes from our own headline list."""
+def proposal(reply: str, items: list, centre: str) -> dict:
+    """Validate the AI's answer into a call for `centre`; the source always comes from our own headline list."""
     from . import research
     match = re.search(r"\{.*\}", reply, re.S)
     if match is None:
         raise ValueError("NO_JSON")
     data = json.loads(match.group(0))
-    if data.get("centre") not in research.CENTRES:
+    if centre not in research.CENTRES:
         raise ValueError("UNKNOWN_CENTRE")
     if data.get("kind") not in research.GENERATORS:
         raise ValueError("UNKNOWN_KIND")
@@ -188,7 +203,7 @@ def proposal(reply: str, items: list) -> dict:
                          ("tech_line", LIMITS["tech_line"])):
         both[field] = {lang: _text(data.get(f"{field}_{lang}"), limit) for lang in ("es", "en")}
     return {
-        "centre": data["centre"], "kind": data["kind"], **both,
+        "centre": centre, "kind": data["kind"], **both,
         "tech": _text(data.get("tech"), LIMITS["tech"]).replace("\n", " "),
         "memory": _text(data.get("memory_es"), 300).replace("\n", " "),
         "source": {"name": items[index]["source"], "title": items[index]["title"][:200], "url": items[index]["url"]},
@@ -219,7 +234,9 @@ def run(fetch=_get, chat=ask) -> dict | None:
         log("FAILED", "sin titulares (¿sin red?)")
         return None
     try:
-        call = research.publish(proposal(chat(prompt(items, research.studied_topics())), items))
+        centre = target_centre()
+        messages = prompt(items, research.studied_topics(), centre, research.recent_kinds())
+        call = research.publish(proposal(chat(messages), items, centre))
     except HTTPError as error:
         log("FAILED", f"IA HTTP {error.code}")
         return None

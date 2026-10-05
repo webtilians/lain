@@ -40,7 +40,7 @@ def fetch(url):
 
 def reply(**changes):
     data = {
-        "headline": 1, "centre": "archivo", "kind": "xor",
+        "headline": 1, "kind": "xor",
         "title_es": "QUIC, la web que ya no espera", "title_en": "QUIC, the web that no longer waits",
         "summary_es": "Medio internet viaja ya sobre QUIC. Ueda quiere entender por qué.",
         "summary_en": "Half of the internet already travels over QUIC. Ueda wants to understand why.",
@@ -67,7 +67,7 @@ def watcher(lab, monkeypatch):  # noqa: F811
 
 def publish(kind, centre="archivo"):
     items = watch.headlines(fetch)
-    return research.publish(watch.proposal(reply(kind=kind, centre=centre), items))
+    return research.publish(watch.proposal(reply(kind=kind), items, centre))
 
 
 def solve(sim, statement, player=PLAYER):
@@ -109,25 +109,27 @@ def test_headlines_come_from_the_three_sources_and_only_web_links_stay():
 
 def test_the_watcher_publishes_a_call_on_its_own(watcher):
     sim = watcher
-    assert "Sin convocatorias abiertas" in sh(sim, "archivo")
+    assert "Sin convocatorias abiertas" in sh(sim, "laboratorio")
     assert watch.due()
     asked = []
     call = watch.run(fetch, lambda messages: asked.append(messages) or reply())
-    assert call["id"] == "PR-01" and call["source"]["url"] == "https://example.org/quic"
-    prompt = json.loads(asked[0][1]["content"])
+    assert call["id"] == "IA-01" and call["source"]["url"] == "https://example.org/quic", "the emptiest centre first"
+    system, prompt = asked[0][0]["content"], json.loads(asked[0][1]["content"])
+    assert "Laboratorio de Inteligencias" in prompt["centre"] and "Takeshi Uno" in system and "evita sucesos" in system
     assert set(prompt["kinds"]) == set(research.GENERATORS) and "QB-01: El qubit" in prompt["already_studied"][0]
+    assert prompt["recent_kinds"] == []
     assert watch.history(1)[0]["status"] == "PUBLISHED"
-    portal = sh(sim, "archivo")
-    assert portal.startswith("ARCHIVO DE PROTOCOLOS · archivo.malla")
-    assert "PR-01  QUIC, la web que ya no espera" in portal and "han terminado 0/3" in portal
-    shown = sh(sim, "archivo ver PR-01")
+    portal = sh(sim, "laboratorio")
+    assert portal.startswith("LABORATORIO DE INTELIGENCIAS · laboratorio.malla")
+    assert "IA-01  QUIC, la web que ya no espera" in portal and "han terminado 0/3" in portal
+    shown = sh(sim, "laboratorio ver IA-01")
     assert "Fuente: Hacker News · QUIC is now half of the web's traffic" in shown
-    assert "Por debajo de cada paquete cifrado" in shown and "archivo entregar PR-01 <respuesta>" in shown
-    assert "https://example.org/quic" in sh(sim, "archivo leer pr-01")
-    mail = sh(sim, "cat ~/correo/pr-01.eml")
-    assert mail.startswith("De: yasuo <yasuo@archivo.malla>") and "Empieza con archivo ver PR-01." in mail
-    assert "QUIC es un protocolo" in sh(sim, "archivo leer pr-01")
-    assert "PR-01" not in sh(sim, "instituto"), "each centre lists its own calls"
+    assert "Por debajo de cada paquete cifrado" in shown and "laboratorio entregar IA-01 <respuesta>" in shown
+    assert "https://example.org/quic" in sh(sim, "laboratorio leer ia-01")
+    mail = sh(sim, "cat ~/correo/ia-01.eml")
+    assert mail.startswith("De: takeshi <takeshi@laboratorio.malla>") and "Empieza con laboratorio ver IA-01." in mail
+    assert "QUIC es un protocolo" in sh(sim, "laboratorio leer ia-01")
+    assert "IA-01" not in sh(sim, "archivo"), "each centre lists its own calls"
     assert not watch.due(), "one call every few days"
     later = research.last_generated() + watch.days() * 86400 + 1
     assert watch.due(later)
@@ -178,12 +180,13 @@ def test_a_watcher_call_changes_the_malla_for_everyone_at_three(watcher):
 
 def test_bad_answers_from_the_ai_publish_nothing(watcher):
     items = watch.headlines(fetch)
-    for broken, reason in ((reply(centre="cocina"), "UNKNOWN_CENTRE"), (reply(kind="test"), "UNKNOWN_KIND"),
-                           (reply(headline=99), "UNKNOWN_HEADLINE"), (reply(title_en=""), "EMPTY_FIELD"),
-                           ("no sé", "NO_JSON")):
+    for broken, centre, reason in ((reply(), "cocina", "UNKNOWN_CENTRE"), (reply(kind="test"), "archivo", "UNKNOWN_KIND"),
+                                   (reply(headline=99), "archivo", "UNKNOWN_HEADLINE"),
+                                   (reply(title_en=""), "archivo", "EMPTY_FIELD"), ("no sé", "archivo", "NO_JSON")):
         with pytest.raises(ValueError, match=reason):
-            watch.proposal(broken, items)
-    long = watch.proposal(reply(article_es="x" * 5000), items)
+            watch.proposal(broken, items, centre)
+    assert watch.proposal(reply(centre="instituto"), items, "archivo")["centre"] == "archivo", "the code picks the centre"
+    long = watch.proposal(reply(article_es="x" * 5000), items, "archivo")
     assert len(long["article"]["es"]) == watch.LIMITS["article"]
     assert watch.run(fetch, lambda messages: reply(kind="test")) is None
     assert watch.history(1)[0]["status"] == "FAILED" and "UNKNOWN_KIND" in watch.history(1)[0]["detail"]
@@ -285,4 +288,15 @@ def test_codes_can_be_written_loosely_and_qb01_keeps_its_channel_form(watcher):
     assert "Primero saca la clave: bb84 medir a" in sh(sim, "instituto entregar a 0110"), "a channel means QB-01"
     assert "No es eso" in sh(sim, "instituto entregar 0110"), "otherwise the newest call still open"
     assert "QB-02  QUIC" in sh(sim, "instituto") and "QB-01  El qubit" in sh(sim, "instituto")
+
+
+def test_every_centre_gets_its_turn_and_exercises_vary(watcher):
+    assert watch.target_centre() == "laboratorio", "the institute already has QB-01"
+    publish("xor", centre="laboratorio")
+    assert watch.target_centre() == "archivo"
+    publish("hamming", centre="archivo")
+    assert watch.target_centre() == "instituto", "a tie goes to the first centre"
+    assert research.recent_kinds() == ["hamming", "xor"]
+    research.delete("PR-01")
+    assert watch.target_centre() == "archivo", "a deleted call leaves room in its centre"
 

@@ -26,15 +26,20 @@ próxima»); el vigía los va llenando.
    - **arXiv**: física cuántica, criptografía, redes e IA;
    - **Hacker News**: la portada;
    - **RFC Editor**: los últimos estándares de internet.
-2. Le pasa los titulares a la IA de los personajes (Gemini), con la lista de lo
-   que ya se ha estudiado. La IA elige **una** noticia y un centro, y escribe en
-   español y en inglés:
+2. Elige el centro: el que tenga **menos convocatorias abiertas**, para que
+   los tres se vayan llenando por turnos.
+3. Le pasa los titulares a la IA de los personajes (Gemini), con la lista de lo
+   que ya se ha estudiado y los últimos tipos de ejercicio, para no repetirlos.
+   La IA elige **una** noticia que encaje con ese centro. Se le pide que evite
+   sucesos (filtraciones, muertes, juicios…), que escriba con la voz del
+   director y que no fuerce la relación entre la noticia y el ejercicio.
+   Escribe en español y en inglés:
    - el título y el resumen;
    - un artículo de estudio;
    - una frase que une la noticia con el ejercicio;
    - qué aprende la Malla cuando se completa;
    - qué recordará el director.
-3. **El ejercicio no lo escribe la IA.** Elige uno de cinco tipos y el código lo
+4. **El ejercicio no lo escribe la IA.** Elige uno de cinco tipos y el código lo
    rellena con números propios de cada jugador. Por eso todas las convocatorias
    tienen solución y se comprueban solas:
 
@@ -49,7 +54,7 @@ próxima»); el vigía los va llenando.
    La parte de experimentar es un primer caso de práctica, y la de demostrar,
    otro caso con los números del jugador. Los ficheros están en
    `/malla/<centro>/<código>/`.
-4. La convocatoria se **publica al momento** con el siguiente código libre del
+5. La convocatoria se **publica al momento** con el siguiente código libre del
    centro (QB-02, IA-01, PR-01…). Su director manda un correo a casa de cada
    jugador (`~/correo/<código>.eml`). Si la terminan **tres personas**, su
    tecnología entra en la Malla para todos: la cinemática «La Malla
@@ -58,9 +63,9 @@ próxima»); el vigía los va llenando.
 
 Si algo falla (no hay red, la IA no responde o devuelve algo que no cuadra),
 no se publica nada y lo vuelve a intentar a las 6 horas. Una respuesta de la IA
-solo vale si nombra un centro, un tipo de ejercicio y una noticia de la lista, y
-trae todos los textos. El enlace de la fuente siempre sale de la lista, nunca de
-la IA.
+solo vale si nombra un tipo de ejercicio y una noticia de la lista, y trae
+todos los textos. El centro y el enlace de la fuente los pone siempre el código,
+nunca la IA.
 
 ## Revisar y borrar (panel del servidor)
 
