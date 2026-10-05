@@ -10,7 +10,7 @@ y los demás jugadores se lo encuentran.
 ## Cómo es
 
 - **Recorre sus sitios de siempre.** El eco va por los tres lugares públicos que
-  más visitaba su jugador (nunca su casa) y pasa una hora del mundo en cada uno.
+  más visitaba su jugador (nunca su casa) y se queda unos 20 minutos en cada uno.
 - **Se ve distinto.** Tiene la silueta de un ciudadano, translúcida y con un
   brillo frío; de vez en cuando parpadea, como una señal que se pierde. Lleva el
   nombre «Eco de …» y la etiqueta «eco · lo que queda de una sesión».

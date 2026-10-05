@@ -203,7 +203,7 @@ func _create_actor(
 		# What is left of a closed session: a citizen's shape, translucent and cold.
 		var model: Node3D = load("res://art/characters/LainSlender.tscn").instantiate()
 		model.set_script(load("res://scripts/art/CitizenAvatar.gd"))
-		model.configure("casual", actor_id.hash() % 50)
+		model.configure("casual", absi(actor_id.hash()) % 50)
 		actor.add_child(model)
 		var meshes: Array = model.find_children("*", "GeometryInstance3D", true, false)
 		for mesh in meshes:

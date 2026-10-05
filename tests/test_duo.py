@@ -63,7 +63,7 @@ def test_two_players_open_a_circle_without_ever_sending_the_key(two):
     assert any("círculo de dos con Ana" in memory["text"] for memory in nora)
 
 
-def test_a_circle_needs_two_cabinets_and_both_within_half_an_hour(two):
+def test_a_circle_needs_two_cabinets_and_both_within_ten_minutes(two, monkeypatch):
     sim = two
     code = re.search(r"(C-\d+)", sh(sim, PLAYER, "circulo abrir", "RELAY_SCHOOL")).group(1)
     with get_connection() as c:
@@ -83,7 +83,8 @@ def test_a_circle_needs_two_cabinets_and_both_within_half_an_hour(two):
     sh(sim, ANA, f"circulo publicar {pow(g, b, p)}", "RELAY_STATION")
     key = pow(g, a * b, p)
     sh(sim, PLAYER, f"circulo enlazar {key}", "RELAY_SCHOOL")
-    sim.minute += duo.WINDOW + 10
+    later = duo.time.time() + duo.WINDOW + 60
+    monkeypatch.setattr(duo.time, "time", lambda: later)
     assert "Falta la otra persona" in sh(sim, ANA, f"circulo enlazar {key}", "RELAY_STATION"), "too late: wait again"
     assert "ABIERTO" in sh(sim, PLAYER, f"circulo enlazar {key}", "RELAY_SCHOOL")
     assert "Sales del círculo" not in sh(sim, PLAYER, "circulo salir", "RELAY_SCHOOL")
@@ -96,6 +97,7 @@ def test_leaving_and_the_manual(two):
     assert f"Sales del círculo {code}" in sh(sim, PLAYER, "circulo salir", "RELAY_SCHOOL")
     assert "Ningún círculo espera" in sh(sim, ANA, "circulo lista", "RELAY_STATION")
     assert "(g^b)^a = (g^a)^b" in sh(sim, PLAYER, "man dh", "RELAY_SCHOOL")
+    assert "circulo abrir · circulo lista" in sh(sim, PLAYER, "circulo Ayuda", "RELAY_SCHOOL"), "unknown subcommands get the help"
     assert "circulo abrir" in sh(sim, PLAYER, "help", "RELAY_SCHOOL")
     assert "Usage" not in sh(sim, PLAYER, "powmod 2 10 1000", "RELAY_SCHOOL")
     assert sh(sim, PLAYER, "powmod 2 10 1000", "RELAY_SCHOOL").endswith("= 24")

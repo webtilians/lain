@@ -6,10 +6,11 @@ their own cabinet, publishes g^secret mod p to the circle, and raises the other
 one's public value to their secret. Both arrive at the same key without ever
 saying it; neither KAGAMI (who copies) nor NOEMA (who rewrites registers) can
 read it. The link opens only when both confirm it from two different cabinets
-within the same half hour of the world.
+within ten real minutes.
 """
 import hashlib
 import random
+import time
 
 from .database import get_connection
 from . import i18n
@@ -17,7 +18,9 @@ from . import i18n
 TITLE = "Círculo de dos"
 COMMANDS = {"circulo", "circle", "powmod"}
 RAW_COMMANDS = COMMANDS
-WINDOW = 30          # world minutes between the two confirmations
+# Real seconds between the two confirmations. Not world minutes: online, ten world minutes pass
+# every eight real seconds, and half an hour of the world would be gone before anyone typed.
+WINDOW = 600
 PRIMES = [2027, 2039, 2053, 2063, 2069, 2081, 2083, 2087, 2089, 2099, 3001, 3011, 3019, 3023, 3037, 3041]
 SUB = {"open": "abrir", "join": "unirse", "publish": "publicar", "show": "ver", "link": "enlazar",
        "leave": "salir", "list": "lista"}
@@ -101,7 +104,20 @@ MAIL = ("De: ryoko\nAsunto: un círculo de dos\n\n"
         "Lo demás está en man dh. La clave no la digas nunca en voz alta: no hace falta.")
 
 
+_registry_cache: dict = {}
+
+
 def _registry(c) -> str:
+    # Every command at a cabinet lists its files; the registry only changes when a circle opens.
+    opened = c.execute("SELECT COUNT(*) FROM duo_links WHERE opened_minute IS NOT NULL").fetchone()[0]
+    key = (str(c.execute("PRAGMA database_list").fetchone()[2]), opened, i18n.language())
+    if key not in _registry_cache:
+        _registry_cache.clear()
+        _registry_cache[key] = _registry_text(c)
+    return _registry_cache[key]
+
+
+def _registry_text(c) -> str:
     rows = c.execute("SELECT l.code, l.opened_minute FROM duo_links l WHERE l.opened_minute IS NOT NULL "
                      "ORDER BY l.opened_minute, l.code").fetchall()
     if not rows:
@@ -214,10 +230,12 @@ def _link(c, player, args, minute, result):
         return i18n.t("La otra persona todavía no ha publicado su valor. Sin él no hay clave.")
     if int(args[0]) != pow(other[0][2], secret, p):
         return i18n.t("Esa clave no es la vuestra. Eleva el valor público de la otra persona a tu secreto, módulo p.")
-    c.execute("UPDATE duo_members SET confirmed_minute=? WHERE code=? AND player_id=?", (minute, code, player))
+    # confirmed_minute holds the real time of each confirmation (seconds), see WINDOW.
+    now = int(time.time())
+    c.execute("UPDATE duo_members SET confirmed_minute=? WHERE code=? AND player_id=?", (now, code, player))
     confirmed = other[0][3]
-    if confirmed is None or minute - confirmed > WINDOW:
-        return i18n.t(f"Confirmado por tu lado. Falta la otra persona: tiene {WINDOW} minutos del mundo para hacerlo.")
+    if confirmed is None or now - confirmed > WINDOW:
+        return i18n.t(f"Confirmado por tu lado. Falta la otra persona: tiene {WINDOW // 60} minutos para hacerlo.")
     return _opened(c, code, minute, result)
 
 
@@ -262,8 +280,10 @@ def _powmod(args):
 def dispatch(c, player, story3, relay, result, name, args, minute):
     if name == "powmod":
         return _powmod(args)
-    sub = SUB.get(args[0], args[0]) if args else ""
+    sub = SUB.get(args[0].lower(), args[0].lower()) if args else ""
     rest = args[1:]
+    if sub not in ("", "ver", "lista", "salir", "publicar", "enlazar", "abrir", "unirse"):
+        return i18n.t(HELP)
     if sub in ("ver", "lista", "salir", "publicar", "enlazar") or not sub:
         if sub == "lista":
             return _list(c, player)
@@ -310,7 +330,7 @@ powmod g <tu secreto> p. Para la clave: powmod <valor de la otra persona> <tu se
   unirse <código>        únete desde OTRO armario
   publicar <valor>       tu valor público (g^secreto mod p)
   ver                    cómo va: quién está y qué ha publicado
-  enlazar <clave>        confirma la clave compartida; los dos en menos de media hora
+  enlazar <clave>        confirma la clave compartida; los dos en menos de 10 minutos
   salir                  deja el círculo""",
 }
 MAN_ALIASES = {"diffie-hellman": "dh", "diffie": "dh", "circle": "circulo", "circulos": "circulo",

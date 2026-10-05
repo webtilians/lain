@@ -33,20 +33,24 @@ def location(actor):
         return c.execute("SELECT location FROM agents WHERE id=?", (actor,)).fetchone()[0]
 
 
-def test_an_echo_walks_its_players_usual_places_but_never_a_home(node):
+def test_an_echo_walks_its_players_usual_places_but_never_a_home(node, monkeypatch):
     sim, _word, _name = node
-    ana_disconnected({"APARTMENT": 9, "CAFE": 5, "STATION": 3, "SCHOOL": 1})
-    sim.minute = 0
+    ana_disconnected({"APARTMENT": 9, "CAFE": 5, "STATION": 3, "SCHOOL": 1, "NOWHERE": 7})
+    clock = [0.0]
+    monkeypatch.setattr(echoes.time, "time", lambda: clock[0])
     sim.tick()
     echo = echoes.PREFIX + ANA
     assert echo in sim.all_agents and sim.all_agents[echo].controller_type == "ECHO"
     with get_connection() as c:
         assert echoes.route(c, ANA) == ["CAFE", "STATION", "SCHOOL"]
     seen = set()
-    for _ in range(3 * echoes.STAY // 10):
+    for stay in range(3):
+        clock[0] = stay * echoes.STAY + 1
         sim.tick()
         seen.add(location(echo))
         assert sim.all_agents[echo].location == location(echo)
+        sim.tick()
+        assert location(echo) == sorted(seen, key=["CAFE", "STATION", "SCHOOL"].index)[-1], "it stays a while"
     assert seen == {"CAFE", "STATION", "SCHOOL"}
 
 

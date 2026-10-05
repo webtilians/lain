@@ -385,6 +385,8 @@ func set_subtitles(on: bool) -> void:
 func stage(shot_id: String) -> Camera3D:
 	# Another place, in its own world, behind the bars and the lines; the real game keeps running.
 	unstage()
+	if skipping:
+		return null  # skipped: do not load a whole scene just to free it
 	var shot: Array = SHOTS[shot_id]
 	var container := SubViewportContainer.new()
 	container.name = "Shot"
@@ -440,6 +442,8 @@ func stage(shot_id: String) -> Camera3D:
 	return camera
 
 func move_camera(camera: Camera3D, seconds: float) -> void:
+	if camera == null:
+		return
 	var start: Transform3D = camera.get_meta("start")
 	var end: Transform3D = camera.get_meta("end")
 	var elapsed := 0.0

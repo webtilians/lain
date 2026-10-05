@@ -7,11 +7,17 @@ decisions, in first person): with the AI when it is on, from those memories when
 it is off. Echoes are passive like the residents: the simulation never plans for
 them, they only move along their route and listen.
 """
+import time
+
 from .database import get_connection
+from .locations import LOCATION_GRAPH
 from .models import Agent
 
 PREFIX = "ECHO_"
-STAY = 60            # minutes in each place before walking to the next one
+# Real seconds in each place before walking on. Not world minutes: online, an hour of the world
+# lasts under a minute, and nobody would ever catch the echo.
+STAY = 20 * 60
+ROUTE_TTL = 10 * 60  # how long a computed route is reused before reading the player's history again
 ROUTE = 3            # how many of the player's usual places it walks
 PRIVATE = {"APARTMENT"}  # everyone's home is their own: an echo never waits there
 FALLBACK = "APARTMENT_DISTRICT"
@@ -35,19 +41,26 @@ def _ready(c) -> bool:
     return c.execute("SELECT 1 FROM sqlite_master WHERE name='layer_seven'").fetchone() is not None
 
 
+_routes: dict = {}
+
+
 def route(c, player: str) -> list[str]:
-    """The player's usual public places, most visited first."""
+    """The player's usual public places, most visited first. Read from their history every ROUTE_TTL."""
+    cached = _routes.get(player)
+    if cached and cached[0] > time.monotonic():
+        return cached[1]
     places = [place for (place,) in c.execute(
         "SELECT target FROM events WHERE actor_id=? AND action='MOVE' GROUP BY target "
-        "ORDER BY COUNT(*) DESC, target", (player,)).fetchall() if place and place not in PRIVATE]
-    known = {row[0] for row in c.execute("SELECT DISTINCT location FROM agents").fetchall()}
-    places = [place for place in places if place in known or place == FALLBACK]
-    return places[:ROUTE] or [FALLBACK]
+        "ORDER BY COUNT(*) DESC, target", (player,)).fetchall()
+        if place in LOCATION_GRAPH and place not in PRIVATE]
+    places = places[:ROUTE] or [FALLBACK]
+    _routes[player] = (time.monotonic() + ROUTE_TTL, places)
+    return places
 
 
-def place_at(c, player: str, minute: int) -> str:
+def place_at(c, player: str, minute: int = 0) -> str:
     places = route(c, player)
-    return places[(max(minute, 0) // STAY) % len(places)]
+    return places[int(time.time() // STAY) % len(places)]
 
 
 def sync(c, minute: int) -> list[tuple[str, str, str]]:

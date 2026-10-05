@@ -346,11 +346,15 @@ def expert_layer(c, player: str, actor: str):
     if actor not in EXPERT_ACTORS or not enabled() or not _exists(c):
         return None
     runs = _runs(c, player)
-    layer = current(runs)
-    if layer is None or EXPERTS[layer][0] != actor:
-        return None
-    step, _ = _plan(c, player, layer, runs[layer])
-    return layer if _level(c, player, layer, step) >= 1 else None
+    # The layer pista named this neighbour for: the current one, or any open layer asked with `pista N`.
+    first = current(runs)
+    for layer in ([first] if first else []) + [name for name in LAYERS if name != first]:
+        if layer not in runs or runs[layer].get("decision") or EXPERTS[layer][0] != actor:
+            continue
+        step, _ = _plan(c, player, layer, runs[layer])
+        if _level(c, player, layer, step) >= 1:
+            return layer
+    return None
 
 
 def consult(c, player: str, actor: str, minute: int) -> str:
@@ -358,7 +362,7 @@ def consult(c, player: str, actor: str, minute: int) -> str:
     layer = expert_layer(c, player, actor)
     if layer is None:
         raise ValueError("NO_HINT_HERE")
-    runs = _runs(c, player)
+    runs = _runs(c, player)  # read again: expert_layer may have answered for a layer asked with `pista N`
     step, texts = _plan(c, player, layer, runs[layer])
     level = min(max(_level(c, player, layer, step), 1) + 1, 3)
     _save(c, player, layer, step, level)
