@@ -239,7 +239,7 @@ def _layer_seven(c, player, run):
                        f"curl -X PUT {auth} http://nodo07.malla/registro/{story.name}")
     return ("nodo07", [
         "NODO_07 se alcanza desde cualquier terminal. dig nodo07.malla dice que no existe… según NOEMA. "
-        "dig NS wired lista los otros servidores de nombres.",
+        "dig NS malla lista los otros servidores de nombres.",
         "Pregúntale a otro: dig @ns.circulos.malla nodo07.malla. Después habla HTTP con curl: el servidor atiende "
         "por nombre (cabecera Host) y pide autenticación Basic con tu nombre y la palabra de la Sesión Cero "
         "(man host, man auth).",

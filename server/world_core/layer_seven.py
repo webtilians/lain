@@ -183,7 +183,9 @@ TXT = {"ns.noema.malla": "quien no está en el registro no existe",
 
 def _zone(story, server: str) -> dict:
     records = {
-        ("wired", "NS"): [f"{name}." for name in NAMESERVERS],
+        ("malla", "NS"): [f"{name}." for name in NAMESERVERS],
+        ("wired", "NS"): [f"{name}." for name in NAMESERVERS],  # its old name still answers
+        ("malla", "TXT"): [f'"{i18n.t(TXT[server])}"'],
         ("wired", "TXT"): [f'"{i18n.t(TXT[server])}"'],
         (MIRROR, "A"): [story.mirror_ip],
     }
@@ -542,7 +544,7 @@ el servidor al que preguntes. /etc/resolv.conf dice a quién pregunta tu equipo.
     "dig": """dig [@servidor] <nombre> [A|NS|CNAME|TXT]
 
 Pregunta a un servidor de nombres. Sin @servidor usa el de /etc/resolv.conf.
-dig NS wired dice qué servidores responden por la zona wired; dig @otro nombre
+dig NS malla dice qué servidores responden por la zona malla; dig @otro nombre
 pregunta a otro. La respuesta trae status (NOERROR o NXDOMAIN) y la sección
 ANSWER con los registros encontrados.""",
     "http": """HTTP · el idioma de las aplicaciones

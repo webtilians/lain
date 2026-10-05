@@ -34,7 +34,7 @@ def node(monkeypatch, club):
 
 def address(sim):
     """The node's real address: ask every nameserver of the zone until one knows the name."""
-    servers = re.findall(r"IN\tNS\t(\S+)\.", out(sim, "dig NS wired"))
+    servers = re.findall(r"IN\tNS\t(\S+)\.", out(sim, "dig NS malla"))
     for server in servers:
         found = re.search(r"nodo07\.malla\.\t\d+\tIN\tA\t(\S+)", out(sim, f"dig @{server} nodo07.malla"))
         if found:
@@ -61,7 +61,7 @@ def test_starts_after_capa_06_and_the_name_does_not_resolve(node):
     assert snapshot["active"] and snapshot["fragments"] == 4 and "NODO_07" in snapshot["goal"]
     assert "servidor de nombres" in out(sim, "cat ~/correo/nodo07.eml") and "10.0.0.53" in out(sim, "cat /etc/resolv.conf")
     assert "NXDOMAIN" in out(sim, "dig nodo07.malla") and "ns.noema.malla" in out(sim, "dig nodo07.malla")
-    assert len(re.findall(r"IN\tNS", out(sim, "dig NS wired"))) == 3
+    assert len(re.findall(r"IN\tNS", out(sim, "dig NS malla"))) == 3
     assert "Could not resolve host: nodo07.malla" in curl(sim, "http://nodo07.malla/")
     assert "Host" in out(sim, "man host") and "base64" in out(sim, "man auth") and "421" in out(sim, "man http")
 
