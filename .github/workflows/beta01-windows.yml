@@ -212,20 +212,32 @@ jobs:
         with:
           name: SesionCero-Mac
 
+      # Findings go out as annotations too: they can be read without signing in to GitHub.
       - name: Unpack as Finder does and check the signature
         run: |
           set -euo pipefail
+          trap 'echo "::error title=Mac app::failed at line $LINENO: $BASH_COMMAND"' ERR
           ditto -x -k SesionCero-Mac.zip "$RUNNER_TEMP/mac"
-          app="$RUNNER_TEMP/mac/Sesión Cero.app"
-          codesign --verify --deep --strict --verbose=2 "$app"
+          app="$(find "$RUNNER_TEMP/mac" -maxdepth 1 -name '*.app' -print -quit)"
+          echo "::notice title=Mac app::$(ls "$RUNNER_TEMP/mac" | tr '\n' ' ') -> $(ls "$app/Contents" | tr '\n' ' ')"
           program="$app/Contents/MacOS/$(/usr/libexec/PlistBuddy -c 'Print CFBundleExecutable' "$app/Contents/Info.plist")"
-          file "$program"
-          lipo -archs "$program" | tee /dev/stderr | grep -q arm64
-          lipo -archs "$program" | grep -q x86_64
+          archs="$(lipo -archs "$program")"
+          signature="$(codesign -dv "$app" 2>&1 | grep -E '^(Signature|Identifier|Format)' | tr '\n' ' ' || true)"
+          strict=0; verified="$(codesign --verify --deep --strict --verbose=2 "$app" 2>&1)" || strict=$?
+          echo "::notice title=Mac app::archs: $archs · $signature · strict verify: $strict $(echo "$verified" | tr '\n' ' ' | cut -c1-500)"
+          [[ " $archs " == *" arm64 "* && " $archs " == *" x86_64 "* ]] || { echo "::error title=Mac app::not universal: $archs"; exit 1; }
+          # Apple silicon refuses to run code without a valid signature, ad-hoc or not.
+          codesign --verify "$app"
           echo "LAIN_MAC_PROGRAM=$program" >> "$GITHUB_ENV"
 
       - name: Two Mac games connect to one online world
-        run: python tools/smoke_online01.py --godot "$LAIN_MAC_PROGRAM" --exported
+        run: |
+          if ! python tools/smoke_online01.py --godot "$LAIN_MAC_PROGRAM" --exported; then
+            for log in outputs/online-smoke/*.log; do
+              echo "::error title=$(basename "$log")::$(tail -c 1500 "$log" | tr '\n' ' ')"
+            done
+            exit 1
+          fi
 
       - name: Keep the test logs
         if: failure()
