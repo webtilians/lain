@@ -1,4 +1,7 @@
 """The owner's server panel: only reachable through the SSH tunnel, read only, no chat contents."""
+import re
+import shutil
+import subprocess
 from types import SimpleNamespace
 
 import pytest
@@ -59,3 +62,15 @@ def test_a_long_gap_opens_a_new_session(world, monkeypatch):
         online._session_seen.clear()
         presence(client, headers[alice])
     assert {item["name"]: item for item in admin.overview()["players"]}["Alice"]["sessions"] == 2
+
+
+def test_the_panel_script_runs(tmp_path):
+    """The whole panel stops loading on one JavaScript syntax error (a variable declared twice did)."""
+    node = shutil.which("node")
+    if node is None:
+        pytest.skip("node is not installed")
+    script = tmp_path / "panel.js"
+    script.write_text(re.search(r"<script>(.*)</script>", admin.PAGE, re.S).group(1), encoding="utf-8")
+    checked = subprocess.run([node, "--check", str(script)], capture_output=True, text=True)
+    assert checked.returncode == 0, checked.stderr
+

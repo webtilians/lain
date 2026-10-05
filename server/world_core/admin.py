@@ -205,11 +205,11 @@ async function refresh(){
   rows("sessions",["Jugador","Entró","Duración",""],d.sessions,x=>[esc(x.name),clock(x.started),`${x.minutes} min`,x.open?'<span class="open">conectado</span>':""],"Sin conexiones registradas todavía.");
   rows("events",["Cuándo","Jugador","Qué",""],d.events,e=>[esc(e.at),esc(e.name),esc(e.what),esc(e.detail)],"Nada todavía.");
   rows("signups",["Nombre","Cuándo"],d.signups,u=>[esc(u.name),clock(u.at)],"Sin registros con contraseña.");
-  const r=d.research;
-  document.getElementById("watchinfo").textContent=(r.ai?"El vigía busca una convocatoria nueva cada "+r.every_days+" días":"El vigía está parado: la IA del servidor está desactivada")+(r.next?" · la próxima, "+clock(r.next):"")+". Entran solas; borra aquí las que no te gusten.";
-  rows("research",["Código","Centro","Título","Ejercicio","Trae","Terminada","Creada","Fuente",""],r.calls,x=>{const gone=x.status!=="open";const t=`<span class="${gone?"gone":""}">${esc(x.title)}</span>`;
+  const research=d.research;
+  document.getElementById("watchinfo").textContent=(research.ai?"El vigía busca una convocatoria nueva cada "+research.every_days+" días":"El vigía está parado: la IA del servidor está desactivada")+(research.next?" · la próxima, "+clock(research.next):"")+". Entran solas; borra aquí las que no te gusten.";
+  rows("research",["Código","Centro","Título","Ejercicio","Trae","Terminada","Creada","Fuente",""],research.calls,x=>{const gone=x.status!=="open";const t=`<span class="${gone?"gone":""}">${esc(x.title)}</span>`;
    return[esc(x.id),esc(x.centre),t,esc(x.kind),esc(x.tech),`${x.finished}/${x.threshold}`,clock(x.created),`<a href="${esc(x.source.url)}" target="_blank" rel="noopener noreferrer">${esc(x.source.name)}</a>`,gone?"borrada":`<button data-delete="${esc(x.id)}">Borrar</button>`]},"El vigía todavía no ha traído ninguna convocatoria.");
-  rows("watchlog",["Cuándo","Resultado",""],r.watch,w=>[clock(w.at),esc(w.status),esc(w.detail)],"Todavía no ha buscado nada.");
+  rows("watchlog",["Cuándo","Resultado",""],research.watch,w=>[clock(w.at),esc(w.status),esc(w.detail)],"Todavía no ha buscado nada.");
   document.getElementById("status").textContent="actualizado "+new Date().toLocaleTimeString("es-ES")+" · se refresca cada 5 s";
  }catch(e){document.getElementById("status").textContent="sin conexión con el servidor (¿sigue abierto el túnel?)"}}
 async function act(url){const r=await fetch(url,{method:"POST",headers:{"X-Lain-Admin":"1"}});if(!r.ok)alert("No se pudo: "+r.status);refresh()}
