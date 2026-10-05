@@ -1,7 +1,8 @@
 extends CanvasLayer
 ## Short in-engine cinematics at the story's turning points: the first time a
 ## player wakes up at home, the first connection to the Wired, every fragment
-## of the Sesión Cero and the end. They wait until no terminal or window is
+## of the Sesión Cero, the end, each finished research call and each technology
+## that enters the Malla (once per PC). They wait until no terminal or window is
 ## open, then darken the screen with letterbox bars, static and a few typed
 ## lines; Esc, Enter, Space or a click skips. Presentation only: it reads the
 ## snapshot and remembers on this PC whether the opening was already shown.
@@ -27,6 +28,7 @@ const OPENING := ["Antes de tu primera conexión ya había una sesión con tu no
 	"Se partió en paquetes y los lanzó a la red.", "Uno de ellos te ha encontrado."]
 const RETURNED := "Has vuelto."
 const WIRED := ["Conexión establecida.", "Tú eres la Sesión Uno.", "Nadie sabe si eres la misma persona."]
+const RESEARCH := ["La Malla aprende.", "Tu nombre queda en el registro del Instituto."]
 const COMPLETE := "Sesión Cero completa."
 const THANKS := "Gracias por recibirla."
 const SKIP := "Esc · saltar"
@@ -180,7 +182,21 @@ func is_playing() -> bool:
 
 func _on_snapshot(snapshot: Dictionary) -> void:
 	# Only changes seen live start a cinematic; the first snapshot just sets what is known.
-	var now := {"stage": str(snapshot.get("prologue", {}).get("stage", "")), "decisions": {}, "fragments": 0}
+	var now := {"stage": str(snapshot.get("prologue", {}).get("stage", "")), "decisions": {}, "fragments": 0,
+		"research": []}
+	var institute = snapshot.get("institute", {})
+	if typeof(institute) == TYPE_DICTIONARY:
+		for call in institute.get("completed", []):
+			now.research.append(str(call.get("id", "")))
+			if not known.is_empty() and not str(call.get("id", "")) in known.research:
+				queue.append({"id": "research", "title": str(call.get("title", ""))})
+		# A technology entering the Malla is news for everyone: shown once on this PC, even if it
+		# happened while the player was away.
+		for tech in institute.get("unlocked", []):
+			var key := "malla:" + str(tech.get("id", ""))
+			if not key in seen and not queue.any(func(item): return item.get("key") == key) and playing != "evolve":
+				queue.append({"id": "evolve", "key": key, "title": str(tech.get("title", "")),
+					"text": str(tech.get("text", "")), "line": str(tech.get("line", ""))})
 	for key in LAYERS:
 		var entry = snapshot.get(key, {})
 		if typeof(entry) == TYPE_DICTIONARY and entry.get("decision") != null:
@@ -248,6 +264,15 @@ func available() -> Array:
 	if typeof(last) == TYPE_DICTIONARY and last.get("decision") != null:
 		items.append({"label": "FINAL // GRACIAS POR RECIBIRLA",
 			"item": {"id": "ending", "decision": str(last.decision), "count": decided}})
+	var institute = snapshot.get("institute", {})
+	if typeof(institute) == TYPE_DICTIONARY:
+		for call in institute.get("completed", []):
+			items.append({"label": "INSTITUTO // %s" % str(call.get("title", "")),
+				"item": {"id": "research", "title": str(call.get("title", ""))}})
+		for tech in institute.get("unlocked", []):
+			items.append({"label": "LA MALLA EVOLUCIONA // %s" % str(tech.get("title", "")),
+				"item": {"id": "evolve", "key": "malla:" + str(tech.get("id", "")), "title": str(tech.get("title", "")),
+					"text": str(tech.get("text", "")), "line": str(tech.get("line", ""))}})
 	return items
 
 func replay(item: Dictionary) -> void:
@@ -293,6 +318,15 @@ func play(item: Dictionary) -> void:
 			await _fragment(item.layer)
 		"ending":
 			await _ending(item.decision, item.count)
+		"research":
+			await _research(item.title)
+		"evolve":
+			if not item.key in seen:
+				seen.append(item.key)
+				var config := ConfigFile.new()
+				config.set_value("cinematics", "seen", seen)
+				config.save(config_path)
+			await _evolve(item)
 		"intro":
 			root.hide()
 			await _intro()
@@ -571,6 +605,50 @@ func _fragment(layer_key: String) -> void:
 	unstage()
 	bars(false)
 	await tween_to(shade, "modulate:a", 0.0, 0.7)
+
+func _research(call_title: String) -> void:
+	await burst(0.7, 0.12, 0.5)
+	shade.modulate.a = 1.0
+	bars(true)
+	var camera := stage("school")
+	set_subtitles(true)
+	caption.text = "INSTITUTO DE FÍSICA DEL PUERTO · REGISTRO"
+	set_static(0.04)
+	await tween_to(shade, "modulate:a", 0.0, 0.8)
+	move_camera(camera, 8.0)
+	await say(RESEARCH[0], AMBER)
+	await wait(0.9)
+	await say(call_title, INK)
+	await wait(0.9)
+	await say(RESEARCH[1], DIM, true)
+	await camera_done(camera)
+	await tween_to(shade, "modulate:a", 1.0, 0.4)
+	unstage()
+	bars(false)
+	await tween_to(shade, "modulate:a", 0.0, 0.7)
+
+func _evolve(item: Dictionary) -> void:
+	await burst(0.9, 0.2, 0.7)
+	shade.modulate.a = 1.0
+	bars(true)
+	var camera := stage("overview")
+	set_subtitles(true)
+	caption.text = "LA MALLA EVOLUCIONA"
+	set_static(0.05)
+	await tween_to(shade, "modulate:a", 0.0, 0.9)
+	move_camera(camera, 10.0)
+	title.text = item.title
+	await wait(1.0)
+	await say(item.text, INK)
+	await wait(1.2)
+	await say(item.line, AMBER)
+	await camera_done(camera)
+	await burst(0.6, 0.0, 0.25)
+	await tween_to(shade, "modulate:a", 1.0, 0.4)
+	unstage()
+	bars(false)
+	title.text = ""
+	await tween_to(shade, "modulate:a", 0.0, 0.8)
 
 func _ending(decision: String, count: int) -> void:
 	await tween_to(shade, "modulate:a", 1.0, 1.6)

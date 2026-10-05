@@ -1,9 +1,10 @@
 # Sesión Cero · La Malla evoluciona (propuesta de diseño)
 
-> Estado: **propuesta para decidir**, sin código todavía. Recoge la idea de que
-> la red cambie con la tecnología real, que haya que estudiarla para seguirle
-> el ritmo, que la IA entre en la Malla y que existan centros de investigación
-> (también de física cuántica).
+> Estado: **en marcha**. La etapa 1 está hecha: el Instituto de Física del
+> Puerto y la convocatoria QB-01 ([INSTITUTO.md](INSTITUTO.md)). Decisiones
+> tomadas: se empieza por el Instituto; las convocatorias del vigía **entran
+> solas** y se revisan después, borrando las que no gusten; el agente `kumo`
+> tendrá **20 preguntas al día** por jugador.
 
 ## La idea en una frase
 
@@ -70,8 +71,9 @@ haría así, con **una persona siempre al mando**:
    Hacker News, los RFC nuevos del IETF) y le pide a Gemini que proponga como
    mucho **una convocatoria por semana**: el tema, por qué importa y un esbozo
    de las tres partes.
-2. **Tú decides**: las propuestas aparecen en el panel del servidor (`-Panel`).
-   Apruebas, editas o descartas. Nada entra en el juego sin pasar por ti.
+2. **Entran solas**: la convocatoria se publica en el juego sin esperar a nadie.
+   El panel del servidor (`-Panel`) las lista y permite **borrar** las que no
+   gusten.
 3. **Se escribe la convocatoria**: los artículos los redacta la IA y los
    repasamos nosotros; el ejercicio y su comprobación se programan y prueban como
    cualquier capa, porque una prueba que no se puede verificar no vale.
@@ -135,12 +137,3 @@ construyeron juntos.
 | 3 | El Laboratorio de Inteligencias y el agente `kumo`, con su límite diario | grande |
 | 4 | El arco cuántico completo y los Círculos poscuánticos | como dos capas |
 | 5 | Escenas 3D de los centros en el barrio | grande (arte) |
-
-## Lo que necesito que decidas
-
-1. ¿Empezamos por la **etapa 1** (Instituto + BB84) o prefieres antes el
-   **agente de IA** (etapa 3), que es lo más vistoso?
-2. Para el vigía: ¿te parece bien **aprobar tú** cada propuesta en el panel, o
-   prefieres que entren solas y revisarlas después?
-3. El agente `kumo` usa la cuota de Gemini. ¿Cuántas preguntas al día por
-   jugador te parecen bien? (Propongo 20.)
