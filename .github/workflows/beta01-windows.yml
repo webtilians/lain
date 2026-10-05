@@ -226,9 +226,14 @@ jobs:
           strict=0; verified="$(codesign --verify --deep --strict --verbose=2 "$app" 2>&1)" || strict=$?
           echo "::notice title=Mac app::archs: $archs · $signature · strict verify: $strict $(echo "$verified" | tr '\n' ' ' | cut -c1-500)"
           [[ " $archs " == *" arm64 "* && " $archs " == *" x86_64 "* ]] || { echo "::error title=Mac app::not universal: $archs"; exit 1; }
-          # Apple silicon refuses to run code without a valid signature, ad-hoc or not.
-          codesign --verify "$app"
           echo "LAIN_MAC_PROGRAM=$program" >> "$GITHUB_ENV"
+          # Which sealed file does not match, and how its name is spelled on disk (é as one or two code points).
+          detail="$(codesign --verify --deep --strict --verbose=4 "$app" 2>&1 | tail -20 | tr '\n' ' ' | cut -c1-1500)" || true
+          names="$(cd "$app/Contents" && find . -type f | LC_ALL=C od -c | head -20 | tr -s ' ' | tr '\n' ' ' | cut -c1-1500)"
+          echo "::notice title=Mac signature detail::$detail"
+          echo "::notice title=Mac file names::$names"
+          # Apple silicon refuses to run code without a valid signature, ad-hoc or not.
+          codesign --verify "$app" || echo "LAIN_MAC_SEAL_BROKEN=1" >> "$GITHUB_ENV"
 
       - name: Two Mac games connect to one online world
         run: |
@@ -238,6 +243,11 @@ jobs:
             done
             exit 1
           fi
+          echo "::notice title=Mac online test::two Mac games played in one world"
+
+      - name: A broken seal fails the job (after the online test has told whether the game runs)
+        if: always()
+        run: test -z "${LAIN_MAC_SEAL_BROKEN:-}"
 
       - name: Keep the test logs
         if: failure()
