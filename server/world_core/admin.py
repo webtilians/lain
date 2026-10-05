@@ -1,8 +1,10 @@
 """The owner's server panel: who is connected, who came and went, and what happened.
 
-Read only. It is served at /admin to loopback requests that did not come
-through Caddy (vps.ps1 -Panel opens an SSH tunnel to it), so it is never
-public. Chat contents are not shown, only how many messages there are.
+It is served at /admin to loopback requests that did not come through Caddy
+(vps.ps1 -Panel opens an SSH tunnel to it), so it is never public. Chat
+contents are not shown, only how many messages there are. It changes only one
+thing: the owner may delete a research call the watcher brought, or ask it to
+look for one now.
 """
 import os
 import subprocess
@@ -34,6 +36,21 @@ def local_request(host: str | None, headers) -> bool:
     """Only the SSH tunnel: a loopback client with no proxy headers (Caddy adds them)."""
     proxied = any(name in headers for name in ("x-forwarded-for", "x-forwarded-host", "forwarded", "x-real-ip"))
     return host in ("127.0.0.1", "::1") and not proxied
+
+
+def owner_action(host: str | None, headers) -> bool:
+    """A change from the panel's own page: tunnel only, with the panel's header and no foreign origin.
+    Another web page open in the owner's browser cannot add that header without a CORS preflight,
+    which this server never answers."""
+    origin = headers.get("origin", "")
+    same = not origin or origin.startswith(("http://localhost:", "http://127.0.0.1:", "http://[::1]:"))
+    return local_request(host, headers) and headers.get("x-lain-admin") == "1" and same
+
+
+def research() -> dict:
+    from . import research as centres, watch
+    return {"calls": centres.panel(), "watch": watch.history(), "next": watch.next_run(), "every_days": watch.days(),
+            "ai": watch.ai_ready()}
 
 
 def _exists(c, table: str) -> bool:
@@ -136,6 +153,7 @@ def overview() -> dict:
             "chat_messages": len(online._chat),
             "offsite_backup": offsite_backup(),
         },
+        "research": research(),
     }
 
 
@@ -153,6 +171,8 @@ table{width:100%;border-collapse:collapse}td,th{padding:5px 6px;text-align:left;
 th{color:var(--muted);font-weight:500;font-size:12px}.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--accent);margin-right:6px}
 .empty{color:var(--muted)}.big{font-size:28px;font-weight:600;color:var(--accent)}.chips span{display:inline-block;border:1px solid var(--line);border-radius:6px;padding:0 5px;margin:1px;font-size:12px}
 .open{color:var(--accent)}.warn{color:var(--warn)}.stat{display:flex;gap:22px;flex-wrap:wrap}.stat div{min-width:90px}
+button{background:#2a2f3b;color:var(--text);border:1px solid var(--line);border-radius:6px;padding:4px 10px;font:inherit;cursor:pointer}
+button:hover{border-color:var(--accent)}a{color:var(--accent)}.gone{color:var(--muted);text-decoration:line-through}
 </style></head><body>
 <header><h1>LAIN · panel del servidor</h1><span class="meta" id="status">cargando…</span></header>
 <div class="grid">
@@ -162,6 +182,9 @@ th{color:var(--muted);font-weight:500;font-size:12px}.dot{display:inline-block;w
 <section><h2>Conexiones recientes</h2><table id="sessions"></table></section>
 <section><h2>Qué está pasando</h2><table id="events"></table></section>
 <section><h2>Registros nuevos</h2><table id="signups"></table></section>
+<section style="grid-column:1/-1"><h2>Convocatorias del vigía</h2>
+<p class="meta" id="watchinfo"></p><p><button id="watchnow">Buscar una convocatoria ahora</button></p>
+<table id="research"></table><h2 style="margin-top:14px">Últimas búsquedas</h2><table id="watchlog"></table></section>
 </div>
 <script>
 const PLACES={APARTMENT:"Casa",APARTMENT_DISTRICT:"Barrio",STATION:"Estación",SCHOOL:"Escuela",SCHOOL_LAB:"Aula de informática",
@@ -182,7 +205,16 @@ async function refresh(){
   rows("sessions",["Jugador","Entró","Duración",""],d.sessions,x=>[esc(x.name),clock(x.started),`${x.minutes} min`,x.open?'<span class="open">conectado</span>':""],"Sin conexiones registradas todavía.");
   rows("events",["Cuándo","Jugador","Qué",""],d.events,e=>[esc(e.at),esc(e.name),esc(e.what),esc(e.detail)],"Nada todavía.");
   rows("signups",["Nombre","Cuándo"],d.signups,u=>[esc(u.name),clock(u.at)],"Sin registros con contraseña.");
+  const r=d.research;
+  document.getElementById("watchinfo").textContent=(r.ai?"El vigía busca una convocatoria nueva cada "+r.every_days+" días":"El vigía está parado: la IA del servidor está desactivada")+(r.next?" · la próxima, "+clock(r.next):"")+". Entran solas; borra aquí las que no te gusten.";
+  rows("research",["Código","Centro","Título","Ejercicio","Trae","Terminada","Creada","Fuente",""],r.calls,x=>{const gone=x.status!=="open";const t=`<span class="${gone?"gone":""}">${esc(x.title)}</span>`;
+   return[esc(x.id),esc(x.centre),t,esc(x.kind),esc(x.tech),`${x.finished}/${x.threshold}`,clock(x.created),`<a href="${esc(x.source.url)}" target="_blank" rel="noopener noreferrer">${esc(x.source.name)}</a>`,gone?"borrada":`<button data-delete="${esc(x.id)}">Borrar</button>`]},"El vigía todavía no ha traído ninguna convocatoria.");
+  rows("watchlog",["Cuándo","Resultado",""],r.watch,w=>[clock(w.at),esc(w.status),esc(w.detail)],"Todavía no ha buscado nada.");
   document.getElementById("status").textContent="actualizado "+new Date().toLocaleTimeString("es-ES")+" · se refresca cada 5 s";
  }catch(e){document.getElementById("status").textContent="sin conexión con el servidor (¿sigue abierto el túnel?)"}}
+async function act(url){const r=await fetch(url,{method:"POST",headers:{"X-Lain-Admin":"1"}});if(!r.ok)alert("No se pudo: "+r.status);refresh()}
+document.addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;
+ if(b.id==="watchnow"){act("/admin/research/watch");b.textContent="Buscando… (tarda un minuto)";setTimeout(()=>b.textContent="Buscar una convocatoria ahora",60000)}
+ else if(b.dataset.delete&&confirm("¿Borrar "+b.dataset.delete+"? Desaparece del juego para todos."))act("/admin/research/"+encodeURIComponent(b.dataset.delete)+"/delete")});
 refresh();setInterval(refresh,5000);
 </script></body></html>"""

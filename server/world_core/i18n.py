@@ -70,6 +70,8 @@ GAME_TERMS = frozenset({
     # Layer titles, captured inside hint lines.
     "Capa 01 · Física", "Capa 02 · Enlace", "Capa 03 · TTL", "Capa 04 · Transporte", "Capa 05 · Sesión",
     "Capa 06 · Presentación", "Capa 07 · Aplicación",
+    # Research centres, captured inside composed lines.
+    "Instituto de Física del Puerto", "Laboratorio de Inteligencias", "Archivo de Protocolos",
 })
 
 

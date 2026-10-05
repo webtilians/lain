@@ -1,7 +1,8 @@
 # Sesión Cero · La Malla evoluciona (propuesta de diseño)
 
-> Estado: **en marcha**. La etapa 1 está hecha: el Instituto de Física del
-> Puerto y la convocatoria QB-01 ([INSTITUTO.md](INSTITUTO.md)). Decisiones
+> Estado: **en marcha**. Hechas la etapa 1, el Instituto de Física del Puerto y
+> la convocatoria QB-01 ([INSTITUTO.md](INSTITUTO.md)), y la etapa 2, el vigía
+> y los otros dos centros ([VIGIA.md](VIGIA.md)). Decisiones
 > tomadas: se empieza por el Instituto; las convocatorias del vigía **entran
 > solas** y se revisan después, borrando las que no gusten; el agente `kumo`
 > tendrá **20 preguntas al día** por jugador.
@@ -78,10 +79,10 @@ haría así, con **una persona siempre al mando**:
    repasamos nosotros; el ejercicio y su comprobación se programan y prueban como
    cualquier capa, porque una prueba que no se puede verificar no vale.
 
-Por qué no automático del todo: una IA puede inventarse detalles técnicos, y un
-puzle generado sin probar puede no tener solución. El vigía da la sensación de
-actualidad («esta semana el Archivo estudia lo último sobre…») y la revisión
-humana garantiza que sea verdad y que se pueda jugar.
+Para que entren solas sin romper nada, la IA solo escribe los textos. El
+ejercicio es siempre uno de cinco tipos que el código rellena y comprueba, así
+que toda convocatoria tiene solución. Lo que la IA se invente se ve en el panel
+y se borra (así quedó hecho: [VIGIA.md](VIGIA.md)).
 
 Coste: una llamada al día a Gemini cabe de sobra en el plan gratuito.
 

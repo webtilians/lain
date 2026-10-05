@@ -197,6 +197,7 @@ automático y asígnala al servidor nuevo. Así nadie tiene que cambiar nada.
 | Abrir una consola en el servidor | `.\vps.ps1 -Shell` |
 | Copia del mundo en el PC (y diaria) | `.\vps.ps1 -Backup` |
 | Volver a una copia | `.\vps.ps1 -Restore ultima` |
+| Revisar o borrar convocatorias del vigía | `.\vps.ps1 -Panel` (ver [VIGIA.md](VIGIA.md)) |
 
 Notas:
 - Añadir un jugador cierra el mundo unos segundos; los conectados se

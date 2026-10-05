@@ -249,8 +249,8 @@ class Simulation:
         initialize_layer_one()
         from .duo import initialize_duo
         initialize_duo()
-        from .institute import initialize_institute
-        initialize_institute()
+        from .research import initialize_research
+        initialize_research()
         from .layer_two import initialize_layer_two
         initialize_layer_two()
         from .layer_four import initialize_layer_four

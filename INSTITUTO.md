@@ -69,18 +69,22 @@ etapa 4 (un ordenador cuántico contra los Círculos).
 
 ## Cómo está hecho
 
-- `server/world_core/institute.py`: una capa más del terminal (órdenes
-  `instituto`, `qubit`, `bb84` y `qkd`), las tablas `institute_progress`,
-  `institute_qubit`, `institute_bb84`, `institute_unlocks` e
-  `institute_knowledge`, el correo de Hideo, los artículos y las páginas de
-  `man` (`man instituto`, `man qubit`, `man bb84`, `man qkd`).
+- `server/world_core/research.py`: los centros de investigación (este y los
+  dos que llena el vigía, [VIGIA.md](VIGIA.md)), con las órdenes `instituto`,
+  `laboratorio` y `archivo`, el progreso, el registro, el umbral y lo que ven el
+  cliente y los personajes (tablas `research_progress`, `research_unlocks` y
+  `research_knowledge`).
+- `server/world_core/institute.py`: lo propio de QB-01. Las órdenes `qubit`,
+  `bb84` y `qkd`, las tablas `institute_qubit` e `institute_bb84`, el correo de
+  Hideo, los artículos y las páginas de `man` (`man qubit`, `man bb84`,
+  `man qkd`).
   - El simulador solo usa X, Z y H desde |0>, así que el qubit siempre está en
     |0>, |1>, |+> o |->.
   - Cada ronda de BB84 se calcula con una semilla del jugador, el canal y la
     ronda. Se repite hasta que la clave tiene al menos 4 bits y, si el canal
     está pinchado, la muestra enseña el espía.
-- El estado del jugador lleva `institute` (convocatorias terminadas y
-  tecnologías que ya están en la Malla). `client/scripts/ui/Cinematic.gd` lo usa
+- El estado del jugador lleva `research` (convocatorias terminadas y
+  tecnologías que ya están en la Malla), ya en el idioma del jugador. `client/scripts/ui/Cinematic.gd` lo usa
   para dos cinemáticas: «La Malla aprende», al terminar una convocatoria, y «La
   Malla evoluciona», al entrar una tecnología. Las dos se pueden volver a ver
   desde el diario.

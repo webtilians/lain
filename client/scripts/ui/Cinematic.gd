@@ -28,7 +28,7 @@ const OPENING := ["Antes de tu primera conexión ya había una sesión con tu no
 	"Se partió en paquetes y los lanzó a la red.", "Uno de ellos te ha encontrado."]
 const RETURNED := "Has vuelto."
 const WIRED := ["Conexión establecida.", "Tú eres la Sesión Uno.", "Nadie sabe si eres la misma persona."]
-const RESEARCH := ["La Malla aprende.", "Tu nombre queda en el registro del Instituto."]
+const RESEARCH := ["La Malla aprende.", "Tu nombre queda en el registro del centro."]
 const COMPLETE := "Sesión Cero completa."
 const THANKS := "Gracias por recibirla."
 const SKIP := "Esc · saltar"
@@ -184,19 +184,19 @@ func _on_snapshot(snapshot: Dictionary) -> void:
 	# Only changes seen live start a cinematic; the first snapshot just sets what is known.
 	var now := {"stage": str(snapshot.get("prologue", {}).get("stage", "")), "decisions": {}, "fragments": 0,
 		"research": []}
-	var institute = snapshot.get("institute", {})
-	if typeof(institute) == TYPE_DICTIONARY:
-		for call in institute.get("completed", []):
+	var research = snapshot.get("research", {})
+	if typeof(research) == TYPE_DICTIONARY:
+		for call in research.get("completed", []):
 			now.research.append(str(call.get("id", "")))
 			if not known.is_empty() and not str(call.get("id", "")) in known.research:
-				queue.append({"id": "research", "title": str(call.get("title", ""))})
+				queue.append(_research_item(call))
 		# A technology entering the Malla is news for everyone: shown once on this PC, even if it
 		# happened while the player was away.
-		for tech in institute.get("unlocked", []):
-			var key := "malla:" + str(tech.get("id", ""))
-			if not key in seen and not queue.any(func(item): return item.get("key") == key) and playing != "evolve":
-				queue.append({"id": "evolve", "key": key, "title": str(tech.get("title", "")),
-					"text": str(tech.get("text", "")), "line": str(tech.get("line", ""))})
+		for tech in research.get("unlocked", []):
+			var item := _evolve_item(tech)
+			var queued_already := queue.any(func(queued): return queued.get("key") == item.key)
+			if not item.key in seen and not queued_already and playing != "evolve":
+				queue.append(item)
 	for key in LAYERS:
 		var entry = snapshot.get(key, {})
 		if typeof(entry) == TYPE_DICTIONARY and entry.get("decision") != null:
@@ -212,6 +212,14 @@ func _on_snapshot(snapshot: Dictionary) -> void:
 				else:
 					queue.append({"id": "fragment", "layer": key})
 	known = now
+
+# The server sends these already in the player's language.
+func _research_item(call: Dictionary) -> Dictionary:
+	return {"id": "research", "title": str(call.get("name", "")), "centre": str(call.get("centre", ""))}
+
+func _evolve_item(tech: Dictionary) -> Dictionary:
+	return {"id": "evolve", "key": "malla:" + str(tech.get("id", "")), "title": str(tech.get("name", "")),
+		"text": str(tech.get("about", "")), "line": str(tech.get("next", ""))}
 
 func can_play() -> bool:
 	var player := get_tree().get_first_node_in_group("player")
@@ -264,15 +272,12 @@ func available() -> Array:
 	if typeof(last) == TYPE_DICTIONARY and last.get("decision") != null:
 		items.append({"label": "FINAL // GRACIAS POR RECIBIRLA",
 			"item": {"id": "ending", "decision": str(last.decision), "count": decided}})
-	var institute = snapshot.get("institute", {})
-	if typeof(institute) == TYPE_DICTIONARY:
-		for call in institute.get("completed", []):
-			items.append({"label": "INSTITUTO // %s" % str(call.get("title", "")),
-				"item": {"id": "research", "title": str(call.get("title", ""))}})
-		for tech in institute.get("unlocked", []):
-			items.append({"label": "LA MALLA EVOLUCIONA // %s" % str(tech.get("title", "")),
-				"item": {"id": "evolve", "key": "malla:" + str(tech.get("id", "")), "title": str(tech.get("title", "")),
-					"text": str(tech.get("text", "")), "line": str(tech.get("line", ""))}})
+	var research = snapshot.get("research", {})
+	if typeof(research) == TYPE_DICTIONARY:
+		for call in research.get("completed", []):
+			items.append({"label": "INVESTIGACIÓN // %s" % str(call.get("name", "")), "item": _research_item(call)})
+		for tech in research.get("unlocked", []):
+			items.append({"label": "LA MALLA EVOLUCIONA // %s" % str(tech.get("name", "")), "item": _evolve_item(tech)})
 	return items
 
 func replay(item: Dictionary) -> void:
@@ -319,7 +324,7 @@ func play(item: Dictionary) -> void:
 		"ending":
 			await _ending(item.decision, item.count)
 		"research":
-			await _research(item.title)
+			await _research(item.title, item.get("centre", ""))
 		"evolve":
 			if not item.key in seen:
 				seen.append(item.key)
@@ -606,13 +611,13 @@ func _fragment(layer_key: String) -> void:
 	bars(false)
 	await tween_to(shade, "modulate:a", 0.0, 0.7)
 
-func _research(call_title: String) -> void:
+func _research(call_title: String, centre: String) -> void:
 	await burst(0.7, 0.12, 0.5)
 	shade.modulate.a = 1.0
 	bars(true)
 	var camera := stage("school")
 	set_subtitles(true)
-	caption.text = "INSTITUTO DE FÍSICA DEL PUERTO · REGISTRO"
+	caption.text = centre.to_upper() + " · " + Language.text("REGISTRO")
 	set_static(0.04)
 	await tween_to(shade, "modulate:a", 0.0, 0.8)
 	move_camera(camera, 8.0)

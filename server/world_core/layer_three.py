@@ -536,6 +536,8 @@ def run_shell(player: str, host: str, cwd: str, command: str, minute: int) -> di
         for path, content in files.items():
             if path.endswith((".seg", "/diario", "/diario.espejo", "/sesion0.txt", "/flujo-4004.txt", ".json", ".pkt")):
                 continue
+            if path.startswith("/malla/"):  # research data: its hashes and counts are checked byte for byte
+                continue
             files[path] = i18n.t(content)
         hostname = RELAYS[relay][0] if relay else story.navi
         home = "/" if relay else story.home
@@ -565,8 +567,10 @@ def run_shell(player: str, host: str, cwd: str, command: str, minute: int) -> di
 
 def _later_layers(c, player):
     """The other layers of the protocol the player has already reached, in order."""
-    from . import duo, hints, institute, journal, layer_one, layer_two, layer_four, layer_five, layer_six, layer_seven
-    layers = (layer_one, layer_two, layer_four, layer_five, layer_six, layer_seven, journal, duo, institute, hints)
+    from . import (duo, hints, institute, journal, layer_one, layer_two, layer_four, layer_five, layer_six, layer_seven,
+                   research)
+    layers = (layer_one, layer_two, layer_four, layer_five, layer_six, layer_seven, journal, duo, research, institute,
+              hints)
     return [layer for layer in layers if layer.run_for(c, player) is not None]
 
 

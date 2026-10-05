@@ -70,7 +70,7 @@ def test_the_institute_opens_once_connected_and_hideo_writes(lab):
     assert "estudiar [ ] · experimentar [ ] · demostrar [ ]" in portal and "han terminado 0/3" in portal
     assert "nada nuevo todavía" in portal
     assert "hideo@instituto.malla" in sh(sim, "cat ~/correo/instituto.eml")
-    assert "instituto ver <código>" in sh(sim, "help")
+    assert "instituto · laboratorio · archivo" in sh(sim, "help") and "qubit [nuevo" in sh(sim, "help")
     assert "qubit nuevo" in sh(sim, "man qubit") and "24 fotones" in sh(sim, "man bb84")
     with get_connection() as c:
         assert institute.run_for(c, "PLAYER_NOBODY") is None, "only players connected to the Malla"
@@ -108,8 +108,9 @@ def test_study_experiment_and_demonstrate_finish_the_call(lab):
     registry = sh(sim, "instituto registro")
     assert "QB-01 · El qubit y la clave que delata al espía" in registry and "1. " in registry
     assert "Han terminado 1/3." in sh(sim, "instituto ver QB-01")
-    snapshot = build_player_snapshot(PLAYER)["institute"]
-    assert snapshot["completed"] == [{"id": "QB-01", "title": "El qubit y la clave que delata al espía"}]
+    snapshot = build_player_snapshot(PLAYER)["research"]
+    assert snapshot["completed"] == [{"id": "QB-01", "name": "El qubit y la clave que delata al espía",
+                                      "centre": "Instituto de Física del Puerto"}]
     assert snapshot["unlocked"] == []
     hideo = AgentContextBuilder().build(institute.HIDEO)["chapter_memory"]["memories"]
     assert any("QB-01" in memory["text"] for memory in hideo)
@@ -176,13 +177,16 @@ def test_three_researchers_bring_qkd_to_the_whole_malla(lab):
     assert "QKD entró en la Malla" in sh(sim, "instituto registro")
     registry = sh(sim, "instituto registro")
     assert registry.index("1. Ana") < registry.index("2. Bea") < registry.index("3. Cris")
-    snapshot = build_player_snapshot(PLAYER)["institute"]
+    snapshot = build_player_snapshot(PLAYER)["research"]
     assert [tech["id"] for tech in snapshot["unlocked"]] == ["qkd"] and snapshot["completed"] == []
+    assert snapshot["unlocked"][0]["next"] == "Desde hoy, cualquiera puede usar qkd en el terminal."
     nora = AgentContextBuilder().build("AGENT_NORA")["chapter_memory"]["memories"]
     assert any("QKD ya está en la Malla" in memory["text"] for memory in nora)
     assert "LA MALLA APRENDE" not in finish(sim), "it enters the Malla once"
     with get_connection() as c:
         assert c.execute("SELECT COUNT(*) FROM events WHERE action='MALLA_EVOLVES'").fetchone()[0] == 1
+    assert "instituto ver <código> · instituto leer <artículo>" in sh(sim, "instituto")
+    assert "Han terminado 4 · QKD ya está en la Malla." in sh(sim, "instituto ver QB-01")
 
 
 def test_the_institute_in_english(lab):
@@ -208,7 +212,7 @@ def test_the_institute_in_english(lab):
         for player in OTHERS:
             texts.append(finish(sim, player))
         texts += [sh(sim, "qkd"), sh(sim, "institute"), sh(sim, "institute registry"), finish(sim)]
-        snapshot = i18n.payload(build_player_snapshot(PLAYER)["institute"])
+        snapshot = i18n.payload(build_player_snapshot(PLAYER)["research"])
         texts += [item[key] for item in snapshot["completed"] + snapshot["unlocked"] for key in item if key != "id"]
         for text in texts:
             lines = [line for line in text.splitlines() if spanish.search(line)

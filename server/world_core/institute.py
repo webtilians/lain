@@ -1,36 +1,28 @@
-"""The Instituto de Física del Puerto: the Malla's first research centre.
+"""The Instituto de Física del Puerto's own call, QB-01: the qubit and BB84.
 
-A call (convocatoria) is a small study unit with three parts: read its articles,
-do its experiment and demonstrate a result the server can check. Whoever
-finishes goes into the institute's registry, and when enough people have
-finished a call its technology enters the Malla for everyone.
-
-The first call, QB-01, is the qubit and BB84: a one-qubit simulator (`qubit`)
-and a key shared with Hideo over two channels, one of them tapped (`bb84`).
-Three researchers bring `qkd` to every terminal.
+The centres, the registry and the threshold are in research.py; this module
+holds what only QB-01 has: its articles, a one-qubit simulator (`qubit`), a
+key shared with Hideo over two channels, one of them tapped (`bb84`), and what
+three researchers bring to every terminal (`qkd`).
 """
 import datetime
 import hashlib
 import random
-import time
 
 from .database import get_connection
 from . import i18n
 
-TITLE = "Instituto de Física del Puerto"
-HOST = "instituto.malla"
 HIDEO = "RESIDENT_019"
-NORA = "AGENT_NORA"
-COMMANDS = {"instituto", "institute", "qubit", "bb84", "qkd"}
+COMMANDS = {"qubit", "bb84", "qkd"}
 RAW_COMMANDS = COMMANDS
 PHOTONS = 24
 CHANNELS = ("a", "b")
-SUB = {"show": "ver", "read": "leer", "submit": "entregar", "registry": "registro", "register": "registro"}
 QUBIT_SUB = {"new": "nuevo", "measure": "medir", "state": "estado"}
 BB84_SUB = {"measure": "medir", "compare": "comparar"}
 
 CALLS = {
     "QB-01": {
+        "centre": "instituto",
         "title": "El qubit y la clave que delata al espía",
         "summary": "Un qubit no se puede leer sin cambiarlo. Con eso, dos personas pueden repartirse una clave\n"
                    "y saber si alguien la ha escuchado. Hideo busca a quien lo entienda midiendo.",
@@ -107,206 +99,32 @@ def enabled() -> bool:
     return layer_three.enabled()
 
 
-def _exists(c) -> bool:
-    return c.execute("SELECT 1 FROM sqlite_master WHERE name='institute_progress'").fetchone() is not None
-
-
 def initialize_institute() -> None:
     if not enabled():
         return
     with get_connection() as c:
         c.executescript("""
-            CREATE TABLE IF NOT EXISTS institute_progress (
-                player_id TEXT NOT NULL, call_id TEXT NOT NULL, read TEXT NOT NULL DEFAULT '',
-                experiment INTEGER NOT NULL DEFAULT 0, demo INTEGER NOT NULL DEFAULT 0,
-                completed_minute INTEGER, completed_at INTEGER, PRIMARY KEY(player_id, call_id));
             CREATE TABLE IF NOT EXISTS institute_qubit (player_id TEXT PRIMARY KEY, state TEXT NOT NULL);
             CREATE TABLE IF NOT EXISTS institute_bb84 (
                 player_id TEXT NOT NULL, channel TEXT NOT NULL, round INTEGER NOT NULL,
                 alice_bits TEXT NOT NULL, alice_bases TEXT NOT NULL, bob_bases TEXT NOT NULL,
                 bob_bits TEXT NOT NULL, published INTEGER NOT NULL DEFAULT 0, compared INTEGER NOT NULL DEFAULT 0,
                 PRIMARY KEY(player_id, channel));
-            CREATE TABLE IF NOT EXISTS institute_unlocks (
-                tech TEXT PRIMARY KEY, call_id TEXT NOT NULL, minute INTEGER NOT NULL, unlocked_at INTEGER NOT NULL);
-            CREATE TABLE IF NOT EXISTS institute_knowledge (
-                player_id TEXT NOT NULL, actor_id TEXT NOT NULL, text TEXT NOT NULL,
-                minute INTEGER NOT NULL, PRIMARY KEY(player_id, actor_id));
         """)
 
 
 def run_for(c, player):
-    """Open to every player already connected to the Malla (Capa 03 started)."""
-    if not enabled() or not _exists(c):
+    """Open with the research centres: to every player already connected to the Malla."""
+    from . import research
+    if c.execute("SELECT 1 FROM sqlite_master WHERE name='institute_qubit'").fetchone() is None:
         return None
-    if c.execute("SELECT 1 FROM layer_three WHERE player_id=?", (player,)).fetchone() is None:
-        return None
-    done = c.execute("SELECT COUNT(*) FROM institute_progress WHERE player_id=? AND completed_minute IS NOT NULL",
-                     (player,)).fetchone()[0]
-    return {"completed": done > 0, "decision": "RESEARCHED" if done else None}
+    return research.run_for(c, player)
 
 
 def files(c, player: str, relay, story3) -> dict:
     if relay is not None or run_for(c, player) is None:
         return {}
     return {f"{story3.home}/correo/instituto.eml": i18n.t(MAIL)}
-
-
-# --- calls, progress and the registry -------------------------------------
-
-def _name(c, player):
-    row = c.execute("SELECT name FROM agents WHERE id=?", (player,)).fetchone()
-    return row[0] if row else player
-
-
-def _progress(c, player, call_id) -> dict:
-    row = c.execute("SELECT read, experiment, demo, completed_minute FROM institute_progress "
-                    "WHERE player_id=? AND call_id=?", (player, call_id)).fetchone()
-    if row is None:
-        return {"read": set(), "experiment": False, "demo": False, "completed": None}
-    return {"read": set(filter(None, row[0].split(","))), "experiment": bool(row[1]), "demo": bool(row[2]),
-            "completed": row[3]}
-
-
-def _mark(c, player, call_id, field, value) -> None:
-    c.execute("INSERT OR IGNORE INTO institute_progress(player_id, call_id) VALUES(?,?)", (player, call_id))
-    c.execute(f"UPDATE institute_progress SET {field}=? WHERE player_id=? AND call_id=?", (value, player, call_id))
-
-
-def _studied(call, progress) -> bool:
-    return set(call["articles"]) <= progress["read"]
-
-
-def _finished(c, call_id) -> list:
-    return c.execute("SELECT player_id, completed_minute FROM institute_progress WHERE call_id=? "
-                     "AND completed_minute IS NOT NULL ORDER BY completed_at, completed_minute", (call_id,)).fetchall()
-
-
-def _unlocked(c) -> dict:
-    return {tech: minute for tech, minute in c.execute("SELECT tech, minute FROM institute_unlocks ORDER BY unlocked_at")}
-
-
-def _complete(c, player, call_id, minute, result) -> list:
-    """Close the call for this player once its three parts are done; the last one in may change the Malla."""
-    call, progress = CALLS[call_id], _progress(c, player, call_id)
-    if progress["completed"] is not None or not (_studied(call, progress) and progress["experiment"]
-                                                 and progress["demo"]):
-        return []
-    c.execute("UPDATE institute_progress SET completed_minute=?, completed_at=? WHERE player_id=? AND call_id=?",
-              (minute, time.time(), player, call_id))
-    c.execute("INSERT OR REPLACE INTO institute_knowledge VALUES(?,?,?,?)", (player, HIDEO, call["memory"], minute))
-    c.execute("INSERT INTO events(minute,actor_id,action,target,details) VALUES(?,?,'RESEARCH_COMPLETED',?,?)",
-              (minute, player, call_id, HOST))
-    result["changed"] = True
-    lines = ["", i18n.t(f"CONVOCATORIA {call_id} COMPLETADA · {TITLE}"),
-             i18n.t("Tu nombre entra en el registro del Instituto: instituto registro.")]
-    tech, done = call["unlock"], len(_finished(c, call_id))
-    if tech in _unlocked(c):
-        return lines
-    title = TECHS[tech]["title"]
-    if done < call["threshold"]:
-        return lines + [i18n.t(f"Van {done} de {call['threshold']}. Cuando lleguen a {call['threshold']}, "
-                               f"{title} entrará en la Malla para todos.")]
-    c.execute("INSERT INTO institute_unlocks VALUES(?,?,?,?)", (tech, call_id, minute, int(time.time())))
-    c.execute("INSERT INTO events(minute,actor_id,action,target,details) VALUES(?,?,'MALLA_EVOLVES',?,?)",
-              (minute, player, tech, call_id))
-    return lines + ["", i18n.t(f"LA MALLA APRENDE · {title} entra en la Malla para todos."),
-                    i18n.t(TECHS[tech]["text"]), i18n.t(TECHS[tech]["line"])]
-
-
-def _checks(call, progress) -> list:
-    def box(done):
-        return "[x]" if done else "[ ]"
-    return [box(_studied(call, progress)), box(progress["experiment"]), box(progress["demo"])]
-
-
-def _count(c, call_id) -> str:
-    call, done = CALLS[call_id], len(_finished(c, call_id))
-    if call["unlock"] in _unlocked(c):
-        return i18n.t(f"han terminado {done} · {TECHS[call['unlock']]['title']} ya está en la Malla")
-    return i18n.t(f"han terminado {done}/{call['threshold']}")
-
-
-def _portal(c, player) -> str:
-    lines = [f"{i18n.t(TITLE).upper()} · {HOST}",
-             i18n.t("Dirige: Hideo Sakamoto, profesor de ciencias del colegio."), "",
-             i18n.t("Convocatorias abiertas:")]
-    for call_id, call in CALLS.items():
-        progress = _progress(c, player, call_id)
-        study, experiment, demo = _checks(call, progress)
-        state = i18n.t("terminada") if progress["completed"] is not None else \
-            i18n.t(f"estudiar {study} · experimentar {experiment} · demostrar {demo}")
-        done = _count(c, call_id)
-        lines.append(f"  {call_id}  {i18n.t(call['title'])}")
-        lines.append(f"         {state} · {done}")
-    unlocked = _unlocked(c)
-    lines.append("")
-    if unlocked:
-        known = ", ".join(i18n.t(f"{TECHS[tech]['title']} (desde el minuto {minute})") for tech, minute in unlocked.items())
-        lines.append(i18n.t("Lo que ya sabe la Malla:") + " " + known)
-    else:
-        lines.append(i18n.t("Lo que ya sabe la Malla: nada nuevo todavía."))
-    lines.append(i18n.t("instituto ver QB-01 · instituto leer qubit · instituto registro · man instituto"))
-    return "\n".join(lines)
-
-
-def _call_id(text: str):
-    code = text.upper()
-    if not code.startswith("QB-") and code.startswith("QB"):
-        code = "QB-" + code[2:]
-    return code if code in CALLS else None
-
-
-def _show(c, player, args) -> str:
-    call_id = _call_id(args[0]) if args else next(iter(CALLS))
-    if call_id is None:
-        return i18n.t("No hay ninguna convocatoria con ese código. instituto enseña las abiertas.")
-    call, progress = CALLS[call_id], _progress(c, player, call_id)
-    study, experiment, demo = _checks(call, progress)
-    articles = " · ".join(i18n.t(f"instituto leer {slug}") for slug in call["articles"])
-    lines = [f"{call_id} · {i18n.t(call['title'])}",
-             i18n.t(f"{TITLE} · umbral: {call['threshold']} personas · "
-                    f"trae a la Malla: {TECHS[call['unlock']]['title']}"), "",
-             i18n.t(call["summary"]), "",
-             f"1. {i18n.t('Estudiar')} {study}  {articles}",
-             f"2. {i18n.t('Experimentar')} {experiment}  {i18n.t(call['experiment'])}",
-             f"3. {i18n.t('Demostrar')} {demo}  {i18n.t(call['demo'])}", ""]
-    if progress["completed"] is not None:
-        lines.append(i18n.t(f"La terminaste en el minuto {progress['completed']}. Estás en el registro."))
-    lines.append(_count(c, call_id).capitalize() + ".")
-    return "\n".join(lines)
-
-
-def _read(c, player, args, minute, result) -> str:
-    slug = ARTICLE_ALIASES.get(args[0].lower(), args[0].lower()) if args else ""
-    if slug not in ARTICLES:
-        return i18n.t("Artículos del Instituto:") + " " + ", ".join(sorted(ARTICLES)) + \
-            "\n" + i18n.t("instituto leer <artículo>")
-    text = i18n.t(ARTICLES[slug])
-    extra = []
-    for call_id, call in CALLS.items():
-        if slug not in call["articles"]:
-            continue
-        progress = _progress(c, player, call_id)
-        if slug not in progress["read"]:
-            _mark(c, player, call_id, "read", ",".join(sorted(progress["read"] | {slug})))
-            if _studied(call, _progress(c, player, call_id)):
-                extra.append(i18n.t(f"Parte 1 de {call_id} (estudiar) conseguida."))
-            extra += _complete(c, player, call_id, minute, result)
-    return "\n".join([text] + ([""] + extra if extra else []))
-
-
-def _registry(c) -> str:
-    lines = [i18n.t(f"Registro del {TITLE}")]
-    for call_id, call in CALLS.items():
-        rows = _finished(c, call_id)
-        lines.append(f"{call_id} · {i18n.t(call['title'])}")
-        if not rows:
-            lines.append("  " + i18n.t("(nadie la ha terminado todavía)"))
-        for number, (player, minute) in enumerate(rows, start=1):
-            lines.append(f"  {number}. {_name(c, player)} · {i18n.t('minuto')} {minute}")
-    for tech, minute in _unlocked(c).items():
-        lines.append(i18n.t(f"{TECHS[tech]['title']} entró en la Malla en el minuto {minute}."))
-    return "\n".join(lines)
 
 
 # --- qubit: the one-qubit simulator ----------------------------------------
@@ -376,12 +194,12 @@ def _qubit(c, player, args, minute, result) -> str:
 
 
 def _experiment_done(c, player, minute, result) -> list:
-    progress = _progress(c, player, "QB-01")
-    if progress["experiment"]:
+    from . import research
+    if research.progress(c, player, "QB-01")["experiment"]:
         return []
-    _mark(c, player, "QB-01", "experiment", 1)
+    research.mark(c, player, "QB-01", "experiment", 1)
     return ["", i18n.t("Parte 2 de QB-01 (experimentar) conseguida: un 1 seguro en la base X. Hideo lo apunta.")] \
-        + _complete(c, player, "QB-01", minute, result)
+        + research.complete(c, player, "QB-01", minute, result)
 
 
 # --- bb84: a key with Hideo, over two channels, one of them tapped -----------
@@ -511,12 +329,12 @@ def _bb84(c, player, args) -> str:
     return "\n".join(lines)
 
 
-def _submit(c, player, args, minute, result) -> str:
-    if args and _call_id(args[0]):
-        args = args[1:]
+def submit(c, player, args, minute, result) -> str:
+    """QB-01's demonstration: the key of the clean channel (research.py hands it over)."""
+    from . import research
     if len(args) < 2 or args[0].lower() not in CHANNELS:
         return i18n.t("Uso: instituto entregar <canal> <clave>   (por ejemplo: instituto entregar a 0110...)")
-    if _progress(c, player, "QB-01")["demo"]:
+    if research.progress(c, player, "QB-01")["demo"]:
         return i18n.t("Ya entregaste tu clave de QB-01. Hideo la tiene apuntada.")
     # The key may come in groups of four, as bb84 prints bits.
     channel, key = args[0].lower(), "".join(args[1:])
@@ -535,24 +353,25 @@ def _submit(c, player, args, minute, result) -> str:
     if key != expected:
         return i18n.t("Esa no es la clave. Son tus bits en las posiciones donde coinciden las bases y que no se "
                       "publicaron al comparar, en orden.")
-    _mark(c, player, "QB-01", "demo", 1)
+    research.mark(c, player, "QB-01", "demo", 1)
     lines = [i18n.t(f"Clave aceptada: {key} ({len(key)} bits). Hideo tiene la misma sin que nadie la haya dicho, "
                     "y sabéis que nadie escuchaba."),
              i18n.t("Parte 3 de QB-01 (demostrar) conseguida.")]
-    progress = _progress(c, player, "QB-01")
-    missing = [i18n.t("estudiar (instituto leer)")] if not _studied(CALLS["QB-01"], progress) else []
-    missing += [i18n.t("experimentar (qubit)")] if not progress["experiment"] else []
+    state = research.progress(c, player, "QB-01")
+    missing = [i18n.t("estudiar (instituto leer)")] if not research.studied(research.calls(c)["QB-01"], state) else []
+    missing += [i18n.t("experimentar (qubit)")] if not state["experiment"] else []
     if missing:
         lines.append(i18n.t("Para terminar la convocatoria te falta:") + " " + ", ".join(missing))
-    return "\n".join(lines + _complete(c, player, "QB-01", minute, result))
+    return "\n".join(lines + research.complete(c, player, "QB-01", minute, result))
 
 
 # --- qkd: what the Malla learnt -----------------------------------------------
 
 def _qkd(c, player, story3) -> str:
+    from . import research
     call = CALLS["QB-01"]
-    if "qkd" not in _unlocked(c):
-        done = len(_finished(c, "QB-01"))
+    if "qkd" not in research.unlocked(c):
+        done = len(research.finished(c, "QB-01"))
         return "\n".join([i18n.t("qkd: la Malla todavía no sabe repartir claves con fotones."),
                           i18n.t(f"Llegará cuando {call['threshold']} personas terminen la convocatoria QB-01 del "
                                  f"Instituto (instituto ver QB-01). Van {done}.")])
@@ -575,40 +394,15 @@ def dispatch(c, player, story3, relay, result, name, args, minute):
         return _qubit(c, player, args, minute, result)
     if name == "bb84":
         return _bb84(c, player, args)
-    if name == "qkd":
-        return _qkd(c, player, story3)
-    sub = SUB.get(args[0].lower(), args[0].lower()) if args else ""
-    rest = args[1:]
-    if not sub:
-        return _portal(c, player)
-    if sub == "ver":
-        return _show(c, player, rest)
-    if sub == "leer":
-        return _read(c, player, rest, minute, result)
-    if sub == "registro":
-        return _registry(c)
-    if sub == "entregar":
-        return _submit(c, player, rest, minute, result)
-    return i18n.t(HELP)
+    return _qkd(c, player, story3)
 
 
-HELP = """Instituto de Física del Puerto (instituto.malla):
-  instituto · instituto ver <código> · instituto leer <artículo> · instituto registro
+HELP = """Instituto de Física del Puerto · QB-01:
   qubit [nuevo|x|z|h|medir z|medir x]    el simulador de un qubit
   bb84 [medir|bases|comparar] <canal>    una clave con Hideo · instituto entregar <canal> <clave>"""
 QUBIT_HELP = "Uso: qubit [estado|nuevo|x|z|h|medir z|medir x]"
 
 MAN = {
-    "instituto": """instituto · el Instituto de Física del Puerto (instituto.malla)
-
-  instituto                   convocatorias abiertas y lo que ya sabe la Malla
-  instituto ver <código>      una convocatoria: sus tres partes y cómo vas
-  instituto leer <artículo>   los artículos para estudiar
-  instituto entregar ...      entrega el resultado de una convocatoria
-  instituto registro          quién ha terminado cada convocatoria
-Cada convocatoria tiene tres partes: estudiar, experimentar y demostrar.
-Cuando la terminan bastantes personas, su tecnología entra en la Malla para
-todos.""",
     "qubit": """qubit · el simulador de un qubit del Instituto
 
   qubit                  cómo está tu qubit y qué saldría al medirlo
@@ -637,37 +431,4 @@ Cuando QKD entra en la Malla, los armarios reparten sus claves con BB84.
 qkd enseña cada enlace con su tasa de error (QBER). Por debajo del 11 % es
 ruido del cable; por encima, alguien está midiendo los fotones.""",
 }
-MAN_ALIASES = {"institute": "instituto", "instituto.malla": "instituto", "qbit": "qubit", "bb-84": "bb84"}
-
-
-# --- what the world sees ------------------------------------------------------
-
-def layer_actor_context(actor: str, player: str) -> list:
-    if actor not in (HIDEO, NORA):
-        return []
-    with get_connection() as c:
-        if not _exists(c):
-            return []
-        rows = c.execute("SELECT text, minute FROM institute_knowledge WHERE player_id=? AND actor_id=?",
-                         (player, actor)).fetchall()
-        unlocked = _unlocked(c)
-    memories = [{"id": "RESEARCH_COMPLETED", "text": text, "source": player, "learned_minute": minute}
-                for text, minute in rows]
-    return memories + [{"id": f"MALLA_{tech.upper()}", "text": TECHS[tech]["memory"], "source": HOST,
-                        "learned_minute": minute} for tech, minute in unlocked.items()]
-
-
-def institute_snapshot(player: str) -> dict:
-    if not enabled():
-        return {"active": False}
-    with get_connection() as c:
-        if run_for(c, player) is None:
-            return {"active": False}
-        completed = [call_id for call_id in CALLS if _progress(c, player, call_id)["completed"] is not None]
-        unlocked = list(_unlocked(c))
-    return {
-        "active": True,
-        "completed": [{"id": call_id, "title": CALLS[call_id]["title"]} for call_id in completed],
-        "unlocked": [{"id": tech, "title": TECHS[tech]["title"], "text": TECHS[tech]["text"],
-                      "line": TECHS[tech]["line"]} for tech in unlocked],
-    }
+MAN_ALIASES = {"qbit": "qubit", "bb-84": "bb84"}

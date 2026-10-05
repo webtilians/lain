@@ -93,9 +93,16 @@ async def world_lifespan(_app: FastAPI):
         if os.getenv("LAIN_WORLD_CLOCK", "1") == "1":
             _clock = WorldClock(get_runtime(), _world_lock, world_clock_interval())
             _clock.start()
+        if online.enabled():
+            # The research watcher brings new calls on its own every few days (watch.py).
+            from server.world_core import watch
+            watch.start()
         try:
             yield
         finally:
+            if online.enabled():
+                from server.world_core import watch
+                watch.stop()
             if _clock is not None:
                 _clock.stop()
                 _clock = None
@@ -599,6 +606,24 @@ def admin_data(request: Request):
     if not admin.local_request(request.client.host if request.client else None, request.headers):
         raise HTTPException(status_code=404)
     return admin.overview()
+
+
+@app.post("/admin/research/{code}/delete", include_in_schema=False)
+def admin_delete_research(code: str, request: Request):
+    from server.world_core import admin, research
+    if not admin.owner_action(request.client.host if request.client else None, request.headers):
+        raise HTTPException(status_code=404)
+    if not research.delete(code.upper()):
+        raise HTTPException(status_code=404)
+    return {"deleted": code.upper()}
+
+
+@app.post("/admin/research/watch", include_in_schema=False)
+def admin_watch_now(request: Request):
+    from server.world_core import admin, watch
+    if not admin.owner_action(request.client.host if request.client else None, request.headers):
+        raise HTTPException(status_code=404)
+    return {"started": watch.run_soon()}
 
 
 @app.get("/health")

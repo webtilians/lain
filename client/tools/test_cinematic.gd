@@ -162,20 +162,20 @@ func run() -> void:
 
 	# Research: a finished call plays live; a technology entering the Malla plays once, even on a first snapshot.
 	state = state.duplicate(true)
-	state["institute"] = {"active": true, "unlocked": [],
-		"completed": [{"id": "QB-01", "title": "El qubit y la clave que delata al espía"}]}
+	state["research"] = {"active": true, "unlocked": [], "completed": [{"id": "QB-01",
+		"name": "El qubit y la clave que delata al espía", "centre": "Instituto de Física del Puerto"}]}
 	api.snapshot_updated.emit(state)
 	await frames(2)
 	check(cinematic.playing == "research", "finishing a research call has no cinematic")
 	seen = {}
 	await watch(seen)
-	check(shown(seen, "INSTITUTO DE FÍSICA DEL PUERTO") and shown(seen, "El qubit y la clave que delata al espía")
+	check(shown(seen, "INSTITUTO DE FÍSICA DEL PUERTO · REGISTRO") and shown(seen, "El qubit y la clave que delata al espía")
 		and shown(seen, "La Malla aprende."), "the research cinematic is incomplete")
 	cinematic.known = {}
 	state = state.duplicate(true)
-	state.institute.unlocked = [{"id": "qkd", "title": "QKD",
-		"text": "La Malla reparte claves con fotones: si alguien escucha, se nota.",
-		"line": "Desde hoy, cualquiera puede usar qkd en el terminal."}]
+	state.research.unlocked = [{"id": "qkd", "name": "QKD",
+		"about": "La Malla reparte claves con fotones: si alguien escucha, se nota.",
+		"next": "Desde hoy, cualquiera puede usar qkd en el terminal."}]
 	api.snapshot_updated.emit(state)
 	await frames(2)
 	check(cinematic.playing == "evolve" and cinematic.queue.is_empty(),
@@ -199,7 +199,7 @@ func run() -> void:
 	await frames(2)
 	var labels: Array = journal.cinema_controls.get_children().map(func(button): return button.text)
 	check(journal.cinema_controls.visible and labels.size() == 12, "the diary does not list every scene reached: " + str(labels))
-	check("INSTITUTO // El qubit y la clave que delata al espía" in labels and "LA MALLA EVOLUCIONA // QKD" in labels,
+	check("INVESTIGACIÓN // El qubit y la clave que delata al espía" in labels and "LA MALLA EVOLUCIONA // QKD" in labels,
 		"research scenes missing from the diary")
 	check("ARRANQUE // LA TERMINAL" in labels and "FINAL // GRACIAS POR RECIBIRLA" in labels, "start-up or ending missing from the diary")
 	var third: Button = journal.cinema_controls.get_children().filter(func(button): return button.text.begins_with("FRAGMENTO 3/7")).front()
