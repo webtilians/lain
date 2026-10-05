@@ -92,7 +92,7 @@ jobs:
             if (!$server.HasExited) { Stop-Process -Id $server.Id -Force }
           }
 
-      - name: Download official Godot 4.7.2 editor and Windows export template
+      - name: Download official Godot 4.7.2 editor and the Windows and macOS export templates
         shell: pwsh
         run: |
           $base = "https://github.com/godotengine/godot-builds/releases/download/4.7.2-stable"
@@ -110,9 +110,12 @@ jobs:
           Expand-Archive -Path $templateZip -DestinationPath (Join-Path $env:RUNNER_TEMP "godot-export") -Force
           $template = Get-ChildItem (Join-Path $env:RUNNER_TEMP "godot-export") -Filter "windows_release_x86_64.exe" -Recurse | Select-Object -First 1
           if ($null -eq $template) { throw "Windows release template missing" }
+          $mac = Get-ChildItem (Join-Path $env:RUNNER_TEMP "godot-export") -Filter "macos.zip" -Recurse | Select-Object -First 1
+          if ($null -eq $mac) { throw "macOS template missing" }
           $target = Join-Path $env:APPDATA "Godot/export_templates/4.7.2.stable"
           New-Item -ItemType Directory -Force $target | Out-Null
           Copy-Item $template.FullName (Join-Path $target "windows_release_x86_64.exe") -Force
+          Copy-Item $mac.FullName (Join-Path $target "macos.zip") -Force
           $version = Join-Path $template.DirectoryName "version.txt"
           if (Test-Path $version) { Copy-Item $version $target -Force }
           Write-Host "Godot editor: $($editor.FullName)"
@@ -138,6 +141,31 @@ jobs:
           python tools/smoke_online01.py --godot (Resolve-Path "release/Game/LAIN-Game.exe").Path --exported
           if ($LASTEXITCODE -ne 0) { throw "Exported online client test failed" }
 
+      # The Mac app is the game alone (no launcher): it carries its server and version in
+      # release.json, is universal (Apple silicon and Intel) and ad-hoc signed by Godot itself.
+      - name: Export the Mac app
+        shell: pwsh
+        run: |
+          $godot = (Get-Content (Join-Path $env:RUNNER_TEMP "godot-editor-path.txt") -Raw).Trim()
+          $version = "0.0.0"
+          python tools/mac_release.py info --version $version
+          if ($LASTEXITCODE -ne 0) { throw "release.json failed" }
+          $presets = (Get-Content client/export_presets.cfg -Raw).Replace('application/short_version=""', "application/short_version=""$version""").Replace('application/version=""', "application/version=""$version""")
+          Set-Content client/export_presets.cfg $presets -NoNewline -Encoding utf8
+          $out = Join-Path (Get-Location) "SesionCero-Mac.zip"
+          & $godot --headless --path client --export-release "macOS" $out
+          if ($LASTEXITCODE -ne 0 -or !(Test-Path $out)) { throw "Mac export failed" }
+          python tools/mac_release.py check SesionCero-Mac.zip --version $version
+          if ($LASTEXITCODE -ne 0) { throw "The Mac app is incomplete" }
+
+      - name: Keep the Mac app for its test on a Mac
+        uses: actions/upload-artifact@v4
+        with:
+          name: SesionCero-Mac
+          path: SesionCero-Mac.zip
+          if-no-files-found: error
+          retention-days: 3
+
       - name: Assemble portable ZIP without world.db or any developer secrets
         shell: pwsh
         run: |
@@ -159,3 +187,75 @@ jobs:
           path: LAIN-Online-0.1-Windows.zip
           if-no-files-found: error
           retention-days: 14
+
+  # The Mac app on a real Mac: it unpacks, its signature holds, and two copies of it
+  # play in one online world (the same test the Windows game passes).
+  mac:
+    needs: windows-beta
+    runs-on: macos-14
+    timeout-minutes: 30
+    env:
+      LAIN_LLM_ENABLED: "0"
+      PYTHONUTF8: "1"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Server requirements for the test world
+        run: python -m pip install -r requirements.txt
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: SesionCero-Mac
+
+      # Findings go out as annotations too: they can be read without signing in to GitHub.
+      - name: Unpack as Finder does and check the signature
+        run: |
+          set -euo pipefail
+          trap 'echo "::error title=Mac app::failed at line $LINENO: $BASH_COMMAND"' ERR
+          ditto -x -k SesionCero-Mac.zip "$RUNNER_TEMP/mac"
+          app="$(find "$RUNNER_TEMP/mac" -maxdepth 1 -name '*.app' -print -quit)"
+          echo "::notice title=Mac app::$(ls "$RUNNER_TEMP/mac" | tr '\n' ' ') -> $(ls "$app/Contents" | tr '\n' ' ')"
+          program="$app/Contents/MacOS/$(/usr/libexec/PlistBuddy -c 'Print CFBundleExecutable' "$app/Contents/Info.plist")"
+          archs="$(lipo -archs "$program")"
+          signature="$(codesign -dv "$app" 2>&1 | grep -E '^(Signature|Identifier|Format)' | tr '\n' ' ' || true)"
+          strict=0; verified="$(codesign --verify --deep --strict --verbose=2 "$app" 2>&1)" || strict=$?
+          echo "::notice title=Mac app::archs: $archs · $signature · strict verify: $strict $(echo "$verified" | tr '\n' ' ' | cut -c1-500)"
+          [[ " $archs " == *" arm64 "* && " $archs " == *" x86_64 "* ]] || { echo "::error title=Mac app::not universal: $archs"; exit 1; }
+          echo "LAIN_MAC_PROGRAM=$program" >> "$GITHUB_ENV"
+          # Which sealed file does not match, and how its name is spelled on disk (é as one or two code points).
+          detail="$(codesign --verify --deep --strict --verbose=4 "$app" 2>&1 | tail -20 | tr '\n' ' ' | cut -c1-1500)" || true
+          names="$(cd "$app/Contents" && find . -type f | LC_ALL=C od -c | head -20 | tr -s ' ' | tr '\n' ' ' | cut -c1-1500)"
+          echo "::notice title=Mac signature detail::$detail"
+          echo "::notice title=Mac file names::$names"
+          sealed="$(plutil -p "$app/Contents/_CodeSignature/CodeResources" | grep -v '^ *[0-9a-f<]\{20,\}' | head -40 | tr -s ' ' | tr '\n' ' ' | cut -c1-1500)" || true
+          echo "::notice title=Mac sealed files::$sealed"
+          # Apple silicon refuses to run code without a valid signature, ad-hoc or not.
+          codesign --verify "$app" || echo "LAIN_MAC_SEAL_BROKEN=1" >> "$GITHUB_ENV"
+
+      - name: Two Mac games connect to one online world
+        run: |
+          if ! python tools/smoke_online01.py --godot "$LAIN_MAC_PROGRAM" --exported; then
+            for log in outputs/online-smoke/*.log; do
+              echo "::error title=$(basename "$log")::$(tail -c 1500 "$log" | tr '\n' ' ')"
+            done
+            exit 1
+          fi
+          echo "::notice title=Mac online test::two Mac games played in one world"
+
+      - name: A broken seal fails the job (after the online test has told whether the game runs)
+        if: always()
+        run: test -z "${LAIN_MAC_SEAL_BROKEN:-}"
+
+      - name: Keep the test logs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mac-smoke-logs
+          path: outputs/online-smoke
+          retention-days: 7
+

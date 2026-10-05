@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://cx67n53pw3xmm"
 path.s3tc="res://.godot/imported/exterior_wall_cladding_03_arm_2k.jpg-7685412895b7a45eb5170d963dfca7a1.s3tc.ctex"
+path.etc2="res://.godot/imported/exterior_wall_cladding_03_arm_2k.jpg-7685412895b7a45eb5170d963dfca7a1.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://art/photoreal11/textures/exterior_wall_cladding_03/exterior_wall_cladding_03_arm_2k.jpg"
-dest_files=["res://.godot/imported/exterior_wall_cladding_03_arm_2k.jpg-7685412895b7a45eb5170d963dfca7a1.s3tc.ctex"]
+dest_files=["res://.godot/imported/exterior_wall_cladding_03_arm_2k.jpg-7685412895b7a45eb5170d963dfca7a1.s3tc.ctex", "res://.godot/imported/exterior_wall_cladding_03_arm_2k.jpg-7685412895b7a45eb5170d963dfca7a1.etc2.ctex"]
 
 [params]
 

@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://dxb1dn7xe3ww1"
 path.s3tc="res://.godot/imported/painted_metal_shutter_arm_2k.jpg-7d1fe2ad790ddd929fdd2d6694dd051f.s3tc.ctex"
+path.etc2="res://.godot/imported/painted_metal_shutter_arm_2k.jpg-7d1fe2ad790ddd929fdd2d6694dd051f.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://art/photoreal11/textures/painted_metal_shutter/painted_metal_shutter_arm_2k.jpg"
-dest_files=["res://.godot/imported/painted_metal_shutter_arm_2k.jpg-7d1fe2ad790ddd929fdd2d6694dd051f.s3tc.ctex"]
+dest_files=["res://.godot/imported/painted_metal_shutter_arm_2k.jpg-7d1fe2ad790ddd929fdd2d6694dd051f.s3tc.ctex", "res://.godot/imported/painted_metal_shutter_arm_2k.jpg-7d1fe2ad790ddd929fdd2d6694dd051f.etc2.ctex"]
 
 [params]
 

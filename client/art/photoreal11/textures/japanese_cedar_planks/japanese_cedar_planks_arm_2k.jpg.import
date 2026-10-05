@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://dshi1jvw53dwd"
 path.s3tc="res://.godot/imported/japanese_cedar_planks_arm_2k.jpg-3b02e37b2154e279970d530ce68b5f7f.s3tc.ctex"
+path.etc2="res://.godot/imported/japanese_cedar_planks_arm_2k.jpg-3b02e37b2154e279970d530ce68b5f7f.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://art/photoreal11/textures/japanese_cedar_planks/japanese_cedar_planks_arm_2k.jpg"
-dest_files=["res://.godot/imported/japanese_cedar_planks_arm_2k.jpg-3b02e37b2154e279970d530ce68b5f7f.s3tc.ctex"]
+dest_files=["res://.godot/imported/japanese_cedar_planks_arm_2k.jpg-3b02e37b2154e279970d530ce68b5f7f.s3tc.ctex", "res://.godot/imported/japanese_cedar_planks_arm_2k.jpg-3b02e37b2154e279970d530ce68b5f7f.etc2.ctex"]
 
 [params]
 

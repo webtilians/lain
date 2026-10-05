@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://iclytq3b1phn"
 path.s3tc="res://.godot/imported/aerial_asphalt_01_arm.jpg-b5f13343a6a7dfccc47c47f0f572296a.s3tc.ctex"
+path.etc2="res://.godot/imported/aerial_asphalt_01_arm.jpg-b5f13343a6a7dfccc47c47f0f572296a.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://art/realism10/materials/aerial_asphalt_01_arm.jpg"
-dest_files=["res://.godot/imported/aerial_asphalt_01_arm.jpg-b5f13343a6a7dfccc47c47f0f572296a.s3tc.ctex"]
+dest_files=["res://.godot/imported/aerial_asphalt_01_arm.jpg-b5f13343a6a7dfccc47c47f0f572296a.s3tc.ctex", "res://.godot/imported/aerial_asphalt_01_arm.jpg-b5f13343a6a7dfccc47c47f0f572296a.etc2.ctex"]
 
 [params]
 

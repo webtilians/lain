@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://exfkujn0r3n5"
 path.s3tc="res://.godot/imported/grey_plaster_02_diff_2k.jpg-370ca1fabf3c7c12be35a3e4f709cd6a.s3tc.ctex"
+path.etc2="res://.godot/imported/grey_plaster_02_diff_2k.jpg-370ca1fabf3c7c12be35a3e4f709cd6a.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://art/photoreal11/textures/grey_plaster_02/grey_plaster_02_diff_2k.jpg"
-dest_files=["res://.godot/imported/grey_plaster_02_diff_2k.jpg-370ca1fabf3c7c12be35a3e4f709cd6a.s3tc.ctex"]
+dest_files=["res://.godot/imported/grey_plaster_02_diff_2k.jpg-370ca1fabf3c7c12be35a3e4f709cd6a.s3tc.ctex", "res://.godot/imported/grey_plaster_02_diff_2k.jpg-370ca1fabf3c7c12be35a3e4f709cd6a.etc2.ctex"]
 
 [params]
 

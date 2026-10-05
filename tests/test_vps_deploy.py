@@ -126,3 +126,14 @@ def test_download_page_images_exist_are_light_and_are_served():
     assert "@images path /img/*" in caddy
     # The images are files, never routed to World Core, and never rewritten to the page.
     assert caddy.index("@images") < caddy.index("reverse_proxy")
+
+
+def test_download_page_offers_windows_and_mac_as_the_release_names_them():
+    from tools import mac_release
+    page = (VPS / "web" / "index.html").read_text(encoding="utf-8")
+    release = (VPS.parents[1] / ".github" / "workflows" / "release.yml").read_text(encoding="utf-8")
+    for asset in ("LAIN-Windows.zip", mac_release.ZIP_NAME):
+        assert f"releases/latest/download/{asset}" in page
+        assert f" {asset} " in release.split("gh release create")[1].splitlines()[0], asset
+    assert "Abrir igualmente" in page and "Open Anyway" in page
+

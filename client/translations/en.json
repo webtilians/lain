@@ -1989,5 +1989,7 @@
   "Tu nombre queda en el registro del centro.": "Your name stays in the centre's registry.",
   "De: {v0}": "From: {v0}",
   "Asunto: convocatoria {v0}": "Subject: call {v0}",
-  "Empieza con {v0} ver {v1}.": "Start with {v0} show {v1}."
+  "Empieza con {v0} ver {v1}.": "Start with {v0} show {v1}.",
+  "Hay una versión nueva: {v0}. Descárgala para jugar con lo último.": "There is a new version: {v0}. Download it to play the latest.",
+  "Descargar la versión {v0}": "Download version {v0}"
 }

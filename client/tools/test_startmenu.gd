@@ -110,6 +110,36 @@ func run() -> void:
 	press(boot, "Cerrar sesión")
 	check(not server.has_session() and boot.fields.has("name"), "Logout did not return to the login form")
 
+	# A build without the Windows launcher (the Mac app) brings its server and version in release.json,
+	# and the start menu offers a newer version with the download for this system.
+	var release_path := "user://test_release.json"
+	var file := FileAccess.open(release_path, FileAccess.WRITE)
+	file.store_string(JSON.stringify({"server_url": "https://mundo.invalid", "version": "0.27.0",
+		"manifest": "https://releases.invalid/manifest.json",
+		"downloads": {OS.get_name(): "https://releases.invalid/SesionCero-Mac.zip"}, "page": "https://mundo.invalid"}))
+	file.close()
+	check(server.load_release(release_path).get("version") == "0.27.0", "release.json not read")
+	check(server.load_release("user://missing.json").is_empty(), "A missing release.json is not empty")
+	check(server.newer("0.28.0", "0.27.9") and server.newer("0.27.10", "0.27.9") and not server.newer("0.27.0", "0.27.0")
+		and not server.newer("0.26.5", "0.27.0") and not server.newer("", "0.27.0"), "Versions compare wrongly")
+	server.release = server.load_release(release_path)
+	server.client_version = "0.27.0"
+	check(server.updates_itself() == OS.get_environment("LAIN_CLIENT_VERSION").is_empty(), "Who updates the game is wrong")
+	check(server.download_url() == "https://releases.invalid/SesionCero-Mac.zip", "Wrong download for this system")
+	boot.offer_update("0.27.0")
+	check(not is_instance_valid(boot.update_box), "The same version is offered as new")
+	boot.offer_update("0.28.0")
+	check(is_instance_valid(boot.update_box) and boot.update_box.get_parent() == boot.menu, "A newer version is not offered")
+	var offered: Array = boot.update_box.get_children().map(func(n): return n.text)
+	check("Hay una versión nueva: 0.28.0. Descárgala para jugar con lo último." in offered
+		and "Descargar la versión 0.28.0" in offered, "The update notice is wrong: " + str(offered))
+	boot.offer_update("0.29.0")
+	check(boot.menu.get_children().filter(func(n): return n is VBoxContainer and n == boot.update_box).size() == 1,
+		"The update notice repeats")
+	await snap("startmenu-update")
+	server.release = {}
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(release_path))
+
 	server.clear_session()
 	current_scene = null
 	boot.queue_free()

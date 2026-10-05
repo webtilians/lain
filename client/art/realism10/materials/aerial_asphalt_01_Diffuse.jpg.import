@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://nkt6n8ujrtsf"
 path.s3tc="res://.godot/imported/aerial_asphalt_01_Diffuse.jpg-4153d007aa1a3476688fa90facbbfd1d.s3tc.ctex"
+path.etc2="res://.godot/imported/aerial_asphalt_01_Diffuse.jpg-4153d007aa1a3476688fa90facbbfd1d.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://art/realism10/materials/aerial_asphalt_01_Diffuse.jpg"
-dest_files=["res://.godot/imported/aerial_asphalt_01_Diffuse.jpg-4153d007aa1a3476688fa90facbbfd1d.s3tc.ctex"]
+dest_files=["res://.godot/imported/aerial_asphalt_01_Diffuse.jpg-4153d007aa1a3476688fa90facbbfd1d.s3tc.ctex", "res://.godot/imported/aerial_asphalt_01_Diffuse.jpg-4153d007aa1a3476688fa90facbbfd1d.etc2.ctex"]
 
 [params]
 

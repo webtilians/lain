@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://d0eph1gyqosm1"
 path.s3tc="res://.godot/imported/plastered_wall_02_nor_gl.png-3dba392a1862087e2982e7fabf1bd1c2.s3tc.ctex"
+path.etc2="res://.godot/imported/plastered_wall_02_nor_gl.png-3dba392a1862087e2982e7fabf1bd1c2.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://art/realism10/materials/plastered_wall_02_nor_gl.png"
-dest_files=["res://.godot/imported/plastered_wall_02_nor_gl.png-3dba392a1862087e2982e7fabf1bd1c2.s3tc.ctex"]
+dest_files=["res://.godot/imported/plastered_wall_02_nor_gl.png-3dba392a1862087e2982e7fabf1bd1c2.s3tc.ctex", "res://.godot/imported/plastered_wall_02_nor_gl.png-3dba392a1862087e2982e7fabf1bd1c2.etc2.ctex"]
 
 [params]
 

@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://cmqemidx4pbkl"
 path.s3tc="res://.godot/imported/wood_floor_arm.jpg-287be4386cc83397745f719a9c5c43e5.s3tc.ctex"
+path.etc2="res://.godot/imported/wood_floor_arm.jpg-287be4386cc83397745f719a9c5c43e5.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://art/realism10/materials/wood_floor_arm.jpg"
-dest_files=["res://.godot/imported/wood_floor_arm.jpg-287be4386cc83397745f719a9c5c43e5.s3tc.ctex"]
+dest_files=["res://.godot/imported/wood_floor_arm.jpg-287be4386cc83397745f719a9c5c43e5.s3tc.ctex", "res://.godot/imported/wood_floor_arm.jpg-287be4386cc83397745f719a9c5c43e5.etc2.ctex"]
 
 [params]
 
