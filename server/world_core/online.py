@@ -373,6 +373,39 @@ def busy_npcs():
         }
 
 
+# One chat per zone, people and residents alike (zone_chat.py): every speaker
+# reaches clients under an opaque key, so nothing in a message says which is which.
+_SPEAKER_SALT = secrets.token_hex(16)
+
+
+def speaker_key(actor_id):
+    return hashlib.sha256((_SPEAKER_SALT + str(actor_id)).encode()).hexdigest()[:12]
+
+
+def _present_in(location):
+    return {
+        actor
+        for actor, item in _presence.items()
+        if item["location"] == location and time.monotonic() - item["at"] < PRESENCE_TTL
+    }
+
+
+def _append_chat(actor_id, name, text, location, recipients):
+    _chat.append(
+        dict(
+            # Clients retain seen IDs while reconnecting. A restarted host
+            # must not reuse IDs for different messages.
+            id=uuid.uuid4().hex,
+            actor_id=actor_id,
+            name=name,
+            text=text,
+            location=location,
+            recipients=recipients,
+            at=time.monotonic(),
+        )
+    )
+
+
 def send_chat(actor_id, text):
     text = text.strip()
     if not 1 <= len(text) <= 240 or any(ord(ch) < 32 for ch in text):
@@ -384,32 +417,52 @@ def send_chat(actor_id, text):
             raise ValueError("PLAYER_NOT_PRESENT")
         if sender["location"] in PRIVATE_ROOMS:
             raise ValueError("PRIVATE_ROOM")
-        recipients = {
-            actor
-            for actor, item in _presence.items()
-            if item["location"] == sender["location"]
-            and time.monotonic() - item["at"] < PRESENCE_TTL
-        }
-        _chat.append(
-            dict(
-                # Clients retain seen IDs while reconnecting. A restarted host
-                # must not reuse IDs for different messages.
-                id=uuid.uuid4().hex,
-                actor_id=actor_id,
-                name=sender["name"],
-                text=text,
-                location=sender["location"],
-                recipients=recipients,
-                at=time.monotonic(),
-            )
-        )
-        return {"sent": True}
+        recipients = _present_in(sender["location"])
+        _append_chat(actor_id, sender["name"], text, sender["location"], recipients)
+        name, location = sender["name"], sender["location"]
+    # Residents in the zone heard it too; any answer comes later, after typing.
+    try:
+        from . import zone_chat
+        zone_chat.on_player_chat(actor_id, name, text, location, others_present=len(recipients) > 1)
+    except Exception:  # noqa: BLE001 - a resident's answer must never stop a player's message
+        pass
+    return {"sent": True}
+
+
+def post_chat(actor_id, name, text, location):
+    """A line said aloud in a zone by anyone the server speaks for (a resident, a conversation)."""
+    text = str(text).strip()[:240]
+    if not text or location in PRIVATE_ROOMS:
+        return False
+    with _lock:
+        _append_chat(actor_id, name, text, location, _present_in(location))
+    return True
+
+
+def recent_lines(location, speakers, count=6):
+    """What these speakers have just said in a zone, as «name: text» (for a resident about to speak).
+    Only the given speakers: what other players say among themselves never goes to the AI."""
+    with _lock:
+        return [
+            f"{row['name']}: {row['text']}"
+            for row in _chat
+            if row["location"] == location and row["actor_id"] in speakers and time.monotonic() - row["at"] < 120
+        ][-count:]
+
+
+def zones_with_players():
+    with _lock:
+        return sorted({
+            item["location"]
+            for item in _presence.values()
+            if time.monotonic() - item["at"] < PRESENCE_TTL and item["location"] not in PRIVATE_ROOMS
+        })
 
 
 def visible_chat(actor_id, location):
     with _lock:
         return [
-            {key: row[key] for key in ("id", "actor_id", "name", "text")}
+            {"id": row["id"], "who": speaker_key(row["actor_id"]), "name": row["name"], "text": row["text"]}
             for row in _chat
             if row["location"] == location
             and actor_id in row["recipients"]

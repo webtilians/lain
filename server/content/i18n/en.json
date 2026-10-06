@@ -2060,5 +2060,11 @@
   "ENLACE ESTABLECIDO": "LINK ESTABLISHED",
   "TÍTULO // SESIÓN CERO": "TITLE // SESSION ZERO",
   "CLS: limpiar   DIR: directorio   VER: version   TYPE <archivo>: mostrar un archivo\nTELNET <red> <puerto>: abrir una sesion en una maquina remota": "CLS: clear   DIR: directory   VER: version   TYPE <file>: show a file\nTELNET <network> <port>: open a session on a remote machine",
-  "BOOT.LOG\n23:58  ARRANQUE NORMAL\n00:03  SESION 0 ABIERTA\n00:41  SESION 0 CERRADA  MOTIVO: VOLUNTARIO\n00:41  ENTRADA MODIFICADA POR: NOEMA\n03:12  CONEXION ENTRANTE  FIRMA: SESION 0\n03:13  CONEXION PERDIDA": "BOOT.LOG\n23:58  NORMAL BOOT\n00:03  SESSION 0 OPENED\n00:41  SESSION 0 CLOSED  REASON: VOLUNTARY\n00:41  ENTRY MODIFIED BY: NOEMA\n03:12  INCOMING CONNECTION  SIGNATURE: SESSION 0\n03:13  CONNECTION LOST"
+  "BOOT.LOG\n23:58  ARRANQUE NORMAL\n00:03  SESION 0 ABIERTA\n00:41  SESION 0 CERRADA  MOTIVO: VOLUNTARIO\n00:41  ENTRADA MODIFICADA POR: NOEMA\n03:12  CONEXION ENTRANTE  FIRMA: SESION 0\n03:13  CONEXION PERDIDA": "BOOT.LOG\n23:58  NORMAL BOOT\n00:03  SESSION 0 OPENED\n00:41  SESSION 0 CLOSED  REASON: VOLUNTARY\n00:41  ENTRY MODIFIED BY: NOEMA\n03:12  INCOMING CONNECTION  SIGNATURE: SESSION 0\n03:13  CONNECTION LOST",
+  "¿Mm? Perdona, estaba en otra cosa.": "Hm? Sorry, I was miles away.",
+  "Ni idea, la verdad.": "No idea, honestly.",
+  "Ahora no puedo, lo siento.": "Can't right now, sorry.",
+  "¿Me lo dices a mí?": "Are you talking to me?",
+  "Puede ser. No sabría decirte.": "Maybe. I couldn't tell you.",
+  "Eso tendrías que preguntárselo a otro.": "You'd have to ask someone else about that."
 }
