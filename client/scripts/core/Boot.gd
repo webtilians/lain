@@ -90,6 +90,7 @@ func _build() -> void:
 	add_child(version)
 	if ServerConnection.updates_itself():
 		_check_update()
+	Gamepad.focus_root(form)
 
 # ------------------------------------------------------------------ updates (no launcher)
 
@@ -174,6 +175,8 @@ func _reset(text := "") -> void:
 		form.remove_child(child)
 		child.queue_free()
 	_say(text)
+	# With the controller, the first field or button of the new form (filled in after this) gets the focus.
+	Gamepad.focus_first(form)
 
 func _say(text: String) -> void:
 	notice.text = text

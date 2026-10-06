@@ -219,6 +219,11 @@ func _input(event: InputEvent) -> void:
 		if directions.has(event.keycode):
 			_move(directions[event.keycode])
 			get_viewport().set_input_as_handled()
+	elif mode in ["CAFE", "CAFE_EVENTS"] and not arcade.is_empty() and event is InputEventJoypadButton and event.pressed:
+		var pad := {JOY_BUTTON_DPAD_UP:"U", JOY_BUTTON_DPAD_DOWN:"D", JOY_BUTTON_DPAD_LEFT:"L", JOY_BUTTON_DPAD_RIGHT:"R"}
+		if pad.has(event.button_index):
+			_move(pad[event.button_index])
+			get_viewport().set_input_as_handled()
 
 func _process(delta: float) -> void:
 	if snake_autoplay and is_snake() and _arcade_allowed() and not snake_model.finished:

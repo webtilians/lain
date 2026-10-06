@@ -1,8 +1,6 @@
 extends CanvasLayer
-## J — readable, privacy-scoped player and NPC technical sheets + case journal.
+## J (Y on the controller) — readable, privacy-scoped player and NPC technical sheets + case journal.
 ## UI only: all state comes from the existing read-only WorldApi snapshot.
-
-const JOURNAL_KEY := KEY_J
 
 var backdrop: ColorRect
 var details: RichTextLabel
@@ -80,6 +78,7 @@ func _ready() -> void:
 	reading.size_flags_vertical=Control.SIZE_EXPAND_FILL
 	body.add_child(reading)
 	reading.add_child(details)
+	Gamepad.scroll_with_stick(details)
 	_build_chapter_controls(reading)
 	cinema_controls = VBoxContainer.new()
 	cinema_controls.add_theme_constant_override("separation", 6)
@@ -93,10 +92,11 @@ func _connect_chapter() -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	var key_event := event as InputEventKey
-	if key_event == null or not key_event.pressed or key_event.echo:
+	if backdrop.visible and event.is_action_pressed("ui_cancel"):
+		close_journal()
+		get_viewport().set_input_as_handled()
 		return
-	if key_event.keycode != JOURNAL_KEY:
+	if not event.is_action_pressed("journal") or event.is_echo():
 		return
 	# Text typed into the DOS command line is not a gameplay hotkey.
 	# Opening the journal over a terminal would also reactivate the player
@@ -126,6 +126,8 @@ func open_journal() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	_refresh_navigation()
 	_render_view()
+	Gamepad.focus_root(navigation)
+	Gamepad.focus_first(navigation)
 
 
 func close_journal() -> void:

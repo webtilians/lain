@@ -2,21 +2,30 @@ extends CanvasLayer
 ## The first minutes. A short guide advances on its own as the player walks,
 ## opens the diary, goes out, finds the school and talks to someone; after
 ## that the prologue's objective stays on screen. The first time a terminal
-## opens it explains how to ask for help. F1 hides or shows it.
+## opens it explains how to ask for help. F1 (View on the controller) hides or
+## shows it. With the controller, the steps name its buttons.
 ## Presentation only: it reads the snapshot and the open windows, and keeps
 ## its progress in user://guide.cfg on this PC.
 const STEPS := [
-	{"id": "move", "title": "1/5 · CAMINAR", "text": "Camina con W A S D."},
-	{"id": "journal", "title": "2/5 · TU DIARIO", "text": "Pulsa J para abrir tu diario. Ahí está siempre tu objetivo."},
-	{"id": "leave", "title": "3/5 · SALIR", "text": "Acércate a la puerta y pulsa E para salir al barrio."},
+	{"id": "move", "title": "1/5 · CAMINAR", "text": "Camina con W A S D.", "pad": "Camina con el stick izquierdo."},
+	{"id": "journal", "title": "2/5 · TU DIARIO", "text": "Pulsa J para abrir tu diario. Ahí está siempre tu objetivo.",
+		"pad": "Pulsa Y para abrir tu diario. Ahí está siempre tu objetivo."},
+	{"id": "leave", "title": "3/5 · SALIR", "text": "Acércate a la puerta y pulsa E para salir al barrio.",
+		"pad": "Acércate a la puerta y pulsa A para salir al barrio."},
 	{"id": "school", "title": "4/5 · EL COLEGIO",
-		"text": "Busca el colegio: es la C del mapa, arriba a la derecha. Entra con E junto a la puerta."},
-	{"id": "talk", "title": "5/5 · HABLAR", "text": "Acércate a alguien y pulsa E. Puedes escribirle lo que quieras."},
+		"text": "Busca el colegio: es la C del mapa, arriba a la derecha. Entra con E junto a la puerta.",
+		"pad": "Busca el colegio: es la C del mapa, arriba a la derecha. Entra con A junto a la puerta."},
+	{"id": "talk", "title": "5/5 · HABLAR", "text": "Acércate a alguien y pulsa E. Puedes escribirle lo que quieras.",
+		"pad": "Acércate a alguien y pulsa A. Puedes escribirle lo que quieras."},
 ]
 const WELCOME := "Esta guía te acompaña los primeros minutos."
 const FINISHED := "Ya sabes lo básico. Tu objetivo queda aquí; si te pierdes, abre el diario con J."
+const FINISHED_PAD := "Ya sabes lo básico. Tu objetivo queda aquí; si te pierdes, abre el diario con Y."
 const SHELL_TIP := "Consejo: escribe help para ver las órdenes, y pista si te atascas."
 const DOS_TIP := "Consejo: escribe una orden y pulsa Enter. Lo que te contó Ryoko está en tu diario (J)."
+const DOS_TIP_PAD := "Consejo: escribe una orden con el teclado de la pantalla y pulsa Start. Lo que te contó Ryoko está en tu diario (Y)."
+const FOOTER := "F1 · ocultar o mostrar la guía"
+const FOOTER_PAD := "View · ocultar o mostrar la guía"
 const WALK := 2.5
 const FINISHED_SECONDS := 9.0
 
@@ -65,7 +74,7 @@ func _build() -> void:
 	title_label = _label(box, 13, Color("e7b493"))
 	text_label = _label(box, 16, Color("dfe3ea"))
 	footer = _label(box, 11, Color("8d95a5"))
-	footer.text = "F1 · ocultar o mostrar la guía"
+	footer.text = FOOTER
 	panel.hide()
 
 func _label(parent: Control, size: int, color: Color) -> Label:
@@ -99,8 +108,8 @@ func save_progress() -> void:
 	if config.save(config_path) != OK:
 		push_warning("No se pudo guardar la guía.")
 
-func _unhandled_key_input(event: InputEvent) -> void:
-	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_F1:
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("guide") and not event.is_echo():
 		toggle()
 		get_viewport().set_input_as_handled()
 
@@ -171,12 +180,14 @@ func _show(step: Dictionary) -> void:
 	var busy: bool = (SceneRouter.get("loading") == true or EventDialog.visible or Workshop.is_open()
 		or ShellTerminal.is_open() or PrologueTerminal.surface.visible or CharacterJournal.backdrop.visible
 		or Cinematic.is_playing())
+	footer.text = FOOTER_PAD if Gamepad.using_pad else FOOTER
 	if not step.is_empty():
+		var text: String = step.get("pad", step.text) if Gamepad.using_pad else step.text
 		title_label.text = step.title
-		text_label.text = (WELCOME + "\n" + step.text) if step.id == "move" else step.text
+		text_label.text = (WELCOME + "\n" + text) if step.id == "move" else text
 	elif finished_left > 0.0:
 		title_label.text = "GUÍA COMPLETADA"
-		text_label.text = FINISHED
+		text_label.text = FINISHED_PAD if Gamepad.using_pad else FINISHED
 	elif stage() in ["FIND_TEACHER", "FIND_RYOKO", "FIND_TERMINAL"]:
 		title_label.text = "OBJETIVO"
 		text_label.text = str(WorldApi.snapshot.get("prologue", {}).get("hint", ""))
@@ -194,7 +205,7 @@ func _terminal_tips() -> void:
 	shell_was_open = shell_open
 	var dos_open: bool = PrologueTerminal.surface.visible
 	if dos_open and not dos_was_open and stage() == "FIND_TERMINAL" and not "dos" in tips:
-		PrologueTerminal.transcript.text += "\n" + Language.text(DOS_TIP) + "\n"
+		PrologueTerminal.transcript.text += "\n" + Language.text(DOS_TIP_PAD if Gamepad.using_pad else DOS_TIP) + "\n"
 		tips.append("dos")
 		save_progress()
 	dos_was_open = dos_open

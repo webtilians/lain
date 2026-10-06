@@ -259,6 +259,16 @@ jobs:
             exit 1
           fi
 
+      - name: Playing with a controller, and its on-screen keyboard
+        shell: bash
+        run: |
+          set -euo pipefail
+          /tmp/lain-godot --headless --path client --script res://tools/test_gamepad.gd 2>&1 | tee /tmp/lain-gamepad.log
+          grep -q 'GAMEPAD_OK' /tmp/lain-gamepad.log
+          if grep -E '^(SCRIPT ERROR:|ERROR:)' /tmp/lain-gamepad.log; then
+            exit 1
+          fi
+
       - name: Visual 0.22 interiors dressed without touching collisions
         shell: bash
         run: |

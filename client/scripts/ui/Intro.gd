@@ -139,7 +139,7 @@ func leave() -> void:
 
 func _input(event: InputEvent) -> void:
 	var pressed: bool = (event is InputEventKey and event.pressed and not event.echo) \
-		or (event is InputEventMouseButton and event.pressed)
+		or (event is InputEventMouseButton and event.pressed) or (event is InputEventJoypadButton and event.pressed)
 	if not pressed or leaving:
 		return
 	get_viewport().set_input_as_handled()

@@ -1991,5 +1991,21 @@
   "Asunto: convocatoria {v0}": "Subject: call {v0}",
   "Empieza con {v0} ver {v1}.": "Start with {v0} show {v1}.",
   "Hay una versión nueva: {v0}. Descárgala para jugar con lo último.": "There is a new version: {v0}. Download it to play the latest.",
-  "Descargar la versión {v0}": "Download version {v0}"
+  "Descargar la versión {v0}": "Download version {v0}",
+  "Camina con el stick izquierdo.": "Walk with the left stick.",
+  "Pulsa Y para abrir tu diario. Ahí está siempre tu objetivo.": "Press Y to open your diary. Your objective is always there.",
+  "Acércate a la puerta y pulsa A para salir al barrio.": "Go to the door and press A to go out to the neighbourhood.",
+  "Busca el colegio: es la C del mapa, arriba a la derecha. Entra con A junto a la puerta.": "Find the school: it is the C on the map, top right. Go in with A by the door.",
+  "Acércate a alguien y pulsa A. Puedes escribirle lo que quieras.": "Walk up to someone and press A. You can write them anything you like.",
+  "Ya sabes lo básico. Tu objetivo queda aquí; si te pierdes, abre el diario con Y.": "You know the basics. Your objective stays here; if you get lost, open the diary with Y.",
+  "Consejo: escribe una orden con el teclado de la pantalla y pulsa Start. Lo que te contó Ryoko está en tu diario (Y).": "Tip: type a command with the on-screen keyboard and press Start. What Ryoko told you is in your diary (Y).",
+  "View · ocultar o mostrar la guía": "View · hide or show the guide",
+  "LA MALLA · TERMINAL   ·   B para salir   ·   help · man <tema>": "THE MESH · TERMINAL   ·   B to exit   ·   help · man <topic>",
+  "Mayús": "Shift",
+  "Espacio (Y)": "Space (Y)",
+  "Borrar (X)": "Delete (X)",
+  "Enviar (Start)": "Send (Start)",
+  "Cerrar (B)": "Close (B)",
+  "Anterior": "Previous",
+  "Siguiente": "Next"
 }

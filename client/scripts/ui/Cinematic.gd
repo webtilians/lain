@@ -246,7 +246,9 @@ func _input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 		var skip_key: bool = event is InputEventKey and event.pressed and not event.echo \
 			and event.keycode in [KEY_ESCAPE, KEY_ENTER, KEY_KP_ENTER, KEY_SPACE]
-		if skip_key or (event is InputEventMouseButton and event.pressed):
+		var skip_pad: bool = event is InputEventJoypadButton and event.pressed \
+			and event.button_index in [JOY_BUTTON_A, JOY_BUTTON_B, JOY_BUTTON_START]
+		if skip_key or skip_pad or (event is InputEventMouseButton and event.pressed):
 			skipping = true
 
 # ------------------------------------------------------------------ replays
@@ -465,7 +467,7 @@ func stage(shot_id: String) -> Camera3D:
 			hud.hide()
 	# Door prompts ("[E] …") belong to playing, not to the shot.
 	for label in place.find_children("*", "Label3D", true, false):
-		if "[E]" in label.text:
+		if "[E]" in label.text or "[A]" in label.text:
 			label.hide()
 	var camera := Camera3D.new()
 	camera.name = "ShotCamera"

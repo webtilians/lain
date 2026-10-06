@@ -22,6 +22,7 @@ func _ready() -> void:
 	for side in ["left", "right", "top", "bottom"]:
 		margin.add_theme_constant_override("margin_" + side, 35)
 	surface.add_child(margin)
+	(func() -> void: PadKeyboard.make_room(margin, 35)).call_deferred()
 	var layout := VBoxContainer.new()
 	layout.add_theme_constant_override("separation", 12)
 	margin.add_child(layout)
@@ -48,6 +49,7 @@ func _ready() -> void:
 	command_line.max_length = 80
 	command_line.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	command_line.text_submitted.connect(_on_command)
+	command_line.set_meta("pad_words", ["telnet ", "23"])  # the address is the puzzle: Ryoko gives it
 	row.add_child(command_line)
 	enter_wired = Button.new()
 	enter_wired.text = "ENTRAR EN LA MALLA"
