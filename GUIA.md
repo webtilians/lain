@@ -26,6 +26,18 @@ objetivo no ve los pasos, solo el objetivo y las ayudas de los terminales.
 ![Paso 1, en casa](docs/guide/guide-apartment.png)
 ![Paso 4, en el barrio](docs/guide/guide-district.png)
 
+## Lo que se puede usar
+
+Todo lo interactivo se distingue del decorado:
+- **Cerca** (unos 7 metros), cada cosa que se puede usar tiene encima una luz suave.
+- **A tu alcance**, la que usarías al pulsar E (A con mando) tiene un **anillo** que late
+  en el suelo y una **flecha** con la tecla encima.
+
+Es exactamente la que responde, porque la elige la misma regla que la interacción.
+Mientras hay una ventana, un terminal o una cinemática abiertos, no se ve nada.
+
+![El ordenador de casa, a tu alcance](docs/highlight/highlight-home.png)
+
 ## Cómo está hecho
 
 - `client/scripts/ui/Guide.gd` (autoload) solo lee el estado que ya muestra
@@ -35,3 +47,7 @@ objetivo no ve los pasos, solo el objetivo y las ayudas de los terminales.
 - `client/tools/test_guide.gd` recorre los cinco pasos, el objetivo, F1, la
   ayuda del Terminal, un jugador veterano y que el estado no cambia.
 - `client/tools/capture_guide.gd` hace las capturas de arriba.
+- `client/scripts/world/InteractHighlight.gd`, hijo del jugador (`IsoController`),
+  dibuja las marcas; `IsoController.nearest_interactable()` es la regla común.
+  `client/tools/test_highlight.gd` lo prueba y `client/tools/capture_highlight.gd`
+  hace la captura.

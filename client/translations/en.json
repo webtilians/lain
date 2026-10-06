@@ -2007,5 +2007,9 @@
   "Enviar (Start)": "Send (Start)",
   "Cerrar (B)": "Close (B)",
   "Anterior": "Previous",
-  "Siguiente": "Next"
+  "Siguiente": "Next",
+  "WASD  Caminar     E  Interactuar     J  Diario": "WASD  Walk     E  Interact     J  Journal",
+  "Stick  Caminar     A  Interactuar     Y  Diario": "Stick  Walk     A  Interact     Y  Journal",
+  "E  Entrar: {v0}     ·     J  Diario": "E  Enter: {v0}     ·     J  Journal",
+  "A  Entrar: {v0}     ·     Y  Diario": "A  Enter: {v0}     ·     Y  Journal"
 }

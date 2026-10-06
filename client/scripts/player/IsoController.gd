@@ -46,6 +46,10 @@ func _ready() -> void:
 	camera.size = orthographic_size
 
 	_update_camera()
+	var highlight := Node3D.new()
+	highlight.name = "InteractHighlight"
+	highlight.set_script(load("res://scripts/world/InteractHighlight.gd"))
+	add_child(highlight)
 
 	if fixed_camera:
 		return
@@ -140,6 +144,23 @@ func _unhandled_input(
 		get_viewport().set_input_as_handled()
 
 func _try_interaction() -> void:
+	var nearest := nearest_interactable()
+
+	if nearest == null:
+		print(
+			"ISO // NO INTERACTABLE NEARBY"
+		)
+		return
+
+	print(
+		"ISO // INTERACT -> ",
+		nearest.name
+	)
+
+	nearest.interact()
+
+func nearest_interactable() -> Node3D:
+	## What E (or A) would use right now; InteractHighlight marks this same one.
 	var nearest: Node3D = null
 	var nearest_distance := interaction_distance
 
@@ -168,15 +189,4 @@ func _try_interaction() -> void:
 		nearest = candidate
 		nearest_distance = distance
 
-	if nearest == null:
-		print(
-			"ISO // NO INTERACTABLE NEARBY"
-		)
-		return
-
-	print(
-		"ISO // INTERACT -> ",
-		nearest.name
-	)
-
-	nearest.interact()
+	return nearest
