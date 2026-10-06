@@ -18,6 +18,7 @@ config/features=PackedStringArray("4.7")
 [autoload]
 
 Language="*res://scripts/core/Language.gd"
+Gamepad="*res://scripts/core/Gamepad.gd"
 
 ServerConnection="*res://scripts/network/ServerConnection.gd"
 WorldApi="*res://scripts/network/WorldApi.gd"
@@ -36,6 +37,7 @@ ShellTerminal="*res://scripts/ui/ShellTerminal.gd"
 PresenceSignal="*res://scripts/ui/PresenceSignal.gd"
 Guide="*res://scripts/ui/Guide.gd"
 Cinematic="*res://scripts/ui/Cinematic.gd"
+PadKeyboard="*res://scripts/ui/PadKeyboard.gd"
 
 [display]
 

@@ -189,7 +189,7 @@ func _received(result: int, code: int, _headers: PackedStringArray, body: Packed
 func _unhandled_input(event: InputEvent) -> void:
 	if not ServerConnection.is_online() or _chat_input == null or EventDialog.visible:
 		return
-	if event is InputEventKey and event.pressed and event.keycode == KEY_ENTER:
+	if event.is_action_pressed("chat"):
 		_chat_input.grab_focus()
 		get_viewport().set_input_as_handled()
 

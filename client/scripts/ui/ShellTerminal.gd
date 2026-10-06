@@ -38,6 +38,7 @@ func _ready() -> void:
 	for side in ["left", "right", "top", "bottom"]:
 		margin.add_theme_constant_override("margin_" + side, 24)
 	surface.add_child(margin)
+	(func() -> void: PadKeyboard.make_room(margin, 24)).call_deferred()
 	var column := VBoxContainer.new()
 	column.add_theme_constant_override("separation", 8)
 	margin.add_child(column)
@@ -45,6 +46,9 @@ func _ready() -> void:
 	column.add_child(bar)
 	var title := Label.new()
 	title.text = "LA MALLA · TERMINAL   ·   Esc para salir   ·   help · man <tema>"
+	title.set_meta("keyboard", title.text)
+	Gamepad.changed.connect(func(pad: bool) -> void:
+		title.text = "LA MALLA · TERMINAL   ·   B para salir   ·   help · man <tema>" if pad else title.get_meta("keyboard"))
 	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	title.add_theme_color_override("font_color", Color("5f8f73"))
 	bar.add_child(title)
@@ -76,7 +80,11 @@ func _ready() -> void:
 	input.add_theme_font_size_override("font_size", 16)
 	input.text_submitted.connect(_submit)
 	input.text_changed.connect(func(_text: String) -> void: pass)
+	# The controller's on-screen keyboard offers these and the history (PadKeyboard).
+	input.set_meta("pad_words", ["help", "ls", "cat ", "cd ", "man ", "pista", "grep ", "sha256 "])
+	input.set_meta("pad_history", history_step)
 	line.add_child(input)
+	Gamepad.scroll_with_stick(output)
 	surface.hide()
 
 func is_open() -> bool:
@@ -115,16 +123,16 @@ func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_cancel"):
 		close_shell()
 		get_viewport().set_input_as_handled()
-	elif event is InputEventKey and event.pressed and input.has_focus() and not history.is_empty():
-		if event.keycode == KEY_UP:
-			history_index = maxi(0, history_index - 1)
-		elif event.keycode == KEY_DOWN:
-			history_index = mini(history.size(), history_index + 1)
-		else:
-			return
-		input.text = history[history_index] if history_index < history.size() else ""
-		input.caret_column = input.text.length()
+	elif event is InputEventKey and event.pressed and input.has_focus() and event.keycode in [KEY_UP, KEY_DOWN]:
+		history_step(-1 if event.keycode == KEY_UP else 1)
 		get_viewport().set_input_as_handled()
+
+func history_step(step: int) -> void:
+	if history.is_empty():
+		return
+	history_index = clampi(history_index + step, 0, history.size())
+	input.text = history[history_index] if history_index < history.size() else ""
+	input.caret_column = input.text.length()
 
 func _submit(text: String) -> void:
 	var command := text.strip_edges()

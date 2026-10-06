@@ -167,6 +167,8 @@ func show_event(
 	Input.mouse_mode = (
 		Input.MOUSE_MODE_VISIBLE
 	)
+	Gamepad.focus_root(continue_button.get_parent())
+	Gamepad.focus_first(continue_button.get_parent())
 
 func close_event() -> void:
 	var previous_owner := current_owner_id
@@ -225,6 +227,7 @@ func show_choices(
 			_on_choice_pressed.bind(choice_id)
 		)
 		choices_box.add_child(button)
+	Gamepad.focus_first(choices_box)
 
 func show_conversation(
 	owner_id: String,
@@ -235,7 +238,9 @@ func show_conversation(
 	show_choices(owner_id, event_title, event_text, choices)
 	message_row.visible = true
 	message_input.text = ""
-	message_input.grab_focus()
+	# With the controller the answers come first; the text field (and its keyboard) is one press below.
+	if not Gamepad.using_pad:
+		message_input.grab_focus()
 
 
 func _on_message_enter(_value: String) -> void:

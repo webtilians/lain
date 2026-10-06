@@ -88,7 +88,7 @@ func _physics_process(
 		"move_backward"
 	)
 	var focus := get_viewport().gui_get_focus_owner()
-	if ServerConnection.is_online() and (focus is LineEdit or focus is TextEdit):
+	if ServerConnection.is_online() and (focus is LineEdit or focus is TextEdit) or PadKeyboard.is_open():
 		input_vector = Vector2.ZERO
 
 	var right := (
