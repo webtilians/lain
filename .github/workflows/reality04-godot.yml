@@ -289,6 +289,16 @@ jobs:
             exit 1
           fi
 
+      - name: Ryoko and the teacher talk with their drawn portrait
+        shell: bash
+        run: |
+          set -euo pipefail
+          /tmp/lain-godot --headless --path client --script res://tools/test_portraits.gd 2>&1 | tee /tmp/lain-portraits.log
+          grep -q 'PORTRAITS_OK' /tmp/lain-portraits.log
+          if grep -E '^(SCRIPT ERROR:|ERROR:)' /tmp/lain-portraits.log; then
+            exit 1
+          fi
+
       - name: Visual 0.22 interiors dressed without touching collisions
         shell: bash
         run: |

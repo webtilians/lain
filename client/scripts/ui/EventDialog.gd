@@ -7,6 +7,17 @@ signal choice_selected(
 signal dialog_closed(owner_id: String)
 signal message_submitted(owner_id: String, message: String)
 
+## Characters with a drawn portrait, by the name the dialogue shows (the server's
+## speaker, in either language). It appears beside the text, like a visual novel.
+const PORTRAITS := {
+	"RYOKO": "res://art/portraits/ryoko.svg",
+	"PROFESOR": "res://art/portraits/profesor.svg",
+	"TEACHER": "res://art/portraits/profesor.svg",
+}
+const PORTRAIT_SIZE := Vector2(510, 645)
+const PORTRAIT_LEFT := 20.0
+const PORTRAIT_SHIFT := 170.0  # the text panel moves right to leave the portrait room
+
 var background: ColorRect
 var title_label: Label
 var body_label: Label
@@ -17,6 +28,9 @@ var message_row: HBoxContainer
 var message_input: LineEdit
 var send_button: Button
 var current_owner_id := ""
+var panel: PanelContainer
+var portrait: TextureRect
+var portrait_key := ""
 
 var active_player: Node = null
 
@@ -36,7 +50,21 @@ func _ready() -> void:
 	)
 	add_child(background)
 
-	var panel := PanelContainer.new()
+	# Under the panel, which overlaps its shoulder a little.
+	portrait = TextureRect.new()
+	portrait.name = "Portrait"
+	portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	portrait.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	portrait.set_anchors_preset(Control.PRESET_BOTTOM_LEFT)
+	portrait.offset_left = PORTRAIT_LEFT
+	portrait.offset_right = PORTRAIT_LEFT + PORTRAIT_SIZE.x
+	portrait.offset_top = -PORTRAIT_SIZE.y
+	portrait.offset_bottom = 0.0
+	portrait.visible = false
+	background.add_child(portrait)
+
+	panel = PanelContainer.new()
 	background.add_child(panel)
 	panel.set_anchors_and_offsets_preset(
 		Control.PRESET_CENTER
@@ -145,6 +173,7 @@ func show_event(
 ) -> void:
 	title_label.text = event_title
 	body_label.text = event_text
+	_show_portrait(portrait_for(event_title))
 	choices_box.visible = false
 	message_row.visible = false
 	continue_button.visible = true
@@ -174,6 +203,7 @@ func close_event() -> void:
 	var previous_owner := current_owner_id
 	current_owner_id = ""
 	visible = false
+	_show_portrait("")
 
 	if is_instance_valid(active_player):
 		active_player.set_physics_process(
@@ -186,6 +216,27 @@ func close_event() -> void:
 	active_player = null
 	if not previous_owner.is_empty():
 		dialog_closed.emit(previous_owner)
+
+static func portrait_for(title: String) -> String:
+	var key := title.strip_edges().to_upper()
+	return key if PORTRAITS.has(key) else ""
+
+func _show_portrait(key: String) -> void:
+	var shift := 0.0 if key.is_empty() else PORTRAIT_SHIFT
+	panel.offset_left = -315.0 + shift
+	panel.offset_right = 315.0 + shift
+	if key == portrait_key:
+		return  # the same character keeps talking: no new entrance
+	portrait_key = key
+	portrait.visible = not key.is_empty()
+	if key.is_empty():
+		return
+	portrait.texture = load(PORTRAITS[key])
+	portrait.modulate.a = 0.0
+	var entrance := create_tween().set_parallel()
+	entrance.tween_property(portrait, "modulate:a", 1.0, 0.25)
+	entrance.tween_property(portrait, "position:x", PORTRAIT_LEFT, 0.25).from(PORTRAIT_LEFT - 40.0) \
+		.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 
 func show_choices(
 	owner_id: String,
