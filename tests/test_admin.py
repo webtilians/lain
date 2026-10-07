@@ -25,6 +25,16 @@ def tunnel(headers=None):
     return SimpleNamespace(client=SimpleNamespace(host="127.0.0.1"), headers=headers or {})
 
 
+def field_names(value):
+    if isinstance(value, dict):
+        for key, item in value.items():
+            yield str(key)
+            yield from field_names(item)
+    elif isinstance(value, (list, tuple)):
+        for item in value:
+            yield from field_names(item)
+
+
 def test_panel_is_hidden_from_public_requests(world):
     client, *_ = world
     assert client.get("/admin").status_code == 404
@@ -48,7 +58,8 @@ def test_panel_shows_connections_progress_and_no_chat_text(world):
     assert players["Alice"]["sessions"] == 1 and players["Alice"]["fragments"] == 0
     assert any(session["name"] == "Bob" and session["open"] for session in data["sessions"])
     assert data["server"]["chat_messages"] == 1 and "secreto" not in str(data)
-    assert all("hash" not in key and "salt" not in key for key in str(data).split())
+    # Field names, not words: the server's last commit message may say anything ("resaltado").
+    assert not any("hash" in key or "salt" in key for key in field_names(data))
 
 
 def test_a_long_gap_opens_a_new_session(world, monkeypatch):

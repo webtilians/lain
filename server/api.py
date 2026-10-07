@@ -138,11 +138,14 @@ class PresenceRequest(BaseModel):
     z: float
     yaw: float = 0
     dialogue: bool = False
+    # Residents within earshot on the player's screen, nearest first (zone_chat answers with them).
+    near: list[Annotated[str, Field(max_length=64)]] | None = Field(default=None, max_length=12)
 
 
 class ChatRequest(BaseModel):
     model_config = {"extra": "forbid"}
     text: str = Field(min_length=1, max_length=240)
+    near: list[Annotated[str, Field(max_length=64)]] | None = Field(default=None, max_length=12)
 
 
 def authenticated_player(
@@ -263,7 +266,7 @@ def player_chat(
         raise HTTPException(status_code=404, detail="ONLINE_DISABLED")
     try:
         with _world_lock:
-            return online.send_chat(player_id, request.text)
+            return online.send_chat(player_id, request.text, request.near)
     except ValueError as error:
         raise HTTPException(status_code=409, detail=str(error))
 

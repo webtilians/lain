@@ -5,11 +5,15 @@ there, and no line says whether a person or a resident wrote it. Residents go
 by their first name, like players, and every speaker reaches the client under
 the same kind of opaque key (online.speaker_key), never an actor id.
 
-Residents answer when someone names them. When a player is alone in a zone and
-says something to the room (a question, a greeting), one of the residents there
-may answer. With the characters' AI on, now and then a resident also says
-something of their own. Answers take the time a person would take to type, and
-the resident remembers what was said to them, as in a conversation.
+Only residents within earshot take part: the ones on the player's screen, as the
+client reports them (nearest first). They answer when someone names them; a
+player alone who was just talking with one keeps talking with them without
+naming them again. When a player is alone and says something to the room (a
+question, a greeting), the nearest resident may answer. With the characters' AI
+on, now and then a resident near someone also says something of their own.
+Answers take the time a person would take to type, and the resident remembers
+what was said to them, as in a conversation. A client too old to report who is
+near gets the whole zone, as before.
 """
 import queue
 import random
@@ -21,7 +25,9 @@ from .database import get_connection
 
 TYPING_PER_SECOND = 9.0     # characters a person types in a second, more or less
 MIN_DELAY, MAX_DELAY = 1.8, 7.0
-COOLDOWN = 20.0             # seconds between two lines of the same resident
+COOLDOWN = 20.0             # seconds between two lines of the same resident on their own
+REPLY_GAP = 4.0             # seconds between two answers of the same resident
+CONVERSATION = 120.0        # a player who talked with a resident this recently is still talking with them
 AMBIENT_EVERY = 240.0       # a zone with players hears a resident on their own about this often
 ROOM_CHANCE = 0.7           # alone, a question to the room gets an answer this often
 MAX_ANSWERS = 2             # residents answering one line
@@ -49,6 +55,7 @@ _worker = None
 _worker_lock = threading.Lock()
 _last_line: dict = {}       # resident id -> when they last spoke (monotonic)
 _next_ambient: dict = {}    # location -> when a resident there may next speak on their own
+_partner: dict = {}         # player id -> (resident id, when they last answered)
 
 
 def first_name(name: str) -> str:
@@ -81,22 +88,38 @@ def to_the_room(text: str) -> bool:
     return "?" in text or bool(_words(text) & ROOM_WORDS)
 
 
+def around(player_id: str, location: str) -> list:
+    """The residents within earshot of a player, nearest first (the whole zone for an old client)."""
+    from . import online
+    residents = residents_at(location)
+    near = online.near_residents(player_id)
+    if near is None:
+        return residents
+    names = dict(residents)
+    return [(actor, names[actor]) for actor in dict.fromkeys(near) if actor in names]
+
+
 def on_player_chat(player_id: str, player_name: str, text: str, location: str, others_present: bool) -> list:
     """Who answers a line said aloud; returns the residents that will (for tests and the log)."""
-    from . import i18n
-    residents = residents_at(location)
+    from . import i18n, online
+    residents = around(player_id, location)
     if not residents:
         return []
-    targets = addressed(text, residents)
-    # A line to the room is answered only by a resident who can really talk (the AI on).
-    if not targets and not others_present and ai_on() and to_the_room(text) and random.random() < ROOM_CHANCE:
-        targets = [random.choice(residents)]
     now = time.monotonic()
+    targets = addressed(text, residents)
+    partner, since = _partner.get(player_id, (None, -CONVERSATION))
+    if not targets and not others_present and ai_on() and now - since < CONVERSATION and partner in dict(residents):
+        # Still talking with them: no need to say their name every time (with people around, it is said).
+        targets = [(partner, dict(residents)[partner])]
+    # A line to the room is answered only by a resident who can really talk (the AI on): the nearest.
+    if not targets and not others_present and ai_on() and to_the_room(text) and random.random() < ROOM_CHANCE:
+        targets = [residents[0] if online.near_residents(player_id) is not None else random.choice(residents)]
     chosen = []
     for resident in targets[:MAX_ANSWERS]:
-        if now - _last_line.get(resident[0], -COOLDOWN) < COOLDOWN:
+        if now - _last_line.get(resident[0], -REPLY_GAP) < REPLY_GAP:
             continue
         _last_line[resident[0]] = now
+        _partner[player_id] = (resident[0], now)
         chosen.append(resident)
         _submit(("reply", resident, player_id, player_name, text, location, i18n.language(), now))
     return chosen
@@ -182,7 +205,9 @@ def ambient_tick(now: float | None = None) -> list:
         if now < _next_ambient.setdefault(location, now + AMBIENT_EVERY * random.uniform(0.3, 0.8)):
             continue
         _next_ambient[location] = now + AMBIENT_EVERY * random.uniform(0.75, 1.25)
-        residents = [r for r in residents_at(location) if now - _last_line.get(r[0], -COOLDOWN) >= COOLDOWN]
+        near = online.residents_near_players(location)  # someone must be there to hear it
+        residents = [r for r in residents_at(location) if now - _last_line.get(r[0], -COOLDOWN) >= COOLDOWN
+                     and (near is None or r[0] in near)]
         if not residents:
             continue
         resident = random.choice(residents)

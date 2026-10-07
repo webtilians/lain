@@ -276,11 +276,14 @@ def list_visible_actors(
         ).fetchall()
 
     from .residents import public_residents
+    from .online import speaker_key
     residents = public_residents(player_location)
     return [
         {
             "id": row[0],
             "name": row[1],
+            # The key their lines carry in the zone chat, so the client shows them over the right head.
+            "who": speaker_key(row[0]),
             **residents.get(row[0], {}),
             **({"patrol_step": row[2]}
                if row[3] == "GENERATED" and row[2] != 0 else {}),

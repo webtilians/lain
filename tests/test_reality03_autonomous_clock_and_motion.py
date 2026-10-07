@@ -63,7 +63,8 @@ def test_idle_player_does_not_stop_independent_world_and_generated_motion():
         ).fetchone()[0] == 0
     assert row == ("WANDER", original_player)
     assert waypoint == (1,)
-    assert {"id": entity_id, "name": "Eco", "patrol_step": 1} in (
+    from server.world_core.online import speaker_key
+    assert {"id": entity_id, "name": "Eco", "who": speaker_key(entity_id), "patrol_step": 1} in (
         build_player_snapshot()["visible_actors"]
     )
 
@@ -84,7 +85,8 @@ def test_local_waypoint_persists_and_cannot_be_set_by_player():
         ).fetchone() == (2,)
     restarted = Simulation()
     assert restarted.all_agents[entity_id].location == sim.player.location
-    assert {"id": entity_id, "name": "Eco", "patrol_step": 2} in (
+    from server.world_core.online import speaker_key
+    assert {"id": entity_id, "name": "Eco", "who": speaker_key(entity_id), "patrol_step": 2} in (
         build_player_snapshot()["visible_actors"]
     )
 
