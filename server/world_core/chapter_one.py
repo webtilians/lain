@@ -88,7 +88,7 @@ def activate_chapter(player=PLAYER) -> bool:
         if c.execute("INSERT OR IGNORE INTO chapter_one(player_id,started_minute,connection_minute) VALUES(?,?,?)",
                      (player, minute, first)).rowcount == 0:
             return False
-        _evidence(c, player, "RETURN_MESSAGE", "Has vuelto", "MESSAGE", "UNKNOWN_WIRED", "Identidad desconocida · Malla",
+        _evidence(c, player, "RETURN_MESSAGE", "Has vuelto", "MESSAGE", "UNKNOWN_WIRED", "Identidad desconocida · Indara",
                   "Has vuelto.", minute, f"Recibido al abrir este capítulo, minuto {minute}")
         memories = {
             HARUTO: "Creo recordar al jugador en la escuela la noche anterior. No comprobé el reloj ni vi quién abrió la puerta.",
@@ -203,13 +203,13 @@ def _talk(c, player, actor, choice, minute, location, run):
             text = "«Cerré la escuela anoche. Firmé el parte del pasillo. Nadie tenía permiso para estar dentro. Eso no significa que yo vigilase la puerta toda la noche.»"
             _evidence(c, player, "PROFESSOR_CLOSED", "El profesor afirma haber cerrado", "TESTIMONY", actor, name, text, minute, "La noche anterior, según el profesor")
         else:
-            text = "«El tercer ordenador conserva el archivo local. Puedes leer la cabecera; la lista de cuentas necesita una referencia del archivo. El parte del pasillo y la copia de la Malla no siempre coinciden.»"
+            text = "«El tercer ordenador conserva el archivo local. Puedes leer la cabecera; la lista de cuentas necesita una referencia del archivo. El parte del pasillo y la copia de Indara no siempre coinciden.»"
     else:
         if choice == "INTRO":
             text = "«Te miro y tengo la sensación de que esta conversación ya empezó. ¿Te ha contestado alguien?»"
         elif choice == "MESSAGE":
             _share(c, player, actor, "RETURN_MESSAGE", minute)
-            text = "«¿Has vuelto? Eso no prueba que te conozca. Tal vez el mensaje estaba esperando a cualquier persona. Busca la escuela en el archivo de la Malla y fíjate en quién firma los registros.»"
+            text = "«¿Has vuelto? Eso no prueba que te conozca. Tal vez el mensaje estaba esperando a cualquier persona. Busca la escuela en el archivo de Indara y fíjate en quién firma los registros.»"
         else:
             text = "«Sí. Algunos ordenadores conservaban el reloj sin sincronizar; otros usaban una cuenta compartida. Un nombre en un registro no es una persona entrando por una puerta.»"
             _evidence(c, player, "RYOKO_CLOCK", "Ryoko: una cuenta no es una persona", "TESTIMONY", actor, name, text, minute)
@@ -308,7 +308,7 @@ def _wired(c, player, target, minute, location, run):
         choices.append(_choice("Contrastar referencias y reconstruir la cuenta.", "WIRED", "RECONSTRUCT"))
     if run[3] == "SEAL":
         choices.append(_choice("Abrir el paquete de Ryoko.", "WIRED", "PACKET"))
-    return _page("LA MALLA · ARCHIVO", text, choices)
+    return _page("INDARA · ARCHIVO", text, choices)
 
 
 def _decision_response(c, player, actor, decision):

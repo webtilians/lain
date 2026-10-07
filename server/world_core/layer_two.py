@@ -145,7 +145,7 @@ def files(c, player: str, relay, story3) -> dict:
 
 def _mail() -> str:
     return "\n".join([
-        "De: k <k@estacion.malla>",
+        "De: k <k@estacion.indara>",
         "Asunto: Tu dirección, dos veces",
         "",
         "La tabla del conmutador de la estación no se está quieta: tu dirección aparece en dos puertos a la vez.",
@@ -352,7 +352,7 @@ def layer_snapshot(player: str) -> dict:
         goal = "Tu dirección aparece en dos puertos del conmutador de la estación. Averigua cuál es el tuyo."
     return {
         "active": True, "title": TITLE, "goal": goal, "decision": run["decision"], "fragments": count,
-        "mail": {"subject": "Tu dirección, dos veces", "from": "k@estacion.malla",
+        "mail": {"subject": "Tu dirección, dos veces", "from": "k@estacion.indara",
                  "body": "Tu dirección aparece en dos sitios a la vez. Lee ~/correo/direccion.eml en el Terminal."},
     }
 

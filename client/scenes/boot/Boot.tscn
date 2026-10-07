@@ -30,5 +30,5 @@ grow_vertical = 2
 
 [node name="Status" type="Label" parent="Center"]
 layout_mode = 2
-text = "CONECTANDO CON LA MALLA..."
+text = "CONECTANDO CON INDARA..."
 horizontal_alignment = 1

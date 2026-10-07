@@ -2,7 +2,7 @@ extends SceneTree
 ## Cinematics: the opening plays once for a new player (the computer writes),
 ## the title once on the first step outside, the Wired connection,
 ## each Sesión Cero fragment, the ending and each finished research call play on
-## live changes only, a technology entering the Malla plays once per PC, another
+## live changes only, a technology entering Indara plays once per PC, another
 ## account on the same PC gets the start of the story again (not the news), they wait
 ## for open terminals, freeze and give back the player and camera, Esc skips,
 ## and the snapshot never changes.
@@ -127,7 +127,7 @@ func run() -> void:
 	check(cinematic.playing == "wired", "connecting to the Wired has no cinematic")
 	seen = {}
 	await watch(seen)
-	check(shown(seen, "LA MALLA") and shown(seen, "Tú eres la Sesión Uno."), "the Wired cinematic is incomplete")
+	check(shown(seen, "INDARA") and shown(seen, "Tú eres la Sesión Uno."), "the Wired cinematic is incomplete")
 	check(shown(seen, "SYN-ACK") and shown(seen, "ENLACE ESTABLECIDO"), "the connection has no handshake")
 
 	# A fragment waits until the terminal closes.
@@ -181,7 +181,7 @@ func run() -> void:
 	check(not cinematic.root.visible, "the cinematic layer stays on screen")
 	check(api.snapshot.prologue == before.prologue and api.snapshot.minute == before.minute, "a cinematic changed the snapshot")
 
-	# Research: a finished call plays live; a technology entering the Malla plays once, even on a first snapshot.
+	# Research: a finished call plays live; a technology entering Indara plays once, even on a first snapshot.
 	state = state.duplicate(true)
 	state["research"] = {"active": true, "unlocked": [], "completed": [{"id": "QB-01",
 		"name": "El qubit y la clave que delata al espía", "centre": "Instituto de Física del Puerto"}]}
@@ -191,20 +191,20 @@ func run() -> void:
 	seen = {}
 	await watch(seen)
 	check(shown(seen, "INSTITUTO DE FÍSICA DEL PUERTO · REGISTRO") and shown(seen, "El qubit y la clave que delata al espía")
-		and shown(seen, "La Malla aprende."), "the research cinematic is incomplete")
+		and shown(seen, "Indara aprende."), "the research cinematic is incomplete")
 	cinematic.known = {}
 	state = state.duplicate(true)
 	state.research.unlocked = [{"id": "qkd", "name": "QKD",
-		"about": "La Malla reparte claves con fotones: si alguien escucha, se nota.",
+		"about": "Indara reparte claves con fotones: si alguien escucha, se nota.",
 		"next": "Desde hoy, cualquiera puede usar qkd en el terminal."}]
 	api.snapshot_updated.emit(state)
 	await frames(2)
 	check(cinematic.playing == "evolve" and cinematic.queue.is_empty(),
-		"a technology entering the Malla does not play once (or an old call replays)")
+		"a technology entering Indara does not play once (or an old call replays)")
 	seen = {}
 	await watch(seen)
-	check(shown(seen, "LA MALLA EVOLUCIONA") and shown(seen, "QKD") and shown(seen, "cualquiera puede usar qkd"),
-		"the Malla's evolution cinematic is incomplete")
+	check(shown(seen, "INDARA EVOLUCIONA") and shown(seen, "QKD") and shown(seen, "cualquiera puede usar qkd"),
+		"Indara's evolution cinematic is incomplete")
 	saved = ConfigFile.new()
 	check(saved.load(path) == OK and "malla:qkd" in Array(saved.get_value("cinematics", "seen", [])),
 		"the technology's cinematic is not remembered")
@@ -217,7 +217,7 @@ func run() -> void:
 	server.session_path = "user://test_cinematic_session.json"
 	server.set_session("t".repeat(43), "Otra")
 	check(not "opening" in cinematic.seen and not "title" in cinematic.seen and "malla:qkd" in cinematic.seen,
-		"a new account on this PC skips the start of the story, or sees the Malla news again: " + str(cinematic.seen))
+		"a new account on this PC skips the start of the story, or sees Indara news again: " + str(cinematic.seen))
 	cinematic._remember("opening")
 	server.clear_session()
 	check("title" in cinematic.seen and cinematic.seen_for == "cinematics", "the first account's cinematics are lost")
@@ -234,7 +234,7 @@ func run() -> void:
 	var labels: Array = journal.cinema_controls.get_children().map(func(button): return button.text)
 	check(journal.cinema_controls.visible and labels.size() == 13, "the diary does not list every scene reached: " + str(labels))
 	check("TÍTULO // SESIÓN CERO" in labels, "the title cannot be watched again")
-	check("INVESTIGACIÓN // El qubit y la clave que delata al espía" in labels and "LA MALLA EVOLUCIONA // QKD" in labels,
+	check("INVESTIGACIÓN // El qubit y la clave que delata al espía" in labels and "INDARA EVOLUCIONA // QKD" in labels,
 		"research scenes missing from the diary")
 	check("ARRANQUE // LA TERMINAL" in labels and "FINAL // GRACIAS POR RECIBIRLA" in labels, "start-up or ending missing from the diary")
 	var third: Button = journal.cinema_controls.get_children().filter(func(button): return button.text.begins_with("FRAGMENTO 3/7")).front()

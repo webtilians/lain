@@ -1,9 +1,9 @@
 # Sesión Cero · El Instituto de Física del Puerto
 
-El primer centro de investigación de la Malla (etapa 1 de
+El primer centro de investigación de Indara (etapa 1 de
 [EVOLUCION.md](EVOLUCION.md)). Lo dirige Hideo Sakamoto, el profesor de
 ciencias del colegio, y se visita desde el terminal: casa o cualquier armario,
-en cuanto el jugador está conectado a la Malla (Capa 03).
+en cuanto el jugador está conectado a Indara (Capa 03).
 
 ## Las convocatorias
 
@@ -15,13 +15,13 @@ Una convocatoria es una unidad de estudio con tres partes:
 
 Quien termina las tres entra en el **registro del Instituto**
 (`instituto registro`), con su nombre y el minuto. Cuando la terminan **tres
-personas**, su tecnología **entra en la Malla para todos**: una orden nueva en
-todos los terminales, una cinemática «La Malla evoluciona» que cada uno ve una
+personas**, su tecnología **entra en Indara para todos**: una orden nueva en
+todos los terminales, una cinemática «Indara evoluciona» que cada uno ve una
 vez y lo que saben de ello Hideo y Nora cuando les hablas.
 
 | Orden | Qué hace |
 |---|---|
-| `instituto` | portada: convocatorias abiertas, tu progreso y lo que ya sabe la Malla |
+| `instituto` | portada: convocatorias abiertas, tu progreso y lo que ya sabe Indara |
 | `instituto ver QB-01` | una convocatoria: sus tres partes, con lo que llevas hecho |
 | `instituto leer qubit` | un artículo (cuenta para la parte de estudiar) |
 | `instituto entregar <canal> <clave>` | entrega el resultado de QB-01 |
@@ -61,7 +61,7 @@ Las comprobaciones explican qué falta: no se puede entregar sin haber medido,
 sin las bases publicadas o sin comparar la muestra («antes de usar una clave hay
 que comprobar que nadie escuchaba»). Medir otra vez empieza una ronda nueva.
 
-**Trae a la Malla:** `qkd`. Antes de que lleguen las tres personas, `qkd` dice
+**Trae a Indara:** `qkd`. Antes de que lleguen las tres personas, `qkd` dice
 cuántas faltan. Después enseña los enlaces cuánticos entre casa y los armarios
 con su tasa de error (QBER): todos con un poco de ruido del cable menos uno, que
 pasa del 20 % porque KAGAMI escucha, y cambia cada día. Prepara la amenaza de la
@@ -84,9 +84,9 @@ etapa 4 (un ordenador cuántico contra los Círculos).
     ronda. Se repite hasta que la clave tiene al menos 4 bits y, si el canal
     está pinchado, la muestra enseña el espía.
 - El estado del jugador lleva `research` (convocatorias terminadas y
-  tecnologías que ya están en la Malla), ya en el idioma del jugador. `client/scripts/ui/Cinematic.gd` lo usa
-  para dos cinemáticas: «La Malla aprende», al terminar una convocatoria, y «La
-  Malla evoluciona», al entrar una tecnología. Las dos se pueden volver a ver
+  tecnologías que ya están en Indara), ya en el idioma del jugador. `client/scripts/ui/Cinematic.gd` lo usa
+  para dos cinemáticas: «Indara aprende», al terminar una convocatoria, y «La
+  Indara evoluciona», al entrar una tecnología. Las dos se pueden volver a ver
   desde el diario.
 - Pruebas: `tests/test_institute.py` (el recorrido completo, leyendo la salida
   como lo haría un jugador, el canal pinchado, el simulador, las tres personas

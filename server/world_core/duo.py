@@ -58,7 +58,7 @@ def initialize_duo() -> None:
 
 
 def run_for(c, player):
-    """Open to every player already connected to the Malla (Capa 03 started)."""
+    """Open to every player already connected to Indara (Capa 03 started)."""
     if not enabled() or not _exists(c):
         return None
     if c.execute("SELECT 1 FROM layer_three WHERE player_id=?", (player,)).fetchone() is None:

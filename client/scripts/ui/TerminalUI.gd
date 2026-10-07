@@ -95,7 +95,7 @@ func _render_mail(next_snapshot: Dictionary) -> void:
 
 func _render_wired(next_snapshot: Dictionary) -> void:
 	mode = "WIRED"
-	sender_label.text = "LA MALLA"
+	sender_label.text = "INDARA"
 	subject_label.text = "REMOTE SIGNALS"
 	connect_button.visible = false
 
@@ -128,7 +128,7 @@ func _render_wired(next_snapshot: Dictionary) -> void:
 			lines.append(str(presence.get("name", "UNKNOWN")))
 		lines.append("")
 	body_label.text = "\n".join(lines)
-	status_label.text = "ENLACE A LA MALLA // ACTIVO"
+	status_label.text = "ENLACE A INDARA // ACTIVO"
 
 func _show_mail() -> void:
 	mode = "MAIL"

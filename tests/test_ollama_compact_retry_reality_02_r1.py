@@ -64,7 +64,7 @@ def test_http_400_retries_once_with_compact_context(monkeypatch, capsys):
         }).encode("utf-8"))
 
     monkeypatch.setattr(llm_dialogue, "urlopen", fake_network)
-    current = "¿Qué imaginas al otro lado de la Malla?"
+    current = "¿Qué imaginas al otro lado de Indara?"
     reply = llm_dialogue._provider_reply(full_context(), current)
     assert reply == "Ahora sí respondo."
     assert len(payloads) == 2

@@ -22,7 +22,7 @@ func capture() -> void:
 	var choices: Array[Dictionary] = [
 		{"id": "ASK_WHO", "text": "«¿A quién me parezco?»"},
 		{"id": "ASK_CLASS", "text": "«¿Qué se hacía en esta aula?»"},
-		{"id": "ASK_STUDENT", "text": "«Alguien me ha escrito. Dice que usted le enseñó a hablar con la Malla.»"},
+		{"id": "ASK_STUDENT", "text": "«Alguien me ha escrito. Dice que usted le enseñó a hablar con Indara.»"},
 		{"id": "GOODBYE", "text": "Dejarle con su registro."},
 	]
 	root.get_node("EventDialog").show_choices("PROLOGUE_PROFESSOR", "Profesor",

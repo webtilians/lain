@@ -5,7 +5,7 @@ Es la primera capa del **Protocolo de presencia**. La historia completa, los
 temas y las siete capas están en [BIBLIA_NARRATIVA.md](BIBLIA_NARRATIVA.md).
 
 Se activa con `LAIN_LAYER_THREE=1` (ya lo ponen el lanzador, `serve-city.ps1` y
-el servidor online) en cuanto el jugador se ha conectado a la Malla.
+el servidor online) en cuanto el jugador se ha conectado a Indara.
 
 ## Qué hay que hacer (sin destripar)
 
@@ -17,7 +17,7 @@ el servidor online) en cuanto el jugador se ha conectado a la Malla.
    **E** y elige **Conectarse al puerto de consola del armario**.
 4. En su búfer de descartes están los segmentos: desordenados, con una
    retransmisión y una copia alterada. Reconstruye el mensaje con `ensamblar`.
-5. El diario de la Malla es una cadena de hashes y alguien reescribió una
+5. El diario de Indara es una cadena de hashes y alguien reescribió una
    entrada. Demuéstralo con `denunciar`.
 6. Decide qué haces con el paquete: `reenviar` o `soltar`. K y Nora lo
    recordarán (o no) en sus conversaciones con IA.

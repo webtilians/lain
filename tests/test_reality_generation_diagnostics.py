@@ -29,7 +29,7 @@ def test_proposal_parser_checks_all_original_npc_replies_when_opted_in(monkeypat
         reality, "urlopen",
         lambda *a, **kw: FakeResponse(
             "```json\n"
-            '{"proposal":{"name":"Eco","premise":"Un reflejo en la Malla",'
+            '{"proposal":{"name":"Eco","premise":"Un reflejo en Indara",'
             '"goal":"OBSERVE_WORLD"}}'
             "\n```"
         ),

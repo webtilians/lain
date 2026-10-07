@@ -1,6 +1,6 @@
 """One chat for everyone in a zone, people and residents alike.
 
-The Malla's broadcast domain: whatever is said somewhere is heard by everyone
+Indara's broadcast domain: whatever is said somewhere is heard by everyone
 there, and no line says whether a person or a resident wrote it. Residents go
 by their first name, like players, and every speaker reaches the client under
 the same kind of opaque key (online.speaker_key), never an actor id.

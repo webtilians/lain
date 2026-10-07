@@ -324,7 +324,7 @@ func _completed(result: int, code: int, _headers: PackedStringArray, body: Packe
 			ServerConnection.set_session(str(payload.get("token", "")), str(payload.get("name", "")))
 			me = {"name": payload.get("name", ""), "has_password": true}
 			if kind == "register":
-				show_menu("Cuenta creada. Bienvenido a la Malla, " + str(payload.get("name", "")) + ".")
+				show_menu("Cuenta creada. Bienvenido a Indara, " + str(payload.get("name", "")) + ".")
 			else:
 				_enter()
 		"password":
@@ -342,7 +342,7 @@ func _enter() -> void:
 func _on_snapshot_updated(snapshot: Dictionary) -> void:
 	var origin: Dictionary = snapshot.get("prologue", {})
 	if bool(origin.get("enabled", false)) and str(origin.get("stage", "")) != "CONNECTED":
-		status.text = "SISTEMA LOCAL DISPONIBLE // SIN CONEXIÓN A LA MALLA"
+		status.text = "SISTEMA LOCAL DISPONIBLE // SIN CONEXIÓN A INDARA"
 	else:
 		status.text = "WORLD CORE SYNCHRONIZED"
 

@@ -37,9 +37,9 @@ CALLS = {
     },
 }
 TECHS = {
-    "qkd": {"title": "QKD", "text": "La Malla reparte claves con fotones: si alguien escucha, se nota.",
+    "qkd": {"title": "QKD", "text": "Indara reparte claves con fotones: si alguien escucha, se nota.",
             "line": "Desde hoy, cualquiera puede usar qkd en el terminal.",
-            "memory": "QKD ya está en la Malla: los armarios reparten sus claves con fotones y, si alguien "
+            "memory": "QKD ya está en Indara: los armarios reparten sus claves con fotones y, si alguien "
                       "escucha, la tasa de error lo delata. Salió de la convocatoria QB-01 del Instituto."},
 }
 
@@ -87,10 +87,10 @@ En el Instituto, Hideo hace de Alicia y tú de Bob: bb84 (man bb84).""",
 }
 ARTICLE_ALIASES = {"bb-84": "bb84", "qbit": "qubit", "cubit": "qubit"}
 
-MAIL = ("De: hideo <hideo@instituto.malla>\nAsunto: convocatoria QB-01\n\n"
-        "Doy ciencias en el colegio y, en mis ratos libres, llevo el Instituto de Física del Puerto, en la Malla.\n"
+MAIL = ("De: hideo <hideo@instituto.indara>\nAsunto: convocatoria QB-01\n\n"
+        "Doy ciencias en el colegio y, en mis ratos libres, llevo el Instituto de Física del Puerto, en Indara.\n"
         "Tenemos una convocatoria abierta: el qubit y la clave que delata al espía.\n"
-        "Si tres personas la terminan, la Malla aprenderá a repartir claves con fotones.\n"
+        "Si tres personas la terminan, Indara aprenderá a repartir claves con fotones.\n"
         "Empieza por la orden instituto. Y no te creas nada que no puedas medir.")
 
 
@@ -114,7 +114,7 @@ def initialize_institute() -> None:
 
 
 def run_for(c, player):
-    """Open with the research centres: to every player already connected to the Malla."""
+    """Open with the research centres: to every player already connected to Indara."""
     from . import research
     if c.execute("SELECT 1 FROM sqlite_master WHERE name='institute_qubit'").fetchone() is None:
         return None
@@ -365,14 +365,14 @@ def submit(c, player, args, minute, result) -> str:
     return "\n".join(lines + research.complete(c, player, "QB-01", minute, result))
 
 
-# --- qkd: what the Malla learnt -----------------------------------------------
+# --- qkd: what Indara learnt -----------------------------------------------
 
 def _qkd(c, player, story3) -> str:
     from . import research
     call = CALLS["QB-01"]
     if "qkd" not in research.unlocked(c):
         done = len(research.finished(c, "QB-01"))
-        return "\n".join([i18n.t("qkd: la Malla todavía no sabe repartir claves con fotones."),
+        return "\n".join([i18n.t("qkd: Indara todavía no sabe repartir claves con fotones."),
                           i18n.t(f"Llegará cuando {call['threshold']} personas terminen la convocatoria QB-01 del "
                                  f"Instituto (instituto ver QB-01). Van {done}.")])
     from .layer_three import RELAYS
@@ -380,7 +380,7 @@ def _qkd(c, player, story3) -> str:
     # The links are quiet but for one, a different one every day: KAGAMI copies everything.
     rng = random.Random(f"qkd:{datetime.date.today().isoformat()}")
     tapped = rng.randrange(len(hops) - 1)
-    lines = [i18n.t("qkd · enlaces cuánticos de la Malla (BB84 entre armarios)")]
+    lines = [i18n.t("qkd · enlaces cuánticos de Indara (BB84 entre armarios)")]
     for index in range(len(hops) - 1):
         rate = rng.randint(22, 27) if index == tapped else rng.randint(1, 4)
         state = i18n.t("ALGUIEN ESCUCHA") if index == tapped else i18n.t("ruido del cable")
@@ -425,9 +425,9 @@ está pinchado.
 La clave son tus bits en las posiciones donde coincidís y que no se han
 publicado, en orden. Se entrega con instituto entregar <canal> <clave>.
 Medir otra vez empieza una ronda nueva, con fotones nuevos.""",
-    "qkd": """qkd · claves cuánticas entre los armarios de la Malla
+    "qkd": """qkd · claves cuánticas entre los armarios de Indara
 
-Cuando QKD entra en la Malla, los armarios reparten sus claves con BB84.
+Cuando QKD entra en Indara, los armarios reparten sus claves con BB84.
 qkd enseña cada enlace con su tasa de error (QBER). Por debajo del 11 % es
 ruido del cable; por encima, alguien está midiendo los fotones.""",
 }

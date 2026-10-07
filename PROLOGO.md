@@ -8,7 +8,7 @@ que enganchar. Esto es lo que vive un jugador nuevo, en orden.
    solo. Alguien que firma «SESIÓN CERO» escribe con prisa:
    - que has vuelto;
    - que la están reescribiendo;
-   - que busques a quien le enseñó a hablar con la Malla, en el aula de informática
+   - que busques a quien le enseñó a hablar con Indara, en el aula de informática
      del colegio.
 
    Así el jugador tiene un motivo, y no solo una flecha en un mapa.
@@ -21,17 +21,17 @@ que enganchar. Esto es lo que vive un jugador nuevo, en orden.
    - Si le dices que alguien te ha escrito, te habla de Ryoko y de dónde pasa las
      noches: el Pasaje Azul, abajo, donde suena la música.
 5. **Ryoko** (el sótano del Azul). Desconfía: sin el profesor, no te habla de la
-   Malla.
+   Indara.
    - Si le cuentas lo de la Sesión Cero, se queda helada: ese nombre no debería
      existir.
-   - Te enseña su hoja, MALLA y 23, pero no te dice qué escribir delante.
+   - Te enseña su hoja, INDARA y 23, pero no te dice qué escribir delante.
    - Después puedes pedirle siempre que te la vuelva a enseñar («¿Me vuelves a enseñar la hoja?»).
 6. **El ordenador de casa** (CERO-DOS). `help` dice qué órdenes tiene el sistema, entre
    ellas `TELNET <red> <puerto>`; la red y el puerto los sabes por Ryoko.
    `type boot.log` enseña la noche en que se cerró la Sesión Cero y quién cambió el
    motivo.
 7. **La conexión.** El saludo entre las dos máquinas en pantalla (SYN, SYN-ACK, ACK) y
-   la Malla: «Tú eres la Sesión Uno».
+   Indara: «Tú eres la Sesión Uno».
 
 ## Las conversaciones
 
@@ -47,7 +47,7 @@ Ya no son un menú fijo de preguntas.
 Se mantienen las reglas de siempre:
 - ningún personaje dice la orden ni el protocolo;
 - el profesor no dice «discoteca»;
-- el dato de acceso es siempre «MALLA y 23».
+- el dato de acceso es siempre «INDARA y 23».
 
 ![El profesor](docs/cinematics/dialogue-professor.png)
 

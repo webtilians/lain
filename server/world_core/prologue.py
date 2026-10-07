@@ -13,9 +13,9 @@ from .messages import INITIAL_MESSAGE_ID
 PLAYER = "PLAYER_1"
 STAGES = ("FIND_TEACHER", "FIND_RYOKO", "FIND_TERMINAL", "CONNECTED")
 PROTOCOL = "telnet"
-HOST = "malla"
-# The English clue says MESH; players who learnt the old name may still type it.
-HOSTS = {HOST, "mesh", "wired"}
+HOST = "indara"
+# Players who learnt an older name of the network (Malla, the Mesh, Wired) may still type it.
+HOSTS = {HOST, "malla", "mesh", "wired"}
 PORT = "23"
 
 
@@ -80,14 +80,14 @@ def gate_move(player_id: str, target_location: str) -> tuple[bool, str]:
 PROFESSOR_CHOICES = {
     "ASK_WHO": "«¿A quién me parezco?»",
     "ASK_CLASS": "«¿Qué se hacía en esta aula?»",
-    "ASK_STUDENT": "«Alguien me ha escrito. Dice que usted le enseñó a hablar con la Malla.»",
+    "ASK_STUDENT": "«Alguien me ha escrito. Dice que usted le enseñó a hablar con Indara.»",
     "ASK_WHERE": "«¿Dónde encuentro a Ryoko?»",
     "GOODBYE": "Dejarle con su registro.",
 }
 RYOKO_CHOICES = {
     "ASK_WIRED": "«Me escribieron desde mi ordenador. Firmaban Sesión Cero.»",
     "ASK_SCHOOL": "«¿Fuiste alumna del profesor?»",
-    "ASK_ADDRESS": "«Necesito entrar en la Malla.»",
+    "ASK_ADDRESS": "«Necesito entrar en Indara.»",
     "ASK_ADDRESS_AGAIN": "«¿Me vuelves a enseñar la hoja?»",
     "ASK_METHOD": "«¿Y qué hay que escribir delante?»",
     "GOODBYE": "Dejarla con su música.",
@@ -159,14 +159,14 @@ RYOKO_LINES = {
     ),
     "ASK_ADDRESS_STRANGER": "«¿Entrar? No hablo de eso con desconocidos. ¿Quién te ha dicho que me busques?»",
     "ASK_ADDRESS": (
-        "Saca una hoja doblada mil veces y te la enseña sin soltarla. A lápiz, dos cosas: MALLA y 23. "
+        "Saca una hoja doblada mil veces y te la enseña sin soltarla. A lápiz, dos cosas: INDARA y 23. "
         "«El nombre de la red y el puerto por el que escucha.» Vuelve a guardarla. «Desde tu "
         "ordenador, no desde aquí. Y lo que hay que escribir delante no te lo voy a dar: si eres "
         "quien creo, lo sabrás.»"
     ),
     "ASK_ADDRESS_AGAIN": (
         "Ryoko resopla, pero vuelve a sacar la hoja doblada y te la pone delante, sin soltarla: "
-        "MALLA y 23. «El nombre de la red y su puerto. Apúntatelo de una vez.»"
+        "INDARA y 23. «El nombre de la red y su puerto. Apúntatelo de una vez.»"
     ),
     "ASK_METHOD": (
         "«Una orden muy vieja, de cuando las máquinas se hablaban por turnos.» Se encoge de hombros. "
@@ -198,7 +198,7 @@ def _professor(choice: str, stage: str) -> tuple[str, str, list]:
 
 
 def _ryoko(choice: str, stage: str) -> tuple[str, str, list]:
-    stranger = stage == "FIND_TEACHER"  # nobody sent you: she will not talk about the Malla
+    stranger = stage == "FIND_TEACHER"  # nobody sent you: she will not talk about Indara
     next_stage = stage
     if choice == "ASK_ADDRESS_AGAIN" and stage in {"FIND_TEACHER", "FIND_RYOKO"}:
         choice = "ASK_ADDRESS"  # she has not shown it yet: the first time, or not at all to a stranger
@@ -317,16 +317,16 @@ def prologue_projection(player_id: str = PLAYER) -> dict:
     hints = {
         "FIND_TEACHER": (
             "Alguien que firma «Sesión Cero» te ha escrito desde tu propio ordenador. "
-            "Busca en el colegio a quien le enseñó a hablar con la Malla: el aula de informática."
+            "Busca en el colegio a quien le enseñó a hablar con Indara: el aula de informática."
         ),
         "FIND_RYOKO": (
             "El profesor habló de Ryoko: de noche, en el Pasaje Azul, bajando las escaleras "
             "donde suena la música."
         ),
         "FIND_TERMINAL": (
-            "MALLA y 23: el nombre de la red y su puerto. Ryoko no quiso decirte qué escribir "
+            "INDARA y 23: el nombre de la red y su puerto. Ryoko no quiso decirte qué escribir "
             "delante. El ordenador de tu casa espera; si no sabes qué orden usar, pídele ayuda."
         ),
-        "CONNECTED": "Estás en la Malla. La Sesión Cero sigue ahí dentro, en algún sitio.",
+        "CONNECTED": "Estás en Indara. La Sesión Cero sigue ahí dentro, en algún sitio.",
     }
     return {"enabled": True, "stage": stage, "hint": t(hints.get(stage, ""))}

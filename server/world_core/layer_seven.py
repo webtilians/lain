@@ -30,9 +30,9 @@ K, NORA = "AGENT_K", "AGENT_NORA"
 COMMANDS = {"dig", "nslookup", "curl"}
 # The layer translates bodies itself so that headers and addresses stay byte-exact.
 RAW_COMMANDS = COMMANDS
-NODE = "nodo07.malla"
-MIRROR = "espejo.kagami.malla"
-NAMESERVERS = {"ns.noema.malla": "10.0.0.53", "ns.kagami.malla": "10.66.0.53", "ns.circulos.malla": "10.9.0.53"}
+NODE = "nodo07.indara"
+MIRROR = "espejo.kagami.indara"
+NAMESERVERS = {"ns.noema.indara": "10.0.0.53", "ns.kagami.indara": "10.66.0.53", "ns.circulos.indara": "10.9.0.53"}
 ENDING_NAMES = {"PERSIST": "persistir", "REPLICATE": "replicarte", "DISCONNECT": "desconectarte"}
 
 
@@ -153,7 +153,7 @@ def files(c, player: str, relay, story3) -> dict:
     if run is None or relay:
         return {}
     result = {f"{story3.home}/correo/nodo07.eml": _mail(),
-              "/etc/resolv.conf": "# Resolutor de la Malla vecinal (lo gestiona NOEMA)\nnameserver 10.0.0.53"}
+              "/etc/resolv.conf": "# Resolutor de Indara vecinal (lo gestiona NOEMA)\nnameserver 10.0.0.53"}
     from . import journal
     if run["decision"] == "REPLICATE" and not journal.enabled():
         result[f"{story3.home}/diario"] = _diary(c, player, run)
@@ -162,12 +162,12 @@ def files(c, player: str, relay, story3) -> dict:
 
 def _mail() -> str:
     return "\n".join([
-        "De: nora <nora@malla>",
+        "De: nora <nora@indara>",
         "Asunto: NODO_07",
         "",
         "Llevo años amplificando NODO_07 y nunca he podido entrar.",
         "No tiene armario: se llega desde cualquier terminal, hablando su protocolo.",
-        "Su nombre ya no resuelve: NOEMA lo borró de su registro. Pero la Malla no tiene un solo servidor de nombres.",
+        "Su nombre ya no resuelve: NOEMA lo borró de su registro. Pero Indara no tiene un solo servidor de nombres.",
         "Y ten cuidado: KAGAMI también sabe responder a ese nombre.",
         "",
         "  man dns   man dig   man http   man curl   man host   man auth",
@@ -176,31 +176,39 @@ def _mail() -> str:
 
 # --- DNS -----------------------------------------------------------------
 
-TXT = {"ns.noema.malla": "quien no está en el registro no existe",
-       "ns.kagami.malla": "todo se copia, nada muere",
-       "ns.circulos.malla": "sin dueño, sin copia, sin consenso"}
+TXT = {"ns.noema.indara": "quien no está en el registro no existe",
+       "ns.kagami.indara": "todo se copia, nada muere",
+       "ns.circulos.indara": "sin dueño, sin copia, sin consenso"}
+
+
+def _current_name(name: str) -> str:
+    """A name written with the network's former name (nodo07.malla) means the same today (nodo07.indara)."""
+    name = name.rstrip(".").lower()
+    if name == "malla" or name.endswith(".malla"):
+        return name[: -len("malla")] + "indara"
+    return name
 
 
 def _zone(story, server: str) -> dict:
     records = {
-        ("malla", "NS"): [f"{name}." for name in NAMESERVERS],
+        ("indara", "NS"): [f"{name}." for name in NAMESERVERS],
         ("wired", "NS"): [f"{name}." for name in NAMESERVERS],  # its old name still answers
-        ("malla", "TXT"): [f'"{i18n.t(TXT[server])}"'],
+        ("indara", "TXT"): [f'"{i18n.t(TXT[server])}"'],
         ("wired", "TXT"): [f'"{i18n.t(TXT[server])}"'],
         (MIRROR, "A"): [story.mirror_ip],
     }
     records.update({(name, "A"): [ip] for name, ip in NAMESERVERS.items()})
-    if server == "ns.kagami.malla":
+    if server == "ns.kagami.indara":
         records[(NODE, "CNAME")] = [f"{MIRROR}."]
-    if server == "ns.circulos.malla":
+    if server == "ns.circulos.indara":
         records[(NODE, "A")] = [story.node_ip]
     return records
 
 
-def _resolve(story, name: str, server: str = "ns.noema.malla"):
+def _resolve(story, name: str, server: str = "ns.noema.indara"):
     """The address a name resolves to on a server, following CNAMEs (None if it does not exist)."""
     zone = _zone(story, server)
-    name = name.rstrip(".").lower()
+    name = _current_name(name)
     for _ in range(4):
         if (name, "A") in zone:
             return zone[(name, "A")][0]
@@ -211,11 +219,11 @@ def _resolve(story, name: str, server: str = "ns.noema.malla"):
 
 
 def _dig(story, args) -> str:
-    server = "ns.noema.malla"
+    server = "ns.noema.indara"
     rest = []
     for arg in args:
         if arg.startswith("@"):
-            wanted = arg[1:].rstrip(".").lower()
+            wanted = _current_name(arg[1:])
             server = next((name for name, ip in NAMESERVERS.items() if wanted in (name, ip)), wanted)
         elif not arg.startswith("+"):
             rest.append(arg)
@@ -226,7 +234,7 @@ def _dig(story, args) -> str:
         return "Uso: dig [@servidor] <nombre> [A|NS|CNAME|TXT]"
     if server not in NAMESERVERS:
         return f";; connection timed out; no servers could be reached ({server})"
-    name = names[0].rstrip(".").lower()
+    name = _current_name(names[0])
     zone = _zone(story, server)
     header = [f"; <<>> dig <<>> {' '.join(args)}"]
     answer = []
@@ -247,7 +255,7 @@ def _dig(story, args) -> str:
     if answer:
         lines += [";; ANSWER SECTION:"] + answer
     else:
-        lines += [";; AUTHORITY SECTION:", f"malla.\t3600\tIN\tSOA\t{server}. registro.{server.split('.')[1]}.malla."]
+        lines += [";; AUTHORITY SECTION:", f"indara.\t3600\tIN\tSOA\t{server}. registro.{server.split('.')[1]}.indara."]
     return "\n".join(lines + [f";; SERVER: {NAMESERVERS[server]}#53 ({server})"])
 
 
@@ -425,8 +433,8 @@ def _curl(c, player, story, run, result, args, minute) -> str:
     authority, _, path = rest.partition("/")
     path = "/" + path
     host, _, port = authority.partition(":")
-    host, port = host.lower(), port or "80"
-    address = options["resolve"].get((host, port))
+    host, port = _current_name(host), port or "80"
+    address = {(_current_name(name), at): ip for (name, at), ip in options["resolve"].items()}.get((host, port))
     if address is None:
         parts = host.split(".")
         is_ip = len(parts) == 4 and all(part.isdigit() for part in parts)
@@ -443,7 +451,7 @@ def _curl(c, player, story, run, result, args, minute) -> str:
     vhost = request_headers.get("host", "").split(":")[0].lower()
     if address == story.mirror_ip:
         status, headers, body = _mirror(c, player, story, run, result, method, path, minute)
-    elif vhost == NODE:
+    elif _current_name(vhost) == NODE:
         status, headers, body = _node(c, player, story, run, result, method, path, request_headers, minute)
     else:
         status, headers, body = _response(421, "Este servidor atiende por nombre, y ese no es uno de los suyos.")
@@ -476,7 +484,7 @@ MEMORIES = {
     },
     "DISCONNECT": {
         NORA: "El jugador cerró su sesión en NODO_07 y la Sesión Cero por fin descansa. Su eco sigue allí.",
-        K: "Una sesión menos en la Malla. NODO_07 está más tranquilo.",
+        K: "Una sesión menos en Indara. NODO_07 está más tranquilo.",
     },
 }
 ENDINGS = {
@@ -537,21 +545,21 @@ MAN = {
     "dns": """DNS · nombres de la red
 
 Las máquinas se hablan por dirección (10.0.0.53); las personas, por nombre
-(nodo07.malla). Un servidor de nombres traduce uno en otro. Tipos de registro:
+(nodo07.indara). Un servidor de nombres traduce uno en otro. Tipos de registro:
 A (dirección), CNAME (este nombre es otro nombre), NS (quién responde por una
 zona) y TXT (texto libre). NXDOMAIN significa «ese nombre no existe»... según
 el servidor al que preguntes. /etc/resolv.conf dice a quién pregunta tu equipo.""",
     "dig": """dig [@servidor] <nombre> [A|NS|CNAME|TXT]
 
 Pregunta a un servidor de nombres. Sin @servidor usa el de /etc/resolv.conf.
-dig NS malla dice qué servidores responden por la zona malla; dig @otro nombre
+dig NS indara dice qué servidores responden por la zona indara; dig @otro nombre
 pregunta a otro. La respuesta trae status (NOERROR o NXDOMAIN) y la sección
 ANSWER con los registros encontrados.""",
     "http": """HTTP · el idioma de las aplicaciones
 
 Una petición es texto: un método (GET leer, PUT escribir en un sitio, POST
 enviar algo nuevo, DELETE borrar), una ruta (/sesiones) y cabeceras
-(Host: nodo07.malla). La respuesta trae un código: 2xx bien (200 OK,
+(Host: nodo07.indara). La respuesta trae un código: 2xx bien (200 OK,
 201 Created, 204 No Content), 4xx error tuyo (401 falta autenticarse,
 403 prohibido, 404 no existe, 405 método no permitido, 409 conflicto,
 421 ese servidor no atiende ese nombre).""",
@@ -600,7 +608,7 @@ def layer_snapshot(player: str) -> dict:
     return {
         "active": True, "title": TITLE, "goal": goal, "decision": run["decision"],
         "fragments": count,
-        "mail": {"subject": "NODO_07", "from": "nora@malla",
+        "mail": {"subject": "NODO_07", "from": "nora@indara",
                  "body": "Nora nunca ha podido entrar en NODO_07. Lee ~/correo/nodo07.eml en el Terminal."},
     }
 

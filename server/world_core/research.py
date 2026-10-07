@@ -1,11 +1,11 @@
-"""The Malla's research centres and their calls (convocatorias).
+"""Indara's research centres and their calls (convocatorias).
 
-Three centres, each a site of the Malla visited from the terminal: the
+Three centres, each a site of Indara visited from the terminal: the
 Instituto de Física del Puerto (instituto), the Laboratorio de Inteligencias
 (laboratorio) and the Archivo de Protocolos (archivo). A call has three parts:
 study its articles, do its experiment and demonstrate a result the server
 checks. Whoever finishes goes into the centre's registry, and when enough
-people have finished, the call's technology enters the Malla for everyone.
+people have finished, the call's technology enters Indara for everyone.
 
 Calls come from two places. Some are written by hand (QB-01, the qubit and
 BB84, in institute.py). The rest are brought by the watcher (watch.py) from
@@ -23,18 +23,18 @@ from .database import get_connection
 from . import i18n
 
 CENTRES = {
-    "instituto": {"title": "Instituto de Física del Puerto", "host": "instituto.malla", "director": "RESIDENT_019",
+    "instituto": {"title": "Instituto de Física del Puerto", "host": "instituto.indara", "director": "RESIDENT_019",
                   "who": "Dirige: Hideo Sakamoto, profesor de ciencias del colegio.", "prefix": "QB",
-                  "commands": ("instituto", "institute"), "en": "institute", "mail": "hideo <hideo@instituto.malla>",
+                  "commands": ("instituto", "institute"), "en": "institute", "mail": "hideo <hideo@instituto.indara>",
                   "focus": "física: cuántica, fotones, medida, materiales, energía, ordenadores cuánticos"},
-    "laboratorio": {"title": "Laboratorio de Inteligencias", "host": "laboratorio.malla", "director": "RESIDENT_025",
+    "laboratorio": {"title": "Laboratorio de Inteligencias", "host": "laboratorio.indara", "director": "RESIDENT_025",
                     "who": "Dirige: Takeshi Uno, ayudante del aula de informática.", "prefix": "IA",
                     "commands": ("laboratorio", "laboratory", "lab"), "en": "lab",
-                    "mail": "takeshi <takeshi@laboratorio.malla>",
+                    "mail": "takeshi <takeshi@laboratorio.indara>",
                     "focus": "inteligencia artificial: modelos de lenguaje, agentes, aprendizaje, datos, robótica"},
-    "archivo": {"title": "Archivo de Protocolos", "host": "archivo.malla", "director": "RESIDENT_049",
+    "archivo": {"title": "Archivo de Protocolos", "host": "archivo.indara", "director": "RESIDENT_049",
                 "who": "Dirige: Yasuo Ueda, coleccionista, desde la librería.", "prefix": "PR",
-                "commands": ("archivo", "archive"), "en": "archive", "mail": "yasuo <yasuo@archivo.malla>",
+                "commands": ("archivo", "archive"), "en": "archive", "mail": "yasuo <yasuo@archivo.indara>",
                 "focus": "redes y protocolos: internet, cifrado, seguridad, estándares, criptografía poscuántica"},
 }
 COMMAND_CENTRE = {command: key for key, centre in CENTRES.items() for command in centre["commands"]}
@@ -83,7 +83,7 @@ def _tables() -> None:
 
 
 def run_for(c, player):
-    """Open to every player already connected to the Malla (Capa 03 started)."""
+    """Open to every player already connected to Indara (Capa 03 started)."""
     if not enabled() or not _exists(c):
         return None
     if c.execute("SELECT 1 FROM layer_three WHERE player_id=?", (player,)).fetchone() is None:
@@ -124,12 +124,12 @@ def articles(call) -> list:
 
 
 def tech(call) -> dict:
-    """What the call brings to the Malla: title, two lines for everyone and what the residents remember."""
+    """What the call brings to Indara: title, two lines for everyone and what the residents remember."""
     if not call["generated"]:
         from .institute import TECHS
         return dict(TECHS[call["unlock"]], id=call["unlock"])
     return {"id": call["id"].lower(), "title": call["tech"], "text": call["tech_text"], "line": call["tech_line"],
-            "memory": f"{call['tech']} ya está en la Malla, gracias a la convocatoria {call['id']} del "
+            "memory": f"{call['tech']} ya está en Indara, gracias a la convocatoria {call['id']} del "
                       f"{CENTRES[call['centre']]['title']}: {call['tech_text']['es']}"}
 
 
@@ -162,7 +162,7 @@ def finished(c, call_id) -> list:
 
 
 def unlocked(c) -> dict:
-    """Technologies already in the Malla: {tech id: (call id, minute)}, only from calls that still exist."""
+    """Technologies already in Indara: {tech id: (call id, minute)}, only from calls that still exist."""
     if not _exists(c, "research_unlocks"):
         return {}
     known = calls(c)
@@ -171,7 +171,7 @@ def unlocked(c) -> dict:
 
 
 def complete(c, player, call_id, minute, result) -> list:
-    """Close the call for this player once its three parts are done; the last one in may change the Malla."""
+    """Close the call for this player once its three parts are done; the last one in may change Indara."""
     call, state = calls(c)[call_id], progress(c, player, call_id)
     if state["completed"] is not None or not (studied(call, state) and state["experiment"] and state["demo"]):
         return []
@@ -193,11 +193,11 @@ def complete(c, player, call_id, minute, result) -> list:
     title = say(brought["title"])
     if done < call["threshold"]:
         return lines + [i18n.t(f"Van {done} de {call['threshold']}. Cuando lleguen a {call['threshold']}, "
-                               f"{title} entrará en la Malla para todos.")]
+                               f"{title} entrará en Indara para todos.")]
     c.execute("INSERT OR REPLACE INTO research_unlocks VALUES(?,?,?,?)", (brought["id"], call_id, minute, time.time()))
     c.execute("INSERT INTO events(minute,actor_id,action,target,details) VALUES(?,?,'MALLA_EVOLVES',?,?)",
               (minute, player, brought["id"], call_id))
-    return lines + ["", i18n.t(f"LA MALLA APRENDE · {title} entra en la Malla para todos."),
+    return lines + ["", i18n.t(f"INDARA APRENDE · {title} entra en Indara para todos."),
                     say(brought["text"]), say(brought["line"])]
 
 
@@ -210,7 +210,7 @@ def _checks(call, state) -> list:
 def _count(c, call) -> str:
     done, brought = len(finished(c, call["id"])), tech(call)
     if brought["id"] in unlocked(c):
-        return i18n.t(f"han terminado {done} · {say(brought['title'])} ya está en la Malla")
+        return i18n.t(f"han terminado {done} · {say(brought['title'])} ya está en Indara")
     return i18n.t(f"han terminado {done}/{call['threshold']}")
 
 
@@ -236,10 +236,10 @@ def _portal(c, player, centre) -> str:
     known = _known(c)
     lines.append("")
     if known:
-        lines.append(i18n.t("Lo que ya sabe la Malla:") + " " +
+        lines.append(i18n.t("Lo que ya sabe Indara:") + " " +
                      ", ".join(i18n.t(f"{say(brought['title'])} (desde el minuto {minute})") for brought, minute in known))
     else:
-        lines.append(i18n.t("Lo que ya sabe la Malla: nada nuevo todavía."))
+        lines.append(i18n.t("Lo que ya sabe Indara: nada nuevo todavía."))
     lines.append(i18n.t(f"{cmd} ver <código> · {cmd} leer <artículo> · {cmd} registro · man {cmd}"))
     return "\n".join(lines)
 
@@ -273,7 +273,7 @@ def _show(c, player, centre, args) -> str:
     study, experiment, demo = _checks(call, state)
     reading = " · ".join(i18n.t(f"{cmd} leer {slug}") for slug in articles(call))
     lines = [f"{call['id']} · {say(call['title'])}",
-             i18n.t(f"{info['title']} · umbral: {call['threshold']} personas · trae a la Malla: "
+             i18n.t(f"{info['title']} · umbral: {call['threshold']} personas · trae a Indara: "
                     f"{say(tech(call)['title'])}"), "", say(call["summary"])]
     if call["generated"]:
         lines.append(i18n.t(f"Fuente: {call['source']['name']} · {call['source']['title']}"))
@@ -350,7 +350,7 @@ def _registry(c, centre) -> str:
     every = calls(c)
     for _tech, (call_key, minute) in unlocked(c).items():
         if every[call_key]["centre"] == centre:
-            lines.append(i18n.t(f"{say(tech(every[call_key])['title'])} entró en la Malla en el minuto {minute}."))
+            lines.append(i18n.t(f"{say(tech(every[call_key])['title'])} entró en Indara en el minuto {minute}."))
     return "\n".join(lines)
 
 
@@ -408,7 +408,7 @@ def dispatch(c, player, story3, relay, result, name, args, minute):
 
 
 def files(c, player: str, relay, story3) -> dict:
-    """Each watcher call's data files, under /malla/<centre>/<code>/, at home and at every cabinet;
+    """Each watcher call's data files, under /indara/<centre>/<code>/, at home and at every cabinet;
     at home, also the director's mail announcing it."""
     if run_for(c, player) is None:
         return {}
@@ -515,7 +515,7 @@ def exercise(c, player, call, part) -> dict:
 def _exercise(code, centre, kind, player, part, _language) -> dict:
     # Every shell command lists its files, so each call's data is built once per player and language.
     rng = random.Random(f"{code}:{player}:{part}")
-    path = f"/malla/{centre}/{code.lower()}/{part}.txt"
+    path = f"/indara/{centre}/{code.lower()}/{part}.txt"
     statement, answer, data = GENERATORS[kind].make(rng, path)
     return {"statement": statement, "answer": answer, "files": data}
 
@@ -615,7 +615,7 @@ def layer_actor_context(actor: str, player: str) -> list:
         brought = _known(c)
     memories = [{"id": f"RESEARCH_{call_id}", "text": text, "source": player, "learned_minute": minute}
                 for call_id, text, minute in rows if call_id in known]
-    return memories + [{"id": f"MALLA_{item['id'].upper()}", "text": item["memory"], "source": "MALLA",
+    return memories + [{"id": f"MALLA_{item['id'].upper()}", "text": item["memory"], "source": "INDARA",
                         "learned_minute": minute} for item, minute in brought]
 
 
@@ -638,27 +638,27 @@ def research_snapshot(player: str) -> dict:
     }
 
 
-HELP = """Centros de investigación de la Malla:
+HELP = """Centros de investigación de Indara:
   instituto · laboratorio · archivo        convocatorias abiertas de cada centro
   <centro> ver <código> · <centro> leer <artículo> · <centro> entregar <código> <respuesta> · <centro> registro"""
 
 MAN = {
-    "instituto": """instituto · laboratorio · archivo · los centros de investigación de la Malla
+    "instituto": """instituto · laboratorio · archivo · los centros de investigación de Indara
 
-  instituto      Instituto de Física del Puerto (instituto.malla)
-  laboratorio    Laboratorio de Inteligencias (laboratorio.malla)
-  archivo        Archivo de Protocolos (archivo.malla)
+  instituto      Instituto de Física del Puerto (instituto.indara)
+  laboratorio    Laboratorio de Inteligencias (laboratorio.indara)
+  archivo        Archivo de Protocolos (archivo.indara)
 
-  <centro>                       convocatorias abiertas y lo que ya sabe la Malla
+  <centro>                       convocatorias abiertas y lo que ya sabe Indara
   <centro> ver <código>          una convocatoria: sus tres partes y cómo vas
   <centro> leer <artículo>       los artículos para estudiar
   <centro> entregar ...          entrega el resultado de una convocatoria
   <centro> registro              quién ha terminado cada convocatoria
 Cada convocatoria tiene tres partes: estudiar, experimentar y demostrar.
-Cuando la terminan bastantes personas, su tecnología entra en la Malla para
+Cuando la terminan bastantes personas, su tecnología entra en Indara para
 todos. El vigía de cada centro trae convocatorias nuevas cada pocos días, a
 partir de noticias reales.""",
 }
-MAN_ALIASES = {"institute": "instituto", "instituto.malla": "instituto", "laboratorio": "instituto",
+MAN_ALIASES = {"institute": "instituto", "instituto.indara": "instituto", "laboratorio": "instituto",
                "lab": "instituto", "laboratory": "instituto", "archivo": "instituto", "archive": "instituto",
                "centros": "instituto", "convocatoria": "instituto", "convocatorias": "instituto"}

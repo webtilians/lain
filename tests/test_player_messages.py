@@ -35,7 +35,7 @@ def test_initial_player_message_is_visible():
     message = snapshot["messages"][0]
 
     assert message["id"] == INITIAL_MESSAGE_ID
-    assert message["sender"] == "unknown@malla"
+    assert message["sender"] == "unknown@indara"
 
 # ======================================================
 # 2. NARRATIVE LIVES ON SERVER

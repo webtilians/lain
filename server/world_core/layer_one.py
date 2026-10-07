@@ -135,7 +135,7 @@ def files(c, player: str, relay, story3) -> dict:
 
 def _mail() -> str:
     return "\n".join([
-        "De: profesor <partes@escuela.malla>",
+        "De: profesor <partes@escuela.indara>",
         "Asunto: Parte de incidencia · enlace del pabellón B",
         "",
         "El enlace del pabellón B lleva días mudo. Alguien cortó el cable de su armario, en el aula de informática.",
@@ -313,7 +313,7 @@ def layer_snapshot(player: str) -> dict:
         goal = "Alguien cortó el cable del armario del aula de informática. Lee en el osciloscopio lo último que llevaba."
     return {
         "active": True, "title": TITLE, "goal": goal, "decision": run["decision"], "fragments": count,
-        "mail": {"subject": "Parte de incidencia · enlace del pabellón B", "from": "partes@escuela.malla",
+        "mail": {"subject": "Parte de incidencia · enlace del pabellón B", "from": "partes@escuela.indara",
                  "body": "El enlace del pabellón B lleva días mudo. Lee ~/correo/cable.eml en el Terminal."},
     }
 

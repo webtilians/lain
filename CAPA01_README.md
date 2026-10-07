@@ -9,7 +9,7 @@ online.
 
 ## Cuándo aparece
 
-- **Jugadores nuevos:** se abre con la conexión a la Malla, a la vez que la
+- **Jugadores nuevos:** se abre con la conexión a Indara, a la vez que la
   [Capa 03](CAPA03_README.md). La esquina de la pantalla enseña primero la
   Capa 01.
 - **Quien ya estaba más adelante:** la tiene abierta para jugarla cuando quiera.

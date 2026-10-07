@@ -52,7 +52,7 @@ func _ready() -> void:
 	command_line.set_meta("pad_words", ["telnet ", "23"])  # the address is the puzzle: Ryoko gives it
 	row.add_child(command_line)
 	enter_wired = Button.new()
-	enter_wired.text = "ENTRAR EN LA MALLA"
+	enter_wired.text = "ENTRAR EN INDARA"
 	enter_wired.visible = false
 	enter_wired.pressed.connect(_enter_wired)
 	layout.add_child(enter_wired)
@@ -79,7 +79,7 @@ func open_terminal() -> void:
 	elif stage == "CONNECTED":
 		text += (
 			"\nLa orden fue aceptada, pero el enlace se interrumpio "
-			+ "antes de abrir la Malla. Repite el comando para recuperar "
+			+ "antes de abrir Indara. Repite el comando para recuperar "
 			+ "la conexion guardada.\n"
 		)
 	else:
@@ -148,7 +148,7 @@ func _on_server_result(result: Dictionary) -> void:
 		connected = true
 		transcript.text += (
 			"Abriendo enlace remoto...\n"
-			+ "MALLA:23 // ENLACE ESTABLECIDO\n\n"
+			+ "INDARA:23 // ENLACE ESTABLECIDO\n\n"
 			+ "NO ESTOY MUERTA. SOLO DEJE DE ESTAR AHI.\n"
 			+ "El silencio del mundo ha cambiado.\n"
 		)

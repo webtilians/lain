@@ -10,7 +10,7 @@ from .prologue import stage_for
 
 # Label and observable inclination; NOT a claim about hidden psychology.
 ROLE_RULES = {
-    "ARCHIVIST": ("Archivista de la Malla", "Contrasta señales y registros.", 4),
+    "ARCHIVIST": ("Archivista de Indara", "Contrasta señales y registros.", 4),
     "SIGNAL_KEEPER": ("Vigilante de señal", "Permanece atento a las variaciones de NODE_07.", 3),
     "ORIGIN_SEEKER": ("Buscador de origen", "Explora vínculos con su aparición.", 2),
     "MONITOR": ("Observador de entidades", "Registra la conducta observable de otras presencias.", 5),
@@ -31,7 +31,7 @@ ORIGIN_NAME_ROLES = {
 }
 NPC_RULES = {
     "AGENT_K": ("Agente del Protocolo", "Investiga alteraciones de la red."),
-    "AGENT_NORA": ("Habitante de la Malla", "Interpreta señales desde su propia experiencia."),
+    "AGENT_NORA": ("Habitante de Indara", "Interpreta señales desde su propia experiencia."),
 }
 
 
@@ -191,7 +191,7 @@ def visible_npc_sheets(player_id: str, location: str) -> list[dict]:
         "NIGHTCLUB": {
             "id": "RYOKO", "name": "Ryoko",
             "role": "FORMER_STUDENT", "role_label": "Antigua alumna",
-            "focus": "Desconfía de quien pregunta por la Malla. Guarda una hoja con dos datos.",
+            "focus": "Desconfía de quien pregunta por Indara. Guarda una hoja con dos datos.",
         },
     }
     if stage in {"FIND_TEACHER", "FIND_RYOKO", "FIND_TERMINAL", "CONNECTED"}:

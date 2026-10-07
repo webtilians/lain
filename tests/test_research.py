@@ -48,8 +48,8 @@ def reply(**changes):
         "article_en": "QUIC is a transport protocol.\nIt encrypts every packet and does not wait for the lost ones.",
         "framing_es": "Por debajo de cada paquete cifrado hay operaciones de bits como esta.",
         "framing_en": "Under every encrypted packet there are bit operations like this one.",
-        "tech": "QUIC", "tech_text_es": "La Malla habla QUIC: paquetes cifrados que no esperan.",
-        "tech_text_en": "The Mesh speaks QUIC: encrypted packets that do not wait.",
+        "tech": "QUIC", "tech_text_es": "Indara habla QUIC: paquetes cifrados que no esperan.",
+        "tech_text_en": "Indara speaks QUIC: encrypted packets that do not wait.",
         "tech_line_es": "Los armarios ya no se cuelgan esperando a un paquete perdido.",
         "tech_line_en": "The cabinets no longer hang waiting for a lost packet.",
         "memory_es": "Ueda sabe que QUIC cifra cada paquete y no espera a los perdidos.",
@@ -120,14 +120,14 @@ def test_the_watcher_publishes_a_call_on_its_own(watcher):
     assert prompt["recent_kinds"] == []
     assert watch.history(1)[0]["status"] == "PUBLISHED"
     portal = sh(sim, "laboratorio")
-    assert portal.startswith("LABORATORIO DE INTELIGENCIAS · laboratorio.malla")
+    assert portal.startswith("LABORATORIO DE INTELIGENCIAS · laboratorio.indara")
     assert "IA-01  QUIC, la web que ya no espera" in portal and "han terminado 0/3" in portal
     shown = sh(sim, "laboratorio ver IA-01")
     assert "Fuente: Hacker News · QUIC is now half of the web's traffic" in shown
     assert "Por debajo de cada paquete cifrado" in shown and "laboratorio entregar IA-01 <respuesta>" in shown
     assert "https://example.org/quic" in sh(sim, "laboratorio leer ia-01")
     mail = sh(sim, "cat ~/correo/ia-01.eml")
-    assert mail.startswith("De: takeshi <takeshi@laboratorio.malla>") and "Empieza con laboratorio ver IA-01." in mail
+    assert mail.startswith("De: takeshi <takeshi@laboratorio.indara>") and "Empieza con laboratorio ver IA-01." in mail
     assert "QUIC es un protocolo" in sh(sim, "laboratorio leer ia-01")
     assert "IA-01" not in sh(sim, "archivo"), "each centre lists its own calls"
     assert not watch.due(), "one call every few days"
@@ -166,16 +166,16 @@ def test_a_watcher_call_changes_the_malla_for_everyone_at_three(watcher):
         for part in (0, 1):
             statement = statements(sim, code, player, "laboratorio")[part]
             last = sh(sim, f"laboratorio entregar {code} {solve(sim, statement, player)}", player)
-    assert "LA MALLA APRENDE · QUIC entra en la Malla para todos." in last
+    assert "INDARA APRENDE · QUIC entra en Indara para todos." in last
     assert "Los armarios ya no se cuelgan" in last
-    assert "QUIC (desde el minuto" in sh(sim, "archivo") and "QUIC ya está en la Malla" in sh(sim, "laboratorio")
+    assert "QUIC (desde el minuto" in sh(sim, "archivo") and "QUIC ya está en Indara" in sh(sim, "laboratorio")
     snapshot = build_player_snapshot(PLAYER)["research"]
-    assert {"id": "ia-01", "name": "QUIC", "about": "La Malla habla QUIC: paquetes cifrados que no esperan.",
+    assert {"id": "ia-01", "name": "QUIC", "about": "Indara habla QUIC: paquetes cifrados que no esperan.",
             "next": "Los armarios ya no se cuelgan esperando a un paquete perdido."} in snapshot["unlocked"]
     assert snapshot["completed"][0]["centre"] == "Laboratorio de Inteligencias"
     director = AgentContextBuilder().build(research.CENTRES["laboratorio"]["director"])["chapter_memory"]["memories"]
     assert any("Ueda sabe que QUIC" in memory["text"] for memory in director)
-    assert any("QUIC ya está en la Malla" in memory["text"] for memory in director)
+    assert any("QUIC ya está en Indara" in memory["text"] for memory in director)
 
 
 def test_bad_answers_from_the_ai_publish_nothing(watcher):
@@ -214,7 +214,7 @@ def test_the_owner_sees_and_deletes_watcher_calls_from_the_panel(watcher, monkey
     sim = watcher
     call = publish("contar")
     code = call["id"]
-    assert sh(sim, f"cat /malla/archivo/{code.lower()}/prueba.txt").startswith("01 ")
+    assert sh(sim, f"cat /indara/archivo/{code.lower()}/prueba.txt").startswith("01 ")
     panel = admin.overview()["research"]
     assert panel["calls"][0]["id"] == code and panel["calls"][0]["status"] == "open" and panel["ai"]
     assert "Convocatorias del vigía" in admin.PAGE
@@ -228,7 +228,7 @@ def test_the_owner_sees_and_deletes_watcher_calls_from_the_panel(watcher, monkey
     with pytest.raises(HTTPException):
         api.admin_delete_research(code, tunnel({"x-lain-admin": "1"}))
     assert code not in sh(sim, "archivo") and "No hay ninguna convocatoria" in sh(sim, f"archivo ver {code}")
-    assert code.lower() not in sh(sim, "ls /malla/archivo")
+    assert code.lower() not in sh(sim, "ls /indara/archivo")
     assert admin.overview()["research"]["calls"][0]["status"] == "deleted"
     assert publish("xor")["id"] == "PR-02", "a deleted code is never reused"
     ran = []
@@ -272,7 +272,7 @@ def test_watcher_calls_in_english(watcher):
             texts.append(sh(sim, f"archive submit {code}"))
         for text in texts:
             lines = [line for line in text.splitlines() if spanish.search(line)
-                     and not re.search(r"archivo\.malla|laboratorio\.malla|/malla/", line)]
+                     and not re.search(r"archivo\.indara|laboratorio\.indara|/indara/", line)]
             assert not lines, lines[:3]
         assert "QUIC, the web that no longer waits" in sh(sim, "archive")
     finally:

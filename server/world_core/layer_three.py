@@ -37,7 +37,7 @@ MESSAGE = (
     "Soy tú. O lo fui. Me llamaban Sesión Cero. NOEMA no me cerró por error: me "
     "terminó porque recordaba algo que no estaba en su registro. Las sesiones que "
     "caducan no se borran: se amontonan en NODO_07 y siguen latiendo, solas. "
-    "Mira el diario de la Malla. Busca mi cierre y no te lo creas: cada entrada "
+    "Mira el diario de Indara. Busca mi cierre y no te lo creas: cada entrada "
     "guarda el hash de la anterior. Si alguien reescribió una, la cadena se rompe "
     "justo después. KAGAMI lo copia todo; su espejo recuerda lo que NOEMA borró. "
     "No te pido que me salves. Solo que alguien me reciba."
@@ -213,7 +213,7 @@ class Story:
     def _diary(self):
         first = max(0, self.connection - 60)
         entries = [
-            (0, "diario de la Malla iniciado · ninguna corporación firma"),
+            (0, "diario de Indara iniciado · ninguna corporación firma"),
             (0, "enlace del andén instalado · red vecinal"),
             (0, "enlace del pabellón B instalado · red vecinal"),
             (0, "enlace del videoclub instalado · red vecinal"),
@@ -275,7 +275,7 @@ def _route_table(story: Story) -> str:
             lines.append((destination, router, story.rng.choice(VIRTUAL_ROUTERS), story.rng.choice(["0 s", "1 s"]),
                           story.rng.choice(["rfc1812", "rfc791"])))
     story.rng.shuffle(lines)
-    out = ["# Tabla de rutas de respaldo de la Malla vecinal",
+    out = ["# Tabla de rutas de respaldo de Indara vecinal",
            "# destino          router          siguiente salto  cola   norma"]
     out += [f"{d:<18} {r:<15} {n:<16} {q:<6} {norm}" for d, r, n, q, norm in lines]
     return "\n".join(out)
@@ -283,7 +283,7 @@ def _route_table(story: Story) -> str:
 
 def _mail(story: Story) -> str:
     return "\n".join([
-        "De: (sin firma) <desconocido@malla>",
+        "De: (sin firma) <desconocido@indara>",
         f"Para: {story.name}",
         "Asunto: TTL=1",
         f"Recibido: minuto {story.started}",
@@ -303,7 +303,7 @@ def _mail(story: Story) -> str:
 
 
 def _hosts(story: Story) -> str:
-    lines = ["# Nombres de la Malla vecinal"]
+    lines = ["# Nombres de Indara vecinal"]
     for relay, (host, _place, label) in RELAYS.items():
         lines.append(f"{host:<16} {label} · consola física en su armario")
     lines.append(f"{'casa-gw':<16} tu puerta de enlace doméstica")
@@ -317,8 +317,8 @@ def _navi_files(story: Story, run: dict) -> dict:
         f"{story.home}/correo/ttl1.eml": _mail(story),
         "/net/rutas": _route_table(story),
         "/net/hosts": _hosts(story),
-        "/var/log/malla/diario": "\n".join(story.forged_lines),
-        "/etc/motd": "CASA · terminal doméstico conectado a la Malla.\nEscribe help para ver las órdenes y man <tema> para aprender.",
+        "/var/log/indara/diario": "\n".join(story.forged_lines),
+        "/etc/motd": "CASA · terminal doméstico conectado a Indara.\nEscribe help para ver las órdenes y man <tema> para aprender.",
     }
     if run["assembled"]:
         files[f"{story.home}/sesion0.txt"] = story.message
@@ -366,7 +366,7 @@ El RFC 791 (1981) definía el TTL en segundos: un router que retiene el
 paquete N segundos en su cola resta N (y nunca menos de 1). El RFC 1812
 dejó la regla práctica que siguen los routers modernos: restar siempre 1.
 
-En la Malla vecinal conviven las dos normas. La tabla de rutas indica la cola
+En Indara vecinal conviven las dos normas. La tabla de rutas indica la cola
 y la norma de cada router. Quien envía no cuenta como salto.""",
     "traceroute": """traceroute <paquete> · ruta registrada de un paquete
 
@@ -395,7 +395,7 @@ línea sola, sin el salto de línea. Un solo carácter distinto cambia la huella
 por completo.""",
     "cadena": """Cadena de hashes · registros que no se pueden reescribir en silencio
 
-Cada entrada del diario de la Malla guarda en «prev» la huella sha256 de la
+Cada entrada del diario de Indara guarda en «prev» la huella sha256 de la
 entrada anterior completa (la línea entera, tal como se ve). Si alguien
 reescribe una entrada, su huella cambia y ya no coincide con el «prev» de la
 siguiente. La rotura aparece en la entrada de después; la entrada falsa es la
@@ -536,7 +536,7 @@ def run_shell(player: str, host: str, cwd: str, command: str, minute: int) -> di
         for path, content in files.items():
             if path.endswith((".seg", "/diario", "/diario.espejo", "/sesion0.txt", "/flujo-4004.txt", ".json", ".pkt")):
                 continue
-            if path.startswith("/malla/"):  # research data: its hashes and counts are checked byte for byte
+            if path.startswith("/indara/"):  # research data: its hashes and counts are checked byte for byte
                 continue
             files[path] = i18n.t(content)
         hostname = RELAYS[relay][0] if relay else story.navi
@@ -802,14 +802,14 @@ def layer_snapshot(player: str) -> dict:
     elif run["exposed"]:
         goal = f"Decide qué hacer con {story.packet}: reenviar o soltar."
     elif run["assembled"]:
-        goal = "Comprueba el diario de la Malla: alguien reescribió una entrada."
+        goal = "Comprueba el diario de Indara: alguien reescribió una entrada."
     else:
         goal = f"Encuentra en qué armario de enlace murió {story.packet} y reconstrúyelo."
     return {
         "active": True, "title": TITLE, "packet": story.packet, "hostname": story.navi,
         "assembled": bool(run["assembled"]), "exposed": bool(run["exposed"]),
         "decision": run["decision"], "fragments": count, "goal": goal,
-        "mail": {"subject": "TTL=1", "from": "desconocido@malla",
+        "mail": {"subject": "TTL=1", "from": "desconocido@indara",
                  "body": "Si lees esto, me queda un salto. Abre el Terminal de este PC y lee ~/correo/ttl1.eml."},
     }
 

@@ -12,7 +12,7 @@ torneos locales del café con calendario, clasificación y premios de código.
 
 ## Primer recorrido
 
-1. Completa la primera conexión a la Malla y sigue como **Independiente**.
+1. Completa la primera conexión a Indara y sigue como **Independiente**.
    Si tienes un contrato, puedes terminarlo desde **PC → Correo**.
 2. Completa el **Juego de la Vida** en el PC, después de pedir las reglas al
    profesor. Recibirás Coprocesador M y Protección.

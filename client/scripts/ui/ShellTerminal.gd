@@ -45,10 +45,10 @@ func _ready() -> void:
 	var bar := HBoxContainer.new()
 	column.add_child(bar)
 	var title := Label.new()
-	title.text = "LA MALLA · TERMINAL   ·   Esc para salir   ·   help · man <tema>"
+	title.text = "INDARA · TERMINAL   ·   Esc para salir   ·   help · man <tema>"
 	title.set_meta("keyboard", title.text)
 	Gamepad.changed.connect(func(pad: bool) -> void:
-		title.text = "LA MALLA · TERMINAL   ·   B para salir   ·   help · man <tema>" if pad else title.get_meta("keyboard"))
+		title.text = "INDARA · TERMINAL   ·   B para salir   ·   help · man <tema>" if pad else title.get_meta("keyboard"))
 	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	title.add_theme_color_override("font_color", Color("5f8f73"))
 	bar.add_child(title)

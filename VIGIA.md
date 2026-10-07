@@ -1,4 +1,4 @@
-# Sesión Cero · El vigía: la Malla sigue a la tecnología real
+# Sesión Cero · El vigía: Indara sigue a la tecnología real
 
 Etapa 2 de [EVOLUCION.md](EVOLUCION.md). Cada pocos días el servidor lee
 noticias reales de tecnología y abre, **él solo**, una convocatoria nueva en uno
@@ -37,7 +37,7 @@ próxima»); el vigía los va llenando.
    - el título y el resumen;
    - un artículo de estudio;
    - una frase que une la noticia con el ejercicio;
-   - qué aprende la Malla cuando se completa;
+   - qué aprende Indara cuando se completa;
    - qué recordará el director.
 4. **El ejercicio no lo escribe la IA.** Elige uno de cinco tipos y el código lo
    rellena con números propios de cada jugador. Por eso todas las convocatorias
@@ -53,11 +53,11 @@ próxima»); el vigía los va llenando.
 
    La parte de experimentar es un primer caso de práctica, y la de demostrar,
    otro caso con los números del jugador. Los ficheros están en
-   `/malla/<centro>/<código>/`.
+   `/indara/<centro>/<código>/`.
 5. La convocatoria se **publica al momento** con el siguiente código libre del
    centro (QB-02, IA-01, PR-01…). Su director manda un correo a casa de cada
    jugador (`~/correo/<código>.eml`). Si la terminan **tres personas**, su
-   tecnología entra en la Malla para todos: la cinemática «La Malla
+   tecnología entra en Indara para todos: la cinemática «Indara
    evoluciona», los centros la enseñan como sabida y el director y Nora la
    recuerdan.
 
@@ -75,13 +75,13 @@ nunca la IA.
 
 La sección **Convocatorias del vigía** enseña cada convocatoria con:
 - su centro, título y tipo de ejercicio;
-- qué trae a la Malla;
+- qué trae a Indara;
 - cuántos la han terminado y cuándo se creó;
 - un enlace a la noticia original.
 
 Desde ahí puedes:
 - **Borrar** una convocatoria: desaparece del juego para todos, y con ella lo
-  que hubiera traído a la Malla. Su código no se vuelve a usar.
+  que hubiera traído a Indara. Su código no se vuelve a usar.
 - **Buscar una convocatoria ahora**, sin esperar a los 3 días.
 - Ver **las últimas búsquedas**, con lo que salió bien y lo que falló.
 

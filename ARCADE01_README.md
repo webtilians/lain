@@ -12,7 +12,7 @@ con intercambios de fragmentos propios y recibos individuales.
 
 ## Probar el nuevo juego
 
-1. Después de conectarte a la Malla, ve al terminal de **Kissa Café** y pulsa
+1. Después de conectarte a Indara, ve al terminal de **Kissa Café** y pulsa
    **Practicar Serpiente**. No hace falta esperar a un torneo.
 2. La serpiente avanza sola, un paso cada cuarto de segundo, tras una breve
    pausa inicial. Gira con las flechas o los botones. No puede girar directamente

@@ -1,4 +1,4 @@
-"""The Instituto de Física del Puerto: the qubit and BB84 call, its registry and QKD entering the Malla."""
+"""The Instituto de Física del Puerto: the qubit and BB84 call, its registry and QKD entering Indara."""
 import re
 
 import pytest
@@ -14,7 +14,7 @@ OTHERS = ["PLAYER_ANA", "PLAYER_BEA", "PLAYER_CRIS"]
 
 @pytest.fixture
 def lab(game):  # noqa: F811
-    """The usual player at home and three more players, all already connected to the Malla."""
+    """The usual player at home and three more players, all already connected to Indara."""
     with get_connection() as c:
         for player in OTHERS:
             name = player.split("_")[1].title()
@@ -65,15 +65,15 @@ def finish(sim, player=PLAYER):
 def test_the_institute_opens_once_connected_and_hideo_writes(lab):
     sim = lab
     portal = sh(sim, "instituto")
-    assert portal.startswith("INSTITUTO DE FÍSICA DEL PUERTO · instituto.malla")
+    assert portal.startswith("INSTITUTO DE FÍSICA DEL PUERTO · instituto.indara")
     assert "QB-01  El qubit y la clave que delata al espía" in portal
     assert "estudiar [ ] · experimentar [ ] · demostrar [ ]" in portal and "han terminado 0/3" in portal
     assert "nada nuevo todavía" in portal
-    assert "hideo@instituto.malla" in sh(sim, "cat ~/correo/instituto.eml")
+    assert "hideo@instituto.indara" in sh(sim, "cat ~/correo/instituto.eml")
     assert "instituto · laboratorio · archivo" in sh(sim, "help") and "qubit [nuevo" in sh(sim, "help")
     assert "qubit nuevo" in sh(sim, "man qubit") and "24 fotones" in sh(sim, "man bb84")
     with get_connection() as c:
-        assert institute.run_for(c, "PLAYER_NOBODY") is None, "only players connected to the Malla"
+        assert institute.run_for(c, "PLAYER_NOBODY") is None, "only players connected to Indara"
 
 
 def test_study_experiment_and_demonstrate_finish_the_call(lab):
@@ -169,24 +169,24 @@ def test_three_researchers_bring_qkd_to_the_whole_malla(lab):
     assert "Van 1 de 3" in finish(sim, OTHERS[0])
     assert "Van 2 de 3" in finish(sim, OTHERS[1])
     third = finish(sim, OTHERS[2])
-    assert "LA MALLA APRENDE · QKD entra en la Malla para todos." in third
+    assert "INDARA APRENDE · QKD entra en Indara para todos." in third
     out = sh(sim, "qkd")
     assert out.startswith("qkd · enlaces cuánticos") and out.count("QBER") == 3 and out.count("ALGUIEN ESCUCHA") == 1
     assert "relay-escuela" in out
-    assert "QKD (desde el minuto" in sh(sim, "instituto") and "han terminado 3 · QKD ya está en la Malla" in sh(sim, "instituto")
-    assert "QKD entró en la Malla" in sh(sim, "instituto registro")
+    assert "QKD (desde el minuto" in sh(sim, "instituto") and "han terminado 3 · QKD ya está en Indara" in sh(sim, "instituto")
+    assert "QKD entró en Indara" in sh(sim, "instituto registro")
     registry = sh(sim, "instituto registro")
     assert registry.index("1. Ana") < registry.index("2. Bea") < registry.index("3. Cris")
     snapshot = build_player_snapshot(PLAYER)["research"]
     assert [tech["id"] for tech in snapshot["unlocked"]] == ["qkd"] and snapshot["completed"] == []
     assert snapshot["unlocked"][0]["next"] == "Desde hoy, cualquiera puede usar qkd en el terminal."
     nora = AgentContextBuilder().build("AGENT_NORA")["chapter_memory"]["memories"]
-    assert any("QKD ya está en la Malla" in memory["text"] for memory in nora)
-    assert "LA MALLA APRENDE" not in finish(sim), "it enters the Malla once"
+    assert any("QKD ya está en Indara" in memory["text"] for memory in nora)
+    assert "INDARA APRENDE" not in finish(sim), "it enters Indara once"
     with get_connection() as c:
         assert c.execute("SELECT COUNT(*) FROM events WHERE action='MALLA_EVOLVES'").fetchone()[0] == 1
     assert "instituto ver <código> · instituto leer <artículo>" in sh(sim, "instituto")
-    assert "Han terminado 4 · QKD ya está en la Malla." in sh(sim, "instituto ver QB-01")
+    assert "Han terminado 4 · QKD ya está en Indara." in sh(sim, "instituto ver QB-01")
 
 
 def test_the_institute_in_english(lab):
@@ -216,7 +216,7 @@ def test_the_institute_in_english(lab):
         texts += [item[key] for item in snapshot["completed"] + snapshot["unlocked"] for key in item if key != "id"]
         for text in texts:
             lines = [line for line in text.splitlines() if spanish.search(line)
-                     and not re.search(r"Ana|Bea|Cris|hideo@|instituto\.malla", line)]
+                     and not re.search(r"Ana|Bea|Cris|hideo@|instituto\.indara", line)]
             assert not lines, lines[:3]
     finally:
         i18n.reset(token)
