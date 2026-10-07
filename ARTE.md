@@ -29,10 +29,23 @@ conversación, no en cada respuesta.
   el importador de Godot no los dibuja. Degradados y recortes sí.
 - Prueba: `client/tools/test_portraits.gd`.
 
+## Expresiones
+
+Cada frase del prólogo dice con qué cara se dice (`mood` en la respuesta del
+servidor; `PROFESSOR_MOODS` y `RYOKO_MOODS` en `server/world_core/prologue.py`). El
+juego muestra `<retrato>_<cara>.svg` si existe y, si no, el retrato de siempre; la
+cara cambia sin que el retrato vuelva a entrar.
+
+- Ryoko: la de siempre (desconfiada), `sonrie`, `seria`.
+- El profesor: el de siempre (cansado), `sorpresa`, `serio`, `sin_gafas`.
+
+Una cara nueva es una copia del retrato con otros ojos, cejas y boca. Un test
+comprueba que toda cara que pide una frase está dibujada.
+
 Hay retrato de Ryoko, del profesor y de K. Falta Sesión Cero (dibujada en los
 bocetos; su sitio natural son las cinemáticas de sus fragmentos) y los vecinos.
 
 ## Lo siguiente
 
-1. Varias expresiones por personaje (desconfiada, sonriendo, seria).
-2. En el mundo: sombreado de anime para los personajes 3D (tonos planos y contorno).
+1. En el mundo: sombreado de anime para los personajes 3D (tonos planos y contorno).
+2. Caras para K y para las conversaciones libres (según lo que diga la IA).

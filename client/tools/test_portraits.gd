@@ -57,6 +57,19 @@ func run() -> void:
 	check(dialog.styled("She looks. “Hi.”").ends_with("“Hi.”") and dialog.styled("[OK]") == "[lb]OK]",
 		"English speech or brackets are mishandled")
 
+	# The face changes with what she says, without a new entrance; a face nobody drew is her usual one.
+	dialog.expression = "sonrie"
+	dialog.show_choices("PROLOGUE_RYOKO", "Ryoko", "Sonríe sin ganas. «Me pasaba las tardes en el último puesto.»", choices)
+	await frames()
+	check(dialog.portrait.texture.resource_path.ends_with("ryoko_sonrie.svg") and dialog.portrait.modulate.a == 1.0,
+		"Ryoko does not smile, or comes in again to do it")
+	dialog.expression = "nadie_la_dibujo"
+	dialog.show_choices("PROLOGUE_RYOKO", "Ryoko", "«…»", choices)
+	await frames()
+	check(dialog.portrait.texture.resource_path.ends_with("ryoko.svg"), "an undrawn face leaves her without a portrait")
+	dialog.close_event()
+	check(dialog.expression.is_empty(), "a face outlasts its dialogue")
+
 	# The teacher, in Spanish or in English.
 	dialog.show_event("K", "...")
 	await frames()

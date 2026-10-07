@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="570" height="720" viewBox="-190 -180 380 480">
+<!-- Ryoko, dialogue portrait, «sonrie» (anime style). Local origin: between the eyes. -->
+<defs>
+<linearGradient id="iris" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#22072c"/><stop offset="0.55" stop-color="#8a2466"/><stop offset="1" stop-color="#ff86bf"/></linearGradient>
+<clipPath id="eyeL"><path d="M-60 -2 Q-50 -16 -30 -16 Q-14 -15 -9 -5 Q-22 5 -36 6 Q-52 5 -60 -2 Z"/></clipPath>
+<clipPath id="eyeR"><path d="M60 -2 Q50 -16 30 -16 Q14 -15 9 -5 Q22 5 36 6 Q52 5 60 -2 Z"/></clipPath>
+</defs>
+<g stroke-linejoin="round" stroke-linecap="round">
+<path d="M-98 -36 C-112 -124 -62 -164 0 -164 C62 -164 112 -124 98 -36 L102 74 L74 62 L64 -20 L-64 -20 L-74 62 L-102 74 Z" fill="#1c1a30" stroke="#0f0d1c" stroke-width="2.6"/>
+<path d="M-26 66 L-28 150 L28 150 L26 66 Z" fill="#ffe6d8" stroke="#2a1a2e" stroke-width="2.4"/>
+<path d="M-26 70 Q0 108 26 70 L27 100 Q0 126 -27 100 Z" fill="#f2b8ab"/>
+<path d="M-176 320 L-138 176 Q-96 142 -36 138 L0 176 L36 138 Q96 142 138 176 L176 320 Z" fill="#5d6b3a" stroke="#2a1a2e" stroke-width="2.6"/>
+<path d="M36 138 Q96 142 138 176 L176 320 L80 320 L60 170 Z" fill="#46522a"/>
+<path d="M-36 138 L0 176 L36 138 L26 134 L0 158 L-26 134 Z" fill="#1d1a24" stroke="#2a1a2e" stroke-width="2"/>
+<path d="M-112 250 L-104 236 M-60 260 L-58 300 M60 260 L58 300" fill="none" stroke="#3f4a28" stroke-width="2"/>
+<circle cx="-96" cy="214" r="14" fill="#e0397a" stroke="#2a1a2e" stroke-width="2"/>
+<path d="M-104 209 Q-104 205 -100 205 Q-96 205 -96 209 Q-96 212 -104 220 H-95 M-92 206 Q-88 204 -86 207 Q-84 210 -89 212 Q-84 214 -86 218 Q-88 221 -92 219" fill="none" stroke="#fff3f8" stroke-width="2"/>
+<path d="M-64 132 Q0 178 64 132" fill="none" stroke="#2a1a2e" stroke-width="10"/>
+<ellipse cx="-64" cy="126" rx="24" ry="28" fill="#e0397a" stroke="#2a1a2e" stroke-width="2.6"/>
+<ellipse cx="-60" cy="126" rx="13" ry="17" fill="#a3204f"/>
+<ellipse cx="64" cy="126" rx="24" ry="28" fill="#e0397a" stroke="#2a1a2e" stroke-width="2.6"/>
+<ellipse cx="60" cy="126" rx="13" ry="17" fill="#a3204f"/>
+<path d="M-78 108 Q-72 102 -64 104 M50 108 Q56 102 64 104" fill="none" stroke="#ffd1e6" stroke-width="2.4"/>
+<path d="M-70 -8 C-88 -16 -90 24 -66 28 Z" fill="#ffe6d8" stroke="#2a1a2e" stroke-width="2.2"/>
+<path d="M70 -8 C88 -16 90 24 66 28 Z" fill="#ffe6d8" stroke="#2a1a2e" stroke-width="2.2"/>
+<circle cx="78" cy="31" r="4.5" fill="none" stroke="#d6dbe8" stroke-width="2"/>
+<path d="M-72 -64 C-74 -10 -66 30 -40 62 L-6 92 Q0 96 6 92 L40 62 C66 30 74 -10 72 -64 Z" fill="#ffe6d8" stroke="#2a1a2e" stroke-width="2.6"/>
+<path d="M72 -64 C74 -10 66 30 40 62 L28 70 C52 30 60 -10 58 -64 Z" fill="#f2b8ab"/>
+<path d="M-70 -64 L-70 -34 L-58 -26 L-50 -2 L-38 -30 L-26 6 L-12 -32 L0 4 L14 -30 L28 8 L40 -32 L54 2 L64 -36 L72 -30 L72 -64 Z" fill="#f2b8ab"/>
+<path d="M-60 -2 Q-50 -16 -30 -16 Q-14 -15 -9 -5 Q-22 5 -36 6 Q-52 5 -60 -2 Z" fill="#ffffff"/>
+<g clip-path="url(#eyeL)">
+<ellipse cx="-34" cy="0" rx="13" ry="17" fill="url(#iris)"/>
+<ellipse cx="-34" cy="2" rx="5" ry="8" fill="#1a0a1e"/>
+<ellipse cx="-34" cy="11" rx="9" ry="4" fill="#ffb3d6" opacity="0.6"/>
+<path d="M-60 -2 Q-50 -16 -30 -16 Q-14 -15 -9 -5 Q-16 -10 -30 -10 Q-48 -10 -60 -2 Z" fill="#c9b8d9" opacity="0.6"/>
+</g>
+<circle cx="-40" cy="-5" r="4.5" fill="#ffffff"/>
+<circle cx="-28" cy="2" r="2" fill="#ffffff"/>
+<path d="M-64 0 Q-52 -22 -30 -21 Q-12 -20 -6 -8 L-9 -4 Q-16 -15 -30 -16 Q-48 -16 -60 2 Z" fill="#2a1a2e"/>
+<path d="M-64 0 L-71 -7 L-61 -5 Z" fill="#2a1a2e"/>
+<path d="M-52 6 Q-38 11 -24 7" fill="none" stroke="#2a1a2e" stroke-width="1.8"/>
+<path d="M60 -2 Q50 -16 30 -16 Q14 -15 9 -5 Q22 5 36 6 Q52 5 60 -2 Z" fill="#ffffff"/>
+<g clip-path="url(#eyeR)">
+<ellipse cx="34" cy="0" rx="13" ry="17" fill="url(#iris)"/>
+<ellipse cx="34" cy="2" rx="5" ry="8" fill="#1a0a1e"/>
+<ellipse cx="34" cy="11" rx="9" ry="4" fill="#ffb3d6" opacity="0.6"/>
+<path d="M60 -2 Q50 -16 30 -16 Q14 -15 9 -5 Q16 -10 30 -10 Q48 -10 60 -2 Z" fill="#c9b8d9" opacity="0.6"/>
+</g>
+<circle cx="28" cy="-5" r="4.5" fill="#ffffff"/>
+<circle cx="40" cy="2" r="2" fill="#ffffff"/>
+<path d="M64 0 Q52 -22 30 -21 Q12 -20 6 -8 L9 -4 Q16 -15 30 -16 Q48 -16 60 2 Z" fill="#2a1a2e"/>
+<path d="M64 0 L71 -7 L61 -5 Z" fill="#2a1a2e"/>
+<path d="M52 6 Q38 11 24 7" fill="none" stroke="#2a1a2e" stroke-width="1.8"/>
+<path d="M3 30 L7 37 L2 38" fill="none" stroke="#c98a80" stroke-width="1.8"/>
+<path d="M-12 57 Q0 61 10 56 Q13 54 15 56" fill="none" stroke="#2a1a2e" stroke-width="2.2"/>
+<path d="M-50 30 L-45 25 M-43 31 L-38 26 M42 31 L47 26 M49 30 L54 25" fill="none" stroke="#ff8fa8" stroke-width="2" opacity="0.7"/>
+<path d="M-2 63 Q4 65 8 62" fill="none" stroke="#d9978c" stroke-width="1.6"/>
+<path d="M-86 -52 C-92 -10 -90 30 -78 76 L-70 30 L-64 -26 Z" fill="#1c1a30" stroke="#0f0d1c" stroke-width="2.4"/>
+<path d="M86 -52 C92 -10 90 30 78 76 L70 30 L64 -26 Z" fill="#1c1a30" stroke="#0f0d1c" stroke-width="2.4"/>
+<path d="M-88 -52 C-90 -134 -42 -154 0 -154 C42 -154 90 -134 88 -52 L78 -28 L68 -64 L58 -16 L46 -60 L32 -10 L20 -58 L6 -14 L-6 -60 L-20 -12 L-32 -58 L-46 -18 L-58 -62 L-72 -24 Z" fill="#1c1a30" stroke="#0f0d1c" stroke-width="2.6"/>
+<path d="M-30 -140 Q-36 -96 -32 -58 M54 -134 Q60 -100 58 -62" fill="none" stroke="#0f0d1c" stroke-width="1.6"/>
+<path d="M6 -152 C14 -122 22 -84 20 -58 L6 -14 L0 -60 C2 -92 -2 -124 6 -152 Z" fill="#e0397a" stroke="#0f0d1c" stroke-width="1.6"/>
+<path d="M-66 -104 Q0 -142 66 -104 L62 -96 L52 -104 L44 -94 L34 -108 L24 -100 Q0 -126 -24 -100 L-34 -108 L-44 -94 L-52 -104 L-62 -96 Z" fill="#3c3868"/>
+<path d="M6 -124 L12 -126 L16 -116 L12 -110 L8 -114 Z" fill="#ff9ccb"/>
+<path d="M-60 -46 Q-42 -54 -18 -48 M60 -46 Q42 -54 18 -48" fill="none" stroke="#2a1a2e" stroke-width="3" opacity="0.85"/>
+<path d="M-102 74 L-98 -36 C-104 -80 -94 -110 -78 -130" fill="none" stroke="#ff5fae" stroke-width="2.4" opacity="0.85"/>
+<path d="M-176 318 L-138 176 Q-96 142 -36 138" fill="none" stroke="#ff5fae" stroke-width="3" opacity="0.8"/>
+<path d="M102 60 L98 -36 C102 -70 96 -96 86 -112" fill="none" stroke="#5fe0ff" stroke-width="2" opacity="0.6"/>
+</g>
+</svg>

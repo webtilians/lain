@@ -96,6 +96,7 @@ func _on_dialogue(actor_id: String, result: Dictionary) -> void:
 	if not waiting or actor_id != npc_id:
 		return
 	waiting = false
+	EventDialog.expression = str(result.get("mood", ""))
 	EventDialog.show_choices(
 		_owner_id,
 		str(result.get("speaker", "DESCONOCIDO")),
