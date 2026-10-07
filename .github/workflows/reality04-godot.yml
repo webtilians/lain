@@ -309,6 +309,16 @@ jobs:
             exit 1
           fi
 
+      - name: Ryoko made in VRoid stands in the club, alive
+        shell: bash
+        run: |
+          set -euo pipefail
+          /tmp/lain-godot --headless --path client --script res://tools/test_vrm_avatar.gd 2>&1 | tee /tmp/lain-vrm.log
+          grep -q 'VRM_AVATAR_OK' /tmp/lain-vrm.log
+          if grep -E '^(SCRIPT ERROR:|ERROR:)' /tmp/lain-vrm.log; then
+            exit 1
+          fi
+
       - name: Visual 0.22 interiors dressed without touching collisions
         shell: bash
         run: |

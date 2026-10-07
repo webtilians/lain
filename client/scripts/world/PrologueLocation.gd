@@ -113,6 +113,10 @@ func _door(title: String, target: String, pos: Vector3, shade: Color) -> void:
 	_sign(title + "\n[E] ENTRAR", pos + Vector3(0, 1.7, 0.4), shade.lightened(0.32))
 
 
+## Characters made in VRoid Studio (VROID.md); the others keep the old figure.
+const VRM_MODELS := {"RYOKO": "res://art/characters/vrm/ryoko.glb"}
+
+
 func _npc(name_text: String, actor_id: String, pos: Vector3,
 		shade: Color) -> void:
 	var actor := StaticBody3D.new()
@@ -120,11 +124,21 @@ func _npc(name_text: String, actor_id: String, pos: Vector3,
 	actor.set_script(NPC_SCRIPT)
 	actor.set("npc_id", actor_id)
 	actor.position = pos
-	var model: Node3D = load("res://art/characters/LainSlender.tscn").instantiate()
-	model.set_script(load("res://scripts/art/CitizenAvatar.gd"))
-	model.configure("teacher" if actor_id == "PROFESSOR" else "casual", 10 if actor_id == "PROFESSOR" else 11)
-	model.position.y = 0.0
-	actor.add_child(model)
+	var vrm: String = VRM_MODELS.get(actor_id, "")
+	if not vrm.is_empty() and ResourceLoader.exists(vrm):
+		# Made in VRoid Studio (VROID.md); its feet stand on the floor.
+		var avatar := Node3D.new()
+		avatar.name = "VrmAvatar"
+		avatar.set_script(load("res://scripts/art/VrmAvatar.gd"))
+		actor.add_child(avatar)
+		avatar.position.y = -pos.y
+		avatar.setup(load(vrm), {"headphones": actor_id == "RYOKO"})
+	else:
+		var model: Node3D = load("res://art/characters/LainSlender.tscn").instantiate()
+		model.set_script(load("res://scripts/art/CitizenAvatar.gd"))
+		model.configure("teacher" if actor_id == "PROFESSOR" else "casual", 10 if actor_id == "PROFESSOR" else 11)
+		model.position.y = 0.0
+		actor.add_child(model)
 	var collider := CollisionShape3D.new()
 	var collision := CapsuleShape3D.new()
 	collision.radius = 0.28
