@@ -106,6 +106,15 @@ def test_registration_is_limited_per_address(server, monkeypatch):
     assert codes[:3] == [200, 200, 200] and codes[3] == 429
 
 
+def test_open_registration_has_a_cap_for_the_whole_world(server, monkeypatch):
+    monkeypatch.setenv("LAIN_SIGNUP_OPEN", "1")
+    monkeypatch.setattr(online_accounts, "OPEN_SIGNUPS_PER_HOUR", 2)
+    for n in range(2):
+        online_accounts.register(f"Gente{n}x", "lluvia-neon", "", f"10.0.0.{n}")
+    with pytest.raises(ValueError, match="PLEASE_WAIT"):
+        online_accounts.register("Gente9x", "lluvia-neon", "", "10.0.0.9")  # many addresses, still stopped
+
+
 def test_owner_created_player_claims_a_password_then_logs_in(server):
     client, runtime = server
     actor, token = online.create_player("Enrique")

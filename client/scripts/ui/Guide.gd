@@ -5,7 +5,7 @@ extends CanvasLayer
 ## opens it explains how to ask for help. F1 (View on the controller) hides or
 ## shows it. With the controller, the steps name its buttons.
 ## Presentation only: it reads the snapshot and the open windows, and keeps
-## its progress in user://guide.cfg on this PC.
+## its progress in user://guide.cfg, one section per account on this PC.
 const STEPS := [
 	{"id": "move", "title": "1/5 · CAMINAR", "text": "Camina con W A S D.", "pad": "Camina con el stick izquierdo."},
 	{"id": "journal", "title": "2/5 · TU DIARIO", "text": "Pulsa J para abrir tu diario. Ahí está siempre tu objetivo.",
@@ -30,6 +30,7 @@ const WALK := 2.5
 const FINISHED_SECONDS := 9.0
 
 var config_path := "user://guide.cfg"
+var progress_for := "guide"  # the section of config_path for the signed-in account
 var done: Array = []
 var tips: Array = []
 var hidden_by_player := false
@@ -48,6 +49,7 @@ func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	_build()
 	load_progress()
+	ServerConnection.account_changed.connect(load_progress)
 
 func _build() -> void:
 	panel = PanelContainer.new()
@@ -91,20 +93,29 @@ func _label(parent: Control, size: int, color: Color) -> Label:
 	return label
 
 func load_progress() -> void:
+	# A new account starts the guide over; a veteran's account skips the steps again (_decide).
+	progress_for = ServerConnection.progress_section("guide")
+	done = []
+	tips = []
+	hidden_by_player = false
+	decided = false
+	start_position = null
+	finished_left = 0.0
 	var config := ConfigFile.new()
 	if config.load(config_path) != OK:
 		return
-	done = Array(config.get_value("guide", "done", []))
-	tips = Array(config.get_value("guide", "tips", []))
-	hidden_by_player = bool(config.get_value("guide", "hidden", false))
-	decided = bool(config.get_value("guide", "decided", false))
+	done = Array(config.get_value(progress_for, "done", []))
+	tips = Array(config.get_value(progress_for, "tips", []))
+	hidden_by_player = bool(config.get_value(progress_for, "hidden", false))
+	decided = bool(config.get_value(progress_for, "decided", false))
 
 func save_progress() -> void:
 	var config := ConfigFile.new()
-	config.set_value("guide", "done", done)
-	config.set_value("guide", "tips", tips)
-	config.set_value("guide", "hidden", hidden_by_player)
-	config.set_value("guide", "decided", decided)
+	config.load(config_path)  # the other accounts on this PC keep theirs
+	config.set_value(progress_for, "done", done)
+	config.set_value(progress_for, "tips", tips)
+	config.set_value(progress_for, "hidden", hidden_by_player)
+	config.set_value(progress_for, "decided", decided)
 	if config.save(config_path) != OK:
 		push_warning("No se pudo guardar la guía.")
 

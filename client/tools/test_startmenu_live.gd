@@ -38,6 +38,10 @@ func run() -> void:
 	boot.fields.name.text = name
 	boot.fields.password.text = "clave-de-prueba"
 	boot.fields.repeat.text = "clave-de-prueba"
+	press(boot, "Crear cuenta")
+	await wait_reply(boot)
+	check(boot.fields.has("invite") and "hace falta un código" in boot.notice.text,
+		"The world with an invite code did not ask for it: " + boot.notice.text)
 	boot.fields.invite.text = "codigo-equivocado"
 	press(boot, "Crear cuenta")
 	await wait_reply(boot)

@@ -70,6 +70,9 @@ def _throttle(key: tuple, count: int, seconds: float) -> None:
         queue.append(now)
 
 
+OPEN_SIGNUPS_PER_HOUR = 60
+
+
 def signup_policy() -> str:
     if os.getenv("LAIN_SIGNUP_OPEN", "0") == "1":
         return "OPEN"
@@ -106,6 +109,9 @@ def register(name: str, password: str, invite: str, client: str) -> dict:
     if policy == "CLOSED":
         raise ValueError("REGISTRATION_CLOSED")
     _throttle(("register", client), 3, 3600)
+    if policy == "OPEN":
+        # Anyone can sign up: a cap on the whole world keeps a flood of scripted sign-ups out.
+        _throttle(("register",), OPEN_SIGNUPS_PER_HOUR, 3600)
     if policy == "INVITE":
         expected = os.getenv("LAIN_SIGNUP_CODE", "").strip().casefold()
         if not hmac.compare_digest(" ".join(str(invite).split()).casefold().encode(), expected.encode()):

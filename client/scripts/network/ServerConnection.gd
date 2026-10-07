@@ -10,6 +10,8 @@ var instance_id := ""
 var configuration_error := ""
 var awaiting_login := false
 var account_name := ""
+## Another account signed in on this PC (or none): local progress (Guide, Cinematic) is kept per account.
+signal account_changed
 var client_version := ""
 ## A build without the Windows launcher (the Mac app) brings its server, version and download
 ## links in res://release.json, written by the release workflow; a checkout has none.
@@ -71,16 +73,27 @@ func account_headers() -> PackedStringArray:
 
 func set_session(token: String, player_name: String) -> void:
 	_token = token
+	var changed := player_name != account_name
 	account_name = player_name
 	var file := FileAccess.open(session_path, FileAccess.WRITE)
 	if file != null:
 		file.store_string(JSON.stringify({"server_url": _url, "token": token, "name": player_name}))
+	if changed:
+		account_changed.emit()
 
 func clear_session() -> void:
 	_token = ""
+	var changed := not account_name.is_empty()
 	account_name = ""
 	if FileAccess.file_exists(session_path):
 		DirAccess.remove_absolute(ProjectSettings.globalize_path(session_path))
+	if changed:
+		account_changed.emit()
+
+func progress_section(base: String) -> String:
+	## Where this PC keeps the signed-in account's local progress (the cinematics it saw, the guide),
+	## so a second account on the same PC starts from the beginning too. Offline it is the PC's own.
+	return base if account_name.is_empty() else base + "@" + account_name.to_lower().uri_encode()
 
 func finish_login() -> void:
 	awaiting_login = false

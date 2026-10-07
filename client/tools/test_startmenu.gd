@@ -54,19 +54,26 @@ func run() -> void:
 	await snap("startmenu-login")
 
 	press(boot, "Crear una cuenta nueva")
-	check(boot.fields.has("invite") and boot.fields.has("repeat"), "Register form incomplete")
+	check(boot.fields.has("repeat"), "Register form incomplete")
+	check(not boot.fields.has("invite"), "The register form asks for an invite code before the world does")
 	boot.fields.name.text = "Mio"
 	boot.fields.password.text = "lluvia-neon"
 	boot.fields.repeat.text = "otra"
-	boot.fields.invite.text = "cable-nodo-482"
 	press(boot, "Crear cuenta")
 	check("no coinciden" in boot.notice.text and boot.pending.is_empty(), "Mismatched passwords were sent")
 	boot.fields.repeat.text = "lluvia-neon"
 	await snap("startmenu-register")
 	press(boot, "Crear cuenta")
 	check(boot.pending == "register", "Registration not sent")
+	# A world that wants a code says so, and only then shows the box for it.
+	answer(boot, 409, {"detail": "INVALID_INVITE"})
+	check(boot.fields.has("invite") and "hace falta un código" in boot.notice.text,
+		"A world with invites does not ask for the code: " + boot.notice.text)
+	boot.fields.invite.text = "codigo-viejo"
+	press(boot, "Crear cuenta")
 	answer(boot, 409, {"detail": "INVALID_INVITE"})
 	check("invitación no es correcto" in boot.notice.text, "Invite error not explained: " + boot.notice.text)
+	boot.fields.invite.text = "cable-nodo-482"
 	press(boot, "Crear cuenta")
 	answer(boot, 200, {"token": "t".repeat(43), "name": "Mio", "actor_id": "PLAYER_1"})
 	check(server.has_session() and server.account_name == "Mio", "Session not stored")

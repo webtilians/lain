@@ -163,11 +163,20 @@ func _process(delta: float) -> void:
 	var tilt := Input.get_joy_axis(pads[0], JOY_AXIS_RIGHT_Y)
 	if absf(tilt) < SCROLL_DEADZONE:
 		return
-	for index in range(scroll_targets.size() - 1, -1, -1):
-		var target := scroll_targets[index]
-		if is_instance_valid(target) and target.is_visible_in_tree():
-			scroll(target, tilt * SCROLL_SPEED * delta)
-			return
+	# The text of the window in front: the diary or a terminal over the chat box.
+	var best: Control = null
+	for target in scroll_targets:
+		if is_instance_valid(target) and target.is_visible_in_tree() \
+				and (best == null or _layer_of(target) >= _layer_of(best)):
+			best = target
+	if best != null:
+		scroll(best, tilt * SCROLL_SPEED * delta)
+
+func _layer_of(control: Node) -> int:
+	var node := control.get_parent()
+	while node != null and not node is CanvasLayer:
+		node = node.get_parent()
+	return node.layer if node != null else 0
 
 func scroll(target: Control, pixels: float) -> void:
 	if target is TextEdit:

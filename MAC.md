@@ -17,8 +17,8 @@ Enlace permanente: https://github.com/webtilians/lain/releases/latest/download/S
    2. Ve a **Ajustes del Sistema → Privacidad y seguridad**.
    3. Abajo aparece *Sesion Cero*: pulsa **Abrir igualmente** y confirma con tu
       contraseña o Touch ID.
-4. En el menú, crea tu cuenta con el código de invitación, o entra con tu nombre y tu
-   contraseña si ya juegas en Windows.
+4. En el menú, crea tu cuenta con un nombre y una contraseña, o entra con los tuyos si
+   ya juegas en Windows.
 
 Si macOS dice que la app «está dañada», es la cuarentena de las descargas. Desde el
 Terminal se quita con:

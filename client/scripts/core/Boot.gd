@@ -8,6 +8,7 @@ const ERRORS := {
 	"INVALID_NAME": "El nombre debe tener entre 3 y 16 letras, números, espacios o guiones.",
 	"WEAK_PASSWORD": "La contraseña debe tener al menos 6 caracteres.",
 	"INVALID_INVITE": "El código de invitación no es correcto.",
+	"INVITE_NEEDED": "Para crear una cuenta en este mundo hace falta un código de invitación.",
 	"REGISTRATION_CLOSED": "Ahora mismo no se pueden crear cuentas nuevas.",
 	"PLEASE_WAIT": "Demasiados intentos. Espera unos minutos.",
 	"PLAYER_ALREADY_CONNECTED": "Tu cuenta está abierta en otro equipo. Espera unos segundos y vuelve a intentarlo.",
@@ -161,7 +162,7 @@ func _field(key: String, placeholder: String, secret := false, submit := Callabl
 	var edit := LineEdit.new()
 	edit.placeholder_text = placeholder
 	edit.secret = secret
-	edit.max_length = 64 if key == "invite" else (128 if secret else 16)
+	edit.max_length = 128 if secret else 16
 	edit.custom_minimum_size.y = 38
 	if submit.is_valid():
 		edit.text_submitted.connect(func(_text): submit.call())
@@ -199,10 +200,22 @@ func show_register(text := "") -> void:
 	_reset(text)
 	_field("name", "Nombre (3 a 16 letras o números)").grab_focus()
 	_field("password", "Contraseña (6 caracteres o más)", true)
-	_field("repeat", "Repite la contraseña", true)
-	_field("invite", "Código de invitación", false, _register)
+	_field("repeat", "Repite la contraseña", true, _register)
 	_button("Crear cuenta", _register, true)
 	_button("Ya tengo cuenta", show_login)
+
+
+func _ask_invite() -> void:
+	## Only a world that asks for an invite code shows the box for it (an open one never does).
+	var edit := LineEdit.new()
+	edit.placeholder_text = "Código de invitación"
+	edit.max_length = 64
+	edit.custom_minimum_size.y = 38
+	edit.text_submitted.connect(func(_text): _register())
+	form.add_child(edit)
+	form.move_child(edit, fields["repeat"].get_index() + 1)
+	fields["invite"] = edit
+	edit.grab_focus()
 
 func show_menu(text := "") -> void:
 	_reset(text)
@@ -290,6 +303,9 @@ func _completed(result: int, code: int, _headers: PackedStringArray, body: Packe
 			ServerConnection.clear_session()
 			show_login(ERRORS["INVALID_PLAYER_ACCESS"])
 			return
+		if detail == "INVALID_INVITE" and not fields.has("invite"):
+			_ask_invite()
+			detail = "INVITE_NEEDED"
 		var text: String = ERRORS.get(detail, "El servidor no aceptó la petición (" + detail + ").")
 		if kind == "me":
 			_reset(text)
