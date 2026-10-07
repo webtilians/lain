@@ -10,7 +10,7 @@ porque nunca pasa por ningún servidor.
 
 ## Cómo se juega
 
-Lo puede hacer cualquiera que ya esté conectado a la Malla (desde la Capa 03).
+Lo puede hacer cualquiera que ya esté conectado a Indara (desde la Capa 03).
 Ryoko lo cuenta en `~/correo/circulos.eml`.
 
 1. Una persona va a un armario (el de la estación, el del aula o el del

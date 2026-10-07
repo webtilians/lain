@@ -1,4 +1,4 @@
-# Sesión Cero · La Malla evoluciona (propuesta de diseño)
+# Sesión Cero · Indara evoluciona (propuesta de diseño)
 
 > Estado: **en marcha**. Hechas la etapa 1, el Instituto de Física del Puerto y
 > la convocatoria QB-01 ([INSTITUTO.md](INSTITUTO.md)), y la etapa 2, el vigía
@@ -9,25 +9,25 @@
 
 ## La idea en una frase
 
-La Malla no está terminada: cada cierto tiempo aparece una **convocatoria** sobre
+Indara no está terminada: cada cierto tiempo aparece una **convocatoria** sobre
 una tecnología nueva. Quien la estudia y supera su prueba **hace avanzar la red
 para todos**, y algunas líneas de investigación acaban dándote herramientas
 nuevas, la más grande de ellas tu propio **agente de IA** en el ordenador de casa.
 
 Encaja con la tesis del juego: igual que un paquete solo existe si alguien lo
-recibe, una tecnología solo llega a la Malla si alguien la entiende.
+recibe, una tecnología solo llega a Indara si alguien la entiende.
 
 ## 1. Los centros de investigación
 
-Tres sitios nuevos de la Malla. Al principio se visitan **desde el terminal**,
+Tres sitios nuevos de Indara. Al principio se visitan **desde el terminal**,
 como NODO_07 en la Capa 07 (con `curl` a su servidor). Más adelante, si va bien,
 tendrán su escena 3D en el barrio.
 
 | Centro | Dónde | Qué investiga |
 |---|---|---|
-| **Instituto de Física del Puerto** | `instituto.malla` | Física cuántica: qubits, medida, entrelazamiento, distribución cuántica de claves (BB84), por qué un ordenador cuántico rompería los Círculos. |
-| **Laboratorio de Inteligencias** | `laboratorio.malla` | IA: tokens, contexto, herramientas, agentes. Ahí se construye el agente de IA del jugador. |
-| **Archivo de Protocolos** | `archivo.malla` | Redes nuevas: QUIC, enrutamiento en malla, pruebas de conocimiento cero, criptografía poscuántica. |
+| **Instituto de Física del Puerto** | `instituto.indara` | Física cuántica: qubits, medida, entrelazamiento, distribución cuántica de claves (BB84), por qué un ordenador cuántico rompería los Círculos. |
+| **Laboratorio de Inteligencias** | `laboratorio.indara` | IA: tokens, contexto, herramientas, agentes. Ahí se construye el agente de IA del jugador. |
+| **Archivo de Protocolos** | `archivo.indara` | Redes nuevas: QUIC, enrutamiento en malla, pruebas de conocimiento cero, criptografía poscuántica. |
 
 Cada centro tiene un personaje responsable (un vecino nuevo o uno que ya
 existe: Hideo Sakamoto, el profesor de ciencias, encaja con el Instituto) y su
@@ -47,16 +47,16 @@ pequeña:
    test: lo mismo que el resto del juego, conocimiento real que se demuestra
    haciendo.
 
-Al superarla aparece una cinemática corta («la Malla aprende…») y el
+Al superarla aparece una cinemática corta («Indara aprende…») y el
 descubrimiento queda en el **registro del centro**, con tu nombre.
 
 ### Que la red avance para todos
 
 Cada convocatoria tiene un **umbral colectivo**: cuando la superan, por ejemplo,
-tres jugadores, la tecnología **entra en la Malla para todos**:
+tres jugadores, la tecnología **entra en Indara para todos**:
 - órdenes nuevas en el terminal (por ejemplo, `qkd` tras BB84);
 - cambios en el mundo (carteles, lo que comentan los vecinos, la cinemática
-  «la Malla evoluciona», que se ve una vez);
+  «Indara evoluciona», que se ve una vez);
 - nuevas convocatorias que dependen de esa (un árbol de tecnologías).
 
 Así el multijugador vuelve a ser la red: el progreso de cada uno empuja el de
@@ -86,7 +86,7 @@ y se borra (así quedó hecho: [VIGIA.md](VIGIA.md)).
 
 Coste: una llamada al día a Gemini cabe de sobra en el plan gratuito.
 
-## 4. La IA entra en la Malla: tu agente
+## 4. La IA entra en Indara: tu agente
 
 La línea del **Laboratorio de Inteligencias** termina con algo tuyo: un agente
 de IA en el ordenador de casa (Kumo). Se gana por etapas:

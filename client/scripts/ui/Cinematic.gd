@@ -2,9 +2,9 @@ extends CanvasLayer
 ## Short in-engine cinematics at the story's turning points: the first time a
 ## player wakes up at home (the computer switches itself on and Session Zero
 ## writes), the first time they step out (the title), the first connection to
-## the Malla (a TCP handshake on the screen), every fragment
+## Indara (a TCP handshake on the screen), every fragment
 ## of the Sesión Cero, the end, each finished research call and each technology
-## that enters the Malla (once per PC). They wait until no terminal or window is
+## that enters Indara (once per PC). They wait until no terminal or window is
 ## open, then darken the screen with letterbox bars, static and a few typed
 ## lines; Esc, Enter, Space or a click skips. Presentation only: it reads the
 ## snapshot and remembers on this PC whether the opening was already shown.
@@ -32,7 +32,7 @@ const AWAKENING := [
 	["> FIRMA: SESIÓN CERO", "e0b45a"],
 	["Has vuelto.", "e0465f"],
 	["No me queda mucho. Me están reescribiendo.", "e9e2ea"],
-	["Alguien me enseñó a hablar con la Malla. En el colegio, en el aula de informática.", "e9e2ea"],
+	["Alguien me enseñó a hablar con Indara. En el colegio, en el aula de informática.", "e9e2ea"],
 	["Encuéntrale antes de que me borren del todo.", "e9e2ea"],
 ]
 const LOST := "> CONEXIÓN PERDIDA"
@@ -40,16 +40,16 @@ const LAYER_ZERO := "CAPA 00 · ARRANQUE"
 const TITLE_LINES := ["Un barrio. Tres armarios de enlace.", "Una red que nadie recuerda haber construido."]
 const GAME_TITLE := "SESIÓN CERO"
 const GAME_SUBTITLE := "PROTOCOLO DE PRESENCIA"
-# A TCP handshake: the Malla answers before you are in it.
+# A TCP handshake: Indara answers before you are in it.
 const HANDSHAKE := [
-	["> MALLA:23 · ABRIENDO ENLACE", "9a8f9e"],
+	["> INDARA:23 · ABRIENDO ENLACE", "9a8f9e"],
 	["-> SYN", "e9e2ea"],
 	["<- SYN-ACK", "e9e2ea"],
 	["-> ACK", "e9e2ea"],
 	["ENLACE ESTABLECIDO", "e0b45a"],
 ]
 const WIRED := ["Conexión establecida.", "Tú eres la Sesión Uno.", "Nadie sabe si eres la misma persona."]
-const RESEARCH := ["La Malla aprende.", "Tu nombre queda en el registro del centro."]
+const RESEARCH := ["Indara aprende.", "Tu nombre queda en el registro del centro."]
 const COMPLETE := "Sesión Cero completa."
 const THANKS := "Gracias por recibirla."
 const SKIP := "Esc · saltar"
@@ -131,7 +131,7 @@ func load_seen() -> void:
 	if config.has_section_key(seen_for, "seen"):
 		seen = Array(config.get_value(seen_for, "seen"))
 	else:
-		# An account new on this PC: Malla news already shown here stays shown (a veteran's own
+		# An account new on this PC: Indara news already shown here stays shown (a veteran's own
 		# account sees nothing again); the start of the story does not, so it plays from the beginning.
 		seen = Array(config.get_value("cinematics", "seen", [])).filter(func(key): return not key in ["opening", "title"])
 
@@ -262,7 +262,7 @@ func _on_snapshot(snapshot: Dictionary) -> void:
 			now.research.append(str(call.get("id", "")))
 			if not known.is_empty() and not str(call.get("id", "")) in known.research:
 				queue.append(_research_item(call))
-		# A technology entering the Malla is news for everyone: shown once on this PC, even if it
+		# A technology entering Indara is news for everyone: shown once on this PC, even if it
 		# happened while the player was away.
 		for tech in research.get("unlocked", []):
 			var item := _evolve_item(tech)
@@ -290,6 +290,7 @@ func _research_item(call: Dictionary) -> Dictionary:
 	return {"id": "research", "title": str(call.get("name", "")), "centre": str(call.get("centre", ""))}
 
 func _evolve_item(tech: Dictionary) -> Dictionary:
+	# "malla:" is only the key each PC remembers them under (the network's former name): it stays.
 	return {"id": "evolve", "key": "malla:" + str(tech.get("id", "")), "title": str(tech.get("name", "")),
 		"text": str(tech.get("about", "")), "line": str(tech.get("next", ""))}
 
@@ -341,7 +342,7 @@ func available() -> Array:
 	if "title" in seen or stage != "FIND_TEACHER":
 		items.append({"label": "TÍTULO // SESIÓN CERO", "item": {"id": "title"}})
 	if stage in ["CONNECTED", "LEGACY"]:
-		items.append({"label": "LA MALLA // SESIÓN UNO", "item": {"id": "wired"}})
+		items.append({"label": "INDARA // SESIÓN UNO", "item": {"id": "wired"}})
 	var decided := 0
 	for key in LAYERS:
 		var entry = snapshot.get(key, {})
@@ -360,7 +361,7 @@ func available() -> Array:
 		for call in research.get("completed", []):
 			items.append({"label": "INVESTIGACIÓN // %s" % str(call.get("name", "")), "item": _research_item(call)})
 		for tech in research.get("unlocked", []):
-			items.append({"label": "LA MALLA EVOLUCIONA // %s" % str(tech.get("name", "")), "item": _evolve_item(tech)})
+			items.append({"label": "INDARA EVOLUCIONA // %s" % str(tech.get("name", "")), "item": _evolve_item(tech)})
 	return items
 
 func replay(item: Dictionary) -> void:
@@ -730,7 +731,7 @@ func _wired() -> void:
 	screen.hide()
 	var camera := stage("street")
 	set_subtitles(true)
-	caption.text = "LA MALLA"
+	caption.text = "INDARA"
 	set_static(0.0)
 	await tween_to(shade, "modulate:a", 0.0, 0.9)
 	move_camera(camera, 9.0)
@@ -791,7 +792,7 @@ func _evolve(item: Dictionary) -> void:
 	bars(true)
 	var camera := stage("overview")
 	set_subtitles(true)
-	caption.text = "LA MALLA EVOLUCIONA"
+	caption.text = "INDARA EVOLUCIONA"
 	set_static(0.05)
 	await tween_to(shade, "modulate:a", 0.0, 0.9)
 	move_camera(camera, 10.0)

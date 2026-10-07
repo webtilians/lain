@@ -9,7 +9,7 @@ Las propuestas son de PNJ locales; esta fase todavía no conecta jugadores reale
 
 ## Recorrido para probarlo
 
-1. Completa la primera conexión a la Malla. En **PC → Intercambios** aparecen
+1. Completa la primera conexión a Indara. En **PC → Intercambios** aparecen
    los dos contactos y dónde encontrarlos. Sus propuestas se descubren hablando.
 2. Visita a **Ryoko en AZUL** y elige **Hablar de intercambiar código**. Está
    disponible tanto en la conversación del capítulo como en la del prólogo.

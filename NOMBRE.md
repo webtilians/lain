@@ -7,19 +7,30 @@ propios. La historia es la misma; la red es la misma, con otro nombre.
 | Antes | Ahora (español) | Ahora (inglés) |
 |---|---|---|
 | LAIN (título) | **Sesión Cero** | **Session Zero** |
-| la Wired | la Malla | the Mesh |
+| la Wired (después «la Malla», «the Mesh») | **Indara** | **Indara** |
 | el ordenador Navi, «navi-tunombre» | el ordenador Kumo, «casa-tunombre» | Kumo, «casa-yourname» |
 | LAIN-DOS | CERO-DOS | CERO-DOS |
-| dominios `.wired`, correos `@wired` | `.malla`, `@malla` | `.malla`, `@malla` |
-| `/var/log/wired/` | `/var/log/malla/` | `/var/log/malla/` |
-| pintadas: WIRED, LAYER:07, PRESENT DAY, CLOSE THE WORLD, KNIGHTS, PROTOCOL 7, DEUS, NAVI, TXEN EHT NEPO, CYBERIA | LA MALLA, CAPA 07, TTL 8, ¿QUIÉN TE RECIBE?, NOEMA MIENTE, NODO 07, SIN ACK, KAGAMI TE VE, OREC NÓISES, AZUL | (son carteles: no se traducen) |
+| dominios `.wired`, correos `@wired` | `.indara`, `@indara` | `.indara`, `@indara` |
+| `/var/log/wired/` | `/var/log/indara/` | `/var/log/indara/` |
+| pintadas: WIRED, LAYER:07, PRESENT DAY, CLOSE THE WORLD, KNIGHTS, PROTOCOL 7, DEUS, NAVI, TXEN EHT NEPO, CYBERIA | INDARA, CAPA 07, TTL 8, ¿QUIÉN TE RECIBE?, NOEMA MIENTE, NODO 07, SIN ACK, KAGAMI TE VE, OREC NÓISES, AZUL | (son carteles: no se traducen) |
 
 *Kumo* es «nube» y también «araña» en japonés. El subtítulo, «Protocolo de
 presencia», ya era nuestro.
 
-El puzle del prólogo pide ahora `telnet malla 23` (en inglés la pista dice
-MESH). El terminal acepta `malla`, `mesh` y la palabra antigua, para que nadie
-que estuviera a mitad del prólogo se quede atascado.
+## Por qué Indara
+
+La red se llamó primero «la Malla». Ahora se llama **Indara**: 因陀羅, la lectura
+japonesa de Indra. En el budismo Huayan, el cielo de Indra está cubierto por una
+red infinita con una joya en cada nudo, y cada joya refleja a todas las demás: la
+imagen de que todo está conectado y cada parte contiene el todo. Es el mismo
+nombre en español y en inglés, sin artículo («entrar en Indara»).
+
+Da juego a la historia: cada sesión es una joya que refleja a las otras, y por eso
+la Sesión Cero sigue viéndose aunque la borraran.
+
+El puzle del prólogo pide ahora `telnet indara 23`. El terminal sigue aceptando
+los nombres anteriores (`malla`, `mesh`, `wired`), para que nadie que estuviera a
+mitad del prólogo se quede atascado.
 
 ## Lo que no cambia, a propósito
 

@@ -36,7 +36,7 @@ def insert_npc_turn(conn, creator="AGENT_NORA", source="LLM_DIALOGUE"):
 
 def test_proposal_is_bounded_and_does_not_accept_reserved_identity():
     assert validate_proposal({
-        "name": "Eco", "premise": "Una presencia surgida de la Malla",
+        "name": "Eco", "premise": "Una presencia surgida de Indara",
         "goal": "OBSERVE_WORLD",
     }).name == "Eco"
     for bad in (
@@ -52,7 +52,7 @@ def test_proposal_is_bounded_and_does_not_accept_reserved_identity():
 
 def test_creation_requires_a_persisted_npc_llm_reply():
     initialize()
-    proposal = EntityProposal("Eco", "Una presencia surgida de la Malla", "OBSERVE_WORLD")
+    proposal = EntityProposal("Eco", "Una presencia surgida de Indara", "OBSERVE_WORLD")
     with get_connection() as conn:
         human_turn = insert_npc_turn(conn, creator="PLAYER_1")
         scripted_turn = insert_npc_turn(conn, source="DETERMINISTIC_DIALOGUE")
@@ -154,18 +154,18 @@ def test_npc_free_dialogue_creates_persistent_visible_actor_without_duplicate(mo
     greeting = start_player_conversation("AGENT_NORA", sim.minute)
     monkeypatch.setattr(
         free_conversation, "generate_dialogue_reply",
-        lambda **kw: DialogueReply("He visto una nueva voz en la Malla.", "LLM_DIALOGUE"),
+        lambda **kw: DialogueReply("He visto una nueva voz en Indara.", "LLM_DIALOGUE"),
     )
     monkeypatch.setattr(
         free_conversation, "suggest_entity",
         lambda *args, **kwargs: EntityProposal(
-            "Eco", "Una voz aparecida en la Malla", "OBSERVE_WORLD",
+            "Eco", "Una voz aparecida en Indara", "OBSERVE_WORLD",
         ),
     )
     response = free_conversation.say_to_player_conversation(
         "AGENT_NORA", "¿Qué has visto?", greeting["turn_id"], sim.minute,
     )
-    assert response["line"] == "He visto una nueva voz en la Malla."
+    assert response["line"] == "He visto una nueva voz en Indara."
     entities = list_generated_entities()
     assert len(entities) == 1
     entity_id = entities[0][0]
@@ -196,7 +196,7 @@ def test_scripted_npc_reply_never_creates_an_entity(monkeypatch):
     greeting = start_player_conversation("AGENT_NORA", sim.minute)
     monkeypatch.setattr(
         free_conversation, "generate_dialogue_reply",
-        lambda **kw: DialogueReply("He visto una nueva voz en la Malla.",
+        lambda **kw: DialogueReply("He visto una nueva voz en Indara.",
                                    "DETERMINISTIC_DIALOGUE"),
     )
     monkeypatch.setattr(

@@ -9,7 +9,7 @@ territorial de NOEMA y el guardado noema01.db.
 
 ## Primera versión jugable
 
-El PC de casa abre un taller después de la primera conexión a la Malla.
+El PC de casa abre un taller después de la primera conexión a Indara.
 Incluye correo, editor con líneas numeradas, ejercicio del Juego de la Vida,
 biblioteca, dispositivos y acceso a la investigación y a los enlaces anteriores.
 

@@ -166,7 +166,7 @@ def files(c, player: str, relay, story3) -> dict:
 
 def _mail() -> str:
     return "\n".join([
-        "De: nodo07 <sesiones@malla>",
+        "De: nodo07 <sesiones@indara>",
         "Asunto: Dos sesiones, una cuenta",
         "",
         "NODO_07 ha encontrado una sesión caducada con tu nombre: la Sesión Cero.",
@@ -374,7 +374,7 @@ def layer_snapshot(player: str) -> dict:
     return {
         "active": True, "title": TITLE, "goal": goal, "decision": run["decision"],
         "fragments": count,
-        "mail": {"subject": "Dos sesiones, una cuenta", "from": "sesiones@malla",
+        "mail": {"subject": "Dos sesiones, una cuenta", "from": "sesiones@indara",
                  "body": "NODO_07 ha encontrado una sesión caducada con tu nombre. Lee ~/correo/sesion.eml en el Terminal."},
     }
 

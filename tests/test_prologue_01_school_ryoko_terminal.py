@@ -106,13 +106,29 @@ def test_teacher_ryoko_order_and_colocation(monkeypatch):
         "PLAYER_1", "RYOKO", sim.minute, "ASK_ADDRESS",
     )
     assert result["stage"] == "FIND_TERMINAL"
-    assert "MALLA" in result["text"]
+    assert "INDARA" in result["text"]
     assert "23" in result["text"]
     assert "TELNET" not in result["text"].upper()
     assert "INTERNET" not in result["text"].upper()
     assert stage_for() == "FIND_TERMINAL"
     with pytest.raises(ValueError, match="TERMINAL_NOT_PRESENT"):
         submit_terminal_command("PLAYER_1", "telnet wired 23", sim.minute)
+
+
+def test_ryoko_shows_the_sheet_again_whenever_asked(monkeypatch):
+    from server.world_core.prologue import _ryoko
+    line, stage, _options = _ryoko("ASK_ADDRESS_AGAIN", "FIND_TEACHER")
+    assert "23" not in line and stage == "FIND_TEACHER", "a stranger sees the sheet"
+    sim = fresh_game(monkeypatch)
+    relocate(sim, "SCHOOL_LAB")
+    talk_to_prologue_npc("PLAYER_1", "PROFESSOR", sim.minute, "ASK_STUDENT")
+    relocate(sim, "NIGHTCLUB")
+    talk_to_prologue_npc("PLAYER_1", "RYOKO", sim.minute, "ASK_ADDRESS")
+    later = talk_to_prologue_npc("PLAYER_1", "RYOKO", sim.minute)
+    assert "ASK_ADDRESS_AGAIN" in [choice["id"] for choice in later["choices"]], "the address can only be heard once"
+    again = talk_to_prologue_npc("PLAYER_1", "RYOKO", sim.minute, "ASK_ADDRESS_AGAIN")
+    assert "INDARA" in again["text"] and "23" in again["text"] and again["stage"] == "FIND_TERMINAL"
+    assert "TELNET" not in again["text"].upper()
 
 
 def test_real_telnet_syntax_and_network_free_validation(monkeypatch):
@@ -280,11 +296,11 @@ def test_questions_drive_inference_without_automatic_reveal(monkeypatch):
         "PLAYER_1", "RYOKO", sim.minute, "ASK_ADDRESS",
     )
     assert result["stage"] == "FIND_TERMINAL"
-    assert "MALLA" in result["text"] and "23" in result["text"]
+    assert "INDARA" in result["text"] and "23" in result["text"]
     for spoiler in ("telnet", "Internet", "comando", "programa", "sintaxis"):
         assert spoiler not in result["text"].casefold()
     hint = build_player_snapshot()["prologue"]["hint"].casefold()
-    assert "23" in hint and "malla" in hint
+    assert "23" in hint and "indara" in hint
     for spoiler in ("telnet", "internet", "chatgpt", "sintaxis"):
         assert spoiler not in hint
     with get_connection() as conn:
@@ -310,15 +326,15 @@ def test_wrong_question_and_remote_spoiler_never_unlock_terminal(monkeypatch):
     ) == {"accepted": False, "reason": "MISSING_CONNECTION_KNOWLEDGE"}
 
 
-@pytest.mark.parametrize("host", ["malla", "MESH", "wired"])
+@pytest.mark.parametrize("host", ["indara", "INDARA", "malla", "MESH", "wired"])
 def test_the_renamed_network_and_the_old_name_both_connect(monkeypatch, host):
-    # The clue says MALLA (MESH in English); players who learnt the old name are not stuck.
+    # The clue says INDARA in both languages; players who learnt an older name are not stuck.
     sim = fresh_game(monkeypatch)
     relocate(sim, "SCHOOL_LAB")
     talk_to_prologue_npc("PLAYER_1", "PROFESSOR", sim.minute, "ASK_STUDENT")
     relocate(sim, "NIGHTCLUB")
     clue = talk_to_prologue_npc("PLAYER_1", "RYOKO", sim.minute, "ASK_ADDRESS")
-    assert "MALLA y 23" in clue["text"]
+    assert "INDARA y 23" in clue["text"]
     relocate(sim, "APARTMENT")
     assert submit_terminal_command("PLAYER_1", f"telnet {host} 23", sim.minute)["accepted"]
     assert stage_for() == "CONNECTED"

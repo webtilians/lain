@@ -47,7 +47,7 @@ func _snapshot(state: Dictionary) -> void:
 	var started := int(chapter.get("started_minute",0))
 	if notified_run != started:
 		notified_run = started
-		toast.text = "MALLA · REMITENTE DESCONOCIDO\n«Has vuelto»."
+		toast.text = "INDARA · REMITENTE DESCONOCIDO\n«Has vuelto»."
 		toast_until = Time.get_ticks_msec()+10000
 		toast.show()
 
@@ -103,7 +103,7 @@ func _send(action: String, target: String, data: Dictionary, journal: bool = fal
 func _dispatch() -> void:
 	busy=true
 	if not journal_request:
-		EventDialog.show_choices(OWNER,"LA MALLA" if terminal_context else "...","Esperando respuesta...",[])
+		EventDialog.show_choices(OWNER,"INDARA" if terminal_context else "...","Esperando respuesta...",[])
 	WorldApi.begin_external_mutation()
 	var err := request.request(ServerConnection.base_url() + "/api/v1/chapter-one/action",
 		ServerConnection.headers(),HTTPClient.METHOD_POST,JSON.stringify(pending))
@@ -156,7 +156,7 @@ func _present(event: Dictionary) -> void:
 	if terminal_context:
 		if NetworkConflict.active():
 			buttons.append({"id":"NETWORK","text":"Consultar el control de los enlaces."})
-		buttons.append({"id":"SIGNALS","text":"Consultar las otras señales de la Malla."})
+		buttons.append({"id":"SIGNALS","text":"Consultar las otras señales de Indara."})
 	buttons.append({"id":"CLOSE","text":"Cerrar la conexión." if terminal_context else "Dejarlo por ahora."})
 	EventDialog.show_choices(OWNER,str(event.get("speaker","...")),str(event.get("text","")),buttons)
 

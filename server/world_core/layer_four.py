@@ -153,7 +153,7 @@ def _story(c, player, run):
 
 def _mail(story: Story) -> str:
     return "\n".join([
-        "De: nodo07 <syn@malla>",
+        "De: nodo07 <syn@indara>",
         "Asunto: SYN",
         "",
         f"Alguien llama a tu puerto {PORT} desde NODO_07 y nadie contesta.",
@@ -522,7 +522,7 @@ def layer_snapshot(player: str) -> dict:
     return {
         "active": True, "title": TITLE, "goal": goal, "decision": run["decision"],
         "fragments": count,
-        "mail": {"subject": "SYN", "from": "syn@malla",
+        "mail": {"subject": "SYN", "from": "syn@indara",
                  "body": "Alguien llama a tu puerto 4004 desde NODO_07 y nadie contesta. Lee ~/correo/syn.eml en el Terminal."},
     }
 

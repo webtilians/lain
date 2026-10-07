@@ -45,7 +45,7 @@ func _on_snapshot_updated(
 		and str(origin.get("stage", "")) != "CONNECTED"
 	)
 	connection_label.text = (
-		"SESIÓN CERO  /  SIN CONEXIÓN A LA MALLA"
+		"SESIÓN CERO  /  SIN CONEXIÓN A INDARA"
 		if offline else "SESIÓN CERO  /  CONECTADO"
 	)
 

@@ -158,7 +158,7 @@ func _run() -> void:
 	terminal._on_command("help")
 	# The system names its own commands (a tool, like man); the network and port are Ryoko's to give.
 	check("telnet" in terminal.transcript.text.to_lower(), "The system's help does not list its commands")
-	check("malla" not in terminal.transcript.text.to_lower() and " 23" not in terminal.transcript.text,
+	check("indara" not in terminal.transcript.text.to_lower() and " 23" not in terminal.transcript.text,
 		"Terminal must not give away the network or its port")
 	terminal._on_command("type boot.log")
 	check("NOEMA" in terminal.transcript.text, "BOOT.LOG does not show who changed the entry")

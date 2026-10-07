@@ -76,7 +76,7 @@ def enroll_workshop():
                 (actor,LIFE_TEMPLATE,'use("routing")\n','use("routing")\n','["routing"]')).rowcount
             if created:
                 _grant(c,actor,"home_navi","DEVICE","navi","Ordenador de casa",now,1)
-                _grant(c,actor,"first_connection","CODE","routing","Tu primera conexión a la Malla",now)
+                _grant(c,actor,"first_connection","CODE","routing","Tu primera conexión a Indara",now)
                 report(c,actor,now,"WORKSHOP","El PC dispone de un taller de código. En Kissa Café han instalado un terminal: su técnico busca ayuda para comprobar un coprocesador.")
     from .cafe_events import initialize_events
     initialize_events()

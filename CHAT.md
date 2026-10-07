@@ -6,7 +6,7 @@ un NPC o con un jugador»*. Así funciona ahora.
 ## Cómo se vive
 
 - **Cada zona tiene una conversación**: lo que se dice en un sitio lo leen todos los que
-  están allí, jugadores y vecinos. Es el dominio de *broadcast* de la Malla: solo te
+  están allí, jugadores y vecinos. Es el dominio de *broadcast* de Indara: solo te
   oyen quienes comparten tu zona.
 - **Nadie lleva etiqueta.** Los vecinos firman con su nombre de pila (Hideo, no Hideo
   Sakamoto), igual que firmaría un jugador. Cada mensaje llega al juego con una clave

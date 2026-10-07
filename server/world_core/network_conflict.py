@@ -121,7 +121,7 @@ def _own(c, relay, actor):
     return c.execute("SELECT amount,defense FROM network_influence WHERE relay=? AND actor_id=?",(relay,actor)).fetchone() or (0,0)
 
 
-def _page(text, choices=(), speaker="MALLA · CONTROL DE ENLACES"):
+def _page(text, choices=(), speaker="INDARA · CONTROL DE ENLACES"):
     return {"speaker":speaker,"text":text,"choices":list(choices)}
 
 
@@ -203,11 +203,11 @@ def perform_network_action(actor, action, relay, rival, request_id, faction="KAG
             result=_menu(c,actor,relay,f"{RELAYS[relay][0]}\n{operators}\nTu control: {amount}% · Defensas: {defense}/2\n\nExamina los contratos y el tráfico antes de intervenir. Cada operador mantiene órdenes y credenciales diferentes.")
         elif action=="INSPECT":
             op=factions.inspect(c,actor,relay,factions.KAGAMI,now)
-            text="CONTRATO DE CESIÓN · El protocolo y sus primeras comunidades son anteriores a KAGAMI. El consorcio adquirió los puntos de acceso y sustituyó las claves de administración; no creó la Malla."
+            text="CONTRATO DE CESIÓN · El protocolo y sus primeras comunidades son anteriores a KAGAMI. El consorcio adquirió los puntos de acceso y sustituyó las claves de administración; no creó Indara."
             if op: text+="\n\nTRÁFICO ACTUAL · La orden de intervención comparte la credencial del personal de mantenimiento presente. Puedes contrastarla hablando con esa persona."
             if factions.active(c):
                 noema_op=factions.inspect(c,actor,relay,factions.NOEMA,now)
-                text+="\n\nANEXO DE REGISTROS · NOEMA adquirió permisos sobre identidades y archivos; tampoco creó la Malla. Controla una cuota distinta a la de KAGAMI."
+                text+="\n\nANEXO DE REGISTROS · NOEMA adquirió permisos sobre identidades y archivos; tampoco creó Indara. Controla una cuota distinta a la de KAGAMI."
                 if noema_op:
                     text+="\n\nORDEN DE REESCRITURA · Su firma coincide con la credencial del personal de registros presente. Contrástala antes de que venza la orden."
             report(c,actor,now,relay,text)
@@ -325,4 +325,4 @@ def network_snapshot(actor="PLAYER_1"):
         reports=[{"id":i,"minute":m,"source":s,"text":t} for i,m,s,t in c.execute("SELECT id,minute,source,text FROM network_reports WHERE recipient=? ORDER BY id DESC LIMIT 25",(actor,))]
         enemy_known=c.execute("SELECT 1 FROM network_discoveries WHERE actor_id=?",(actor,)).fetchone() is not None
         total=sum(sum(operator["control"] for operator in row["controllers"]) if dual else row["corporation"] for row in relays)
-        return {"active":True,"multiple_operators":dual,"corporation":"Administradores de la Malla" if dual else (CORPORATION if enemy_known else "Administrador desconocido"),"corporate_control":round(total/len(RELAYS),1),"trace":player[0],"ready_in":max(0,10-(now-player[1])),"relays":relays,"rankings":rankings,"pending":pending,"reports":reports,"visible_personnel":operatives,"session_mode":"LOCAL"}
+        return {"active":True,"multiple_operators":dual,"corporation":"Administradores de Indara" if dual else (CORPORATION if enemy_known else "Administrador desconocido"),"corporate_control":round(total/len(RELAYS),1),"trace":player[0],"ready_in":max(0,10-(now-player[1])),"relays":relays,"rankings":rankings,"pending":pending,"reports":reports,"visible_personnel":operatives,"session_mode":"LOCAL"}

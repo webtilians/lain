@@ -137,9 +137,9 @@ def _layer_three(c, player, run, story3):
                        f"reenviar {story3.packet}")
     if run["assembled"]:
         return ("diario", [
-            "Ya tienes el mensaje. Ahora comprueba el diario de la Malla, en el Terminal de casa: "
-            "cat /var/log/malla/diario.",
-            "Cada entrada guarda el hash (prev) de la anterior. sha256 /var/log/malla/diario <línea> calcula el de "
+            "Ya tienes el mensaje. Ahora comprueba el diario de Indara, en el Terminal de casa: "
+            "cat /var/log/indara/diario.",
+            "Cada entrada guarda el hash (prev) de la anterior. sha256 /var/log/indara/diario <línea> calcula el de "
             "una línea: compáralo con el prev de la siguiente. Donde no coincida, alguien la reescribió (man cadena).",
             f"La entrada reescrita es la {story3.forged_number:04d}. Escribe denunciar {story3.forged_number}.",
         ])
@@ -234,17 +234,17 @@ def _layer_six(c, player, run):
 def _layer_seven(c, player, run):
     from . import layer_seven
     story = layer_seven._story(c, player)
-    auth = f'--resolve nodo07.malla:80:{story.node_ip} -u "{story.name}:{story.word}"'
+    auth = f'--resolve nodo07.indara:80:{story.node_ip} -u "{story.name}:{story.word}"'
     if run["inside"]:
         return _decide("cómo termina tu historia", "persistir (PUT), replicarte (POST al espejo de KAGAMI) o desconectarte (DELETE)",
-                       f"curl -X PUT {auth} http://nodo07.malla/registro/{story.name}")
+                       f"curl -X PUT {auth} http://nodo07.indara/registro/{story.name}")
     return ("nodo07", [
-        "NODO_07 se alcanza desde cualquier terminal. dig nodo07.malla dice que no existe… según NOEMA. "
-        "dig NS malla lista los otros servidores de nombres.",
-        "Pregúntale a otro: dig @ns.circulos.malla nodo07.malla. Después habla HTTP con curl: el servidor atiende "
+        "NODO_07 se alcanza desde cualquier terminal. dig nodo07.indara dice que no existe… según NOEMA. "
+        "dig NS indara lista los otros servidores de nombres.",
+        "Pregúntale a otro: dig @ns.circulos.indara nodo07.indara. Después habla HTTP con curl: el servidor atiende "
         "por nombre (cabecera Host) y pide autenticación Basic con tu nombre y la palabra de la Sesión Cero "
         "(man host, man auth).",
-        f"Escribe curl {auth} http://nodo07.malla/sesiones",
+        f"Escribe curl {auth} http://nodo07.indara/sesiones",
     ])
 
 

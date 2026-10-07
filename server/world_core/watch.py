@@ -131,7 +131,7 @@ def prompt(items: list, existing: list, centre: str, recent_kinds: list | None =
     kinds = {key: generator.ABOUT for key, generator in research.GENERATORS.items()}
     director = research.CENTRES[centre]["who"].removeprefix("Dirige: ").rstrip(".")
     system = (
-        "Eres el vigía de la Malla, la red de un videojuego de misterio llamado Sesión Cero. Cada pocos días eliges "
+        "Eres el vigía de Indara, la red de un videojuego de misterio llamado Sesión Cero. Cada pocos días eliges "
         "UNA noticia real de la lista y la conviertes en una convocatoria de estudio para un centro de "
         f"investigación del juego. Esta vez es para {research.centre_focus(centre)}. Elige la noticia que mejor "
         "encaje con ese centro. Prefiere avances de ciencia, tecnología o estándares; evita sucesos (filtraciones "
@@ -150,7 +150,7 @@ def prompt(items: list, existing: list, centre: str, recent_kinds: list | None =
         '(máx. 70 caracteres), "summary_es", "summary_en" (dos frases), "article_es", "article_en" (artículo de '
         'estudio de 120 a 220 palabras, con saltos de línea), "framing_es", "framing_en" (una frase), "tech" '
         '(nombre corto de la tecnología, máx. 30 caracteres), "tech_text_es", "tech_text_en" (una frase: qué '
-        'aprende la Malla), "tech_line_es", "tech_line_en" (una frase: qué cambia para quien juega), "memory_es" '
+        'aprende Indara), "tech_line_es", "tech_line_en" (una frase: qué cambia para quien juega), "memory_es" '
         "(lo que el director recordará de ello, en primera persona y en una frase). No repitas temas ya estudiados.")
     user = json.dumps({
         "centre": research.centre_focus(centre), "kinds": kinds, "recent_kinds": recent_kinds or [],

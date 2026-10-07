@@ -41,7 +41,7 @@ def ensure_station_followup(
         return False
 
     # No basta con haber recibido la pista
-    # de la Malla: necesitamos evidencia directa.
+    # de Indara: necesitamos evidencia directa.
 
     belief = load_belief(
         player_id,
@@ -81,7 +81,7 @@ def ensure_station_followup(
                 player_message_id(FOLLOWUP_MESSAGE_ID, player_id),
                 player_id,
                 None,
-                "unknown@malla",
+                "unknown@indara",
                 "YOU WERE SEEN",
                 (
                     "HAS VISTO LA SEÑAL.\n\n"

@@ -13,7 +13,7 @@ con un segundo juego y un catálogo ampliable de futuras ediciones.
 
 ## Probarlo
 
-1. Tras la primera conexión a la Malla, abre **PC → Eventos**. También hay un
+1. Tras la primera conexión a Indara, abre **PC → Eventos**. También hay un
    acceso en Correo. Comprueba el premio, la apertura y el cierre.
 2. Visita **Kissa Café**, usa su terminal con **E** y elige **Torneos y
    clasificación**. La práctica anterior y el técnico siguen disponibles.
@@ -26,7 +26,7 @@ con un segundo juego y un catálogo ampliable de futuras ediciones.
    elegida por el cliente.
 5. Al cerrar, el primer puesto recibe automáticamente el premio en su biblioteca
    o inventario. Los empates en primera posición comparten premio. El resto no
-   recibe ese premio. Queda un informe individual en la actividad de la Malla.
+   recibe ese premio. Queda un informe individual en la actividad de Indara.
 6. El primer torneo entrega **Amortiguación**. En **PC → Código**, inserta ese
    módulo junto a Enrutamiento y compila. Consumen 4 unidades, disponibles con
    tu Kumo inicial. Amortiguación absorbe hasta 5 puntos de pérdida en cada

@@ -9,13 +9,13 @@ el guardado circles01.db.
 
 NOEMA disputa ahora el control de tres enlaces y tiene personal encubierto en
 la ciudad. KAGAMI controla infraestructura; NOEMA intenta recuperar permisos
-mediante reescrituras de registros. Ninguna creó la Malla.
+mediante reescrituras de registros. Ninguna creó Indara.
 
 ![Elección de corporación en el aula](docs/noema01/two-controllers.png)
 
 ## Recorrido para probarlo
 
-1. Después de la primera conexión a la Malla, ve al **aula de informática**.
+1. Después de la primera conexión a Indara, ve al **aula de informática**.
    Acércate al armario de enlace, pulsa **E** y examina contratos y tráfico.
    Ahora aparecen dos cuotas y puedes elegir a qué corporación disputar control.
 2. Elige **Disputar 20 puntos a NOEMA**. Consulta **J → RED / CONTROL DE ENLACES**:

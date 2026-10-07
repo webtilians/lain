@@ -3,7 +3,7 @@
 Rama independiente `experiment/chapter-0.1-already-here`, basada en Visual 0.10
 (`34845c8`). No se fusiona con ninguna rama anterior.
 
-Al conectarte a la Malla recibes «Has vuelto». El caso se puede ignorar o
+Al conectarte a Indara recibes «Has vuelto». El caso se puede ignorar o
 investigar libremente. Participan Ryoko, el profesor, Haruto Senda y Aiko Mori,
 además de una identidad desconocida. Los otros vecinos conservan sus rutinas,
 fichas y conversaciones.
@@ -59,7 +59,7 @@ Capturas del cliente Godot con una partida sintética:
   conversación con el profesor. En partidas antiguas que no tengan ese evento,
   Haruto no inventa esa visita.
 - Se puede contrastar un recuerdo con otro, examinar físicamente el pasillo y
-  su reloj, acceder al tercer ordenador o consultar el espejo de la Malla.
+  su reloj, acceder al tercer ordenador o consultar el espejo de Indara.
 - Las relaciones e hipótesis son interpretaciones del jugador, sin veredicto
   automático sobre la identidad ni la veracidad del registro.
 - Compartir o reservar la copia afecta de forma persistente a dos personajes,
@@ -99,7 +99,7 @@ Recorrido reproducible:
 4. En J, relacionar «Haruto te sitúa en la escuela» con el parte o con la
    declaración del profesor mediante «Se contradicen». También sirve contrastar
    el detalle falso de Haruto con la conversación propia del prólogo.
-5. Leer el tercer ordenador del aula o buscar la escuela desde la Malla en casa.
+5. Leer el tercer ordenador del aula o buscar la escuela desde Indara en casa.
    Contrastar las referencias muestra la cuenta fechada antes de tu conexión.
 6. Enseñar la copia al profesor y autorizar su aviso a Ryoko **o** reservarla con
    Ryoko y enviar al profesor solo la anomalía. El texto explica los destinatarios.

@@ -159,7 +159,7 @@ def files(c, player: str, relay, story3) -> dict:
 
 def _mail() -> str:
     return "\n".join([
-        "De: nora <nora@malla>",
+        "De: nora <nora@indara>",
         "Asunto: ¿Has leído tu diario?",
         "",
         "NOEMA corrige lo que no le gusta, también en los diarios. Lo hace con buena letra: no se nota.",
