@@ -25,6 +25,7 @@ que enganchar. Esto es lo que vive un jugador nuevo, en orden.
    - Si le cuentas lo de la Sesión Cero, se queda helada: ese nombre no debería
      existir.
    - Te enseña su hoja, MALLA y 23, pero no te dice qué escribir delante.
+   - Después puedes pedirle siempre que te la vuelva a enseñar («¿Me vuelves a enseñar la hoja?»).
 6. **El ordenador de casa** (CERO-DOS). `help` dice qué órdenes tiene el sistema, entre
    ellas `TELNET <red> <puerto>`; la red y el puerto los sabes por Ryoko.
    `type boot.log` enseña la noche en que se cerró la Sesión Cero y quién cambió el

@@ -115,6 +115,22 @@ def test_teacher_ryoko_order_and_colocation(monkeypatch):
         submit_terminal_command("PLAYER_1", "telnet wired 23", sim.minute)
 
 
+def test_ryoko_shows_the_sheet_again_whenever_asked(monkeypatch):
+    from server.world_core.prologue import _ryoko
+    line, stage, _options = _ryoko("ASK_ADDRESS_AGAIN", "FIND_TEACHER")
+    assert "23" not in line and stage == "FIND_TEACHER", "a stranger sees the sheet"
+    sim = fresh_game(monkeypatch)
+    relocate(sim, "SCHOOL_LAB")
+    talk_to_prologue_npc("PLAYER_1", "PROFESSOR", sim.minute, "ASK_STUDENT")
+    relocate(sim, "NIGHTCLUB")
+    talk_to_prologue_npc("PLAYER_1", "RYOKO", sim.minute, "ASK_ADDRESS")
+    later = talk_to_prologue_npc("PLAYER_1", "RYOKO", sim.minute)
+    assert "ASK_ADDRESS_AGAIN" in [choice["id"] for choice in later["choices"]], "the address can only be heard once"
+    again = talk_to_prologue_npc("PLAYER_1", "RYOKO", sim.minute, "ASK_ADDRESS_AGAIN")
+    assert "MALLA" in again["text"] and "23" in again["text"] and again["stage"] == "FIND_TERMINAL"
+    assert "TELNET" not in again["text"].upper()
+
+
 def test_real_telnet_syntax_and_network_free_validation(monkeypatch):
     sim = fresh_game(monkeypatch)
     relocate(sim, "SCHOOL_LAB")

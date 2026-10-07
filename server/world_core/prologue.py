@@ -88,6 +88,7 @@ RYOKO_CHOICES = {
     "ASK_WIRED": "«Me escribieron desde mi ordenador. Firmaban Sesión Cero.»",
     "ASK_SCHOOL": "«¿Fuiste alumna del profesor?»",
     "ASK_ADDRESS": "«Necesito entrar en la Malla.»",
+    "ASK_ADDRESS_AGAIN": "«¿Me vuelves a enseñar la hoja?»",
     "ASK_METHOD": "«¿Y qué hay que escribir delante?»",
     "GOODBYE": "Dejarla con su música.",
 }
@@ -163,6 +164,10 @@ RYOKO_LINES = {
         "ordenador, no desde aquí. Y lo que hay que escribir delante no te lo voy a dar: si eres "
         "quien creo, lo sabrás.»"
     ),
+    "ASK_ADDRESS_AGAIN": (
+        "Ryoko resopla, pero vuelve a sacar la hoja doblada y te la pone delante, sin soltarla: "
+        "MALLA y 23. «El nombre de la red y su puerto. Apúntatelo de una vez.»"
+    ),
     "ASK_METHOD": (
         "«Una orden muy vieja, de cuando las máquinas se hablaban por turnos.» Se encoge de hombros. "
         "«Si no te acuerdas, pídele ayuda al ordenador. Los sistemas viejos siempre la tienen.»"
@@ -195,6 +200,8 @@ def _professor(choice: str, stage: str) -> tuple[str, str, list]:
 def _ryoko(choice: str, stage: str) -> tuple[str, str, list]:
     stranger = stage == "FIND_TEACHER"  # nobody sent you: she will not talk about the Malla
     next_stage = stage
+    if choice == "ASK_ADDRESS_AGAIN" and stage in {"FIND_TEACHER", "FIND_RYOKO"}:
+        choice = "ASK_ADDRESS"  # she has not shown it yet: the first time, or not at all to a stranger
     if choice == "INTRO":
         line = RYOKO_LINES["INTRO_STRANGER" if stranger else
                            "INTRO_AGAIN" if stage != "FIND_RYOKO" else "INTRO"]
@@ -209,7 +216,8 @@ def _ryoko(choice: str, stage: str) -> tuple[str, str, list]:
     elif next_stage == "FIND_RYOKO":
         options = ["ASK_WIRED", "ASK_SCHOOL", "ASK_ADDRESS", "GOODBYE"]
     else:
-        options = ["ASK_METHOD", "ASK_WIRED", "ASK_SCHOOL", "GOODBYE"]
+        # Once she has shown the sheet, the player can always ask to see it again.
+        options = ["ASK_ADDRESS_AGAIN", "ASK_METHOD", "ASK_WIRED", "ASK_SCHOOL", "GOODBYE"]
     return line, next_stage, [option for option in options if option != choice or option == "GOODBYE"]
 
 
