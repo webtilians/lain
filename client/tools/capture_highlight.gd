@@ -26,18 +26,21 @@ func capture() -> void:
 	root.add_child(home)
 	current_scene = home
 	var player: Node3D = home.get_node("Player")
+	# A place without a visible shape of its own: the faint floor glow and the key.
 	player.global_position = home.get_node("Monitor").global_position + Vector3(0.6, -0.4, 0.9)
 	await shot("highlight-home")
-	home.queue_free()
-	await process_frame
-	root.get_node("WorldApi").snapshot.player.location = "APARTMENT_DISTRICT"
-	var district: Node3D = load("res://scenes/apartment_district/ApartmentDistrict.tscn").instantiate()
-	root.add_child(district)
-	current_scene = district
-	await process_frame
-	var street: Node3D = district.get_node("Player")
-	var doors := get_nodes_in_group("interactable").filter(func(n): return n is Node3D and n.has_method("interact"))
-	if not doors.is_empty():
-		street.global_position = doors[0].global_position + Vector3(1.2, 0, 1.4)
-	await shot("highlight-district")
+	# Someone standing in the room: the glow along their silhouette.
+	var figure: Node3D = load("res://art/characters/LainSlender.tscn").instantiate()
+	var usable := GDScript.new()
+	usable.source_code = "extends Node3D\nfunc interact() -> void:\n\tpass\n"
+	usable.reload()
+	var holder := Node3D.new()
+	holder.set_script(usable)
+	holder.add_to_group("interactable")
+	holder.add_child(figure)
+	home.add_child(holder)
+	holder.global_position = Vector3(0.8, player.global_position.y - 0.9, 0.2)
+	player.global_position = holder.global_position + Vector3(0.9, 0.9, 0.9)
+	await shot("highlight-figure")
+	DirAccess.remove_absolute(ProjectSettings.globalize_path("user://guide_capture.cfg"))
 	quit()

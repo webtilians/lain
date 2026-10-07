@@ -20,18 +20,29 @@ Todo se maneja desde el PC con `vps.ps1`.
    botón de descarga y capturas del juego (`deploy/vps/web`; las imágenes se
    rehacen con `client/tools/capture_landing.gd`). El enlace directo, que siempre baja la última versión,
    es `https://github.com/webtilians/lain/releases/latest/download/LAIN-Windows.zip`.
-2. Pásales también el **código de invitación**. Para verlo o cambiarlo:
+2. El registro está **abierto**: cualquiera con el juego se crea una cuenta
+   con nombre y contraseña, sin código ni escribirte. Para que nadie llene el
+   mundo de cuentas falsas hay un tope de 3 altas por hora desde cada dirección
+   y de 60 por hora en total. Si algún día hace falta, se puede volver a pedir
+   código o cerrarlo (el menú del juego solo enseña la casilla del código cuando
+   el servidor lo pide):
 
    ```powershell
-   .\vps.ps1 -Invite ver      # muestra el código actual
-   .\vps.ps1 -Invite nuevo    # código nuevo (el anterior deja de valer)
-   .\vps.ps1 -Invite abierto  # cualquiera con el juego puede registrarse
+   .\vps.ps1 -Invite ver      # cómo está el registro ahora
+   .\vps.ps1 -Invite abierto  # cualquiera con el juego puede registrarse (lo normal)
+   .\vps.ps1 -Invite nuevo    # pedir un código de invitación (uno nuevo)
    .\vps.ps1 -Invite cerrado  # nadie nuevo puede registrarse
    ```
 
-3. Cada persona extrae el ZIP, abre `LAIN.exe` y se crea su cuenta con nombre,
-   contraseña y el código. El PC recuerda la sesión. Desde otro PC entra con
-   su nombre y contraseña.
+3. Cada persona extrae el ZIP, abre `LAIN.exe` y se crea su cuenta con nombre
+   y contraseña. El PC recuerda la sesión. Desde otro PC entra con su nombre y
+   contraseña.
+
+   Para probar el juego desde el principio sin perder tu partida: en el menú de
+   inicio, **Cerrar sesión** y luego **Crear una cuenta nueva**. La cuenta nueva
+   empieza el prólogo desde cero (con su cinemática, el título y la guía, aunque
+   sea el mismo PC). Para volver a la tuya, **Cerrar sesión** y entra con tu
+   nombre y contraseña.
 4. Si alguien olvida su contraseña: `.\vps.ps1 -ResetPassword "Nombre"` te da
    una nueva para pasársela.
 

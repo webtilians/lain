@@ -1,7 +1,7 @@
 extends Node
 ## Other players are visual replicas. World Core still decides all gameplay actions.
 const AVATAR := preload("res://art/characters/LainSlender.tscn")
-const CHAT_LINES := 6
+const CHAT_LINES := 40  # kept in the scrollable log; the box shows the last few
 var _request: HTTPRequest
 var _chat_request: HTTPRequest
 var _elapsed := 0.0
@@ -13,6 +13,7 @@ var _seen_messages: Dictionary = {}
 var _history: Array[String] = []
 var _status: Label
 var _log: Label
+var _scroll: ScrollContainer
 var _chat_input: LineEdit
 var _layer: CanvasLayer
 
@@ -44,10 +45,18 @@ func _ready() -> void:
 	_status = Label.new()
 	_status.text = "ONLINE · conectando…"
 	column.add_child(_status)
+	# The log keeps a fixed height and scrolls (wheel or right stick), so the box to write in
+	# never leaves the screen however long the conversation gets.
+	_scroll = ScrollContainer.new()
+	_scroll.custom_minimum_size = Vector2(440, 150)
+	_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	column.add_child(_scroll)
 	_log = Label.new()
 	_log.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_log.custom_minimum_size = Vector2(440, 132)
-	column.add_child(_log)
+	_log.custom_minimum_size = Vector2(424, 0)
+	_log.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_scroll.add_child(_log)
+	Gamepad.scroll_with_stick(_scroll)
 	_chat_input = LineEdit.new()
 	_chat_input.max_length = 240
 	_chat_input.placeholder_text = "Enter para hablar con quienes están aquí"
@@ -186,7 +195,16 @@ func _received(result: int, code: int, _headers: PackedStringArray, body: Packed
 		# One chat per zone: people and residents alike, written the same way (zone_chat.py).
 		while _history.size() > CHAT_LINES:
 			_history.pop_front()
-	_log.text = "\n".join(_history)
+	var text := "\n".join(_history)
+	if text != _log.text:
+		_log.text = text
+		_scroll_to_end.call_deferred()
+
+
+func _scroll_to_end() -> void:
+	# After the label has grown with the new line.
+	await get_tree().process_frame
+	_scroll.scroll_vertical = int(_scroll.get_v_scroll_bar().max_value)
 
 func _unhandled_input(event: InputEvent) -> void:
 	if not ServerConnection.is_online() or _chat_input == null or EventDialog.visible:

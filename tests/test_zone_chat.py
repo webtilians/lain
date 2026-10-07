@@ -96,6 +96,30 @@ def test_what_other_players_say_never_reaches_the_ai(plaza):
     assert heard[0] == "Alice: Hideo, ¿qué tal?" and not any("banco" in line for line in heard)
 
 
+def test_a_reply_that_repeats_the_question_loses_the_echo():
+    assert zone_chat.unecho("Me preguntas cómo me va el día. Pues bien, tirando.") == "Pues bien, tirando."
+    assert zone_chat.unecho("Me preguntas si quiero jugar al pádel. No creo que pueda.") == "No creo que pueda."
+    assert zone_chat.unecho("You ask how my day is going. Busy, as always.") == "Busy, as always."
+    assert zone_chat.unecho("Me preguntas demasiado.") == "Me preguntas demasiado.", "nothing left after it: kept"
+    assert zone_chat.unecho("Bien, ¿y tú?") == "Bien, ¿y tú?"
+
+
+def test_the_chat_asks_the_ai_to_write_like_a_person(monkeypatch):
+    from server.world_core import llm_dialogue
+    seen = {}
+
+    def fake_post(request, timeout):
+        seen["system"] = __import__("json").loads(request.data)["messages"][0]["content"]
+        raise OSError("no network in tests")
+    monkeypatch.setenv("LAIN_LLM_MODEL", "test")
+    monkeypatch.setattr(llm_dialogue, "urlopen", fake_post)
+    context = {"identity": {}, "situation": {"zone_chat": []}, "beliefs": {"nodes": [], "actors": [], "situations": []},
+               "memory": [], "goals": {}, "conversation": None}
+    with pytest.raises(OSError):
+        llm_dialogue._provider_reply(context, "¿quieres jugar al pádel?")
+    assert "CHAT DE GRUPO" in seen["system"] and "Me preguntas" in seen["system"]
+
+
 def test_names_are_found_however_they_are_written(plaza):
     residents = [("RESIDENT_A", "Aiko Tanaka"), ("RESIDENT_B", "Óscar Ruiz")]
     assert zone_chat.addressed("eh, AIKO!", residents) == [residents[0]]

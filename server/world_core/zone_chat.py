@@ -126,7 +126,25 @@ def reply_text(resident_id: str, player_id: str, player_name: str, text: str, lo
     if reply.source != "LLM_DIALOGUE":
         from . import i18n
         return i18n.t(random.choice(SHORT_ANSWERS))
-    return reply.text
+    return unecho(reply.text)
+
+
+ECHO_OPENINGS = ("me preguntas", "me dices", "me comentas", "preguntas si", "preguntas cómo", "preguntas que",
+                 "dices que", "you ask", "you're asking", "you are asking", "you say", "you said")
+
+
+def unecho(text: str) -> str:
+    """Drop a first sentence that only repeats what was asked («Me preguntas si…»): nobody chats like that."""
+    stripped = text.strip()
+    lowered = plain(stripped)
+    if not lowered.startswith(tuple(plain(opening) for opening in ECHO_OPENINGS)):
+        return stripped
+    for mark in (". ", "? ", "! ", ".\n"):
+        cut = stripped.find(mark)
+        if cut != -1 and stripped[cut + len(mark):].strip():
+            rest = stripped[cut + len(mark):].strip()
+            return rest[:1].upper() + rest[1:]
+    return stripped
 
 
 def _remember(resident_id: str, player_id: str, player_name: str, text: str, location: str) -> None:

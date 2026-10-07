@@ -90,6 +90,7 @@ var enabled := DisplayServer.get_name() != "headless"
 var pace := 1.0
 var config_path := CONFIG_PATH
 var seen: Array = []
+var seen_for := "cinematics"  # the section of config_path that `seen` belongs to (one per account)
 var queue: Array = []
 var playing := ""
 var skipping := false
@@ -117,10 +118,28 @@ func _ready() -> void:
 	layer = 115
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	_build()
-	var config := ConfigFile.new()
-	if config.load(config_path) == OK:
-		seen = Array(config.get_value("cinematics", "seen", []))
+	load_seen()
+	ServerConnection.account_changed.connect(load_seen)
 	WorldApi.snapshot_updated.connect(_on_snapshot)
+
+func load_seen() -> void:
+	seen_for = ServerConnection.progress_section("cinematics")
+	seen = []
+	var config := ConfigFile.new()
+	if config.load(config_path) != OK:
+		return
+	if config.has_section_key(seen_for, "seen"):
+		seen = Array(config.get_value(seen_for, "seen"))
+	else:
+		# An account new on this PC: Malla news already shown here stays shown (a veteran's own
+		# account sees nothing again); the start of the story does not, so it plays from the beginning.
+		seen = Array(config.get_value("cinematics", "seen", [])).filter(func(key): return not key in ["opening", "title"])
+
+func _save_seen() -> void:
+	var config := ConfigFile.new()
+	config.load(config_path)  # the other accounts on this PC keep theirs
+	config.set_value(seen_for, "seen", seen)
+	config.save(config_path)
 
 func _build() -> void:
 	root = Control.new()
@@ -391,9 +410,7 @@ func play(item: Dictionary) -> void:
 		"evolve":
 			if not item.key in seen:
 				seen.append(item.key)
-				var config := ConfigFile.new()
-				config.set_value("cinematics", "seen", seen)
-				config.save(config_path)
+				_save_seen()
 			await _evolve(item)
 		"intro":
 			root.hide()
@@ -403,9 +420,7 @@ func play(item: Dictionary) -> void:
 func _remember(key: String) -> void:
 	if not key in seen:
 		seen.append(key)
-	var config := ConfigFile.new()
-	config.set_value("cinematics", "seen", seen)
-	config.save(config_path)
+	_save_seen()
 
 func _restore_camera() -> void:
 	var camera := get_node_or_null("/root/CinematicCamera")

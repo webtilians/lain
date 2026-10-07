@@ -1,8 +1,8 @@
 extends SceneTree
 ## The first-minutes guide: it advances as the player walks, opens the diary,
 ## goes out, finds the school and talks; then keeps the prologue objective on
-## screen; F1 hides it; terminals get one tip; veterans skip the steps; and it
-## never changes the world.
+## screen; F1 hides it; terminals get one tip; veterans skip the steps; another
+## account on the same PC starts over; and it never changes the world.
 var failures: Array[String] = []
 
 func _initialize() -> void:
@@ -117,6 +117,24 @@ func run() -> void:
 	api.snapshot.prologue.stage = "CONNECTED"
 	await frames()
 	check(not guide.panel.visible, "the guide stays after the prologue")
+
+	# Another account on this PC starts the guide over; the first one keeps its own.
+	var server := root.get_node("ServerConnection")
+	server.session_path = "user://test_guide_session.json"
+	reset(guide, path)
+	guide.done = ["move", "journal"]
+	guide.decided = true
+	guide.save_progress()
+	server.set_session("t".repeat(43), "Otra Persona")
+	check(guide.progress_for == "guide@otra%20persona" and guide.done.is_empty() and not guide.decided,
+		"a new account on this PC inherits someone else's guide")
+	guide.done = ["move"]
+	guide.save_progress()
+	server.clear_session()
+	check(guide.progress_for == "guide" and guide.done == ["move", "journal"], "the first guide is lost after another account")
+	saved = ConfigFile.new()
+	check(saved.load(path) == OK and saved.get_value("guide@otra%20persona", "done", []) == ["move"],
+		"the other account's guide is not kept")
 
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(path))
 	scene.queue_free()

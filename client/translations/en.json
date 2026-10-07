@@ -18,6 +18,7 @@
   "El nombre debe tener entre 3 y 16 letras, números, espacios o guiones.": "Your name must contain 3 to 16 letters, numbers, spaces or hyphens.",
   "La contraseña debe tener al menos 6 caracteres.": "Your password must contain at least 6 characters.",
   "El código de invitación no es correcto.": "The invitation code is incorrect.",
+  "Para crear una cuenta en este mundo hace falta un código de invitación.": "This world needs an invitation code to create an account.",
   "Tu cuenta está abierta en otro equipo. Espera unos segundos y vuelve a intentarlo.": "Your account is open on another computer. Wait a few seconds and try again.",
   "Tu sesión ha caducado. Entra de nuevo.": "Your session has expired. Please log in again.",
   "Nombre (3 a 16 letras o números)": "Name (3 to 16 letters or numbers)",

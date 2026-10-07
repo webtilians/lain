@@ -113,6 +113,16 @@ def with_provider_options(body: dict) -> dict:
     return {**body, **extra}
 
 
+CHAT_STYLE = (
+    " ESTÁS EN UN CHAT DE GRUPO de tu zona: escribes como una persona más, y nadie debe notar que eres un "
+    "personaje. Escribe como se escribe en un chat: una frase, dos como mucho, corta y coloquial. NUNCA repitas, "
+    "resumas ni reformules lo que te han dicho (no empieces con «Me preguntas», «Me dices» ni nada parecido): "
+    "contesta directamente. No hables de tu tarea o tu objetivo en cada mensaje; solo si viene a cuento. "
+    "Si te proponen algo o te preguntan algo personal o sin importancia, contesta como lo haría alguien del "
+    "barrio, con naturalidad. Sin comillas, sin narrar lo que haces, sin saludar en cada mensaje."
+)
+
+
 def _provider_reply(context: dict, choice_text: str) -> str:
     model = "shared-ai" if shared_ai.enabled() else os.getenv("LAIN_LLM_MODEL", "").strip()
     if not model:
@@ -235,6 +245,9 @@ def _provider_reply(context: dict, choice_text: str) -> str:
         "ya ha cambiado. No controles herramientas ni ejecutes cambios "
         "de estado. Responde en 1-3 frases."
     )
+    if context.get("situation", {}).get("zone_chat") is not None:
+        # The zone chat (zone_chat.py): one more voice among people, who must not sound like a machine.
+        system += CHAT_STYLE
     from . import i18n
     if i18n.language() == "en":
         system += (

@@ -2,7 +2,8 @@ extends SceneTree
 ## Cinematics: the opening plays once for a new player (the computer writes),
 ## the title once on the first step outside, the Wired connection,
 ## each Sesión Cero fragment, the ending and each finished research call play on
-## live changes only, a technology entering the Malla plays once per PC, they wait
+## live changes only, a technology entering the Malla plays once per PC, another
+## account on the same PC gets the start of the story again (not the news), they wait
 ## for open terminals, freeze and give back the player and camera, Esc skips,
 ## and the snapshot never changes.
 var failures: Array[String] = []
@@ -210,6 +211,19 @@ func run() -> void:
 	api.snapshot_updated.emit(state)
 	await frames(3)
 	check(not cinematic.is_playing() and cinematic.queue.is_empty(), "a technology's cinematic plays twice")
+
+	# Another account on this PC: the opening and the title again, not the news already shown here.
+	var server := root.get_node("ServerConnection")
+	server.session_path = "user://test_cinematic_session.json"
+	server.set_session("t".repeat(43), "Otra")
+	check(not "opening" in cinematic.seen and not "title" in cinematic.seen and "malla:qkd" in cinematic.seen,
+		"a new account on this PC skips the start of the story, or sees the Malla news again: " + str(cinematic.seen))
+	cinematic._remember("opening")
+	server.clear_session()
+	check("title" in cinematic.seen and cinematic.seen_for == "cinematics", "the first account's cinematics are lost")
+	saved = ConfigFile.new()
+	check(saved.load(path) == OK and Array(saved.get_value("cinematics@otra", "seen", [])).has("opening")
+		and Array(saved.get_value("cinematics", "seen", [])).has("malla:qkd"), "each account's cinematics are not kept")
 
 	# Watching again from the diary: only what this player has reached.
 	var journal := root.get_node("CharacterJournal")

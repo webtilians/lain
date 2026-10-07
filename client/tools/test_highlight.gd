@@ -69,7 +69,30 @@ func run() -> void:
 	pad.pressed = false
 	Input.parse_input_event(pad)
 
+	# Something with a visible shape glows along its own silhouette, and gets its looks back after.
+	var figure := Node3D.new()
+	var usable := GDScript.new()
+	usable.source_code = "extends Node3D\nfunc interact() -> void:\n\tpass\n"
+	usable.reload()
+	figure.set_script(usable)
+	figure.add_to_group("interactable")
+	var body := MeshInstance3D.new()
+	body.mesh = CapsuleMesh.new()
+	figure.add_child(body)
+	scene.add_child(figure)
+	figure.global_position = Vector3(0.3, monitor.global_position.y - 0.4, 0.3)
+	player.global_position = figure.global_position + Vector3(0.5, 0, 0.5)
+	await frames()
+	check(highlight.focused == figure and body.material_overlay == highlight.rim, "a figure in reach does not glow")
+	check(not highlight.ring.visible and highlight.marker.visible, "a figure gets the floor glow instead of its silhouette")
+	player.global_position = Vector3(0.3, player.global_position.y, 3.5)
+	await frames()
+	check(body.material_overlay == null, "the figure keeps the glow out of reach")
+	figure.queue_free()
+	await frames()
+
 	# Held by a window (the player stops), nothing shows.
+	player.global_position = monitor.global_position + Vector3(0.6, -0.4, 0.9)
 	player.set_physics_process(false)
 	await frames()
 	check(not highlight.ring.visible and not highlight.marker.visible and shown_hints(highlight) == 0,

@@ -279,6 +279,16 @@ jobs:
             exit 1
           fi
 
+      - name: The zone chat scrolls and the box to write in stays on screen
+        shell: bash
+        run: |
+          set -euo pipefail
+          /tmp/lain-godot --headless --path client --script res://tools/test_chat_box.gd 2>&1 | tee /tmp/lain-chat-box.log
+          grep -q 'CHAT_BOX_OK' /tmp/lain-chat-box.log
+          if grep -E '^(SCRIPT ERROR:|ERROR:)' /tmp/lain-chat-box.log; then
+            exit 1
+          fi
+
       - name: Visual 0.22 interiors dressed without touching collisions
         shell: bash
         run: |
