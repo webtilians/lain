@@ -18,6 +18,9 @@ const RAIN_DROPS := [1200, 2800, 5200]
 var materials = MATERIALS.new()
 var soft_edges = preload("res://scripts/art/SoftEdges.gd").new()
 var dresser = preload("res://scripts/art/InteriorDresser.gd").new(materials)
+const ANIME_LOOK = preload("res://scripts/art/AnimeLook.gd")
+var anime_look = ANIME_LOOK.new()
+var anime := true  # the anime look (ARTE.md); F9 switches to the realistic one and back
 var quality := 2
 var current_id := 0
 var environments: Array[Environment] = []
@@ -34,10 +37,14 @@ func _ready() -> void:
 	var config := ConfigFile.new()
 	if config.load(CONFIG_PATH) == OK:
 		quality = clampi(int(config.get_value("graphics","quality",2)),0,2)
+		anime = bool(config.get_value("graphics","anime",true))
 	if "--render-balanced" in OS.get_cmdline_user_args():
 		quality = 1
 	elif "--render-high" in OS.get_cmdline_user_args():
 		quality = 2
+	if "--render-realistic" in OS.get_cmdline_user_args():
+		anime = false
+	get_tree().node_added.connect(_on_node_added)
 
 func _process(_delta: float) -> void:
 	if baseline:
@@ -54,6 +61,29 @@ func _unhandled_key_input(event: InputEvent) -> void:
 	if event.keycode == KEY_F6:
 		apply_quality((quality+1)%3, true)
 		get_viewport().set_input_as_handled()
+	elif event.keycode == KEY_F9:
+		set_anime(not anime, true)
+		get_viewport().set_input_as_handled()
+
+func set_anime(on: bool, persist: bool = false) -> void:
+	anime = on
+	if is_instance_valid(scene_ref):
+		anime_look.apply(scene_ref, anime, forward_plus)
+	apply_quality(quality, persist)
+
+func _on_node_added(node: Node) -> void:
+	# People and things that arrive later (residents, other players, a cinematic camera),
+	# once they are set up; the look may have been switched off in between.
+	if anime and is_instance_valid(scene_ref) and scene_ref.is_ancestor_of(node) 			and (node is GeometryInstance3D or node is Camera3D):
+		_dress_late.call_deferred(node)
+
+func _dress_late(node: Node) -> void:
+	if not anime or not is_instance_valid(node) or not node.is_inside_tree():
+		return
+	if node is Camera3D:
+		anime_look.outline(node, forward_plus)
+	else:
+		anime_look.dress(node, true)
 
 func apply_scene(scene: Node3D) -> void:
 	scene_ref = scene
@@ -94,6 +124,7 @@ func apply_scene(scene: Node3D) -> void:
 	quality_label.add_theme_constant_override("shadow_offset_x",1)
 	quality_label.add_theme_constant_override("shadow_offset_y",1)
 	hud.add_child(quality_label)
+	anime_look.apply(scene, anime, forward_plus)
 	apply_quality(quality, false)
 
 func location_of(scene: Node) -> String:
@@ -234,10 +265,11 @@ func apply_quality(level: int, persist: bool = false) -> void:
 				light.visible = quality > 0
 	dresser.apply_quality(quality)
 	if is_instance_valid(quality_label):
-		quality_label.text = "F6  ·  GRÁFICOS: " + QUALITY_NAMES[quality] + ("  ·  Compatibilidad" if not forward_plus else "")
+		quality_label.text = "F6  ·  GRÁFICOS: " + QUALITY_NAMES[quality] + ("  ·  Compatibilidad" if not forward_plus else "") 			+ "   F9  ·  ESTILO: " + ("Anime" if anime else "Realista")
 	if persist:
 		var config := ConfigFile.new()
 		config.set_value("graphics","quality",quality)
+		config.set_value("graphics","anime",anime)
 		var error := config.save(CONFIG_PATH)
 		if error != OK:
 			push_warning("No se pudo guardar la calidad gráfica.")
@@ -321,3 +353,4 @@ func lighting(e: Environment) -> void:
 		e.glow_intensity = .55
 		e.glow_hdr_threshold = 1.0
 		e.fog_enabled = false
+	ANIME_LOOK.environment(e, anime)

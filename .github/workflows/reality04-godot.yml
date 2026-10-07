@@ -299,6 +299,16 @@ jobs:
             exit 1
           fi
 
+      - name: The anime look on people, ink lines, and F9 back to realistic
+        shell: bash
+        run: |
+          set -euo pipefail
+          /tmp/lain-godot --headless --path client --script res://tools/test_anime_look.gd 2>&1 | tee /tmp/lain-anime-look.log
+          grep -q 'ANIME_LOOK_OK' /tmp/lain-anime-look.log
+          if grep -E '^(SCRIPT ERROR:|ERROR:)' /tmp/lain-anime-look.log; then
+            exit 1
+          fi
+
       - name: Visual 0.22 interiors dressed without touching collisions
         shell: bash
         run: |
