@@ -388,7 +388,7 @@ def test_presence_chat_areas_and_expiry(world, monkeypatch):
         assert presence(client, headers[actor]).status_code == 200
     visible = presence(client, headers[alice]).json()["players"]
     assert [item["id"] for item in visible] == [bob]
-    assert set(visible[0]) == {"id", "name", "x", "y", "z", "yaw"}
+    assert set(visible[0]) == {"id", "name", "x", "y", "z", "yaw", "who"}
     assert (
         client.post(
             "/api/v1/online/chat",

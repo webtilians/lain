@@ -170,7 +170,8 @@ def test_npc_free_dialogue_creates_persistent_visible_actor_without_duplicate(mo
     assert len(entities) == 1
     entity_id = entities[0][0]
     snapshot = build_player_snapshot()
-    assert {"id": entity_id, "name": "Eco"} in snapshot["visible_actors"]
+    from server.world_core.online import speaker_key
+    assert {"id": entity_id, "name": "Eco", "who": speaker_key(entity_id)} in snapshot["visible_actors"]
     assert free_conversation.say_to_player_conversation(
         "AGENT_NORA", "¿Qué has visto?", greeting["turn_id"], sim.minute,
     )["turn_id"] == response["turn_id"]

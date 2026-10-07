@@ -1,7 +1,10 @@
 extends SceneTree
 ## The zone chat box keeps its size however long the conversation gets: the log
 ## scrolls (to the newest line on its own, back with the wheel or the right stick)
-## and the box to write in never leaves the screen. Never calls the server.
+## and the box to write in never leaves the screen. Only the residents the player
+## can see are told to the server as listeners, and each new line shows for a while
+## over its speaker's head (a resident, another player or the player). Never calls
+## the server.
 var failures: Array[String] = []
 
 func _initialize() -> void:
@@ -62,6 +65,55 @@ func run() -> void:
 	check(presence._scroll.scroll_vertical + presence._scroll.size.y >= bar.max_value - 2, "a new line does not scroll down")
 	check(presence._chat_input.get_global_rect() == box, "a new line moves the box to write in")
 	check(presence._scroll in root.get_node("Gamepad").scroll_targets, "the right stick does not scroll the chat")
+
+	# Who hears: the residents on screen and close by, nearest first (one behind the camera is close, but unseen).
+	var world := Node3D.new()
+	scene.add_child(world)
+	var player := Node3D.new()
+	player.add_to_group("player")
+	world.add_child(player)
+	var camera := Camera3D.new()
+	world.add_child(camera)
+	camera.look_at_from_position(Vector3(0, 1.5, 6), Vector3.ZERO)
+	camera.current = true
+	var usable := GDScript.new()
+	usable.source_code = "extends Node3D
+var actor_id := \"\"
+func interact() -> void:
+	pass
+"
+	usable.reload()
+	var residents := {}
+	for entry in [["RESIDENT_NEAR", Vector3(2, 0, 1)], ["RESIDENT_NEXT", Vector3(-2, 0, -3)],
+			["RESIDENT_FAR", Vector3(-40, 0, -40)], ["RESIDENT_BEHIND", Vector3(0, 0, 10)]]:
+		var resident := Node3D.new()
+		resident.set_script(usable)
+		resident.actor_id = entry[0]
+		resident.add_to_group("interactable")
+		resident.set_meta("who", "key-" + entry[0])
+		var name_label := Label3D.new()
+		name_label.position.y = 2.0
+		resident.add_child(name_label)
+		world.add_child(resident)
+		resident.global_position = entry[1]
+		residents[entry[0]] = resident
+	await frames()
+	check(presence.near_residents() == ["RESIDENT_NEAR", "RESIDENT_NEXT"],
+		"the residents told as listeners are not the ones on screen: " + str(presence.near_residents()))
+	check(presence.chat_body("hola")["near"] == ["RESIDENT_NEAR", "RESIDENT_NEXT"], "a chat line does not say who hears it")
+
+	# A new line shows over whoever said it, above their name.
+	presence._me = "key-me"
+	presence._request_scene = current_scene.get_instance_id()
+	presence._received(HTTPRequest.RESULT_SUCCESS, 200, PackedStringArray(), JSON.stringify({"players": [], "accepted": true,
+		"me": "key-me", "chat": [{"id": "b1", "who": "key-RESIDENT_NEXT", "name": "Daichi", "text": "Aquí, limpiando."},
+			{"id": "b2", "who": "key-me", "name": "Mio", "text": "¿qué haces?"}]}).to_utf8_buffer())
+	await frames()
+	var bubble: Label3D = residents.RESIDENT_NEXT.get_node_or_null("ChatBubble")
+	check(bubble != null and bubble.text == "Aquí, limpiando." and bubble.position.y > 2.0,
+		"the line does not show over the resident who said it")
+	check(player.get_node_or_null("ChatBubble") != null, "the player's own line does not show over their head")
+	check(residents.RESIDENT_NEAR.get_node_or_null("ChatBubble") == null, "a line shows over someone who did not say it")
 
 	server._token = ""
 	scene.queue_free()

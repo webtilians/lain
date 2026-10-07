@@ -213,7 +213,7 @@ def limit(actor_id, lane, count, seconds):
         queue.append(now)
 
 
-def heartbeat(actor_id, instance, location, x, y, z, yaw, dialogue=False, received_at=None):
+def heartbeat(actor_id, instance, location, x, y, z, yaw, dialogue=False, received_at=None, near=None):
     """Coordinates are cosmetic, bounded and speed-checked. No world MOVE here."""
     if not 8 <= len(instance) <= 80 or any(
         not math.isfinite(v) for v in (x, y, z, yaw)
@@ -255,8 +255,10 @@ def heartbeat(actor_id, instance, location, x, y, z, yaw, dialogue=False, receiv
             at=now,
             instance=instance,
             dialogue=dialogue,
+            near=_near(near, previous),
         )
         response = {
+            "me": speaker_key(actor_id),  # to show the player's own lines over their head
             "accepted": accepted,
             "position": {"x": x, "y": y, "z": z},
             "players": visible_players(actor_id, location),
@@ -329,13 +331,38 @@ def disconnect(actor_id, instance):
             _connections.pop(actor_id, None)
 
 
+def _near(near, previous):
+    """The residents a player has around them (None: a client too old to say)."""
+    if near is None:
+        return previous.get("near") if previous else None
+    return [str(actor) for actor in near][:12]
+
+
+def near_residents(actor_id):
+    """Residents within earshot of a player, nearest first; None if their client does not say."""
+    with _lock:
+        item = _presence.get(actor_id)
+        return list(item["near"]) if item and item.get("near") is not None else None
+
+
+def residents_near_players(location):
+    """Every resident some player in a zone has around them; None if a client there does not say."""
+    now = time.monotonic()
+    with _lock:
+        lists = [item.get("near") for item in _presence.values()
+                 if item["location"] == location and now - item["at"] < PRESENCE_TTL]
+    if not lists or any(found is None for found in lists):
+        return None
+    return set().union(*lists)
+
+
 def visible_players(actor_id, location):
     if location in PRIVATE_ROOMS:
         return []
     now = time.monotonic()
     with _lock:
         return [
-            {key: item[key] for key in ("id", "name", "x", "y", "z", "yaw")}
+            {**{key: item[key] for key in ("id", "name", "x", "y", "z", "yaw")}, "who": speaker_key(item["id"])}
             for item in _presence.values()
             if item["id"] != actor_id
             and item["location"] == location
@@ -406,7 +433,7 @@ def _append_chat(actor_id, name, text, location, recipients):
     )
 
 
-def send_chat(actor_id, text):
+def send_chat(actor_id, text, near=None):
     text = text.strip()
     if not 1 <= len(text) <= 240 or any(ord(ch) < 32 for ch in text):
         raise ValueError("INVALID_CHAT_MESSAGE")
@@ -417,6 +444,7 @@ def send_chat(actor_id, text):
             raise ValueError("PLAYER_NOT_PRESENT")
         if sender["location"] in PRIVATE_ROOMS:
             raise ValueError("PRIVATE_ROOM")
+        sender["near"] = _near(near, sender)
         recipients = _present_in(sender["location"])
         _append_chat(actor_id, sender["name"], text, sender["location"], recipients)
         name, location = sender["name"], sender["location"]

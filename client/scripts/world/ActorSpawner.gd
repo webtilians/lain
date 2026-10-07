@@ -183,6 +183,7 @@ func _create_actor(
 	actor.set_script(ACTOR_INTERACTABLE)
 	actor.set("actor_id", actor_id)
 	actor.set("actor_name", actor_name)
+	actor.set_meta("who", str(data.get("who", "")))  # their lines in the zone chat show over this head
 
 	# Visuals only. Authority, visibility and dialogue remain in World Core.
 	if actor_id.begins_with("RESIDENT_"):
