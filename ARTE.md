@@ -45,7 +45,22 @@ comprueba que toda cara que pide una frase está dibujada.
 Hay retrato de Ryoko, del profesor y de K. Falta Sesión Cero (dibujada en los
 bocetos; su sitio natural son las cinemáticas de sus fragmentos) y los vecinos.
 
+## El aspecto anime en el mundo
+
+`client/scripts/art/AnimeLook.gd`, aplicado por `GraphicsDirector` a cada escena y a
+quien llega después:
+
+- **Las personas** con sombreado anime: luz con corte limpio, brillo marcado y una luz
+  de color en el borde.
+- **Los escenarios** conservan su luz pintada (el corte limpio en suelos y paredes les
+  quitaba la luz de las lámparas).
+- **Contorno de tinta** en siluetas y aristas: una pasada a pantalla completa sobre
+  profundidad y normales (`client/shaders/anime_outline.gdshader`, solo Forward+).
+- **Color** algo más vivo, sombras de tono medio violeta y más brillo en las luces.
+- **F9** cambia entre anime y realista; se guarda en `user://graphics10.cfg`.
+- Prueba: `client/tools/test_anime_look.gd`.
+
 ## Lo siguiente
 
-1. En el mundo: sombreado de anime para los personajes 3D (tonos planos y contorno).
+1. Personajes 3D anime hechos con VRoid Studio (ver `VROID.md`), empezando por Ryoko.
 2. Caras para K y para las conversaciones libres (según lo que diga la IA).
