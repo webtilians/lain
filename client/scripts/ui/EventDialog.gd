@@ -50,6 +50,10 @@ var panel: PanelContainer
 var text_margin: MarginContainer
 var portrait: TextureRect
 var portrait_key := ""
+var portrait_path := ""
+## The face the next line is said with (the server's «mood»): «<portrait>_<mood>.svg» when
+## there is one, the usual portrait otherwise. It lasts until the dialogue closes.
+var expression := ""
 var box_style: StyleBoxFlat
 var tab_style: StyleBoxFlat
 var field_focus: StyleBoxFlat
@@ -309,6 +313,7 @@ func close_event() -> void:
 	var previous_owner := current_owner_id
 	current_owner_id = ""
 	visible = false
+	expression = ""
 	_show_portrait("")
 
 	if is_instance_valid(active_player):
@@ -323,15 +328,28 @@ static func portrait_for(title: String) -> String:
 	var key := title.strip_edges().to_upper()
 	return key if PORTRAITS.has(key) else ""
 
+func portrait_file(key: String) -> String:
+	if key.is_empty():
+		return ""
+	var base: String = PORTRAITS[key]
+	var face := base.trim_suffix(".svg") + "_" + expression + ".svg"
+	return face if not expression.is_empty() and ResourceLoader.exists(face) else base
+
 func _show_portrait(key: String) -> void:
 	_lay_out(key)
+	var path := portrait_file(key)
 	if key == portrait_key:
-		return  # the same character keeps talking: no new entrance
+		# The same character keeps talking: no new entrance, only the face changes.
+		if path != portrait_path:
+			portrait_path = path
+			portrait.texture = load(path)
+		return
 	portrait_key = key
+	portrait_path = path
 	portrait.visible = not key.is_empty()
 	if key.is_empty():
 		return
-	portrait.texture = load(PORTRAITS[key])
+	portrait.texture = load(path)
 	portrait.modulate.a = 0.0
 	var entrance := create_tween().set_parallel()
 	entrance.tween_property(portrait, "modulate:a", 1.0, 0.25)

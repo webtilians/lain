@@ -131,6 +131,25 @@ def test_ryoko_shows_the_sheet_again_whenever_asked(monkeypatch):
     assert "TELNET" not in again["text"].upper()
 
 
+def test_each_line_says_which_face_goes_with_it(monkeypatch):
+    from pathlib import Path
+    from server.world_core import prologue
+    sim = fresh_game(monkeypatch)
+    relocate(sim, "SCHOOL_LAB")
+    assert talk_to_prologue_npc("PLAYER_1", "PROFESSOR", sim.minute)["mood"] == "sorpresa"
+    assert talk_to_prologue_npc("PLAYER_1", "PROFESSOR", sim.minute, "ASK_CLASS")["mood"] == ""
+    assert talk_to_prologue_npc("PLAYER_1", "PROFESSOR", sim.minute, "ASK_STUDENT")["mood"] == "serio"
+    assert talk_to_prologue_npc("PLAYER_1", "PROFESSOR", sim.minute, "ASK_STUDENT")["mood"] == "sin_gafas"
+    relocate(sim, "NIGHTCLUB")
+    assert talk_to_prologue_npc("PLAYER_1", "RYOKO", sim.minute, "ASK_SCHOOL")["mood"] == "sonrie"
+    assert talk_to_prologue_npc("PLAYER_1", "RYOKO", sim.minute, "ASK_WIRED")["mood"] == "seria"
+    # Every face a line asks for is drawn.
+    portraits = Path(__file__).resolve().parents[1] / "client" / "art" / "portraits"
+    for who, moods in (("profesor", prologue.PROFESSOR_MOODS), ("ryoko", prologue.RYOKO_MOODS)):
+        for mood in set(moods.values()):
+            assert (portraits / f"{who}_{mood}.svg").exists(), f"{who}_{mood}.svg"
+
+
 def test_real_telnet_syntax_and_network_free_validation(monkeypatch):
     sim = fresh_game(monkeypatch)
     relocate(sim, "SCHOOL_LAB")

@@ -176,6 +176,19 @@ RYOKO_LINES = {
 }
 
 
+# The face each line is said with: the client shows that expression of the portrait
+# (client/art/portraits/<who>_<mood>.svg); a line not listed is said with the usual one.
+PROFESSOR_MOODS = {"INTRO": "sorpresa", "ASK_WHO": "sorpresa", "ASK_STUDENT": "serio",
+                   "ASK_STUDENT_AGAIN": "sin_gafas", "ASK_WHERE": "serio"}
+RYOKO_MOODS = {"INTRO_STRANGER": "seria", "INTRO_AGAIN": "sonrie", "ASK_SCHOOL": "sonrie",
+               "ASK_WIRED": "seria", "ASK_ADDRESS_STRANGER": "seria"}
+
+
+def mood_of(npc_id: str, line: str) -> str:
+    lines, moods = (PROFESSOR_LINES, PROFESSOR_MOODS) if npc_id == "PROFESSOR" else (RYOKO_LINES, RYOKO_MOODS)
+    return next((moods.get(key, "") for key, text in lines.items() if text == line), "")
+
+
 def _professor(choice: str, stage: str) -> tuple[str, str, list]:
     """(line, next stage, what the player can say next)."""
     met_ryoko_clue = stage != "FIND_TEACHER"
@@ -266,7 +279,7 @@ def talk_to_prologue_npc(
             )
     return {
         "speaker": t("Profesor") if npc_id == "PROFESSOR" else "Ryoko",
-        "text": t(line), "stage": next_stage,
+        "text": t(line), "stage": next_stage, "mood": mood_of(npc_id, line),
         "closed": choice == "GOODBYE",
         "choices": [{"id": option, "text": t(labels[option])} for option in options],
     }
