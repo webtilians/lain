@@ -1,6 +1,8 @@
 extends StaticBody3D
 ## A dialogue is an exchange, not a proximity-triggered exposition dump.
-## Each choice goes to World Core, which alone may advance the prologue.
+## Each choice goes to World Core, which alone may advance the prologue, and
+## answers with what the player can say next (the fixed lists below are only
+## for a server that does not send them).
 
 @export var npc_id := "PROFESSOR"
 
@@ -34,7 +36,23 @@ func _ask(question: String) -> void:
 	PrologueApi.talk(npc_id, question)
 
 
-func _choices() -> Array[Dictionary]:
+func _choices(offered: Variant = null) -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	if typeof(offered) == TYPE_ARRAY:
+		for item in offered:
+			if typeof(item) == TYPE_DICTIONARY and item.has("id"):
+				result.append({"id": str(item.id), "text": str(item.get("text", item.id))})
+	if result.is_empty():
+		result = _fixed_choices()
+	elif npc_id == "PROFESSOR" and Workshop.active():
+		result.insert(0, {"id": "LIFE", "text": "Pedir las reglas del Juego de la Vida."})
+	elif npc_id == "RYOKO":
+		if Workshop.circles_active(): result.insert(0, {"id": "CIRCLE", "text": "Hablar de crear una red propia."})
+		if Workshop.exchange_active(): result.insert(0, {"id": "EXCHANGE", "text": "Hablar de intercambiar código."})
+	return result
+
+
+func _fixed_choices() -> Array[Dictionary]:
 	if npc_id == "PROFESSOR":
 		if Workshop.active():
 			return [{"id":"LIFE","text":"Pedir las reglas del Juego de la Vida."},{"id":"ASK_CLASS","text":"¿Qué se enseñaba aquí?"},{"id":"GOODBYE","text":"Dejar al profesor con sus cosas."}]
@@ -82,7 +100,7 @@ func _on_dialogue(actor_id: String, result: Dictionary) -> void:
 		_owner_id,
 		str(result.get("speaker", "DESCONOCIDO")),
 		str(result.get("text", "...")),
-		_choices(),
+		_choices(result.get("choices")),
 	)
 
 

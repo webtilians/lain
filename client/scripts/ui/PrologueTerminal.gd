@@ -111,6 +111,10 @@ func _unhandled_input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 
 
+const HELP := "CLS: limpiar   DIR: directorio   VER: version   TYPE <archivo>: mostrar un archivo\nTELNET <red> <puerto>: abrir una sesion en una maquina remota"
+# What the computer kept from the night Session Zero closed (NOEMA rewrote the reason).
+const BOOT_LOG := "BOOT.LOG\n23:58  ARRANQUE NORMAL\n00:03  SESION 0 ABIERTA\n00:41  SESION 0 CERRADA  MOTIVO: VOLUNTARIO\n00:41  ENTRADA MODIFICADA POR: NOEMA\n03:12  CONEXION ENTRANTE  FIRMA: SESION 0\n03:13  CONEXION PERDIDA"
+
 func _on_command(line: String) -> void:
 	if not surface.visible or connected or not command_line.editable:
 		return
@@ -126,8 +130,11 @@ func _on_command(line: String) -> void:
 			transcript.text += "CERO-DOS 1.0 // TERMINAL LOCAL\n"
 		"dir":
 			transcript.text += "C:\\USUARIO\\  <DIR>    BOOT.LOG\n"
-		"help":
-			transcript.text += "CLS: limpiar   DIR: directorio   VER: version\n"
+		"help", "ayuda", "?":
+			# The system's own help names its commands; the network and its port are Ryoko's.
+			transcript.text += Language.text(HELP) + "\n"
+		"type boot.log", "type c:\\usuario\\boot.log":
+			transcript.text += Language.text(BOOT_LOG) + "\n"
 		_:
 			command_line.editable = false
 			PrologueApi.terminal_command(command)

@@ -28,6 +28,8 @@ const STICK_DEADZONE := 0.25
 const SCROLL_DEADZONE := 0.2
 const SCROLL_SPEED := 1400.0  # pixels a second with the stick pushed all the way
 const PROMPTS := {false: "[E]", true: "[A]"}
+# Fixed key hints in scenes, and what they say with the controller.
+const HINTS := {"WASD // MOVE     E // INTERACT": "STICK // MOVE     A // INTERACT"}
 
 var using_pad := false
 # Long text the right stick scrolls; the last visible one registered wins.
@@ -99,19 +101,25 @@ func label(action: String) -> String:
 # ------------------------------------------------------------------ prompts in the world
 
 func _on_node_added(node: Node) -> void:
-	if node is Label3D and using_pad:
+	if (node is Label3D or node is Label) and using_pad:
 		# Signs often get their text right after being added.
 		_swap_label.call_deferred(node)
 
 func _swap_prompts(node: Node) -> void:
-	if node is Label3D:
+	if node is Label3D or node is Label:
 		_swap_label(node)
 	for child in node.get_children():
 		_swap_prompts(child)
 
-func _swap_label(label3d: Label3D) -> void:
-	if is_instance_valid(label3d):
-		label3d.text = label3d.text.replace(PROMPTS[not using_pad], PROMPTS[using_pad])
+func _swap_label(label: Node) -> void:
+	if not is_instance_valid(label):
+		return
+	if label is Label3D:
+		label.text = label.text.replace(PROMPTS[not using_pad], PROMPTS[using_pad])
+	for keys in HINTS:
+		var before: String = keys if using_pad else HINTS[keys]
+		if label.text == before:
+			label.text = HINTS[keys] if using_pad else keys
 
 # ------------------------------------------------------------------ focus
 

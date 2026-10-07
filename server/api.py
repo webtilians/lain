@@ -95,8 +95,10 @@ async def world_lifespan(_app: FastAPI):
             _clock.start()
         if online.enabled():
             # The research watcher brings new calls on its own every few days (watch.py).
-            from server.world_core import watch
+            from server.world_core import watch, zone_chat
             watch.start()
+            # Residents speak in the zone chat too, now and then on their own (zone_chat.py).
+            zone_chat.start_ambient()
         try:
             yield
         finally:

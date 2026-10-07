@@ -76,14 +76,153 @@ def gate_move(player_id: str, target_location: str) -> tuple[bool, str]:
     return True, ""
 
 
+# What the player can say to each of them. Labels are the player's own words.
+PROFESSOR_CHOICES = {
+    "ASK_WHO": "«¿A quién me parezco?»",
+    "ASK_CLASS": "«¿Qué se hacía en esta aula?»",
+    "ASK_STUDENT": "«Alguien me ha escrito. Dice que usted le enseñó a hablar con la Malla.»",
+    "ASK_WHERE": "«¿Dónde encuentro a Ryoko?»",
+    "GOODBYE": "Dejarle con su registro.",
+}
+RYOKO_CHOICES = {
+    "ASK_WIRED": "«Me escribieron desde mi ordenador. Firmaban Sesión Cero.»",
+    "ASK_SCHOOL": "«¿Fuiste alumna del profesor?»",
+    "ASK_ADDRESS": "«Necesito entrar en la Malla.»",
+    "ASK_METHOD": "«¿Y qué hay que escribir delante?»",
+    "GOODBYE": "Dejarla con su música.",
+}
+
+# The teacher believes in registers; his own says something he does not remember.
+PROFESSOR_LINES = {
+    "INTRO": (
+        "El profesor no levanta la vista del registro de préstamos. «El aula cierra a las nueve. "
+        "Si buscas un libro, la biblioteca está…» Entonces te mira, y el bolígrafo se le queda quieto. "
+        "«Perdona. Te pareces mucho a alguien.»"
+    ),
+    "INTRO_AGAIN": (
+        "El profesor cierra el registro en cuanto te ve entrar. «Otra vez tú. "
+        "¿La has encontrado ya? A Ryoko, digo.»"
+    ),
+    "ASK_WHO": (
+        "«A alguien que estudió aquí hace años. Se sentaba en el último puesto y se quedaba cuando ya "
+        "no quedaba nadie.» Pasa páginas del registro hasta dar con una línea. «Aquí pone que se dio de "
+        "baja. Con su firma. Qué raro… yo no recuerdo que se despidiera.»"
+    ),
+    "ASK_CLASS": (
+        "«Oficialmente, a escribir cartas en un procesador de textos.» Mira los ordenadores apagados. "
+        "«Había una red en el barrio, antes de que las empresas compraran los cables. Algunos se "
+        "conectaban a ella desde aquí. Yo firmaba los partes y no hacía preguntas.»"
+    ),
+    "ASK_STUDENT": (
+        "Se queda muy quieto. «Yo enseñaba a escribir cartas. Quien entendía lo que había al otro "
+        "lado de esas pantallas era Ryoko.» Baja la voz. «No la busques de día. La última vez que oí "
+        "su nombre fue en el Pasaje Azul, abajo, donde la música no deja oír los ventiladores.»"
+    ),
+    "ASK_STUDENT_AGAIN": (
+        "«Ryoko. Ya te lo he dicho.» Se quita las gafas. «Y no le digas quién te manda. "
+        "No firmo cosas que no puedo explicar.»"
+    ),
+    "ASK_WHERE_EARLY": (
+        "«¿A quién buscas? Por esta aula han pasado muchos. A algunos ya no los reconocería ni "
+        "mirándolos a la cara.»"
+    ),
+    "ASK_WHERE": (
+        "«En el Pasaje Azul, de noche. Bajando las escaleras, donde suena la música.» Vuelve al "
+        "registro. «Si alguien te pregunta, no has hablado conmigo.»"
+    ),
+    "GOODBYE": "«Cierra la puerta al salir. Con la corriente, las pantallas se apagan solas.»",
+}
+
+# Ryoko builds networks nobody owns; she trusts nobody who comes asking.
+RYOKO_LINES = {
+    "INTRO_STRANGER": (
+        "Alguien se te pone delante entre las luces y no te deja pasar. «No te conozco. "
+        "Y aquí abajo eso es un problema.»"
+    ),
+    "INTRO": (
+        "Una chica con los auriculares al cuello te mira de arriba abajo. «Te manda el profesor. "
+        "Se nota: miras las pantallas como él, como si fueran a morder.»"
+    ),
+    "INTRO_AGAIN": (
+        "Ryoko ni se quita los auriculares. «Todavía aquí. Ese ordenador no se va a encender solo… "
+        "aunque contigo, por lo visto, sí.»"
+    ),
+    "ASK_SCHOOL": (
+        "«Me pasaba las tardes en el último puesto. Él fingía no ver lo que hacía.» Sonríe sin ganas. "
+        "«Cree en los registros. Yo aprendí pronto que los registros se reescriben.»"
+    ),
+    "ASK_WIRED": (
+        "Deja de sonreír. «La Sesión Cero.» Mira alrededor antes de seguir. «Ese nombre no debería "
+        "seguir existiendo. Las sesiones que caducan… alguien se encarga de que nadie las recuerde.» "
+        "Te mira otra vez, más despacio. «Si de verdad te escribió, no fue por casualidad.»"
+    ),
+    "ASK_ADDRESS_STRANGER": "«¿Entrar? No hablo de eso con desconocidos. ¿Quién te ha dicho que me busques?»",
+    "ASK_ADDRESS": (
+        "Saca una hoja doblada mil veces y te la enseña sin soltarla. A lápiz, dos cosas: MALLA y 23. "
+        "«El nombre de la red y el puerto por el que escucha.» Vuelve a guardarla. «Desde tu "
+        "ordenador, no desde aquí. Y lo que hay que escribir delante no te lo voy a dar: si eres "
+        "quien creo, lo sabrás.»"
+    ),
+    "ASK_METHOD": (
+        "«Una orden muy vieja, de cuando las máquinas se hablaban por turnos.» Se encoge de hombros. "
+        "«Si no te acuerdas, pídele ayuda al ordenador. Los sistemas viejos siempre la tienen.»"
+    ),
+    "GOODBYE": "Ryoko vuelve a ponerse los auriculares. «Si te borran, no vengas a buscarme.»",
+}
+
+
+def _professor(choice: str, stage: str) -> tuple[str, str, list]:
+    """(line, next stage, what the player can say next)."""
+    met_ryoko_clue = stage != "FIND_TEACHER"
+    next_stage = stage
+    if choice == "INTRO":
+        line = PROFESSOR_LINES["INTRO_AGAIN" if met_ryoko_clue else "INTRO"]
+    elif choice == "ASK_STUDENT":
+        line = PROFESSOR_LINES["ASK_STUDENT_AGAIN" if met_ryoko_clue else "ASK_STUDENT"]
+        if not met_ryoko_clue:
+            next_stage = "FIND_RYOKO"
+    elif choice == "ASK_WHERE":
+        line = PROFESSOR_LINES["ASK_WHERE" if met_ryoko_clue else "ASK_WHERE_EARLY"]
+    else:
+        line = PROFESSOR_LINES[choice]
+    if next_stage == "FIND_TEACHER":
+        options = ["ASK_WHO", "ASK_CLASS", "ASK_STUDENT", "GOODBYE"]
+    else:
+        options = ["ASK_WHERE", "ASK_WHO", "ASK_CLASS", "GOODBYE"]
+    return line, next_stage, [option for option in options if option != choice or option == "GOODBYE"]
+
+
+def _ryoko(choice: str, stage: str) -> tuple[str, str, list]:
+    stranger = stage == "FIND_TEACHER"  # nobody sent you: she will not talk about the Malla
+    next_stage = stage
+    if choice == "INTRO":
+        line = RYOKO_LINES["INTRO_STRANGER" if stranger else
+                           "INTRO_AGAIN" if stage != "FIND_RYOKO" else "INTRO"]
+    elif choice == "ASK_ADDRESS":
+        line = RYOKO_LINES["ASK_ADDRESS_STRANGER" if stranger else "ASK_ADDRESS"]
+        if stage == "FIND_RYOKO":
+            next_stage = "FIND_TERMINAL"
+    else:
+        line = RYOKO_LINES[choice]
+    if stranger:
+        options = ["ASK_SCHOOL", "ASK_ADDRESS", "GOODBYE"]
+    elif next_stage == "FIND_RYOKO":
+        options = ["ASK_WIRED", "ASK_SCHOOL", "ASK_ADDRESS", "GOODBYE"]
+    else:
+        options = ["ASK_METHOD", "ASK_WIRED", "ASK_SCHOOL", "GOODBYE"]
+    return line, next_stage, [option for option in options if option != choice or option == "GOODBYE"]
+
+
 def talk_to_prologue_npc(
     player_id: str, npc_id: str, minute: int, choice: str = "INTRO"
 ) -> dict:
     """One deliberate question per interaction; opening a dialogue is read-only.
 
-    The teacher does not know Ryoko's location. Ryoko knows ONLY the
-    fictional host and port: neither NPC names a real protocol, a program,
-    its syntax, a website, or a plan for solving the terminal puzzle.
+    The teacher points to where Ryoko spends her nights, never to a door on
+    the map. Ryoko knows ONLY the fictional host and port: neither of them
+    names a real protocol, a program, its syntax, a website, or a plan for
+    solving the terminal puzzle. Each answer comes with what the player can
+    say next, so a conversation follows what was said.
     """
     stage = stage_for(player_id)
     if stage is None:
@@ -91,13 +230,8 @@ def talk_to_prologue_npc(
     if npc_id not in {"PROFESSOR", "RYOKO"}:
         raise ValueError("UNKNOWN_PROLOGUE_CHARACTER")
     required_location = "SCHOOL_LAB" if npc_id == "PROFESSOR" else "NIGHTCLUB"
-    allowed = (
-        {"INTRO", "ASK_CLASS", "ASK_STUDENT", "ASK_WHERE", "GOODBYE"}
-        if npc_id == "PROFESSOR"
-        else {"INTRO", "ASK_SCHOOL", "ASK_WIRED", "ASK_ADDRESS",
-              "ASK_METHOD", "GOODBYE"}
-    )
-    if choice not in allowed:
+    labels = PROFESSOR_CHOICES if npc_id == "PROFESSOR" else RYOKO_CHOICES
+    if choice != "INTRO" and choice not in labels:
         raise ValueError("INVALID_PROLOGUE_QUESTION")
     with get_connection() as conn:
         player = conn.execute(
@@ -106,78 +240,7 @@ def talk_to_prologue_npc(
     if player != (required_location,):
         raise ValueError("CHARACTER_NOT_PRESENT")
 
-    next_stage = stage
-    if npc_id == "PROFESSOR":
-        lines = {
-            "INTRO": (
-                "La pantalla lleva años apagada. El profesor no se vuelve "
-                "inmediatamente. «¿Has venido a por algún libro?»"
-            ),
-            "ASK_CLASS": (
-                "«Teníamos pocos ordenadores. La mayoría aprendía "
-                "a escribir documentos. A veces alguien se quedaba "
-                "hasta que cerraban las puertas.»"
-            ),
-            "ASK_WHERE": (
-                "«¿Dónde está? No lo sé. Dejé de verla al acabar el curso. "
-                "Ni siquiera sé si conserva el mismo nombre.»"
-                if stage != "FIND_TEACHER"
-                else "«¿A quién buscas? Hay antiguos alumnos a los "
-                "que ya no reconocería.»"
-            ),
-            "GOODBYE": "El profesor vuelve la mirada a la pantalla vacía.",
-        }
-        if choice == "ASK_STUDENT":
-            if stage == "FIND_TEACHER":
-                next_stage = "FIND_RYOKO"
-                line = (
-                    "«Solo hubo una persona que parecía entender qué había "
-                    "al otro lado de esas pantallas. Ryoko. "
-                    "No sé dónde está ahora.»"
-                )
-            else:
-                line = (
-                    "«Ryoko. No tengo ningún dato nuevo sobre su paradero. "
-                    "¿Por qué te interesa tanto?»"
-                )
-        else:
-            line = lines[choice]
-    else:
-        lines = {
-            "INTRO": (
-                "Entre la música alguien te observa un instante. "
-                "«No creo que nos conozcamos.»"
-            ),
-            "ASK_SCHOOL": (
-                "«La escuela... Hace mucho que no paso por allí. "
-                "¿Todavía guardan aquellos ordenadores?»"
-            ),
-            "ASK_WIRED": (
-                "«Las cosas no siempre son lo que parecen en una pantalla. "
-                "No todo lo que responde está al otro lado.»"
-            ),
-            "ASK_METHOD": (
-                "«No recuerdo las teclas. Recuerdo esperar. "
-                "Lo demás tendrás que averiguarlo tú.»"
-            ),
-            "GOODBYE": "Ryoko se pierde de nuevo entre las luces.",
-        }
-        if choice == "ASK_ADDRESS":
-            if stage == "FIND_TEACHER":
-                line = (
-                    "«No hablo de direcciones con desconocidos. "
-                    "¿Cómo has llegado hasta mí?»"
-                )
-            else:
-                if stage == "FIND_RYOKO":
-                    next_stage = "FIND_TERMINAL"
-                line = (
-                    "«Había dos datos escritos en una hoja: "
-                    "MALLA y 23. El segundo era el puerto. "
-                    "No conservo la hoja. Lo demás tendrás que averiguarlo tú.»"
-                )
-        else:
-            line = lines[choice]
+    line, next_stage, options = (_professor if npc_id == "PROFESSOR" else _ryoko)(choice, stage)
 
     if next_stage != stage:
         with get_connection() as conn:
@@ -197,6 +260,7 @@ def talk_to_prologue_npc(
         "speaker": t("Profesor") if npc_id == "PROFESSOR" else "Ryoko",
         "text": t(line), "stage": next_stage,
         "closed": choice == "GOODBYE",
+        "choices": [{"id": option, "text": t(labels[option])} for option in options],
     }
 
 
@@ -244,17 +308,17 @@ def prologue_projection(player_id: str = PLAYER) -> dict:
         return {"enabled": False, "stage": "LEGACY", "hint": ""}
     hints = {
         "FIND_TEACHER": (
-            "En el barrio está la antigua escuela. "
-            "En el aula de informática quizá quede alguien que recuerde."
+            "Alguien que firma «Sesión Cero» te ha escrito desde tu propio ordenador. "
+            "Busca en el colegio a quien le enseñó a hablar con la Malla: el aula de informática."
         ),
         "FIND_RYOKO": (
-            "El profesor pronunció un nombre: Ryoko. "
-            "No sabe dónde está. El barrio parece tener otra vida al caer la noche."
+            "El profesor habló de Ryoko: de noche, en el Pasaje Azul, bajando las escaleras "
+            "donde suena la música."
         ),
         "FIND_TERMINAL": (
-            "MALLA. Puerto 23. Dos datos que Ryoko no quiso explicar. "
-            "El ordenador de tu apartamento sigue esperando."
+            "MALLA y 23: el nombre de la red y su puerto. Ryoko no quiso decirte qué escribir "
+            "delante. El ordenador de tu casa espera; si no sabes qué orden usar, pídele ayuda."
         ),
-        "CONNECTED": "La conexión cambió algo. Quizá ahora puedas descubrir qué.",
+        "CONNECTED": "Estás en la Malla. La Sesión Cero sigue ahí dentro, en algún sitio.",
     }
     return {"enabled": True, "stage": stage, "hint": t(hints.get(stage, ""))}

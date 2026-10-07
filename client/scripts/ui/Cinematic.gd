@@ -1,6 +1,8 @@
 extends CanvasLayer
 ## Short in-engine cinematics at the story's turning points: the first time a
-## player wakes up at home, the first connection to the Wired, every fragment
+## player wakes up at home (the computer switches itself on and Session Zero
+## writes), the first time they step out (the title), the first connection to
+## the Malla (a TCP handshake on the screen), every fragment
 ## of the Sesión Cero, the end, each finished research call and each technology
 ## that enters the Malla (once per PC). They wait until no terminal or window is
 ## open, then darken the screen with letterbox bars, static and a few typed
@@ -24,9 +26,28 @@ const ENDINGS := {
 	"REPLICATE": "Dejé que KAGAMI me copiara.",
 	"DISCONNECT": "Cerré mi sesión en NODO_07.",
 }
-const OPENING := ["Antes de tu primera conexión ya había una sesión con tu nombre.", "La Sesión Cero.",
-	"Se partió en paquetes y los lanzó a la red.", "Uno de ellos te ha encontrado."]
-const RETURNED := "Has vuelto."
+# What Session Zero types on the home computer the first time you wake up: [line, colour].
+const AWAKENING := [
+	["> CONEXIÓN ENTRANTE · ORIGEN DESCONOCIDO", "9a8f9e"],
+	["> FIRMA: SESIÓN CERO", "e0b45a"],
+	["Has vuelto.", "e0465f"],
+	["No me queda mucho. Me están reescribiendo.", "e9e2ea"],
+	["Alguien me enseñó a hablar con la Malla. En el colegio, en el aula de informática.", "e9e2ea"],
+	["Encuéntrale antes de que me borren del todo.", "e9e2ea"],
+]
+const LOST := "> CONEXIÓN PERDIDA"
+const LAYER_ZERO := "CAPA 00 · ARRANQUE"
+const TITLE_LINES := ["Un barrio. Tres armarios de enlace.", "Una red que nadie recuerda haber construido."]
+const GAME_TITLE := "SESIÓN CERO"
+const GAME_SUBTITLE := "PROTOCOLO DE PRESENCIA"
+# A TCP handshake: the Malla answers before you are in it.
+const HANDSHAKE := [
+	["> MALLA:23 · ABRIENDO ENLACE", "9a8f9e"],
+	["-> SYN", "e9e2ea"],
+	["<- SYN-ACK", "e9e2ea"],
+	["-> ACK", "e9e2ea"],
+	["ENLACE ESTABLECIDO", "e0b45a"],
+]
 const WIRED := ["Conexión establecida.", "Tú eres la Sesión Uno.", "Nadie sabe si eres la misma persona."]
 const RESEARCH := ["La Malla aprende.", "Tu nombre queda en el registro del centro."]
 const COMPLETE := "Sesión Cero completa."
@@ -53,6 +74,8 @@ const SHOTS := {
 	"home_street": [DISTRICT, Vector3(6, 8, 7), Vector3(-3, 1.2, -6), Vector3(2, 2.6, 2.5), Vector3(-4, 1.4, -8), false],
 	"school": [DISTRICT, Vector3(-8, 9, -6), Vector3(-19, 1.5, -19), Vector3(-12, 3.0, -11), Vector3(-20, 2.0, -21), false],
 	"overview": [DISTRICT, Vector3(70, 80, 30), Vector3(0, 0, -48), Vector3(110, 135, 62), Vector3(0, 0, -50), false],
+	# High over the neon streets, slowly closer: the title shot (no edge of the world in frame).
+	"title": [DISTRICT, Vector3(30, 26, -20), Vector3(14, 0, -56), Vector3(27, 21, -27), Vector3(15, 0, -59), false],
 	"station": [STATION, Vector3(6, 3.5, 7), Vector3(0, 1, 0), Vector3(3, 1.8, 3.5), Vector3(-1, 1.3, -3), true],
 }
 const FRAGMENT_SHOTS := {"layer_one": "school", "layer_two": "station", "layer_three": "overview",
@@ -86,6 +109,9 @@ var skip_label: Label
 var shown: Array[String] = []
 var stage_view: SubViewportContainer
 var subtitles := false
+var screen: PanelContainer  # the home computer's screen, as text over the shot
+var screen_text: RichTextLabel
+var title_queued := false
 
 func _ready() -> void:
 	layer = 115
@@ -143,6 +169,31 @@ func _build() -> void:
 	skip_label.offset_top = -34
 	skip_label.offset_bottom = -12
 	skip_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	screen = PanelContainer.new()
+	var glass := StyleBoxFlat.new()
+	glass.bg_color = Color(0.01, 0.04, 0.03, 0.9)
+	glass.border_color = Color("5f8f73")
+	glass.set_border_width_all(1)
+	glass.set_content_margin_all(22)
+	screen.add_theme_stylebox_override("panel", glass)
+	screen.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
+	screen.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	screen.grow_vertical = Control.GROW_DIRECTION_BOTH
+	screen.custom_minimum_size = Vector2(780, 0)
+	screen.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	root.add_child(screen)
+	screen_text = RichTextLabel.new()
+	screen_text.bbcode_enabled = true
+	screen_text.fit_content = true
+	screen_text.scroll_active = false
+	screen_text.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
+	screen_text.custom_minimum_size = Vector2(736, 0)
+	var mono := SystemFont.new()
+	mono.font_names = PackedStringArray(["Cascadia Mono", "Consolas", "Menlo", "DejaVu Sans Mono", "monospace"])
+	screen_text.add_theme_font_override("normal_font", mono)
+	screen_text.add_theme_font_size_override("normal_font_size", 22)
+	screen_text.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	screen.add_child(screen_text)
 	_reset_view()
 
 func _rect(color: Color) -> ColorRect:
@@ -174,6 +225,8 @@ func _reset_view() -> void:
 	title.text = ""
 	shown.clear()
 	lines_label.text = ""
+	screen.hide()
+	screen_text.text = ""
 
 func is_playing() -> bool:
 	return not playing.is_empty()
@@ -236,6 +289,13 @@ func _process(_delta: float) -> void:
 		var location := str(snapshot.get("player", {}).get("location", ""))
 		if stage == "FIND_TEACHER" and location == "APARTMENT" and not "opening" in seen:
 			queue.push_front({"id": "opening"})
+	# The first step outside, at the start of the story: the title over the neighbourhood.
+	if not title_queued and not "title" in seen and not snapshot.is_empty() \
+			and get_tree().get_first_node_in_group("player") != null \
+			and str(snapshot.get("prologue", {}).get("stage", "")) == "FIND_TEACHER" \
+			and str(snapshot.get("player", {}).get("location", "")) == "APARTMENT_DISTRICT":
+		title_queued = true
+		queue.append({"id": "title"})
 	if not queue.is_empty() and can_play():
 		play(queue.pop_front())
 
@@ -259,6 +319,8 @@ func available() -> Array:
 	var stage := str(snapshot.get("prologue", {}).get("stage", "LEGACY"))
 	var items: Array = [{"label": "ARRANQUE // LA TERMINAL", "item": {"id": "intro"}},
 		{"label": "APERTURA // HAS VUELTO", "item": {"id": "opening"}}]
+	if "title" in seen or stage != "FIND_TEACHER":
+		items.append({"label": "TÍTULO // SESIÓN CERO", "item": {"id": "title"}})
 	if stage in ["CONNECTED", "LEGACY"]:
 		items.append({"label": "LA MALLA // SESIÓN UNO", "item": {"id": "wired"}})
 	var decided := 0
@@ -313,12 +375,11 @@ func play(item: Dictionary) -> void:
 			hidden_huds.append(hud)
 	match item.id:
 		"opening":
-			if not "opening" in seen:
-				seen.append("opening")
-			var config := ConfigFile.new()
-			config.set_value("cinematics", "seen", seen)
-			config.save(config_path)
+			_remember("opening")
 			await _opening()
+		"title":
+			_remember("title")
+			await _title()
 		"wired":
 			await _wired()
 		"fragment":
@@ -338,6 +399,13 @@ func play(item: Dictionary) -> void:
 			root.hide()
 			await _intro()
 	_finish()
+
+func _remember(key: String) -> void:
+	if not key in seen:
+		seen.append(key)
+	var config := ConfigFile.new()
+	config.set_value("cinematics", "seen", seen)
+	config.save(config_path)
 
 func _restore_camera() -> void:
 	var camera := get_node_or_null("/root/CinematicCamera")
@@ -516,22 +584,30 @@ func clear_lines() -> void:
 	shown.clear()
 	lines_label.text = ""
 
+func type_screen(text: String, color: String) -> void:
+	## Types one more line on the computer's screen, a key sound per line.
+	var line := Language.text(text).replace("[", "[lb]")
+	var before := screen_text.text
+	var count := 0.0
+	AudioDirector.play("key")
+	while count < line.length() and not skipping:
+		await get_tree().process_frame
+		count += get_process_delta_time() * 40.0 * pace
+		screen_text.text = before + "[color=#%s]%s[/color]" % [color, line.left(int(count))]
+	screen_text.text = before + "[color=#%s]%s[/color]\n" % [color, line]
+
+func _monitor_light() -> OmniLight3D:
+	var scene := get_tree().current_scene
+	return scene.get_node_or_null("MonitorGlow") as OmniLight3D if scene != null else null
+
 # ------------------------------------------------------------------ the four cinematics
 
 func _opening() -> void:
+	# The home computer, dark for years, switches itself on and Session Zero writes.
 	shade.modulate.a = 1.0
 	bars(true)
-	await wait(0.8)
-	for line in OPENING:
-		await say(line, INK if line != "La Sesión Cero." else AMBER)
-		await wait(1.1)
-	await wait(0.6)
-	clear_lines()
-	await wait(0.5)
-	title.text = RETURNED
-	AudioDirector.play("static")
-	await wait(2.4)
-	title.text = ""
+	caption.text = LAYER_ZERO
+	await wait(1.0)
 	var camera := _opening_camera()
 	var shot_start := Transform3D()
 	var shot_end := Transform3D()
@@ -540,11 +616,35 @@ func _opening() -> void:
 		shot_end = camera.get_meta("end")
 		camera.global_transform = shot_start
 		camera.make_current()
-	await tween_to(shade, "modulate:a", 0.0, 1.4)
+	var glow := _monitor_light()
+	var energy := glow.light_energy if glow != null else 0.0
+	if glow != null:
+		glow.light_energy = 0.0
+	await tween_to(shade, "modulate:a", 0.0, 1.2)
+	await wait(0.6)
+	AudioDirector.play("static")
+	if glow != null:
+		for flicker in range(6):
+			glow.light_energy = energy * (2.6 if flicker % 2 == 0 else 0.3)
+			await wait(0.07)
+		glow.light_energy = energy * 2.2
+	caption.text = ""
+	screen_text.text = ""
+	screen.show()
+	for entry in AWAKENING:
+		await type_screen(entry[0], entry[1])
+		await wait(1.5 if entry[1] == RED else 0.8)
+	await burst(0.75, 0.12, 0.45)
+	await type_screen(LOST, RED)
+	await wait(1.1)
+	screen.hide()
+	set_static(0.0)
+	if glow != null:
+		glow.light_energy = energy
 	if camera != null:
-		# A slow pull back from the computer that is still waiting, to you.
+		# A slow pull back from the computer, now silent again, to you.
 		var elapsed := 0.0
-		var span := 6.5 / pace
+		var span := 6.0 / pace
 		while elapsed < span and not skipping:
 			await get_tree().process_frame
 			elapsed += get_process_delta_time()
@@ -552,6 +652,34 @@ func _opening() -> void:
 			camera.global_transform = shot_start.interpolate_with(shot_end, t * t * (3.0 - 2.0 * t))
 		await tween_to(shade, "modulate:a", 1.0, 0.5)
 		_restore_camera()
+	bars(false)
+	await tween_to(shade, "modulate:a", 0.0, 0.9)
+
+func _title() -> void:
+	# The neighbourhood from above, at night, and the game's name.
+	await tween_to(shade, "modulate:a", 1.0, 0.7)
+	bars(true)
+	var camera := stage("title")
+	set_subtitles(true)
+	set_static(0.03)
+	await tween_to(shade, "modulate:a", 0.0, 1.4)
+	move_camera(camera, 12.0)
+	for line in TITLE_LINES:
+		await say(line, DIM if line == TITLE_LINES[0] else INK)
+		await wait(1.3)
+	clear_lines()
+	await wait(0.4)
+	AudioDirector.play("static")
+	await burst(0.5, 0.03, 0.25)
+	title.text = GAME_TITLE
+	caption.text = GAME_SUBTITLE
+	await wait(3.2)
+	await camera_done(camera)
+	await tween_to(shade, "modulate:a", 1.0, 0.8)
+	title.text = ""
+	caption.text = ""
+	unstage()
+	set_subtitles(false)
 	bars(false)
 	await tween_to(shade, "modulate:a", 0.0, 0.9)
 
@@ -577,6 +705,14 @@ func _wired() -> void:
 	await burst(0.9, 0.25, 0.7)
 	shade.modulate.a = 1.0
 	bars(true)
+	# Before the street: the handshake, as the computer saw it.
+	screen_text.text = ""
+	screen.show()
+	for entry in HANDSHAKE:
+		await type_screen(entry[0], entry[1])
+		await wait(0.5)
+	await wait(0.9)
+	screen.hide()
 	var camera := stage("street")
 	set_subtitles(true)
 	caption.text = "LA MALLA"

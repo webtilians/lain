@@ -22,14 +22,16 @@ class AgentContextBuilder:
         agent_id: str,
         interaction_id: str | None = None,
         retrieval_query: str | None = None,
+        player_id: str | None = None,
     ) -> dict:
+        """player_id names who the actor is facing when there is no conversation (the zone chat)."""
         agent = self._load_agent(agent_id)
         conversation = (
             self._conversation(agent_id, interaction_id)
             if interaction_id is not None
             else None
         )
-        player_id = conversation["initiator_id"] if conversation else "PLAYER_1"
+        player_id = conversation["initiator_id"] if conversation else (player_id or "PLAYER_1")
         memory_records = retrieve_memories(
             agent_id,
             retrieval_query,

@@ -269,6 +269,16 @@ jobs:
             exit 1
           fi
 
+      - name: Interactive objects stand out, and the mark is the one E uses
+        shell: bash
+        run: |
+          set -euo pipefail
+          /tmp/lain-godot --headless --path client --script res://tools/test_highlight.gd 2>&1 | tee /tmp/lain-highlight.log
+          grep -q 'HIGHLIGHT_OK' /tmp/lain-highlight.log
+          if grep -E '^(SCRIPT ERROR:|ERROR:)' /tmp/lain-highlight.log; then
+            exit 1
+          fi
+
       - name: Visual 0.22 interiors dressed without touching collisions
         shell: bash
         run: |

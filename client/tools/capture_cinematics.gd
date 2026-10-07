@@ -38,22 +38,32 @@ func capture() -> void:
 	var scene: Node3D = load("res://scenes/apartment/ApartmentIso.tscn").instantiate()
 	root.add_child(scene)
 	current_scene = scene
-	await create_timer(6.0).timeout
-	await shot("opening-text")
+	while not "Encuéntrale" in cinematic.screen_text.get_parsed_text():
+		await process_frame
+	await create_timer(1.2).timeout
+	await shot("opening-screen")
+	while root.get_node_or_null("CinematicCamera") == null or cinematic.screen.visible:
+		await process_frame
+	await create_timer(3.0).timeout
+	await shot("opening-camera")
+	while cinematic.is_playing():
+		await process_frame
+	cinematic.play({"id": "title"})
 	while cinematic.title.text.is_empty():
 		await process_frame
-	await create_timer(0.6).timeout
-	await shot("opening-returned")
-	while root.get_node_or_null("CinematicCamera") == null:
-		await process_frame
-	await create_timer(2.6).timeout
-	await shot("opening-camera")
-	await create_timer(3.6).timeout
-	await shot("opening-camera-end")
+	await create_timer(1.5).timeout
+	await shot("title")
+	cinematic.skipping = true
 	while cinematic.is_playing():
 		await process_frame
 	cinematic.play({"id": "wired"})
-	await create_timer(4.5).timeout
+	while not "ENLACE ESTABLECIDO" in cinematic.screen_text.get_parsed_text():
+		await process_frame
+	await create_timer(0.5).timeout
+	await shot("wired-handshake")
+	while cinematic.screen.visible:
+		await process_frame
+	await create_timer(4.0).timeout
 	await shot("wired")
 	while cinematic.is_playing():
 		await process_frame

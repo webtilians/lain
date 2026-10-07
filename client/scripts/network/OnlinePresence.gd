@@ -1,6 +1,7 @@
 extends Node
 ## Other players are visual replicas. World Core still decides all gameplay actions.
 const AVATAR := preload("res://art/characters/LainSlender.tscn")
+const CHAT_LINES := 6
 var _request: HTTPRequest
 var _chat_request: HTTPRequest
 var _elapsed := 0.0
@@ -35,8 +36,8 @@ func _ready() -> void:
 	_layer = layer
 	var panel := PanelContainer.new()
 	panel.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_LEFT)
-	panel.position = Vector2(12, -170)
-	panel.size = Vector2(440, 155)
+	panel.position = Vector2(12, -240)
+	panel.size = Vector2(460, 225)
 	layer.add_child(panel)
 	var column := VBoxContainer.new()
 	panel.add_child(column)
@@ -45,7 +46,7 @@ func _ready() -> void:
 	column.add_child(_status)
 	_log = Label.new()
 	_log.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_log.custom_minimum_size = Vector2(420, 64)
+	_log.custom_minimum_size = Vector2(440, 132)
 	column.add_child(_log)
 	_chat_input = LineEdit.new()
 	_chat_input.max_length = 240
@@ -182,7 +183,8 @@ func _received(result: int, code: int, _headers: PackedStringArray, body: Packed
 		while _seen_messages.size() > 100:
 			_seen_messages.erase(_seen_messages.keys()[0])
 		_history.append("%s: %s" % [message.get("name", ""), message.get("text", "")])
-		while _history.size() > 3:
+		# One chat per zone: people and residents alike, written the same way (zone_chat.py).
+		while _history.size() > CHAT_LINES:
 			_history.pop_front()
 	_log.text = "\n".join(_history)
 

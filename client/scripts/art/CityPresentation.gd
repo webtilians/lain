@@ -51,8 +51,11 @@ func _process(_delta: float) -> void:
 		location_label.text = "Colegio municipal" if p.x < 0 else "Plaza del alcanfor"
 	else:
 		location_label.text = "Residencial"
-	var nearby := ""
+	var place := ""
 	for target in LAYOUT.DOORS:
 		if player.position.distance_to(LAYOUT.DOORS[target]) < player.interaction_distance:
-			nearby = "Entrar: " + LAYOUT.TITLES.get(target, target)
-	hint.text = "E  " + nearby + "     ·     J  Diario" if not nearby.is_empty() else "WASD  Caminar     E  Interactuar     J  Diario"
+			place = LAYOUT.TITLES.get(target, target)
+	if Gamepad.using_pad:
+		hint.text = "A  Entrar: " + place + "     ·     Y  Diario" if not place.is_empty() else "Stick  Caminar     A  Interactuar     Y  Diario"
+	else:
+		hint.text = "E  Entrar: " + place + "     ·     J  Diario" if not place.is_empty() else "WASD  Caminar     E  Interactuar     J  Diario"

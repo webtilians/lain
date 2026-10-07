@@ -1,5 +1,6 @@
 extends SceneTree
-## Cinematics: the opening plays once for a new player, the Wired connection,
+## Cinematics: the opening plays once for a new player (the computer writes),
+## the title once on the first step outside, the Wired connection,
 ## each Sesión Cero fragment, the ending and each finished research call play on
 ## live changes only, a technology entering the Malla plays once per PC, they wait
 ## for open terminals, freeze and give back the player and camera, Esc skips,
@@ -29,7 +30,8 @@ func until_idle(limit: int = 900) -> bool:
 func watch(seen: Dictionary, limit: int = 40000) -> void:
 	# Remember every caption, title and line shown while the cinematic plays.
 	for i in range(limit):
-		for text in [cinematic.caption.text, cinematic.title.text, cinematic.lines_label.get_parsed_text()]:
+		for text in [cinematic.caption.text, cinematic.title.text, cinematic.lines_label.get_parsed_text(),
+				cinematic.screen_text.get_parsed_text()]:
 			if not str(text).is_empty():
 				seen[str(text)] = true
 		if not cinematic.is_playing() and cinematic.queue.is_empty():
@@ -79,8 +81,10 @@ func run() -> void:
 	check(not guide.panel.visible, "the guide shows over a cinematic")
 	var seen := {}
 	await watch(seen)
-	for line in ["Antes de tu primera conexión", "La Sesión Cero.", "Uno de ellos te ha encontrado.", "Has vuelto."]:
+	for line in ["CAPA 00 · ARRANQUE", "FIRMA: SESIÓN CERO", "Has vuelto.", "En el colegio, en el aula de informática.",
+			"CONEXIÓN PERDIDA"]:
 		check(shown(seen, line), "the opening does not show: " + line)
+	check(not cinematic.screen.visible, "the computer's screen stays over the game")
 	check(player.is_physics_processing(), "the player stays frozen after the opening")
 	check(root.get_viewport().get_camera_3d() == own_camera, "the player's camera is not given back")
 	check(root.get_node_or_null("CinematicCamera") == null, "the cinematic camera is left behind")
@@ -89,6 +93,21 @@ func run() -> void:
 	cinematic.opening_checked = false
 	await frames(3)
 	check(not cinematic.is_playing(), "the opening plays twice")
+
+	# The first step outside: the title over the neighbourhood, once.
+	api.snapshot.player.location = "APARTMENT_DISTRICT"
+	await frames(3)
+	check(cinematic.playing == "title", "stepping out for the first time does not show the title")
+	seen = {}
+	await watch(seen)
+	check(shown(seen, "SESIÓN CERO") and shown(seen, "PROTOCOLO DE PRESENCIA")
+		and shown(seen, "Una red que nadie recuerda haber construido."), "the title cinematic is incomplete")
+	saved = ConfigFile.new()
+	check(saved.load(path) == OK and "title" in Array(saved.get_value("cinematics", "seen", [])), "the title is not remembered")
+	cinematic.title_queued = false
+	await frames(3)
+	check(not cinematic.is_playing(), "the title plays twice")
+	api.snapshot.player.location = "APARTMENT"
 
 	# The first snapshot after starting never plays anything.
 	cinematic.known = {}
@@ -108,6 +127,7 @@ func run() -> void:
 	seen = {}
 	await watch(seen)
 	check(shown(seen, "LA MALLA") and shown(seen, "Tú eres la Sesión Uno."), "the Wired cinematic is incomplete")
+	check(shown(seen, "SYN-ACK") and shown(seen, "ENLACE ESTABLECIDO"), "the connection has no handshake")
 
 	# A fragment waits until the terminal closes.
 	shell.surface.show()
@@ -198,7 +218,8 @@ func run() -> void:
 	journal._choose_view("CINEMATICS", "")
 	await frames(2)
 	var labels: Array = journal.cinema_controls.get_children().map(func(button): return button.text)
-	check(journal.cinema_controls.visible and labels.size() == 12, "the diary does not list every scene reached: " + str(labels))
+	check(journal.cinema_controls.visible and labels.size() == 13, "the diary does not list every scene reached: " + str(labels))
+	check("TÍTULO // SESIÓN CERO" in labels, "the title cannot be watched again")
 	check("INVESTIGACIÓN // El qubit y la clave que delata al espía" in labels and "LA MALLA EVOLUCIONA // QKD" in labels,
 		"research scenes missing from the diary")
 	check("ARRANQUE // LA TERMINAL" in labels and "FINAL // GRACIAS POR RECIBIRLA" in labels, "start-up or ending missing from the diary")
@@ -222,6 +243,8 @@ func run() -> void:
 	check(player.is_physics_processing(), "the player stays frozen after the terminal")
 	state.prologue.stage = "FIND_TEACHER"
 	api.snapshot = {"prologue": {"stage": "FIND_TEACHER"}}
+	check(cinematic.available().size() == 3, "the title, once seen, cannot be watched again")
+	cinematic.seen = []  # someone new on this PC
 	check(cinematic.available().size() == 2, "a new player can watch scenes not reached yet")
 
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(path))

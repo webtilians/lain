@@ -186,12 +186,12 @@ def visible_npc_sheets(player_id: str, location: str) -> list[dict]:
         "SCHOOL_LAB": {
             "id": "PROFESSOR", "name": "Profesor",
             "role": "TEACHER", "role_label": "Profesor de informática",
-            "focus": "Recuerda a un antiguo alumno, no conoce su paradero actual.",
+            "focus": "Cree reconocerte. Su registro dice que alguien se dio de baja sin despedirse.",
         },
         "NIGHTCLUB": {
             "id": "RYOKO", "name": "Ryoko",
-            "role": "FORMER_STUDENT", "role_label": "Antiguo alumno",
-            "focus": "Conoce el protocolo de acceso, pero no ha revelado la orden completa.",
+            "role": "FORMER_STUDENT", "role_label": "Antigua alumna",
+            "focus": "Desconfía de quien pregunta por la Malla. Guarda una hoja con dos datos.",
         },
     }
     if stage in {"FIND_TEACHER", "FIND_RYOKO", "FIND_TERMINAL", "CONNECTED"}:

@@ -80,6 +80,19 @@ def _is_identical_retry(
     )
 
 
+def _say_in_zone_chat(player_id, actor_id, actor_name, player_line, reply_text, location):
+    """Talking to someone is done aloud: both lines also go to the zone chat, as any other."""
+    from . import online
+    from .echoes import is_echo
+    from .zone_chat import first_name
+    if not online.enabled() or not location or is_echo(actor_id):
+        return
+    with get_connection() as conn:
+        row = conn.execute("SELECT name FROM agents WHERE id=?", (player_id,)).fetchone()
+    online.post_chat(player_id, row[0] if row else player_id, player_line, location)
+    online.post_chat(actor_id, first_name(actor_name), reply_text, location)
+
+
 def say_to_player_conversation(
     actor_id: str,
     text: str,
@@ -147,6 +160,7 @@ def say_to_player_conversation(
 
     # Model inference must not hold a database write lock.
     created_entity_id = None
+    fresh = False  # a retry of the same line is not said twice
     with get_connection() as conn:
         conn.execute("BEGIN IMMEDIATE")
         state = conn.execute(
@@ -180,6 +194,7 @@ def say_to_player_conversation(
         else:
             if latest[1] != actor_id:
                 raise ValueError("NOT_PLAYER_TURN")
+            fresh = True
             player_turn = conn.execute(
                 """
                 INSERT INTO player_conversation_turns
@@ -262,6 +277,8 @@ def say_to_player_conversation(
     if created_entity_id is not None:
         # This message is emitted only after SQLite commits successfully.
         trace_reality("ENTITY_CREATED_" + created_entity_id)
+    if fresh:
+        _say_in_zone_chat(player_id, actor_id, actor_name, player_line, reply.text, locations.get(player_id))
     return conversation_payload(
         interaction.id, actor_id, actor_name, player_id=player_id
     )
