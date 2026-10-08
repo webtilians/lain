@@ -1,7 +1,9 @@
 extends SceneTree
 ## Ryoko made in VRoid Studio (VROID.md) stands in the club instead of the old figure:
 ## anime-shaded, arms down from VRoid's T-pose, feet on the floor, headphones on, she
-## blinks, turns her head to the player and walks when she moves. Never calls the server.
+## blinks, turns her head to the player and walks when she moves. The teacher, from
+## VRoid's female base, is made an older man in the game: grey hair, a moustache, no long
+## lashes, a man's build, and the mustard cardigan of the sketches. Never calls the server.
 var failures: Array[String] = []
 
 func _initialize() -> void:
@@ -77,9 +79,52 @@ func run() -> void:
 			moved = true
 	check(moved, "her legs do not move when she walks")
 
-	DirAccess.remove_absolute(ProjectSettings.globalize_path(guide.config_path))
 	scene.queue_free()
+	await frames()
+	await teacher()
+
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(guide.config_path))
 	current_scene = null
 	await frames()
 	print("VRM_AVATAR_", "FAILED" if failures else "OK")
 	quit(1 if failures else 0)
+
+func teacher() -> void:
+	root.get_node("WorldApi").snapshot = {"minute": 1300, "player": {"location": "SCHOOL_LAB", "energy": 1.0},
+		"visible_actors": [], "known_nodes": [], "prologue": {"enabled": true, "stage": "FIND_TEACHER", "hint": ""}}
+	var scene: Node3D = load("res://scenes/prologue/ComputerLab.tscn").instantiate()
+	root.add_child(scene)
+	current_scene = scene
+	await frames(5)
+	var professor: Node3D = scene.find_child("PROFESSOR", true, false)
+	var avatar: Node3D = professor.get_node_or_null("VrmAvatar") if professor != null else null
+	check(avatar != null and avatar.skeleton != null, "the teacher is not his VRoid model")
+	if avatar == null:
+		scene.queue_free()
+		return
+	var skeleton: Skeleton3D = avatar.skeleton
+	var grey := 0
+	var cardigan := 0
+	var lashes := 0
+	for mesh in avatar.find_children("*", "MeshInstance3D", true, false):
+		if mesh.mesh == null or mesh.get_parent() is BoneAttachment3D:
+			continue
+		for index in mesh.mesh.get_surface_count():
+			var part := str(mesh.mesh.surface_get_material(index).resource_name)
+			var material: Material = mesh.get_active_material(index)
+			if "_HAIR" in part and material is ShaderMaterial:
+				grey += 1
+			if "N00_007_01_Tops" in part and material is BaseMaterial3D and material.albedo_color.r > material.albedo_color.b * 1.5:
+				cardigan += 1
+			if "FaceEyelash" in part and material is BaseMaterial3D and material.albedo_color.a == 0.0:
+				lashes += 1
+	check(grey > 0, "his hair is not grey")
+	check(cardigan > 0, "his cardigan is not mustard")
+	check(lashes > 0, "he still has long eyelashes")
+	var moustache := skeleton.get_node_or_null("Moustache") as BoneAttachment3D
+	check(moustache != null and moustache.bone_name == "J_Bip_C_Head" and moustache.get_child_count() == 3, "he has no moustache")
+	var bust := skeleton.find_bone("J_Sec_L_Bust1")
+	check(bust < 0 or skeleton.get_bone_pose_scale(bust).x < 0.5, "he still has a woman's chest")
+	check(skeleton.get_bone_pose_scale(skeleton.find_bone("J_Bip_C_UpperChest")).x > 1.0, "his shoulders are not broader")
+	scene.queue_free()
+	await frames()

@@ -114,7 +114,14 @@ func _door(title: String, target: String, pos: Vector3, shade: Color) -> void:
 
 
 ## Characters made in VRoid Studio (VROID.md); the others keep the old figure.
-const VRM_MODELS := {"RYOKO": "res://art/characters/vrm/ryoko.glb"}
+const VRM_MODELS := {"RYOKO": "res://art/characters/vrm/ryoko.glb", "PROFESSOR": "res://art/characters/vrm/profesor.glb"}
+## What VRoid could not do, retouched in the game (VrmAvatar.gd).
+const VRM_EXTRAS := {
+	"RYOKO": {"headphones": true},
+	"PROFESSOR": {"grey_hair": true, "hide": ["FaceEyelash"], "moustache": true, "masculine": true,
+		"tint": {"N00_007_01_Tops": Color("a8893c"), "Bottoms": Color("5a5966")},
+		"face": {"Fcl_BRW_Angry": 0.3, "Fcl_EYE_Angry": 0.1}},
+}
 
 
 func _npc(name_text: String, actor_id: String, pos: Vector3,
@@ -132,7 +139,7 @@ func _npc(name_text: String, actor_id: String, pos: Vector3,
 		avatar.set_script(load("res://scripts/art/VrmAvatar.gd"))
 		actor.add_child(avatar)
 		avatar.position.y = -pos.y
-		avatar.setup(load(vrm), {"headphones": actor_id == "RYOKO"})
+		avatar.setup(load(vrm), VRM_EXTRAS.get(actor_id, {}))
 	else:
 		var model: Node3D = load("res://art/characters/LainSlender.tscn").instantiate()
 		model.set_script(load("res://scripts/art/CitizenAvatar.gd"))

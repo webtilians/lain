@@ -110,7 +110,7 @@ static func environment(e: Environment, on: bool) -> void:
 	e.adjustment_contrast = 1.06
 	# Shadows are a coloured mid-tone, never black: more ambient light, leaning violet.
 	e.ambient_light_color = e.ambient_light_color.lerp(Color("6a5a9a"), 0.35)
-	e.ambient_light_energy *= 2.4
+	e.ambient_light_energy *= 1.5
 	e.tonemap_exposure += 0.15
 	e.glow_bloom = maxf(e.glow_bloom, 0.06)
 	e.glow_hdr_threshold = minf(e.glow_hdr_threshold, 0.85)

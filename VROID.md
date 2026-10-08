@@ -71,12 +71,30 @@ el juego toma el archivo nuevo.
 Ryoko ya está (versión 0.37). Su pelo azul y la sudadera son como los hizo su autor en
 VRoid.
 
-**Licencia:** al exportar, VRoid guarda quién puede usar el modelo. El de Ryoko dice
-«solo el autor» y «uso personal sin ánimo de lucro»: vale para el juego mientras el
-autor sea quien lo publica; si algún día se vende, se vuelve a exportar permitiendo el
-uso comercial.
+### El profesor
+
+También está (versión 0.37). VRoid solo tenía el modelo base femenino y no trae
+bigotes, así que el juego lo retoca al cargarlo (`VRM_EXTRAS` en `PrologueLocation.gd`):
+
+| Retoque | Cómo |
+|---|---|
+| Pelo gris | El pelo de VRoid con su textura pero sin color, aclarado (`client/shaders/vrm_grey_hair.gdshader`). |
+| Bigote | Tres piezas grises bajo la nariz, sujetas al hueso de la cabeza: se mueve con ella. |
+| Sin pestañas largas | La parte `FaceEyelash` se oculta. |
+| Cuerpo de hombre | Sin pecho, hombros más anchos y caderas más estrechas (escala de huesos). |
+| Ropa | La rebeca, mostaza como en los bocetos; el pantalón, gris oscuro. |
+| Cara | Cejas algo fruncidas: cansado y serio. |
+
+Si algún día VRoid deja hacer algo de esto (un modelo base masculino, un bigote), se
+quita de `VRM_EXTRAS` y se hace allí.
+
+**Licencia:** al exportar, VRoid guarda quién puede usar el modelo. Los de Ryoko y el
+profesor dicen «solo el autor», «uso personal sin ánimo de lucro», «sin modificar» y «sin
+redistribuir»: son condiciones para los demás, no para su autor, así que valen para el
+juego (y para los retoques que le hace) mientras el autor sea quien lo publica. Si algún
+día se vende, se vuelven a exportar permitiendo el uso comercial.
 
 ## Después
 
-El profesor, Haruto y K, con la misma idea (sus colores están en los bocetos). Los
-vecinos pueden compartir unos pocos modelos con colores distintos.
+Haruto y K, con la misma idea (sus colores están en los bocetos). Los vecinos pueden
+compartir unos pocos modelos con colores distintos (`tint` en `VRM_EXTRAS`).
