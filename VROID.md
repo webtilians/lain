@@ -56,7 +56,45 @@ Copia `ryoko.vrm` a `client/art/characters/vrm/` (o dime dónde está). Yo:
 Si algo no convence al verla en el juego, se retoca en VRoid y se vuelve a exportar:
 el juego toma el archivo nuevo.
 
+## Cómo entra en el juego
+
+- El `.vrm` se copia como `client/art/characters/vrm/<nombre>.glb` (un VRM es un glTF):
+  Godot lo importa sin complementos. Las texturas salen a la misma carpeta.
+- `client/scripts/art/VrmAvatar.gd` le da el sombreado anime (VRoid exporta materiales
+  planos), le baja los brazos de la postura en T y lo mantiene vivo: respira, se mece un
+  poco, parpadea (con su forma `Fcl_EYE_Close`), gira la cabeza hacia el jugador cercano
+  y anda cuando se mueve. Los auriculares de Ryoko los pone este script, sobre el pelo.
+- `client/scripts/world/PrologueLocation.gd` (`VRM_MODELS`) dice qué personaje usa qué
+  modelo; sin modelo, sigue la figura de antes.
+- Prueba: `client/tools/test_vrm_avatar.gd`.
+
+Ryoko ya está (versión 0.37). Su pelo azul y la sudadera son como los hizo su autor en
+VRoid.
+
+### El profesor
+
+También está (versión 0.37). VRoid solo tenía el modelo base femenino y no trae
+bigotes, así que el juego lo retoca al cargarlo (`VRM_EXTRAS` en `PrologueLocation.gd`):
+
+| Retoque | Cómo |
+|---|---|
+| Pelo gris | El pelo de VRoid con su textura pero sin color, aclarado (`client/shaders/vrm_grey_hair.gdshader`). |
+| Bigote | Tres piezas grises bajo la nariz, sujetas al hueso de la cabeza: se mueve con ella. |
+| Sin pestañas largas | La parte `FaceEyelash` se oculta. |
+| Cuerpo de hombre | Sin pecho, hombros más anchos y caderas más estrechas (escala de huesos). |
+| Ropa | La rebeca, mostaza como en los bocetos; el pantalón, gris oscuro. |
+| Cara | Cejas algo fruncidas: cansado y serio. |
+
+Si algún día VRoid deja hacer algo de esto (un modelo base masculino, un bigote), se
+quita de `VRM_EXTRAS` y se hace allí.
+
+**Licencia:** al exportar, VRoid guarda quién puede usar el modelo. Los de Ryoko y el
+profesor dicen «solo el autor», «uso personal sin ánimo de lucro», «sin modificar» y «sin
+redistribuir»: son condiciones para los demás, no para su autor, así que valen para el
+juego (y para los retoques que le hace) mientras el autor sea quien lo publica. Si algún
+día se vende, se vuelven a exportar permitiendo el uso comercial.
+
 ## Después
 
-El profesor, Haruto y K, con la misma idea (sus colores están en los bocetos). Los
-vecinos pueden compartir unos pocos modelos con colores distintos.
+Haruto y K, con la misma idea (sus colores están en los bocetos). Los vecinos pueden
+compartir unos pocos modelos con colores distintos (`tint` en `VRM_EXTRAS`).

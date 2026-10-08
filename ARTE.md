@@ -62,5 +62,6 @@ quien llega después:
 
 ## Lo siguiente
 
-1. Personajes 3D anime hechos con VRoid Studio (ver `VROID.md`), empezando por Ryoko.
+1. Personajes 3D anime hechos con VRoid Studio (ver `VROID.md`): Ryoko y el profesor ya
+   están; siguen Haruto y K.
 2. Caras para K y para las conversaciones libres (según lo que diga la IA).
