@@ -83,3 +83,13 @@ def test_server_script_names_every_copy_and_writes_the_panels_mark():
     assert "chown lain:lain" in script
     vps = (ROOT / "vps.ps1").read_text(encoding="utf-8-sig")
     assert "lain-backup --downloaded" in vps and "tools\\check_backup.py" in vps
+
+
+def test_server_copies_wait_for_a_busy_world_and_never_keep_half_a_copy():
+    # 2026-10-08: a copy taken while the game was writing came out empty ("database is
+    # locked", ROLLBACK) and was kept as if it were good.
+    script = (ROOT / "deploy" / "vps" / "bin" / "lain-backup").read_text(encoding="utf-8")
+    assert '-cmd ".timeout 30000"' in script
+    assert '= "COMMIT;" ]' in script and 'rm -f "$copy.tmp"' in script
+    assert script.index('= "COMMIT;" ]') < script.index('mv "$copy.tmp" "$copy"')
+    assert "exit 1" in script.split("for attempt")[1]

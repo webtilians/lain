@@ -23,9 +23,23 @@ if [ "${1:-}" = "--downloaded" ]; then
 fi
 [ -f "$database" ] || exit 0
 stamp=$(date +%Y-%m-%d-%H%M%S)
-# Read as the service user so SQLite never leaves root-owned -wal/-shm files.
-runuser -u lain -- sqlite3 "$database" .dump | gzip > "$destination/online-world-$stamp.sql.gz.tmp"
-mv "$destination/online-world-$stamp.sql.gz.tmp" "$destination/online-world-$stamp.sql.gz"
+copy="$destination/online-world-$stamp.sql.gz"
+# The game may be writing just then: wait for it (up to 30 s) rather than give up, and never
+# keep a copy that did not finish (a whole dump ends in COMMIT; a failed one in ROLLBACK).
+for attempt in 1 2 3; do
+  # Read as the service user so SQLite never leaves root-owned -wal/-shm files.
+  runuser -u lain -- sqlite3 -cmd ".timeout 30000" "$database" .dump | gzip > "$copy.tmp"
+  if [ "$(zcat "$copy.tmp" | tail -n 1)" = "COMMIT;" ]; then
+    break
+  fi
+  rm -f "$copy.tmp"
+  if [ "$attempt" = 3 ]; then
+    echo "No se pudo copiar el mundo: la base de datos estaba ocupada. Prueba otra vez en un momento." >&2
+    exit 1
+  fi
+  sleep 5
+done
+mv "$copy.tmp" "$copy"
 # Access files hold the only copy of each player's token.
 if [ -d /var/lib/lain/access ]; then
   tar -C /var/lib/lain -czf "$destination/access-$stamp.tar.gz.tmp" access
