@@ -60,6 +60,24 @@ quien llega después:
 - **F9** cambia entre anime y realista; se guarda en `user://graphics10.cfg`.
 - Prueba: `client/tools/test_anime_look.gd`.
 
+## Fuera de los edificios: la red de Indara
+
+Dentro de un edificio, lo que hay al otro lado de las paredes es la red de Indara (la
+red de Indra: una joya en cada nudo y cada joya refleja a las demás). La sala flota en
+la oscuridad, colgada de la red por tres cables desde sus esquinas.
+
+- **Hilos de luz** en cuadrícula que se pierden en lo oscuro, con pulsos lentos.
+- **Una joya por cada zona** de la ciudad (menos aquella en la que estás y la casa, que es
+  privada). Brilla más mientras hay jugadores allí.
+- **Pulsos con sentido**: cuando alguien dice algo en otra zona, un pulso rosa corre por
+  los hilos y sube por un cable hasta la sala; cuando alguien llega a una zona, uno azul.
+  Lo que se dice en la sala sale de ella hacia la red. El servidor solo manda cuántos hay
+  y cuántas frases se han dicho en cada zona (`indara` en la presencia): nunca quién ni qué.
+- Sin conexión, la red sigue con sus propios pulsos.
+- Más tenue en el aspecto realista (F9).
+- `client/scripts/art/IndaraNet.gd` y `client/shaders/indara_net.gdshader`; la pone
+  `GraphicsDirector` en todos los interiores. Prueba: `client/tools/test_indara_net.gd`.
+
 ## Lo siguiente
 
 1. Personajes 3D anime hechos con VRoid Studio (ver `VROID.md`): Ryoko y el profesor ya

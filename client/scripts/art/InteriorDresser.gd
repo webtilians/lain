@@ -51,7 +51,7 @@ func dress(scene: Node3D, location: String) -> void:
 	var root := Node3D.new()
 	root.name = "InteriorDressing"
 	scene.add_child(root)
-	var bounds := _room(scene)
+	var bounds := room_bounds(scene)
 	var top := _ceiling(scene)
 	_surfaces(scene, style, location)
 	_lights(root, style, bounds, top, location)
@@ -77,7 +77,7 @@ func apply_quality(level: int) -> void:
 
 # ---------------------------------------------------------------- room shape
 
-func _room(scene: Node3D) -> AABB:
+static func room_bounds(scene: Node3D) -> AABB:
 	var floor := scene.get_node_or_null("Floor")
 	if floor is CSGBox3D:
 		return AABB(floor.global_position - floor.size * .5, floor.size)

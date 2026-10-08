@@ -4,6 +4,8 @@ const AVATAR := preload("res://art/characters/LainSlender.tscn")
 const CHAT_LINES := 40  # kept in the scrollable log; the box shows the last few
 const HEARING := 14.0  # metres: residents further away, or off screen, do not hear the zone chat
 const BUBBLE_SECONDS := 6.0
+## The city in counts, for the Indara net outside the rooms (IndaraNet.gd).
+signal indara_heard(zones: Array)
 var _request: HTTPRequest
 var _chat_request: HTTPRequest
 var _elapsed := 0.0
@@ -191,6 +193,7 @@ func _received(result: int, code: int, _headers: PackedStringArray, body: Packed
 			var point: Dictionary = data.get("position", {})
 			player.position = Vector3(float(point.x), float(point.y), float(point.z))
 	_me = str(data.get("me", _me))
+	indara_heard.emit(data.get("indara", []))
 	var bubbles := not _quiet
 	_quiet = false
 	for message in data.get("chat", []):
