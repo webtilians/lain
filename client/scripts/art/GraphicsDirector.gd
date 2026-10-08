@@ -20,6 +20,7 @@ var soft_edges = preload("res://scripts/art/SoftEdges.gd").new()
 var dresser = preload("res://scripts/art/InteriorDresser.gd").new(materials)
 const ANIME_LOOK = preload("res://scripts/art/AnimeLook.gd")
 var anime_look = ANIME_LOOK.new()
+const INDARA_NET = preload("res://scripts/art/IndaraNet.gd")
 var anime := true  # the anime look (ARTE.md); F9 switches to the realistic one and back
 var quality := 2
 var current_id := 0
@@ -69,6 +70,8 @@ func set_anime(on: bool, persist: bool = false) -> void:
 	anime = on
 	if is_instance_valid(scene_ref):
 		anime_look.apply(scene_ref, anime, forward_plus)
+		if scene_ref.has_node("IndaraNet"):
+			scene_ref.get_node("IndaraNet").set_look(anime)
 	apply_quality(quality, persist)
 
 func _on_node_added(node: Node) -> void:
@@ -92,6 +95,13 @@ func apply_scene(scene: Node3D) -> void:
 	visit(scene, false)
 	if not exterior:
 		dresser.dress(scene, location_of(scene))
+		if location_of(scene) != "" and not scene.has_node("IndaraNet"):
+			# Outside the walls of a building: the Indara net (ARTE.md).
+			var indara := Node3D.new()
+			indara.set_script(INDARA_NET)
+			scene.add_child(indara)
+			indara.setup(scene, location_of(scene))
+			indara.set_look(anime)
 	if environments.is_empty():
 		var environment := WorldEnvironment.new()
 		environment.name = "RealismEnvironment"
@@ -349,6 +359,9 @@ func lighting(e: Environment) -> void:
 		e.ambient_light_color = Color("5a554e")
 		e.ambient_light_energy = .5
 		e.ambient_light_sky_contribution = 0
+		# Outside the walls: the dark the Indara net floats in.
+		e.background_mode = Environment.BG_COLOR
+		e.background_color = Color("06070d")
 		e.tonemap_exposure = 1.2
 		e.glow_intensity = .55
 		e.glow_hdr_threshold = 1.0

@@ -21,6 +21,9 @@ _lock = threading.RLock()
 _presence = {}
 _connections = {}
 _chat = deque(maxlen=100)
+# Lines said aloud in each zone since the host started: the pulses of the Indara net that
+# the game draws outside the rooms (indara()).
+_said = defaultdict(int)
 _limits = defaultdict(deque)
 PRESENCE_TTL = 12
 # The shadow (BIBLIA_NARRATIVA.md, section 7): while a player is offline, others
@@ -263,6 +266,7 @@ def heartbeat(actor_id, instance, location, x, y, z, yaw, dialogue=False, receiv
             "position": {"x": x, "y": y, "z": z},
             "players": visible_players(actor_id, location),
             "chat": visible_chat(actor_id, location),
+            "indara": indara(now),
         }
         present = {item["id"] for item in _presence.values() if now - item["at"] < PRESENCE_TTL}
     if accepted:
@@ -431,6 +435,7 @@ def _append_chat(actor_id, name, text, location, recipients):
             at=time.monotonic(),
         )
     )
+    _said[location] += 1
 
 
 def send_chat(actor_id, text, near=None):
@@ -485,6 +490,21 @@ def zones_with_players():
             for item in _presence.values()
             if time.monotonic() - item["at"] < PRESENCE_TTL and item["location"] not in PRIVATE_ROOMS
         })
+
+
+def indara(now=None):
+    """The city as the Indara net, seen from inside a building: how many players each public
+    zone has and how many lines have been said aloud there. Never who, nor what was said."""
+    now = time.monotonic() if now is None else now
+    with _lock:
+        people = defaultdict(int)
+        for item in _presence.values():
+            if now - item["at"] < PRESENCE_TTL and item["location"] not in PRIVATE_ROOMS:
+                people[item["location"]] += 1
+        return [
+            {"zone": zone, "people": people[zone], "said": _said[zone]}
+            for zone in sorted(set(people) | {zone for zone, count in _said.items() if count})
+        ]
 
 
 def visible_chat(actor_id, location):

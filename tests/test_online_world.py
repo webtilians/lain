@@ -99,6 +99,7 @@ def world(monkeypatch):
         online._connections,
         online._limits,
         online._chat,
+        online._said,
         api._dialogue_locks,
     ):
         collection.clear()
@@ -379,6 +380,27 @@ def test_encounters_do_not_confuse_two_visitors(world):
         ]
     assert sorted(["AGENT_K", alice]) in participants
     assert sorted(["AGENT_K", bob]) in participants
+
+
+def test_the_indara_net_counts_people_and_lines_never_who_or_what(world):
+    client, runtime, alice, bob, headers = world
+    place(runtime, alice, "APARTMENT_DISTRICT")
+    place(runtime, bob, "SCHOOL")
+    presence(client, headers[alice])
+    assert presence(client, headers[bob], location="SCHOOL").status_code == 200
+    assert client.post("/api/v1/online/chat", headers=headers[alice], json={"text": "Hola"}).status_code == 200
+    net = presence(client, headers[bob], location="SCHOOL").json()["indara"]
+    assert net == [
+        {"zone": "APARTMENT_DISTRICT", "people": 1, "said": 1},
+        {"zone": "SCHOOL", "people": 1, "said": 0},
+    ]
+    assert "Hola" not in json.dumps(net) and "Alice" not in json.dumps(net)
+    # Home is private: nobody sees on the net who is in.
+    place(runtime, alice, "APARTMENT")
+    presence(client, headers[alice], location="APARTMENT")
+    net = presence(client, headers[bob], location="SCHOOL").json()["indara"]
+    assert all(zone["zone"] != "APARTMENT" for zone in net)
+    assert {"zone": "APARTMENT_DISTRICT", "people": 0, "said": 1} in net
 
 
 def test_presence_chat_areas_and_expiry(world, monkeypatch):
