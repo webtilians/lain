@@ -29,6 +29,12 @@ def test_service_runs_the_real_online_server_command():
     assert "reverse_proxy 127.0.0.1:8000" in caddy
 
 
+def test_caddy_keeps_the_other_sites_of_this_server():
+    # DH Trails runs on the same machine; lain-update rewrites the Caddyfile and must keep importing it.
+    caddy = (VPS / "Caddyfile.template").read_text(encoding="utf-8")
+    assert "import /etc/caddy/sites.d/*.caddy" in caddy.splitlines()
+
+
 def test_ai_key_helper_matches_what_the_engine_reads():
     helper = (VPS / "bin" / "lain-set-ai-key").read_text(encoding="utf-8")
     for name in ("LAIN_LLM_ENABLED", "LAIN_LLM_MODEL", "LAIN_LLM_ENDPOINT",

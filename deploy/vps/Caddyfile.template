@@ -23,3 +23,7 @@ __HOST__ {
 		reverse_proxy 127.0.0.1:8000
 	}
 }
+
+# Other sites on this server (DH Trails) keep their own file in sites.d,
+# so rewriting this Caddyfile on every update never removes them.
+import /etc/caddy/sites.d/*.caddy
