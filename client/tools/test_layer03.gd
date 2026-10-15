@@ -74,6 +74,14 @@ func run() -> void:
 	shell.input.grab_focus()
 	shell._input(up)
 	check(shell.input.text == "cat ~/correo/ttl1.eml", "History does not recall the last command")
+	# Kumo (KUMO.md) thinks with the server's AI: its questions wait longer and say so; its rules do not.
+	shell._submit("kumo ¿qué hago ahora?")
+	check(shell.request.timeout == shell.KUMO_TIMEOUT and "Kumo está pensando" in shell.output.text,
+		"A question for Kumo does not wait for the AI")
+	reply(shell, "Kumo: Lee el correo de Takeshi.", "/home/enrique")
+	shell._submit("kumo reglas")
+	check(shell.request.timeout == 20, "Kumo's rules wait as long as a question")
+	reply(shell, "Kumo no tiene reglas.", "/home/enrique")
 	var esc := InputEventAction.new()
 	esc.action = "ui_cancel"
 	esc.pressed = true

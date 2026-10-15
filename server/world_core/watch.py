@@ -162,17 +162,9 @@ def prompt(items: list, existing: list, centre: str, recent_kinds: list | None =
 
 def ask(messages: list) -> str:
     """One chat completion through the same provider the characters use."""
-    from . import llm_dialogue, shared_ai
-    body = {"model": os.getenv("LAIN_LLM_MODEL", ""), "messages": messages, "temperature": 0.7, "max_tokens": 3000}
+    from . import llm_dialogue
     timeout = max(20.0, min(90.0, float(os.getenv("LAIN_LLM_TIMEOUT", "15")) * 4))
-    if shared_ai.enabled():
-        raw = shared_ai.completion(body, "dialogue", timeout)
-    else:
-        payload = json.dumps(llm_dialogue.with_provider_options(body), ensure_ascii=False).encode("utf-8")
-        request = Request(llm_dialogue._endpoint(), data=payload, headers=llm_dialogue.provider_headers(), method="POST")
-        with urlopen(request, timeout=timeout) as response:
-            raw = response.read(262_144)
-    return json.loads(raw.decode("utf-8"))["choices"][0]["message"]["content"]
+    return llm_dialogue.complete(messages, temperature=0.7, max_tokens=3000, timeout=timeout)
 
 
 def _text(value, limit: int) -> str:

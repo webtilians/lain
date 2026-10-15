@@ -526,21 +526,11 @@ def run_shell(player: str, host: str, cwd: str, command: str, minute: int) -> di
             raise ValueError("LAYER_NOT_ACTIVE")
         relay = _host(c, player, host)
         story = _story(c, player, run)
-        files = _relay_files(story, relay) if relay else _navi_files(story, run)
         # Later layers share this shell: their files and commands join once each starts.
         layers = _later_layers(c, player)
-        for layer in layers:
-            files.update(layer.files(c, player, relay, story))
-        # Hashed evidence and packet segments are immutable. Auxiliary files
-        # (manuals, mail and route headings) may follow the current UI language.
-        for path, content in files.items():
-            if path.endswith((".seg", "/diario", "/diario.espejo", "/sesion0.txt", "/flujo-4004.txt", ".json", ".pkt")):
-                continue
-            if path.startswith("/indara/"):  # research data: its hashes and counts are checked byte for byte
-                continue
-            files[path] = i18n.t(content)
+        files = visible_files(c, player, relay, story, run, layers)
         hostname = RELAYS[relay][0] if relay else story.navi
-        home = "/" if relay else story.home
+        home = home_of(relay, story)
         cwd = _norm("/", cwd or home, home)
         if cwd not in _dirs(files):
             cwd = home
@@ -565,12 +555,33 @@ def run_shell(player: str, host: str, cwd: str, command: str, minute: int) -> di
         return result
 
 
+def visible_files(c, player, relay, story, run=None, layers=None) -> dict:
+    """The files the player sees on this host, as the shell shows them (also for later layers' commands)."""
+    run = run if run is not None else _run(c, player)
+    files = _relay_files(story, relay) if relay else _navi_files(story, run)
+    for layer in layers if layers is not None else _later_layers(c, player):
+        files.update(layer.files(c, player, relay, story))
+    # Hashed evidence and packet segments are immutable. Auxiliary files
+    # (manuals, mail and route headings) may follow the current UI language.
+    for path, content in files.items():
+        if path.endswith((".seg", "/diario", "/diario.espejo", "/sesion0.txt", "/flujo-4004.txt", ".json", ".pkt")):
+            continue
+        if path.startswith("/indara/"):  # research data: its hashes and counts are checked byte for byte
+            continue
+        files[path] = i18n.t(content)
+    return files
+
+
+def home_of(relay, story) -> str:
+    return "/" if relay else story.home
+
+
 def _later_layers(c, player):
     """The other layers of the protocol the player has already reached, in order."""
-    from . import (duo, hints, institute, journal, layer_one, layer_two, layer_four, layer_five, layer_six, layer_seven,
-                   research)
+    from . import (duo, hints, institute, journal, kumo, laboratory, layer_one, layer_two, layer_four, layer_five,
+                   layer_six, layer_seven, research)
     layers = (layer_one, layer_two, layer_four, layer_five, layer_six, layer_seven, journal, duo, research, institute,
-              hints)
+              laboratory, kumo, hints)
     return [layer for layer in layers if layer.run_for(c, player) is not None]
 
 

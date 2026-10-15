@@ -113,6 +113,21 @@ def with_provider_options(body: dict) -> dict:
     return {**body, **extra}
 
 
+def complete(messages: list, temperature: float, max_tokens: int, timeout: float) -> str:
+    """One plain chat completion through the provider the characters use (the watcher, Kumo).
+    Raises on any failure; the caller decides what the player sees."""
+    body = {"model": os.getenv("LAIN_LLM_MODEL", ""), "messages": messages, "temperature": temperature,
+            "max_tokens": max_tokens}
+    if shared_ai.enabled():
+        raw = shared_ai.completion(body, "dialogue", timeout)
+    else:
+        payload = json.dumps(with_provider_options(body), ensure_ascii=False).encode("utf-8")
+        request = Request(_endpoint(), data=payload, headers=provider_headers(), method="POST")
+        with urlopen(request, timeout=timeout) as response:
+            raw = response.read(262_144)
+    return json.loads(raw.decode("utf-8"))["choices"][0]["message"]["content"]
+
+
 CHAT_STYLE = (
     " ESTÁS EN UN CHAT DE GRUPO de tu zona: escribes como una persona más, y nadie debe notar que eres un "
     "personaje. Escribe como se escribe en un chat: una frase, dos como mucho, corta y coloquial. NUNCA repitas, "
