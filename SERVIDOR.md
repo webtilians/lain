@@ -18,7 +18,8 @@ Todo se maneja desde el PC con `vps.ps1`.
 
 1. Pásales la web del servidor: **https://178-105-103-4.sslip.io**. Tiene el
    botón de descarga y capturas del juego (`deploy/vps/web`; las imágenes se
-   rehacen con `client/tools/capture_landing.gd`). El enlace directo, que siempre baja la última versión,
+   rehacen con `client/tools/capture_landing.gd`, y los textos reales que enseñan con
+   `tools/landing_inputs.py`). El enlace directo, que siempre baja la última versión,
    es `https://github.com/webtilians/lain/releases/latest/download/LAIN-Windows.zip`.
 2. El registro está **abierto**: cualquiera con el juego se crea una cuenta
    con nombre y contraseña, sin código ni escribirte. Para que nadie llene el
