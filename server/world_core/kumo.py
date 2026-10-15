@@ -273,7 +273,7 @@ def _goal(c, player) -> str:
 
 
 def _messages(state, question, place, goal, used, left) -> list:
-    language = "inglés" if i18n.language() == "en" else "español"
+    language = {"en": "inglés", "ru": "ruso"}.get(i18n.language(), "español")
     system = (
         f"Eres Kumo, el agente de IA del ordenador de casa de {state['name']}, en Indara, un juego sobre cómo "
         f"funcionan las redes. Hablas en {language}. Eres breve: seis líneas como mucho, sin markdown.\n"

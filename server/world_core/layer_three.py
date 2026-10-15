@@ -239,7 +239,7 @@ class Story:
             # Translate before hashing, in the language chosen on first entry.
             # Existing saves default to Spanish and retain their exact bytes.
             content = i18n.t(text, self.language)
-            unit = "minute" if self.language == "en" else "minuto"
+            unit = i18n.t("minuto", self.language)
             line = f"{number:04d} | {unit} {minute:6d} | prev {prev} | {content}"
             self.original_lines.append(line)
             prev = h8(line)
@@ -428,7 +428,8 @@ segundos sin latido, desapareces para los demás. Que te perciban también
 cuenta: si nadie te responde durante un rato, tu señal se debilita.""",
 }
 
-HELP = """Órdenes:
+# Translated without its list of topics, which are names (and grow with each layer).
+HELP_HEAD = """Órdenes:
   ls [ruta]              listar          cd <ruta>        cambiar de carpeta
   cat <archivo>...       leer            pwd              carpeta actual
   grep <texto> <ruta>    buscar          sha256 <archivo> [línea]
@@ -436,7 +437,8 @@ HELP = """Órdenes:
   whoami · uptime · last · date          man <tema>       aprender
   ensamblar · denunciar · reenviar · soltar                (ver man)
   clear · exit
-Temas de man: """ + ", ".join(sorted(MAN))
+Temas de man: """
+HELP = HELP_HEAD + ", ".join(sorted(MAN))
 
 
 # --------------------------------------------------------------- the shell
@@ -598,7 +600,8 @@ def _dispatch(c, player, story, run, relay, files, home, result, name, args, min
     cwd = result["cwd"]
     try:
         if name == "help":
-            return "\n".join([i18n.t(HELP)] + [i18n.t(layer.HELP) for layer in _later_layers(c, player)])
+            return "\n".join([i18n.t(HELP_HEAD) + ", ".join(sorted(MAN))]
+                             + [i18n.t(layer.HELP) for layer in _later_layers(c, player)])
         if name == "man":
             topic = (args[0] if args else "").lower()
             topic = {"routes": "rutas", "segments": "segmentos", "chain": "cadena",

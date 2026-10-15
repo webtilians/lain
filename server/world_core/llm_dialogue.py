@@ -264,9 +264,10 @@ def _provider_reply(context: dict, choice_text: str) -> str:
         # The zone chat (zone_chat.py): one more voice among people, who must not sound like a machine.
         system += CHAT_STYLE
     from . import i18n
-    if i18n.language() == "en":
+    spoken = {"en": "inglés", "ru": "ruso"}.get(i18n.language())
+    if spoken:
         system += (
-            " IDIOMA: el jugador juega en inglés. Responde SIEMPRE en inglés "
+            f" IDIOMA: el jugador juega en {spoken}. Responde SIEMPRE en {spoken} "
             "natural, aunque tus recuerdos, el contexto y el historial estén "
             "en español; los nombres propios no se traducen."
         )
@@ -536,6 +537,7 @@ def generate_dialogue_reply(
         if resident and any(term in question for term in (
             "que haces", "a que te dedicas", "objetivo", "trabajas", "habilidades",
             "what do you do", "your job", "your goal", "work", "skills",
+            "чем ты занимаешься", "чем занимаешься", "кем ты работаешь", "твоя цель", "работа",
         )):
             from . import i18n
             if i18n.language() == "en":
@@ -543,6 +545,13 @@ def generate_dialogue_reply(
                     text=(f"I'm {i18n.t(resident['role']).lower()}. "
                           f"Right now: {i18n.t(resident['activity']).lower()}. "
                           f"My goal: {i18n.t(resident['public_objective'])}"),
+                    source="DETERMINISTIC_RESIDENT_PROFILE",
+                )
+            if i18n.language() == "ru":
+                return DialogueReply(
+                    text=(f"Я {i18n.t(resident['role']).lower()}. "
+                          f"Сейчас: {i18n.t(resident['activity']).lower()}. "
+                          f"Моя цель: {i18n.t(resident['public_objective'])}"),
                     source="DETERMINISTIC_RESIDENT_PROFILE",
                 )
             return DialogueReply(

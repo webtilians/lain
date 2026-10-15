@@ -101,13 +101,14 @@ def run_for(c, player):
 def say(value) -> str:
     """A text in the player's language: watcher texts carry both, hand-written ones go through the catalogue."""
     if isinstance(value, dict):
-        return value.get(i18n.language()) or value.get("es", "")
+        # The watcher writes Spanish and English: a Russian player reads the English.
+        return value.get(i18n.language()) or (value.get("en") if i18n.language() == "ru" else "") or value.get("es", "")
     return i18n.t(value)
 
 
 def command(centre: str) -> str:
     """The centre's command as the player would type it in their language."""
-    return CENTRES[centre]["en"] if i18n.language() == "en" else CENTRES[centre]["commands"][0]
+    return CENTRES[centre]["commands"][0] if i18n.language() == "es" else CENTRES[centre]["en"]
 
 
 def handwritten() -> tuple:

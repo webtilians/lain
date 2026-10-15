@@ -262,10 +262,10 @@ def _tokens(c, player, story3, relay, result, args, minute) -> str:
             size = count(line)
             total += size
             lines.append(f"{number:>3} │ {size:>3} │ {line[:60]}")
-        return "\n".join(lines + [i18n.t(f"total: {total} tokens")])
+        return "\n".join(lines + [i18n.t(f"en total: {total} tokens")])
     text = " ".join(args)
     pieces = tokenize(text)
-    lines = [_shown(pieces), i18n.t(f"{len(pieces)} tokens")]
+    lines = [_shown(pieces), i18n.t(f"Son {len(pieces)} tokens.")]
     if research.progress(c, player, "KU-01")["experiment"]:
         return "\n".join(lines)
     goal = target_tokens(player)

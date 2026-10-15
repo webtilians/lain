@@ -3,11 +3,11 @@ extends Translation
 ## names, identifiers, numbers) are substituted verbatim, never translated.
 var catalog: Dictionary = {}
 var patterns: Array = []
+var token := RegEx.new()
 
-func configure(data: Dictionary) -> void:
+func configure(data: Dictionary, language := "en") -> void:
 	catalog = data
-	locale = "en"
-	var token := RegEx.new()
+	locale = language
 	token.compile("\\{\\w+\\}|%[-+0-9.]*[sdf]")
 	var sources := catalog.keys()
 	sources.sort_custom(func(a, b): return str(a).length() > str(b).length())
@@ -43,16 +43,16 @@ func render(source: String) -> String:
 		if found == null:
 			continue
 		var target: String = item.target
-		# Replace target slots in one pass: inserted names cannot become tokens.
+		var values := {}
+		for index in range(item.slots.size()):
+			values[item.slots[index]] = found.get_string(index + 1)
+		# Replace target slots in one pass, in whatever order the language puts them:
+		# inserted names cannot become tokens.
 		var result := ""
 		var cursor := 0
-		for index in range(item.slots.size()):
-			var slot: String = item.slots[index]
-			var position := target.find(slot, cursor)
-			if position < 0:
-				continue
-			result += target.substr(cursor, position - cursor) + found.get_string(index + 1)
-			cursor = position + slot.length()
+		for slot in token.search_all(target):
+			result += target.substr(cursor, slot.get_start() - cursor) + str(values.get(slot.get_string(), slot.get_string()))
+			cursor = slot.get_end()
 		return result + target.substr(cursor)
 	if source.contains("\n"):
 		var lines := source.split("\n")
@@ -69,7 +69,7 @@ func render(source: String) -> String:
 
 func _get_message(src_message: StringName, _context: StringName) -> StringName:
 	# Godot falls back to this catalogue for locales without one; Spanish is the source.
-	if not TranslationServer.get_locale().begins_with("en"):
+	if not TranslationServer.get_locale().begins_with(locale):
 		return &""
 	var source := String(src_message)
 	var translated := render(source)

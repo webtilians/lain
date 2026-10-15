@@ -109,7 +109,7 @@ def chain(c, player: str):
     from .layer_three import h8
     found = entries(c, player)
     bad = rewritten(player, found, _restored(c, player))
-    unit = "minute" if i18n.language() == "en" else "minuto"
+    unit = i18n.t("minuto")
     prev, lines = "00000000", []
     for number, (table, minute, text) in enumerate(found, start=1):
         start = f"{number:04d} | {unit} {minute:6d} | prev {prev} | "
