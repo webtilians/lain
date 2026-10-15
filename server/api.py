@@ -504,7 +504,19 @@ def layer_three_shell(
     request: ShellRequest,
     player_id: Annotated[str, Depends(authenticated_player)] = PLAYER_ID,
 ):
+    from server.world_core import kumo
     from server.world_core.layer_three import run_shell
+
+    if kumo.is_question(request.command):
+        # Kumo asks the AI with no lock held: a slow answer must not stop the world for everyone.
+        minute = get_runtime().minute
+        try:
+            result = kumo.ask(player_id, request.host, request.cwd, request.command, minute, _world_lock)
+        except ValueError as error:
+            raise HTTPException(status_code=409, detail=str(error))
+        with _world_lock:
+            state = build_player_snapshot(player_id) if result["changed"] else None
+        return {"result": result, "state": state}
 
     with _world_lock:
         runtime = get_runtime()

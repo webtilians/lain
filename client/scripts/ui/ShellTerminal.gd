@@ -19,6 +19,13 @@ var busy := false
 var history: Array[String] = []
 var history_index := 0
 var held_player: Node
+const KUMO_TIMEOUT := 60
+const KUMO_SUBCOMMANDS := ["reglas", "regla", "probar", "estado", "rules", "rule", "test", "status", "allow", "deny",
+	"remove", "delete", "up"]
+
+static func is_kumo_question(command: String) -> bool:
+	var words := command.strip_edges().split(" ", false, 2)
+	return words.size() >= 2 and words[0].to_lower() == "kumo" and not words[1].to_lower() in KUMO_SUBCOMMANDS
 
 func _ready() -> void:
 	layer = 106
@@ -150,6 +157,10 @@ func _send(command: String, echo: bool) -> void:
 		_print(prompt.text + " " + command)
 	busy = true
 	input.editable = false
+	# Kumo asks the server's AI and may use a few orders before answering: give it time.
+	request.timeout = KUMO_TIMEOUT if is_kumo_question(command) else 20
+	if is_kumo_question(command):
+		_print(Language.text("Kumo está pensando…"))
 	var body := JSON.stringify({"host": host, "cwd": cwd, "command": command})
 	var error := request.request(ServerConnection.base_url() + "/api/v1/layer-three/shell",
 		ServerConnection.headers(), HTTPClient.METHOD_POST, body)

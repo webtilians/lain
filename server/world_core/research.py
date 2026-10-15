@@ -8,7 +8,7 @@ checks. Whoever finishes goes into the centre's registry, and when enough
 people have finished, the call's technology enters Indara for everyone.
 
 Calls come from two places. Some are written by hand (QB-01, the qubit and
-BB84, in institute.py). The rest are brought by the watcher (watch.py) from
+BB84, in institute.py; KU-01 and KU-02, the road to Kumo, in laboratory.py). The rest are brought by the watcher (watch.py) from
 real headlines: their words are the AI's, in Spanish and English, but their
 exercise is always one of the GENERATORS below, filled with each player's own
 numbers, so it can always be solved and checked. The owner can delete a
@@ -60,7 +60,10 @@ def initialize_research() -> None:
         return
     _tables()
     from .institute import initialize_institute
+    from .kumo import initialize_kumo
     initialize_institute()
+    with get_connection() as c:
+        initialize_kumo(c)
 
 
 def _tables() -> None:
@@ -107,10 +110,20 @@ def command(centre: str) -> str:
     return CENTRES[centre]["en"] if i18n.language() == "en" else CENTRES[centre]["commands"][0]
 
 
+def handwritten() -> tuple:
+    """The modules with calls written by hand, each with its CALLS, TECHS, ARTICLES and submit."""
+    from . import institute, laboratory
+    return institute, laboratory
+
+
+def owner(call_id: str):
+    return next(module for module in handwritten() if call_id in module.CALLS)
+
+
 def calls(c, every=False) -> dict:
     """Every open call, hand-written first, then the watcher's, oldest first (every=True adds deleted ones)."""
-    from .institute import CALLS
-    found = {call_id: dict(call, id=call_id, generated=False) for call_id, call in CALLS.items()}
+    found = {call_id: dict(call, id=call_id, generated=False)
+             for module in handwritten() for call_id, call in module.CALLS.items()}
     if _exists(c, "research_calls"):
         for call_id, data, created, status in c.execute(
                 "SELECT id, data, created_at, status FROM research_calls ORDER BY created_at, id").fetchall():
@@ -126,8 +139,7 @@ def articles(call) -> list:
 def tech(call) -> dict:
     """What the call brings to Indara: title, two lines for everyone and what the residents remember."""
     if not call["generated"]:
-        from .institute import TECHS
-        return dict(TECHS[call["unlock"]], id=call["unlock"])
+        return dict(owner(call["id"]).TECHS[call["unlock"]], id=call["unlock"])
     return {"id": call["id"].lower(), "title": call["tech"], "text": call["tech_text"], "line": call["tech_line"],
             "memory": f"{call['tech']} ya está en Indara, gracias a la convocatoria {call['id']} del "
                       f"{CENTRES[call['centre']]['title']}: {call['tech_text']['es']}"}
@@ -187,6 +199,7 @@ def complete(c, player, call_id, minute, result) -> list:
     result["changed"] = True
     lines = ["", i18n.t(f"CONVOCATORIA {call_id} COMPLETADA · {centre['title']}"),
              i18n.t(f"Tu nombre entra en el registro del centro: {command(call['centre'])} registro.")]
+    lines += [i18n.t(call["reward"])] if call.get("reward") else []
     brought, done = tech(call), len(finished(c, call_id))
     if brought["id"] in unlocked(c):
         return lines
@@ -252,7 +265,7 @@ def _known(c) -> list:
 def call_id(text: str) -> str:
     """A call's code as written: «qb01», «ia-1» and «PR-01» are all fine."""
     code = text.upper()
-    for prefix in [info["prefix"] for info in CENTRES.values()]:
+    for prefix in [info["prefix"] for info in CENTRES.values()] + ["KU"]:
         if code.startswith(prefix):
             number = code[len(prefix):].lstrip("-")
             return f"{prefix}-{int(number):02d}" if number.isdigit() else code
@@ -280,6 +293,8 @@ def _show(c, player, centre, args) -> str:
         statements = [say(call["framing"]) + " " + exercise(c, player, call, "practica")["statement"],
                       exercise(c, player, call, "prueba")["statement"]]
         submit = i18n.t(f"Se entrega con {cmd} entregar {call['id']} <respuesta>.")
+    elif hasattr(owner(call["id"]), "statements"):
+        statements, submit = owner(call["id"]).statements(c, player, call["id"]), ""
     else:
         statements, submit = [i18n.t(call["experiment"]), i18n.t(call["demo"])], ""
     lines += ["", f"1. {i18n.t('Estudiar')} {study}  {reading}",
@@ -296,7 +311,6 @@ def _show(c, player, centre, args) -> str:
 
 def article(c, slug):
     """(call, text) of an article by its name, or (None, None)."""
-    from .institute import ARTICLES
     slug = _slug(slug)
     every = calls(c)
     if call_id(slug) in every:
@@ -304,7 +318,7 @@ def article(c, slug):
     for call in every.values():
         if slug in articles(call):
             if not call["generated"]:
-                return call, i18n.t(ARTICLES[slug])
+                return call, i18n.t(owner(call["id"]).ARTICLES[slug])
             source = call["source"]
             return call, "\n".join([say(call["article"]), "", i18n.t(f"Fuente: {source['name']} · {source['title']}"),
                                     source["url"]])
@@ -331,8 +345,9 @@ def _read(c, player, centre, args, minute, result) -> str:
 
 
 def _slug(slug: str) -> str:
-    from .institute import ARTICLE_ALIASES
-    return ARTICLE_ALIASES.get(slug, slug)
+    for module in handwritten():
+        slug = module.ARTICLE_ALIASES.get(slug, slug)
+    return slug
 
 
 def _registry(c, centre) -> str:
@@ -367,8 +382,10 @@ def _submit(c, player, centre, args, minute, result) -> str:
     if call is None:
         return i18n.t("Este centro no tiene convocatorias abiertas.")
     if not call["generated"]:
-        from .institute import submit
-        return submit(c, player, args, minute, result)
+        from . import institute
+        if owner(call["id"]) is institute:
+            return institute.submit(c, player, args, minute, result)
+        return owner(call["id"]).submit(c, player, args, minute, result, call["id"])
     cmd, state = command(centre), progress(c, player, call["id"])
     if not args:
         return i18n.t(f"Uso: {cmd} entregar {call['id']} <respuesta>")
@@ -536,12 +553,12 @@ def say_es(value) -> str:
 
 
 def open_counts() -> dict:
-    """How many calls each centre has open (hand-written ones included)."""
+    """How many calls each centre has open (hand-written ones included, not the road to Kumo)."""
     _tables()
     with get_connection() as c:
         counts = {key: 0 for key in CENTRES}
         for call in calls(c).values():
-            counts[call["centre"]] += 1
+            counts[call["centre"]] += 0 if call.get("road") else 1
     return counts
 
 

@@ -109,7 +109,7 @@ def test_headlines_come_from_the_three_sources_and_only_web_links_stay():
 
 def test_the_watcher_publishes_a_call_on_its_own(watcher):
     sim = watcher
-    assert "Sin convocatorias abiertas" in sh(sim, "laboratorio")
+    assert "IA-" not in sh(sim, "laboratorio"), "only the road to Kumo (KU-01, KU-02) before the watcher"
     assert watch.due()
     asked = []
     call = watch.run(fetch, lambda messages: asked.append(messages) or reply())

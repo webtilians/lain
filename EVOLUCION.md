@@ -1,8 +1,9 @@
 # Sesión Cero · Indara evoluciona (propuesta de diseño)
 
 > Estado: **en marcha**. Hechas la etapa 1, el Instituto de Física del Puerto y
-> la convocatoria QB-01 ([INSTITUTO.md](INSTITUTO.md)), y la etapa 2, el vigía
-> y los otros dos centros ([VIGIA.md](VIGIA.md)). Decisiones
+> la convocatoria QB-01 ([INSTITUTO.md](INSTITUTO.md)), la etapa 2, el vigía
+> y los otros dos centros ([VIGIA.md](VIGIA.md)), y la etapa 3, Kumo, el agente
+> de tu ordenador, con KU-01 y KU-02 en el Laboratorio ([KUMO.md](KUMO.md)). Decisiones
 > tomadas: se empieza por el Instituto; las convocatorias del vigía **entran
 > solas** y se revisan después, borrando las que no gusten; el agente `kumo`
 > tendrá **20 preguntas al día** por jugador.
