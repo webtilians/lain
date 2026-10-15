@@ -12,8 +12,8 @@ import json
 from pathlib import Path
 import re
 
-LANGUAGES = ("es", "en")
-NAMES = {"es": "español", "en": "English"}
+LANGUAGES = ("es", "en", "ru")
+NAMES = {"es": "español", "en": "English", "ru": "русский"}
 CATALOGS = Path(__file__).resolve().parents[1] / "content" / "i18n"
 _current = contextvars.ContextVar("lain_language", default="es")
 

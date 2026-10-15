@@ -36,6 +36,29 @@ func run() -> void:
 	language.select("es")
 	check(tr("Entrar") == "Entrar", "Switch back to Spanish")
 	check(boot.fields.name.text == "Guardar" and boot.fields.password.text == "no-change", "Switch erased form")
+	# Russian, and the wink for Olya when she picks it.
+	language.select("ru")
+	check(tr("Entrar") == "Войти", "Russian static translation: " + tr("Entrar"))
+	check(tr("Sesión: {v0}") == "Вход выполнен: {v0}", "Russian template: " + tr("Sesión: {v0}"))
+	check("X-Lain-Language: ru" in connection.headers(), "Russian language header")
+	var selector: OptionButton = boot.menu.get_node("LanguageSelector")
+	check(selector.item_count == 3 and selector.get_item_text(2) == "Русский", "Russian missing from the menu")
+	var greeting: CanvasLayer = language.get_node_or_null("Greeting")
+	var greeted := ""
+	if greeting != null:
+		for line in greeting.find_children("*", "Label", true, false):
+			greeted += line.text + " "
+	check("Привет, Оля!" in greeted and "Мы тебя ждали." in greeted, "Olya was not greeted: " + greeted)
+	language.select("en")
+	language.select("en")
+	check(language.code == "en", "Back to English")
+	var f8 := InputEventKey.new()
+	f8.keycode = KEY_F8
+	f8.pressed = true
+	language._unhandled_key_input(f8)
+	check(language.code == "ru", "F8 does not go from English to Russian")
+	language._unhandled_key_input(f8)
+	check(language.code == "es", "F8 does not go from Russian back to Spanish")
 	language.select("en")
 	for arg in OS.get_cmdline_user_args():
 		if arg.begins_with("--capture="):

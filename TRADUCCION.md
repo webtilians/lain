@@ -1,11 +1,25 @@
-# LAIN en dos idiomas (español / English)
+# LAIN en tres idiomas (español / English / русский)
 
-El juego se escribe en **español**: es el idioma fuente. El inglés sale de un
-único catálogo revisado:
+El juego se escribe en **español**: es el idioma fuente. El inglés y el ruso salen
+de un catálogo revisado cada uno:
 
 - `server/content/i18n/en.json`: texto en español → texto en inglés.
-- `client/translations/en.json`: copia idéntica para el cliente
-  (`python tools/sync_translations.py` la copia y comprueba los huecos).
+- `server/content/i18n/ru.json`: texto en español → texto en ruso (las mismas claves).
+- `client/translations/`: copias idénticas para el cliente
+  (`python tools/sync_translations.py` las copia y comprueba los huecos).
+
+## El ruso
+
+- Se elige en el menú de inicio («Русский») o con **F8**, que pasa por los tres
+  idiomas. Al elegirlo sale un saludo, «Привет, Оля! Мы тебя ждали.»: un guiño a
+  Olya, que lleva el juego a sus amigos (`client/scripts/core/Language.gd`).
+- Las órdenes del terminal se escriben como en inglés (`lab show KU-01`, `kumo rule
+  allow …`); los textos rusos las citan así.
+- Los personajes y Kumo contestan en ruso (la IA recibe la orden de hacerlo).
+- Las convocatorias del vigía se escriben en español e inglés: en ruso se leen en
+  inglés.
+- Al jugador se le habla en masculino cuando el ruso obliga a elegir («ты вернулся»).
+- La traducción es de Claude; conviene que la repase alguien nativo.
 
 ## Cómo funciona
 
@@ -28,9 +42,10 @@ El juego se escribe en **español**: es el idioma fuente. El inglés sale de un
 ## Al añadir una fase nueva
 
 1. Escribe los textos en español, como siempre.
-2. Añade su traducción a `server/content/i18n/en.json`. Usa `{v0}`, `{v1}`…
-   para las partes variables, en el mismo orden que el código las une.
+2. Añade su traducción a `server/content/i18n/en.json` **y a `ru.json`**. Usa `{v0}`,
+   `{v1}`… para las partes variables (en ruso pueden cambiar de orden).
 3. `python tools/sync_translations.py` (copia al cliente y valida).
+   `tests/test_i18n_russian.py` falla si un texto con inglés no tiene ruso.
 4. Las pruebas del CI fallan si un texto que ve el jugador no tiene
    traducción: el auditor (`tools/i18n_audit_plugin.py`) recorre toda la
    batería en modo estricto. Para buscarlos antes:

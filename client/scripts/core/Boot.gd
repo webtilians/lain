@@ -71,10 +71,10 @@ func _build() -> void:
 	_label(menu, "PROTOCOLO DE PRESENCIA", 15, RED)
 	var languages := OptionButton.new()
 	languages.name = "LanguageSelector"
-	languages.add_item("Español")
-	languages.add_item("English")
-	languages.select(1 if Language.code == "en" else 0)
-	languages.item_selected.connect(func(index: int): Language.select("en" if index == 1 else "es"))
+	for language in Language.CODES:
+		languages.add_item(Language.NAMES[language])
+	languages.select(Language.CODES.find(Language.code))
+	languages.item_selected.connect(func(index: int): Language.select(Language.CODES[index]))
 	menu.add_child(languages)
 	menu.add_child(_gap(18))
 	form = VBoxContainer.new()
