@@ -2200,5 +2200,18 @@
   "LIBROS USADOS · REVISTAS · MANGA": "БУКИНИСТ · ЖУРНАЛЫ · МАНГА",
   "PRODUCTOS DEL DÍA · ENCARGOS": "ТОВАРЫ ДНЯ · ЗАКАЗЫ",
   "AKARI · COMIDAS Y BEBIDAS": "AKARI · ЕДА И НАПИТКИ",
-  "KISSA · CAFÉ · DISCOS": "KISSA · КАФЕ · ПЛАСТИНКИ"
+  "KISSA · CAFÉ · DISCOS": "KISSA · КАФЕ · ПЛАСТИНКИ",
+  "INDARA 1/3 · EL TERMINAL": "ИНДАРА 1/3 · ТЕРМИНАЛ",
+  "Ya estás en Indara. En casa, acércate al ordenador, pulsa E y abre el Terminal.": "Ты в Индаре. Дома подойди к компьютеру, нажми E и открой терминал.",
+  "Ya estás en Indara. En casa, acércate al ordenador, pulsa A y abre el Terminal.": "Ты в Индаре. Дома подойди к компьютеру, нажми A и открой терминал.",
+  "INDARA 2/3 · LAS ÓRDENES": "ИНДАРА 2/3 · КОМАНДЫ",
+  "Abre el Terminal del ordenador de casa y escribe help.": "Открой терминал на домашнем компьютере и набери help.",
+  "Guía · Indara 2/3 · Escribe help y pulsa Enter: verás las órdenes que puedes usar.": "Гид · Индара 2/3 · Набери help и нажми Enter: увидишь команды, которыми можно пользоваться.",
+  "Guía · Indara 2/3 · Escribe help y pulsa Start: verás las órdenes que puedes usar.": "Гид · Индара 2/3 · Набери help и нажми Start: увидишь команды, которыми можно пользоваться.",
+  "INDARA 3/3 · SI TE ATASCAS": "ИНДАРА 3/3 · ЕСЛИ ЗАСТРЯЛ",
+  "En el Terminal, escribe pista: te da una ayuda para el paso en el que estás.": "В терминале набери hint: он подскажет, что делать на твоём шаге.",
+  "Guía · Indara 3/3 · Si no sabes por dónde seguir, escribe pista: te da una ayuda para el paso en el que estás, cada vez más clara.": "Гид · Индара 3/3 · Если не знаешь, что делать дальше, набери hint: он подскажет, что делать на твоём шаге, каждый раз всё яснее.",
+  "Guía completada. Si te pierdes, tu objetivo está en el diario (J) y pista te ayuda aquí.": "Гид пройден. Если заблудишься, твоя цель — в дневнике (J), а hint поможет здесь.",
+  "Guía completada. Si te pierdes, tu objetivo está en el diario (Y) y pista te ayuda aquí.": "Гид пройден. Если заблудишься, твоя цель — в дневнике (Y), а hint поможет здесь.",
+  "No sé mucho de ordenadores, pero los que saben dicen que en el terminal escribes help para ver las órdenes, y pista cuando te atascas: te dice por dónde seguir.": "Я мало что понимаю в компьютерах, но знающие люди говорят: в терминале набираешь help, чтобы увидеть команды, а hint — когда застрянешь: он подскажет, куда двигаться дальше."
 }

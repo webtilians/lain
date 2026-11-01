@@ -113,10 +113,39 @@ func run() -> void:
 	api.snapshot.prologue.stage = "FIND_RYOKO"
 	api.snapshot.player.location = "APARTMENT_DISTRICT"
 	await frames()
-	check(guide.done.size() == 5 and guide.title_label.text == "OBJETIVO", "a returning player is taught again")
+	check(guide.done.size() == guide.STEPS.size() and guide.title_label.text == "OBJETIVO", "a returning player is taught again")
 	api.snapshot.prologue.stage = "CONNECTED"
 	await frames()
 	check(not guide.panel.visible, "the guide stays after the prologue")
+
+	# In Indara the guide goes on in the home terminal: open it, then help, then pista.
+	reset(guide, path)
+	guide.done = ["move", "journal", "leave", "school", "talk"]
+	guide.decided = true
+	api.snapshot.prologue.stage = "CONNECTED"
+	await frames()
+	check(guide.title_label.text == "INDARA 1/3 · EL TERMINAL" and guide.panel.visible,
+		"in Indara the guide does not point to the terminal: " + guide.title_label.text)
+	shell.output.text = ""
+	shell.surface.show()
+	await frames()
+	check("terminal" in guide.done and "Escribe help" in shell.output.text, "the terminal does not ask for help")
+	shell.command_done.emit("ls")
+	check(not "help" in guide.done, "any command counts as help")
+	shell.command_done.emit("help")
+	check("help" in guide.done and "escribe pista" in shell.output.text, "help does not lead to pista")
+	shell.command_done.emit("pista")
+	check("hint" in guide.done and "Guía completada" in shell.output.text, "pista does not finish the guide")
+	shell.surface.hide()
+	shell.output.text = ""
+	await frames()
+	# Someone who already used the terminal before these steps existed is not taught them.
+	reset(guide, path)
+	guide.tips = ["shell"]
+	guide.decided = true
+	guide.save_progress()
+	guide.load_progress()
+	check(["terminal", "help", "hint"].all(func(id): return id in guide.done), "a terminal veteran is taught the terminal")
 
 	# Another account on this PC starts the guide over; the first one keeps its own.
 	var server := root.get_node("ServerConnection")

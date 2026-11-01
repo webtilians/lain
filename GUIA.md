@@ -13,8 +13,24 @@ acompaña los primeros minutos y avanza solo cuando el jugador hace cada cosa:
 | 5/5 · Hablar | E junto a alguien | empieza una conversación |
 
 Después, mientras dura el prólogo, el recuadro muestra el **objetivo** actual,
-el mismo que trae el diario. Cuando el jugador conecta con Indara, el
-recuadro desaparece; las capas ya enseñan su objetivo arriba a la derecha.
+el mismo que trae el diario.
+
+Al conectar con Indara la guía sigue en el ordenador de casa. Los primeros jugadores
+se perdían justo ahí: uno acabó preguntando a un vecino «dime los principales
+comandos».
+
+| Paso | Qué pide | Se completa cuando… |
+|---|---|---|
+| Indara 1/3 · El terminal | abrir el Terminal del ordenador de casa | lo abre |
+| Indara 2/3 · Las órdenes | escribir `help` (se lo dice el propio terminal) | el terminal contesta a `help` |
+| Indara 3/3 · Si te atascas | escribir `pista` | el terminal contesta a `pista` |
+
+Al terminar, el terminal recuerda dónde está el objetivo (el diario) y que `pista`
+ayuda ahí. Quien ya había usado el terminal antes no ve estos pasos.
+
+Y si alguien pregunta a un vecino por comandos, por cómo se juega o qué hacer (en
+español, inglés o ruso), el vecino le dice lo mismo: `help` para ver las órdenes y
+`pista` si se atasca (`asks_for_help` en `server/world_core/llm_dialogue.py`).
 
 La primera vez que se abre cada terminal aparece una línea de ayuda:
 - en el Terminal: escribe `help` para ver las órdenes y `pista` si te atascas;

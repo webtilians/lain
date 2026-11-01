@@ -1,9 +1,11 @@
 extends CanvasLayer
 ## The first minutes. A short guide advances on its own as the player walks,
 ## opens the diary, goes out, finds the school and talks to someone; after
-## that the prologue's objective stays on screen. The first time a terminal
-## opens it explains how to ask for help. F1 (View on the controller) hides or
-## shows it. With the controller, the steps name its buttons.
+## that the prologue's objective stays on screen. Once connected to Indara it
+## goes on in the home terminal: open it, try help, try pista (the first players
+## got lost right there). The first time a terminal opens it explains how to ask
+## for help. F1 (View on the controller) hides or shows it. With the controller,
+## the steps name its buttons.
 ## Presentation only: it reads the snapshot and the open windows, and keeps
 ## its progress in user://guide.cfg, one section per account on this PC.
 const STEPS := [
@@ -17,7 +19,20 @@ const STEPS := [
 		"pad": "Busca el colegio: es la C del mapa, arriba a la derecha. Entra con A junto a la puerta."},
 	{"id": "talk", "title": "5/5 · HABLAR", "text": "Acércate a alguien y pulsa E. Puedes escribirle lo que quieras.",
 		"pad": "Acércate a alguien y pulsa A. Puedes escribirle lo que quieras."},
+	# Once in Indara (stage CONNECTED): the home terminal. The last two are shown inside it.
+	{"id": "terminal", "connected": true, "title": "INDARA 1/3 · EL TERMINAL",
+		"text": "Ya estás en Indara. En casa, acércate al ordenador, pulsa E y abre el Terminal.",
+		"pad": "Ya estás en Indara. En casa, acércate al ordenador, pulsa A y abre el Terminal."},
+	{"id": "help", "connected": true, "title": "INDARA 2/3 · LAS ÓRDENES",
+		"text": "Abre el Terminal del ordenador de casa y escribe help.",
+		"shell": "Guía · Indara 2/3 · Escribe help y pulsa Enter: verás las órdenes que puedes usar.",
+		"shell_pad": "Guía · Indara 2/3 · Escribe help y pulsa Start: verás las órdenes que puedes usar."},
+	{"id": "hint", "connected": true, "title": "INDARA 3/3 · SI TE ATASCAS",
+		"text": "En el Terminal, escribe pista: te da una ayuda para el paso en el que estás.",
+		"shell": "Guía · Indara 3/3 · Si no sabes por dónde seguir, escribe pista: te da una ayuda para el paso en el que estás, cada vez más clara."},
 ]
+const SHELL_DONE := "Guía completada. Si te pierdes, tu objetivo está en el diario (J) y pista te ayuda aquí."
+const SHELL_DONE_PAD := "Guía completada. Si te pierdes, tu objetivo está en el diario (Y) y pista te ayuda aquí."
 const WELCOME := "Esta guía te acompaña los primeros minutos."
 const FINISHED := "Ya sabes lo básico. Tu objetivo queda aquí; si te pierdes, abre el diario con J."
 const FINISHED_PAD := "Ya sabes lo básico. Tu objetivo queda aquí; si te pierdes, abre el diario con Y."
@@ -50,6 +65,7 @@ func _ready() -> void:
 	_build()
 	load_progress()
 	ServerConnection.account_changed.connect(load_progress)
+	ShellTerminal.command_done.connect(_on_command)
 
 func _build() -> void:
 	panel = PanelContainer.new()
@@ -108,6 +124,11 @@ func load_progress() -> void:
 	tips = Array(config.get_value(progress_for, "tips", []))
 	hidden_by_player = bool(config.get_value(progress_for, "hidden", false))
 	decided = bool(config.get_value(progress_for, "decided", false))
+	if decided and "shell" in tips:
+		# Already used the terminal before these steps existed: nothing to teach there.
+		for id in ["terminal", "help", "hint"]:
+			if not id in done:
+				done.append(id)
 
 func save_progress() -> void:
 	var config := ConfigFile.new()
@@ -136,9 +157,14 @@ func location() -> String:
 
 func current_step() -> Dictionary:
 	for step in STEPS:
-		if not step.id in done:
-			return step
+		if step.id in done:
+			continue
+		# The terminal steps wait until the player is in Indara.
+		return step if _open(step) else {}
 	return {}
+
+func _open(step: Dictionary) -> bool:
+	return not step.get("connected", false) or stage() == "CONNECTED"
 
 func _decide() -> void:
 	# Only someone at the very start of the prologue gets the steps; everyone
@@ -165,7 +191,9 @@ func _met(id: String, player: Node3D) -> bool:
 		"talk":
 			# A conversation offers choices or the message box; a plain notice only has «Continuar».
 			return EventDialog.visible and (EventDialog.choices_box.visible or EventDialog.message_row.visible)
-	return false
+		"terminal":
+			return ShellTerminal.is_open() or "shell" in tips
+	return false  # help and hint: when the terminal answers them (_on_command)
 
 func _process(delta: float) -> void:
 	var player := get_tree().get_first_node_in_group("player") as Node3D
@@ -174,11 +202,11 @@ func _process(delta: float) -> void:
 		return
 	if not decided:
 		_decide()
-	_terminal_tips()
 	var before := done.size()
 	for step in STEPS:
-		if not step.id in done and _met(step.id, player):
+		if not step.id in done and _open(step) and _met(step.id, player):
 			done.append(step.id)
+	_terminal_tips()
 	if done.size() != before:
 		AudioDirector.play("hint")
 		if current_step().is_empty():
@@ -209,7 +237,12 @@ func _show(step: Dictionary) -> void:
 func _terminal_tips() -> void:
 	# The first time each terminal opens, one line on how to get unstuck.
 	var shell_open: bool = ShellTerminal.is_open()
-	if shell_open and not shell_was_open and not "shell" in tips:
+	if shell_open and not shell_was_open and current_step().has("shell"):
+		ShellTerminal._print(Language.text(_shell_line(current_step())))
+		if not "shell" in tips:
+			tips.append("shell")
+		save_progress()
+	elif shell_open and not shell_was_open and not "shell" in tips:
 		ShellTerminal._print(Language.text(SHELL_TIP))
 		tips.append("shell")
 		save_progress()
@@ -220,3 +253,23 @@ func _terminal_tips() -> void:
 		tips.append("dos")
 		save_progress()
 	dos_was_open = dos_open
+
+func _shell_line(step: Dictionary) -> String:
+	return step.get("shell_pad", step.shell) if Gamepad.using_pad else step.shell
+
+func _on_command(command: String) -> void:
+	## The terminal answered: the first help and the first hint move the guide on, inside it.
+	var words := command.strip_edges().split(" ", false, 1)
+	var name := words[0].to_lower() if words.size() > 0 else ""
+	var id := "help" if name == "help" else ("hint" if name in ["pista", "hint"] else "")
+	if id.is_empty() or id in done or stage() != "CONNECTED":
+		return
+	done.append(id)
+	AudioDirector.play("hint")
+	var next := current_step()
+	if next.has("shell"):
+		ShellTerminal._print(Language.text(_shell_line(next)))
+	elif next.is_empty() and STEPS.all(func(step): return step.id in done):
+		ShellTerminal._print(Language.text(SHELL_DONE_PAD if Gamepad.using_pad else SHELL_DONE))
+		finished_left = FINISHED_SECONDS
+	save_progress()

@@ -2200,5 +2200,18 @@
   "LIBROS USADOS · REVISTAS · MANGA": "USED BOOKS · MAGAZINES · MANGA",
   "PRODUCTOS DEL DÍA · ENCARGOS": "TODAY'S PRODUCE · ORDERS",
   "AKARI · COMIDAS Y BEBIDAS": "AKARI · FOOD AND DRINK",
-  "KISSA · CAFÉ · DISCOS": "KISSA · CAFÉ · RECORDS"
+  "KISSA · CAFÉ · DISCOS": "KISSA · CAFÉ · RECORDS",
+  "INDARA 1/3 · EL TERMINAL": "INDARA 1/3 · THE TERMINAL",
+  "Ya estás en Indara. En casa, acércate al ordenador, pulsa E y abre el Terminal.": "You are in Indara now. At home, walk up to the computer, press E and open the Terminal.",
+  "Ya estás en Indara. En casa, acércate al ordenador, pulsa A y abre el Terminal.": "You are in Indara now. At home, walk up to the computer, press A and open the Terminal.",
+  "INDARA 2/3 · LAS ÓRDENES": "INDARA 2/3 · THE COMMANDS",
+  "Abre el Terminal del ordenador de casa y escribe help.": "Open the Terminal on your home computer and type help.",
+  "Guía · Indara 2/3 · Escribe help y pulsa Enter: verás las órdenes que puedes usar.": "Guide · Indara 2/3 · Type help and press Enter: you will see the commands you can use.",
+  "Guía · Indara 2/3 · Escribe help y pulsa Start: verás las órdenes que puedes usar.": "Guide · Indara 2/3 · Type help and press Start: you will see the commands you can use.",
+  "INDARA 3/3 · SI TE ATASCAS": "INDARA 3/3 · IF YOU GET STUCK",
+  "En el Terminal, escribe pista: te da una ayuda para el paso en el que estás.": "In the Terminal, type hint: it helps you with the step you are on.",
+  "Guía · Indara 3/3 · Si no sabes por dónde seguir, escribe pista: te da una ayuda para el paso en el que estás, cada vez más clara.": "Guide · Indara 3/3 · If you do not know how to go on, type hint: it helps you with the step you are on, more clearly each time.",
+  "Guía completada. Si te pierdes, tu objetivo está en el diario (J) y pista te ayuda aquí.": "Guide complete. If you get lost, your objective is in the diary (J) and hint helps you here.",
+  "Guía completada. Si te pierdes, tu objetivo está en el diario (Y) y pista te ayuda aquí.": "Guide complete. If you get lost, your objective is in the diary (Y) and hint helps you here.",
+  "No sé mucho de ordenadores, pero los que saben dicen que en el terminal escribes help para ver las órdenes, y pista cuando te atascas: te dice por dónde seguir.": "I don't know much about computers, but people who do say you type help in the terminal to see the commands, and hint when you get stuck: it tells you where to go next."
 }
