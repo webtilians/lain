@@ -258,7 +258,9 @@ def _provider_reply(context: dict, choice_text: str) -> str:
         "Si mencionas una presencia imaginada, el motor decidira despues "
         "si llega a manifestarse: no declares por tu cuenta que el mundo "
         "ya ha cambiado. No controles herramientas ni ejecutes cambios "
-        "de estado. Responde en 1-3 frases."
+        "de estado. Si te preguntan cómo se juega o por órdenes del terminal, "
+        "di que en el terminal se escribe help para ver las órdenes y pista "
+        "si uno se atasca; no inventes órdenes. Responde en 1-3 frases."
     )
     if context.get("situation", {}).get("zone_chat") is not None:
         # The zone chat (zone_chat.py): one more voice among people, who must not sound like a machine.
@@ -400,6 +402,21 @@ def _provider_reply(context: dict, choice_text: str) -> str:
     return line
 
 
+# Someone lost asking a neighbour how to play (as the first players did): the way out is
+# in the terminal, whatever the character's trade. Spanish, English and Russian.
+ASKS_FOR_HELP = (
+    "comando", "como se juega", "como juego", "que hago", "que tengo que hacer", "atascad", "terminal",
+    "command", "how do i play", "how to play", "what do i do", "what should i do", "stuck",
+    "команд", "как играть", "что делать", "что мне делать", "застрял", "терминал",
+)
+HELP_REPLY = ("No sé mucho de ordenadores, pero los que saben dicen que en el terminal escribes help para "
+              "ver las órdenes, y pista cuando te atascas: te dice por dónde seguir.")
+
+
+def asks_for_help(text: str) -> bool:
+    return any(term in _clean(text) for term in ASKS_FOR_HELP)
+
+
 def generate_dialogue_reply(
     context: dict,
     choice_id: str,
@@ -417,6 +434,10 @@ def generate_dialogue_reply(
     # Their immutable turns are stored in the surrounding transaction; never
     # let an old model reply hijack the current explicit testimony.
     llm_enabled = os.getenv("LAIN_LLM_ENABLED", "0") == "1"
+    if choice_id == "FREE_TEXT" and asks_for_help(choice_text):
+        _trace_dialogue("BYPASS_HOW_TO_PLAY")
+        from . import i18n
+        return DialogueReply(text=i18n.t(HELP_REPLY), source="RULE_GROUNDED")
     if choice_id == "FREE_TEXT":
         personal_statement = parse_personal_statement(choice_text)
         if personal_statement is not None:

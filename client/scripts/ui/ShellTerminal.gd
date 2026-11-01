@@ -16,6 +16,9 @@ var host := "navi"
 var cwd := "/"
 var hostname := "navi"
 var busy := false
+var last_command := ""
+## A command's reply has been printed (the guide follows the first help and hint).
+signal command_done(command: String)
 var history: Array[String] = []
 var history_index := 0
 var held_player: Node
@@ -155,6 +158,7 @@ func _submit(text: String) -> void:
 func _send(command: String, echo: bool) -> void:
 	if echo:
 		_print(prompt.text + " " + command)
+	last_command = command
 	busy = true
 	input.editable = false
 	# Kumo asks the server's AI and may use a few orders before answering: give it time.
@@ -184,6 +188,7 @@ func _completed(result: int, code: int, _headers: PackedStringArray, body: Packe
 	if bool(reply.get("clear", false)):
 		output.text = ""
 	_done(str(reply.get("output", "")))
+	command_done.emit(last_command)
 	if bool(reply.get("exit", false)):
 		close_shell()
 
